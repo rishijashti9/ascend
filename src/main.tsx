@@ -10,6 +10,7 @@ import { startAutoPlanner } from './core/planner/auto';
 import { startAchievements } from './core/achievements/auto';
 import { startAchievementsStore } from './core/state/achievements';
 import { startMoments } from './core/state/moments';
+import { startSuggestion } from './core/state/suggestion';
 import { appStore, startAppState } from './core/state/app';
 import { startBody } from './core/state/body';
 import { startFocusStore } from './core/state/focus';
@@ -58,6 +59,7 @@ async function start(): Promise<void> {
   await startBody();
   await startReviews();
   await startAchievementsStore();
+  await startSuggestion();
   startAutoPlanner();
   startAchievements();
   startMoments();

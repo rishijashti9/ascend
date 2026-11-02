@@ -16,6 +16,7 @@ import { GoalNudges } from './GoalNudges';
 import { QuestCard } from './QuestCard';
 import { RecoveryCard } from './RecoveryCard';
 import { StatusHeader } from './StatusHeader';
+import { DifficultyCard } from './DifficultyCard';
 import { SystemMessage } from './SystemMessage';
 import { ThisWeek } from './ThisWeek';
 import { WakeCard } from './WakeCard';
@@ -69,6 +70,7 @@ export function TodayPage() {
         </div>
         <StatusHeader day={day} />
         <SystemMessage />
+        <DifficultyCard />
         <GoalNudges />
         <WeeklyReviewPrompt />
         <MonthlyReviewPrompt />

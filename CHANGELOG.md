@@ -4,9 +4,23 @@ All notable changes to ASCEND. Versions follow [semantic versioning](https://sem
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-11-03 — Phase 5: Reviews & progress
+
+### Added
+
+- Review (in More): a 1-minute daily check-in (energy, mood, one win, one lesson), with a reminder on Today in the evening.
+- Weekly review: how the week went, two questions, and next week's quests to keep, drop or rename before the week starts (saved straight into next week, with Undo). Today reminds you on the week's last day.
+- Monthly and yearly summaries made from your data (active days, Daily Clears, XP and levels, focus hours, quests and milestones, best streak, check-in averages), browsable back to your first month, with an optional reflection.
+- Profile (in More): level, rank and what the next rank needs, lifetime numbers, a stats triangle, XP per week, and a GitHub-style calendar of active days for every year.
+- 46 quiet achievements tied to real behaviour (First Light, Iron Habit, Centurion, …) with a small note when one unlocks; any unlocked one can be worn as your title on Profile and Today.
+- Level-up and rank-up moments: a short full-screen card, skippable with one tap or Esc, still with reduced motion, never replayed.
+- Difficulty suggestions on Today: after 3 days under 50%, aim for minimums and make the hardest quests a bit smaller; after 7 days at 100%, raise one a little; after 4 low-energy days in a row, a gentle check-in. One tap applies (with Undo), "Not now" hides it for a while.
+- End-to-end test: a level up shows its moment once.
+
 ### Changed
 
 - Steps and sleep are one number per day: entering them on the Walk / Sleep quest updates the Body log and its charts, and entering them in Body updates the quests. Undo / clearing works in both places.
+- A weekly quest finished after the weekly review removes its untouched copy from next week (with Undo).
 
 ## [0.4.0] — 2026-11-02 — Phase 4: Focus & Body
 

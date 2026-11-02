@@ -20,6 +20,7 @@ import './actions/reviews';
 import './actions/achievements';
 import './actions/profile';
 import './actions/moments';
+import './actions/difficulty';
 
 export * from './events';
 export * from './recordAction';

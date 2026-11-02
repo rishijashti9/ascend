@@ -39,6 +39,7 @@ export interface DomainEvents {
   RankUp: { rank: Rank };
   AchievementUnlocked: { key: string };
   ProfileChanged: { changed: string[] };
+  SuggestionAnswered: { kind: string; applied: boolean };
   DataImported: { mode: 'replace' | 'merge' };
   DataReset: Record<string, never>;
 }
