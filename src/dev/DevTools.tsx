@@ -14,6 +14,7 @@ import {
   setTimeZoneOverride,
 } from '@/core/time';
 import { clearDevClock, saveDevClock } from './devClock';
+import { GenerateData } from './GenerateData';
 
 const DAY_MS = 86_400_000;
 const ZONES = ['', 'Asia/Kolkata', 'Europe/Berlin', 'UTC', 'America/New_York', 'Pacific/Auckland'];
@@ -198,6 +199,8 @@ export function DevTools({
           ))}
         </select>
       </label>
+
+      <GenerateData db={db} reload={reload} />
 
       <button
         type="button"
