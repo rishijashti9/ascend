@@ -39,14 +39,16 @@ function WeeklyPlanNote({ weekStart }: { weekStart: string }) {
   const { run, busy, error } = useAction();
   const entry = history.find(
     (h) =>
-      h.trigger === 'weekly' &&
       !h.undone_at &&
-      dayOf(Date.parse(h.created_at), currentTimeZone(), dayStart) >= weekStart,
+      (h.trigger === `weekly:${weekStart}` ||
+        // plans saved before the week was part of the trigger
+        (h.trigger === 'weekly' &&
+          dayOf(Date.parse(h.created_at), currentTimeZone(), dayStart) >= weekStart)),
   );
   if (!entry) return null;
   return (
     <div className="bg-surface-2 flex flex-wrap items-center justify-between gap-2 rounded-md px-3 py-2 text-sm">
-      <span>{entry.summary} Planned by the System.</span>
+      <span>This week’s quests were planned by the System.</span>
       <Button
         variant="ghost"
         className="px-2"

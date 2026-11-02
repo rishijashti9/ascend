@@ -1,5 +1,6 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router';
 import { db } from '@/core/db/db';
 import { clearSubscribers, recordAction } from '@/core/pipeline';
 import { startReviews } from '@/core/state/reviews';
@@ -20,7 +21,11 @@ beforeEach(async () => {
   setNow(ist(2026, 11, 2, 21));
   await startToday();
   await startReviews();
-  render(<ReviewPage />);
+  render(
+    <MemoryRouter>
+      <ReviewPage />
+    </MemoryRouter>,
+  );
 });
 afterEach(() => {
   clearSubscribers();

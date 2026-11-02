@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import type { PlanHistory, PlanProposal } from '@/core/db/types';
 import type { ProposalItem } from '@/core/planner/types';
+import { appDayOf } from '../helpers';
 import { newBase } from '../records';
 import { defineAction } from '../registry';
 import { applyProposal, PLAN_TABLES } from './planApply';
@@ -26,6 +27,8 @@ export const planWeekly = defineAction({
     if (items.length === 0) return null;
 
     const list = items as unknown as ProposalItem[];
+    // Planned ahead during the weekly review, or on the week's first day.
+    const ahead = (await appDayOf(ctx.db, ctx.processedAt)) < week_start;
     const carried = list.filter(
       (i) => i.kind === 'quest.create' && i.data.carried_over_from,
     ).length;
@@ -33,8 +36,9 @@ export const planWeekly = defineAction({
       ...newBase(undefined, ctx.processedAt),
       goal_type: null,
       goal_id: null,
-      trigger: 'weekly',
-      summary: `This week’s quests: ${list.length}${carried ? ` (${carried} carried over)` : ''}.`,
+      // The week is part of the trigger, so a week planned ahead (weekly review) is recognised.
+      trigger: `weekly:${week_start}`,
+      summary: `${ahead ? 'Next' : 'This'} week’s quests: ${list.length}${carried ? ` (${carried} carried over)` : ''}.`,
       items: list,
       status: 'pending',
       source: 'rules',

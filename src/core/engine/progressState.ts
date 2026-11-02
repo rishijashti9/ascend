@@ -51,6 +51,8 @@ export interface ProgressState {
   habitStreaks: Record<string, HabitStreak>;
   /** Today's XP so far and the streak it started with (for the streak bonus). */
   today: { day: DayString; xp: DayXp; streakAtStart: number };
+  /** Every day with a record or XP: final XP, active, Daily Clear (history, heatmap, reviews). */
+  perDay: Record<DayString, { xp: number; active: boolean; dailyClear: boolean }>;
 }
 
 const RANK_ORDER: readonly Rank[] = GAME.ranks.map((r) => r.rank);
@@ -77,6 +79,7 @@ export function computeProgress(input: ProgressInput): ProgressState {
   let activeSoFar = 0;
   let rank: Rank = 'E';
   let todayXp = EMPTY_DAY;
+  const perDay: ProgressState['perDay'] = {};
 
   for (const day of allDays) {
     const record = dayRecord.get(day);
@@ -90,6 +93,11 @@ export function computeProgress(input: ProgressInput): ProgressState {
     if (record?.active) activeSoFar++;
     rank = higherRank(rank, rankFor(levelFromXp(total).level, activeSoFar));
     if (day === input.today) todayXp = xp;
+    perDay[day] = {
+      xp: xp.total,
+      active: record?.active ?? false,
+      dailyClear: record?.daily_clear ?? false,
+    };
   }
 
   const recovered = new Set(
@@ -121,6 +129,7 @@ export function computeProgress(input: ProgressInput): ProgressState {
     rank,
     streak: streaks.summary,
     habitStreaks: Object.fromEntries(habitStreaks),
+    perDay,
     today: {
       day: input.today,
       xp: todayXp,

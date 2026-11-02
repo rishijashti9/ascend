@@ -40,7 +40,9 @@ describe('SettingsPage', () => {
   it('saves the theme', async () => {
     await userEvent.click(within(section('Appearance')).getByRole('radio', { name: /Dark/ }));
     await waitFor(async () => expect((await stored())?.theme).toBe('dark'));
-    expect(within(section('Appearance')).getByRole('radio', { name: /Dark/ })).toBeChecked();
+    await waitFor(() =>
+      expect(within(section('Appearance')).getByRole('radio', { name: /Dark/ })).toBeChecked(),
+    );
   });
 
   it('saves day-start hour and week start', async () => {

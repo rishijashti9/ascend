@@ -11,6 +11,7 @@ import { Button } from '@/ui/Button';
 import { useAction } from '@/ui/hooks/useAction';
 import { BackupReminder } from './BackupReminder';
 import { CheckInPrompt } from './CheckInPrompt';
+import { WeeklyReviewPrompt } from './WeeklyReviewPrompt';
 import { GoalNudges } from './GoalNudges';
 import { QuestCard } from './QuestCard';
 import { RecoveryCard } from './RecoveryCard';
@@ -69,6 +70,7 @@ export function TodayPage() {
         <StatusHeader day={day} />
         <SystemMessage />
         <GoalNudges />
+        <WeeklyReviewPrompt />
         <CheckInPrompt />
         <BackupReminder />
       </div>

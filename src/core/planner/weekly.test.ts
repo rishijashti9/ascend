@@ -91,9 +91,9 @@ describe('weekly generation', () => {
     expect((await weekly('2026-11-09')).length).toBe(count);
 
     const history = (await t.db.plan_history.toArray()).find(
-      (h) => h.trigger === 'weekly',
+      (h) => h.trigger === 'weekly:2026-11-09',
     ) as PlanHistory;
-    expect(history.summary).toMatch(/This week’s quests: \d+ \(\d+ carried over\)/);
+    expect(history.summary).toMatch(/^This week’s quests: \d+ \(\d+ carried over\)/);
     await t.run({ type: 'plan.undo', payload: { id: history.id } });
     expect(await weekly('2026-11-09')).toEqual([]);
   });
