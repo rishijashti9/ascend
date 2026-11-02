@@ -3,7 +3,7 @@ import type { DayRecord, DayString, Quest, QuestInstance } from '@/core/db/types
 import { isRecoveryId } from '@/core/engine/instances';
 import { isDone } from '@/core/engine/progress';
 import { repairAllowed, type StreakSummary } from '@/core/engine/streaks';
-import { addDays, daysBetween } from '@/core/time';
+import { addDays, daysBetween, weekStartOf } from '@/core/time';
 import { recoveryTemplateFor } from '@/data/recovery';
 import { refreshDayRecord } from '../days';
 import { appDayOf, ensureInstancesForDay } from '../helpers';
@@ -50,6 +50,7 @@ export const rollover = defineAction({
 
     const closedDays = [...toClose].sort();
     for (const day of closedDays) await closeDay(ctx, day, first);
+    await closeOldWeeks(ctx, today);
 
     if (first !== null && today >= first) {
       await ensureInstancesForDay(db, today);
@@ -71,6 +72,33 @@ export const rollover = defineAction({
     };
   },
 });
+
+/**
+ * Weekly quests of a finished week that weren't done are closed as "not done" — no penalty
+ * (SPEC 4.8); the weekly plan offers them again as carry-over.
+ */
+async function closeOldWeeks(ctx: ActionContext, today: DayString) {
+  const settings = await ctx.db.settings.get('settings');
+  const thisWeek = weekStartOf(today, settings?.week_start ?? 1);
+  const open = (await ctx.db.quests.where('type').equals('weekly').toArray()).filter(
+    (q) =>
+      q.deleted_at === null &&
+      q.status === 'active' &&
+      q.week_start !== null &&
+      q.week_start < thisWeek,
+  );
+  for (const q of open) {
+    await ctx.db.quests.put({ ...q, status: 'not_done', ...touch(ctx.processedAt) });
+    const instance = await ctx.db.quest_instances.get(`${q.id}:${q.week_start}`);
+    if (instance && instance.status === 'pending' && instance.deleted_at === null) {
+      await ctx.db.quest_instances.put({
+        ...instance,
+        status: 'missed',
+        ...touch(ctx.processedAt),
+      });
+    }
+  }
+}
 
 /** Unfinished quests of a closed day become missed (no XP change), then the day is closed. */
 async function closeDay(ctx: ActionContext, day: DayString, first: DayString | null) {

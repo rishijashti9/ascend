@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { TableName } from '@/core/db/db';
-import type { PlanChange, PlanHistory } from '@/core/db/types';
+import type { PlanChange, PlanHistory, PlanProposal } from '@/core/db/types';
 import type { ProposalItem } from '@/core/planner/types';
 import { newBase, touch } from '../records';
 import { defineAction, RuleError, type ActionContext, type ActionDefinition } from '../registry';
@@ -66,130 +66,143 @@ export const applyPlan = defineAction({
     const proposal = await outer.db.plan_proposals.get(id);
     if (!proposal || proposal.status !== 'pending')
       throw new RuleError('That plan is no longer waiting');
-    const ctx: ActionContext = { ...outer, source: 'planner' };
-    const keep = new Set(selected);
-    const items = (proposal.items as ProposalItem[]).filter((i) => keep.has(i.id));
-    const refs = new Map<string, string>(); // `ref:i1` → created milestone id
-    const changes: PlanChange[] = [];
-    const resolve = (v: string | null) => (v && v.startsWith('ref:') ? (refs.get(v) ?? null) : v);
-
-    const record = async (snaps: Snapshot[], apply: () => Promise<unknown>) => {
-      const before = await Promise.all(snaps.map((s) => read(ctx, s)));
-      await apply();
-      for (const [n, s] of snaps.entries()) {
-        changes.push({ entity: s.entity, id: s.id, before: before[n], after: await read(ctx, s) });
-      }
-    };
-
-    for (const item of items) {
-      const edit = edits[item.id] ?? {};
-      switch (item.kind) {
-        case 'milestone.create': {
-          const m = await runInside(createMilestone, ctx, {
-            ...item.data,
-            title: edit.title ?? item.data.title,
-          });
-          refs.set(`ref:${item.id}`, m.id);
-          changes.push({ entity: 'milestones', id: m.id, before: null, after: m });
-          break;
-        }
-        case 'quest.create': {
-          const linked = resolve(item.data.linked_goal_id);
-          if (!linked) break; // its milestone was unticked: nothing to attach it to
-          const q = await runInside(createQuest, ctx, {
-            ...item.data,
-            title: edit.title ?? item.data.title,
-            linked_goal_id: linked,
-            planned_by: 'rules',
-          });
-          changes.push({ entity: 'quests', id: q.id, before: null, after: q });
-          const instId = questInstanceId(q);
-          changes.push({
-            entity: 'quest_instances',
-            id: instId,
-            before: null,
-            after: await read(ctx, { entity: 'quest_instances', id: instId }),
-          });
-          break;
-        }
-        case 'habit.create': {
-          const target = edit.target_value ?? item.data.target_value;
-          const h = await runInside(createHabit, ctx, {
-            ...item.data,
-            title: edit.title ?? item.data.title,
-            target_value: target,
-            min_value:
-              item.data.min_value !== null && target !== null
-                ? Math.min(item.data.min_value, target)
-                : item.data.min_value,
-            linked_goal_id: resolve(item.data.linked_goal_id),
-            planned_by: 'rules',
-          });
-          changes.push({ entity: 'habits', id: h.id, before: null, after: h });
-          break;
-        }
-        case 'habit.update':
-          await record([{ entity: 'habits', id: item.habitId }], () =>
-            runInside(updateHabit, ctx, { id: item.habitId, changes: item.changes }),
-          );
-          break;
-        case 'habit.pause':
-        case 'habit.archive':
-        case 'habit.restore': {
-          const def =
-            item.kind === 'habit.pause'
-              ? pauseHabit
-              : item.kind === 'habit.archive'
-                ? archiveHabit
-                : restoreHabit;
-          await record([{ entity: 'habits', id: item.habitId }], () =>
-            runInside(def, ctx, { id: item.habitId }),
-          );
-          break;
-        }
-        case 'quest.archive': {
-          const q = await ctx.db.quests.get(item.questId);
-          if (!q) break;
-          await record(
-            [
-              { entity: 'quests', id: q.id },
-              { entity: 'quest_instances', id: questInstanceId(q) },
-            ],
-            () => runInside(setQuestArchived, ctx, { id: q.id, archived: true }),
-          );
-          break;
-        }
-        case 'milestone.setStatus':
-          await record([{ entity: 'milestones', id: item.milestoneId }], () =>
-            runInside(setMilestoneStatus, ctx, { id: item.milestoneId, status: item.status }),
-          );
-          break;
-        case 'mainQuest.setStatus':
-          await record([{ entity: 'main_quests', id: item.mainQuestId }], () =>
-            runInside(setMainQuestStatus, ctx, { id: item.mainQuestId, status: item.status }),
-          );
-          break;
-      }
-    }
-
-    const history: PlanHistory = {
-      ...newBase(undefined, ctx.processedAt),
-      goal_type: proposal.goal_type,
-      goal_id: proposal.goal_id,
-      trigger: proposal.trigger,
-      summary: proposal.summary,
-      changes,
-      source: proposal.source,
-      undone_at: null,
-    };
-    await ctx.db.plan_history.add(history);
-    await ctx.db.plan_proposals.put({
-      ...proposal,
-      status: 'applied',
-      plan_history_id: history.id,
-      ...touch(ctx.processedAt),
-    });
-    ctx.emit({ type: 'PlanApplied', payload: { proposalId: proposal.id, historyId: history.id } });
-    return history;
+    return applyProposal(outer, proposal, selected, edits);
   },
 });
+
+/**
+ * Applies a pending proposal's selected items (shared by plan.apply and the weekly plan).
+ * Runs inside the caller's transaction.
+ */
+export async function applyProposal(
+  outer: ActionContext,
+  proposal: PlanProposal,
+  selected: readonly string[],
+  edits: Record<string, z.infer<typeof editSchema>> = {},
+): Promise<PlanHistory> {
+  const ctx: ActionContext = { ...outer, source: 'planner' };
+  const keep = new Set(selected);
+  const items = (proposal.items as ProposalItem[]).filter((i) => keep.has(i.id));
+  const refs = new Map<string, string>(); // `ref:i1` → created milestone id
+  const changes: PlanChange[] = [];
+  const resolve = (v: string | null) => (v && v.startsWith('ref:') ? (refs.get(v) ?? null) : v);
+
+  const record = async (snaps: Snapshot[], apply: () => Promise<unknown>) => {
+    const before = await Promise.all(snaps.map((s) => read(ctx, s)));
+    await apply();
+    for (const [n, s] of snaps.entries()) {
+      changes.push({ entity: s.entity, id: s.id, before: before[n], after: await read(ctx, s) });
+    }
+  };
+
+  for (const item of items) {
+    const edit = edits[item.id] ?? {};
+    switch (item.kind) {
+      case 'milestone.create': {
+        const m = await runInside(createMilestone, ctx, {
+          ...item.data,
+          title: edit.title ?? item.data.title,
+        });
+        refs.set(`ref:${item.id}`, m.id);
+        changes.push({ entity: 'milestones', id: m.id, before: null, after: m });
+        break;
+      }
+      case 'quest.create': {
+        const linked = resolve(item.data.linked_goal_id);
+        if (!linked) break; // its milestone was unticked: nothing to attach it to
+        const q = await runInside(createQuest, ctx, {
+          ...item.data,
+          title: edit.title ?? item.data.title,
+          linked_goal_id: linked,
+          planned_by: 'rules',
+        });
+        changes.push({ entity: 'quests', id: q.id, before: null, after: q });
+        const instId = questInstanceId(q);
+        changes.push({
+          entity: 'quest_instances',
+          id: instId,
+          before: null,
+          after: await read(ctx, { entity: 'quest_instances', id: instId }),
+        });
+        break;
+      }
+      case 'habit.create': {
+        const target = edit.target_value ?? item.data.target_value;
+        const h = await runInside(createHabit, ctx, {
+          ...item.data,
+          title: edit.title ?? item.data.title,
+          target_value: target,
+          min_value:
+            item.data.min_value !== null && target !== null
+              ? Math.min(item.data.min_value, target)
+              : item.data.min_value,
+          linked_goal_id: resolve(item.data.linked_goal_id),
+          planned_by: 'rules',
+        });
+        changes.push({ entity: 'habits', id: h.id, before: null, after: h });
+        break;
+      }
+      case 'habit.update':
+        await record([{ entity: 'habits', id: item.habitId }], () =>
+          runInside(updateHabit, ctx, { id: item.habitId, changes: item.changes }),
+        );
+        break;
+      case 'habit.pause':
+      case 'habit.archive':
+      case 'habit.restore': {
+        const def =
+          item.kind === 'habit.pause'
+            ? pauseHabit
+            : item.kind === 'habit.archive'
+              ? archiveHabit
+              : restoreHabit;
+        await record([{ entity: 'habits', id: item.habitId }], () =>
+          runInside(def, ctx, { id: item.habitId }),
+        );
+        break;
+      }
+      case 'quest.archive': {
+        const q = await ctx.db.quests.get(item.questId);
+        if (!q) break;
+        await record(
+          [
+            { entity: 'quests', id: q.id },
+            { entity: 'quest_instances', id: questInstanceId(q) },
+          ],
+          () => runInside(setQuestArchived, ctx, { id: q.id, archived: true }),
+        );
+        break;
+      }
+      case 'milestone.setStatus':
+        await record([{ entity: 'milestones', id: item.milestoneId }], () =>
+          runInside(setMilestoneStatus, ctx, { id: item.milestoneId, status: item.status }),
+        );
+        break;
+      case 'mainQuest.setStatus':
+        await record([{ entity: 'main_quests', id: item.mainQuestId }], () =>
+          runInside(setMainQuestStatus, ctx, { id: item.mainQuestId, status: item.status }),
+        );
+        break;
+    }
+  }
+
+  const history: PlanHistory = {
+    ...newBase(undefined, ctx.processedAt),
+    goal_type: proposal.goal_type,
+    goal_id: proposal.goal_id,
+    trigger: proposal.trigger,
+    summary: proposal.summary,
+    changes,
+    source: proposal.source,
+    undone_at: null,
+  };
+  await ctx.db.plan_history.add(history);
+  await ctx.db.plan_proposals.put({
+    ...proposal,
+    status: 'applied',
+    plan_history_id: history.id,
+    ...touch(ctx.processedAt),
+  });
+  ctx.emit({ type: 'PlanApplied', payload: { proposalId: proposal.id, historyId: history.id } });
+  return history;
+}

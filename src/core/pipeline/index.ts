@@ -12,6 +12,7 @@ import './actions/questDefs';
 import './actions/plans';
 import './actions/planApply';
 import './actions/planUndo';
+import './actions/planWeekly';
 
 export * from './events';
 export * from './recordAction';

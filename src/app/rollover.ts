@@ -1,6 +1,7 @@
 import { db as defaultDb, type AscendDB } from '@/core/db/db';
 import { logError } from '@/core/errorLog';
 import { getSettings, recordAction, type RolloverResult } from '@/core/pipeline';
+import { runWeeklyPlan } from '@/core/planner/weekly';
 import { currentTimeZone, dayBounds, dayOf, nowMs } from '@/core/time';
 
 /**
@@ -36,6 +37,8 @@ export async function runRollover(database: AscendDB = defaultDb): Promise<Rollo
       { db: database },
     );
     latest = result.value ?? latest;
+    // A new week: plan this week's quests (once per week; applied with Undo).
+    await runWeeklyPlan(database);
     // A later run the same day (app resumed) must not erase the welcome-back note.
     if (latest && latest.daysAway > 0) {
       welcome = { day: latest.today, daysAway: latest.daysAway, shieldsUsed: latest.shieldsUsed };
