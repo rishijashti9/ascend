@@ -57,6 +57,16 @@ describe('Planner sheet', () => {
     expect(
       await screen.findByRole('heading', { name: 'Core robotics skills: guided practice' }),
     ).toBeInTheDocument();
+
+    // Plan history on the goal page: Undo removes what the plan added.
+    const history = await screen.findByRole('region', { name: 'Plan history' });
+    await userEvent.click(within(history).getByRole('button', { name: /Undo/ }));
+    await waitFor(() =>
+      expect(
+        screen.queryByRole('heading', { name: 'Core robotics skills: guided practice' }),
+      ).not.toBeInTheDocument(),
+    );
+    expect(within(history).getByText(/undone/)).toBeInTheDocument();
     expect((await db.main_quests.get(questId))?.planner_context).toMatchObject({
       level: 'some',
       obstacle: 'unclear',

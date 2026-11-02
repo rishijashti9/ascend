@@ -8,6 +8,7 @@ import { Button } from '@/ui/Button';
 import { useAction } from '@/ui/hooks/useAction';
 import { StatChip } from '@/ui/stats';
 import { ImpactPreview, PendingPlan } from '@/features/planner/PendingPlan';
+import { PlanHistoryList } from '@/features/planner/PlanHistory';
 import { PlannerSheet } from '@/features/planner/PlannerSheet';
 import { formatDay } from './format';
 import { MainQuestForm, MilestoneForm } from './forms';
@@ -187,6 +188,7 @@ export function MainQuestPage() {
       )}
 
       <PendingPlan goalId={id} />
+      <PlanHistoryList goalId={id} limit={3} />
       {planning && (
         <PlannerSheet mainQuestId={id} trigger={planning} onClose={closePlanner}>
           {(proposalId) => <SheetPreview proposalId={proposalId} onDone={closePlanner} />}

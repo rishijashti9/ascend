@@ -11,6 +11,7 @@ import './actions/goals';
 import './actions/questDefs';
 import './actions/plans';
 import './actions/planApply';
+import './actions/planUndo';
 
 export * from './events';
 export * from './recordAction';

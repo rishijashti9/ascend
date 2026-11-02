@@ -7,6 +7,7 @@ import { Button } from '@/ui/Button';
 import { useAction } from '@/ui/hooks/useAction';
 import { StatChip } from '@/ui/stats';
 import { PendingPlan } from '@/features/planner/PendingPlan';
+import { PlanHistoryList } from '@/features/planner/PlanHistory';
 import { DreamForm, MainQuestForm } from './forms';
 import { formatDay } from './format';
 import { ProgressLine, StatusActions, StatusChip } from './parts';
@@ -200,6 +201,7 @@ export function GoalsPage() {
           <DreamCard key={d.id} dream={d} />
         ))}
       </ul>
+      <PlanHistoryList limit={20} />
       {archived.length > 0 && (
         <details>
           <summary className="text-muted min-h-11 cursor-pointer py-2">
