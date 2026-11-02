@@ -45,6 +45,14 @@ export interface ActionDefinition<S extends z.ZodType = z.ZodType, R = unknown> 
   run(ctx: ActionContext, payload: z.infer<S>): Promise<R>;
 }
 
+/** A game/data rule was broken (e.g. a 4th core quest). The message is safe to show to Rishi. */
+export class RuleError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'RuleError';
+  }
+}
+
 const registry = new Map<string, ActionDefinition>();
 
 export function defineAction<S extends z.ZodType, R>(
