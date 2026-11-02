@@ -1,5 +1,6 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router';
 import { db } from '@/core/db/db';
 import { clearSubscribers, recordAction } from '@/core/pipeline';
 import { startAppState } from '@/core/state/app';
@@ -27,7 +28,11 @@ async function setup(hour = 10, start: 'today' | 'tomorrow' = 'today') {
   await startAppState();
   await startProgressStore();
   await startToday();
-  render(<TodayPage />);
+  render(
+    <MemoryRouter>
+      <TodayPage />
+    </MemoryRouter>,
+  );
 }
 
 /** Clicks once the button is enabled (cards ignore taps while an action is saving). */

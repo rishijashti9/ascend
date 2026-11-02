@@ -8,6 +8,7 @@ import { openDatabase } from './core/db/open';
 import { installGlobalErrorHandlers, logError } from './core/errorLog';
 import { startAutoPlanner } from './core/planner/auto';
 import { appStore, startAppState } from './core/state/app';
+import { startFocusStore } from './core/state/focus';
 import { startGoals } from './core/state/goals';
 import { startHabits } from './core/state/habits';
 import { startQuests } from './core/state/quests';
@@ -48,6 +49,7 @@ async function start(): Promise<void> {
   await startHabits();
   await startGoals();
   await startQuests();
+  await startFocusStore();
   startAutoPlanner();
   root.render(
     <StrictMode>

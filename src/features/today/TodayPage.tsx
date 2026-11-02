@@ -1,4 +1,6 @@
-import { BatteryLow } from 'lucide-react';
+import { BatteryLow, Timer } from 'lucide-react';
+import { Link } from 'react-router';
+import { isEnabled } from '@/config/features';
 import { useState } from 'react';
 import { visibleOnLowEnergy } from '@/core/engine/dayEval';
 import { isRecoveryId } from '@/core/engine/instances';
@@ -52,7 +54,17 @@ export function TodayPage() {
   return (
     <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:items-start lg:gap-8">
       <div className="flex flex-col gap-4 lg:sticky lg:top-6">
-        <h1 className="text-xl font-semibold">Today</h1>
+        <div className="flex items-center justify-between gap-2">
+          <h1 className="text-xl font-semibold">Today</h1>
+          {isEnabled('focus') && (
+            <Link
+              to="/focus"
+              className="bg-accent-fill text-on-accent inline-flex min-h-11 items-center gap-2 rounded-md px-4 font-medium"
+            >
+              <Timer aria-hidden size={18} /> Start focus
+            </Link>
+          )}
+        </div>
         <StatusHeader day={day} />
         <SystemMessage />
         <GoalNudges />

@@ -77,10 +77,12 @@ export const finishFocus = defineAction({
       completed: z.boolean(),
       /** "Phone face-down" honesty check answered yes. */
       face_down: z.boolean().default(false),
+      /** Abandoned only: minutes Rishi says really counted (e.g. 0 after leaving the app). */
+      counted_min: z.number().int().min(0).max(180).nullable().default(null),
     })
     .strict(),
   tables: [...TABLES],
-  async run(ctx, { id, completed, face_down }) {
+  async run(ctx, { id, completed, face_down, counted_min }) {
     const session = await ctx.db.focus_sessions.get(id);
     if (!session || session.deleted_at) throw new RuleError('That session no longer exists');
     if (session.ended_at) throw new RuleError('That session has already ended');
@@ -89,12 +91,14 @@ export const finishFocus = defineAction({
     if (completed && elapsedMinutes(session.started_at, endMs) < session.planned_min - 1) {
       throw new RuleError('The session isn’t finished yet');
     }
-    const minutes = countedMinutes({
+    const measured = countedMinutes({
       startedAt: session.started_at,
       endMs,
       plannedMin: session.planned_min,
       completed,
     });
+    // Rishi can only lower an abandoned session's minutes, never raise them.
+    const minutes = !completed && counted_min !== null ? Math.min(counted_min, measured) : measured;
     const ended: FocusSession = {
       ...session,
       ended_at: ctx.occurredAt,

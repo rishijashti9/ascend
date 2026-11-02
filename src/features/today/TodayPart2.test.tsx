@@ -1,5 +1,6 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router';
 import { db } from '@/core/db/db';
 import { clearSubscribers, recordAction } from '@/core/pipeline';
 import { startAppState } from '@/core/state/app';
@@ -29,7 +30,11 @@ async function show() {
   await startAppState();
   await startProgressStore();
   await startToday();
-  render(<TodayPage />);
+  render(
+    <MemoryRouter>
+      <TodayPage />
+    </MemoryRouter>,
+  );
 }
 
 async function instanceId(title: string, day: string) {
