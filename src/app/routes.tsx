@@ -1,5 +1,6 @@
 import { Navigate, type RouteObject } from 'react-router';
 import { isEnabled, type FeatureKey } from '@/config/features';
+import { BodyPage } from '@/features/body/BodyPage';
 import { FocusPage } from '@/features/focus/FocusPage';
 import { GoalsPage } from '@/features/goals/GoalsPage';
 import { MainQuestPage } from '@/features/goals/MainQuestPage';
@@ -14,6 +15,7 @@ import { Layout } from './Layout';
 const SCREENS: { path: string; feature: FeatureKey; element: React.ReactNode }[] = [
   { path: 'quests', feature: 'quests', element: <QuestsPage /> },
   { path: 'focus', feature: 'focus', element: <FocusPage /> },
+  { path: 'body', feature: 'body', element: <BodyPage /> },
   { path: 'goals', feature: 'goals', element: <GoalsPage /> },
   { path: 'goals/:id', feature: 'goals', element: <MainQuestPage /> },
   { path: 'settings', feature: 'settings', element: <SettingsPage /> },

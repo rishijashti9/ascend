@@ -14,7 +14,7 @@ export const features = {
   goals: true,
   // Phase 4
   focus: true,
-  body: false,
+  body: true,
   // Phase 5
   review: false,
   profile: false,

@@ -14,6 +14,7 @@ import './actions/planApply';
 import './actions/planUndo';
 import './actions/planWeekly';
 import './actions/focus';
+import './actions/body';
 
 export * from './events';
 export * from './recordAction';
