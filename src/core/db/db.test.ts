@@ -1,7 +1,7 @@
 import Dexie from 'dexie';
 import { DEFAULT_SETTINGS } from '@/config/defaults';
 import { ALL_TABLES, AscendDB, SCHEMA_VERSION } from './db';
-import { openDatabase, requestPersistentStorage } from './open';
+import { deleteAllData, openDatabase, requestPersistentStorage } from './open';
 import type { XpEvent } from './types';
 
 let database: AscendDB;
@@ -139,5 +139,18 @@ describe('opening and persistence', () => {
     expect(await requestPersistentStorage(database)).toBe('granted');
     expect(persist).toHaveBeenCalledOnce();
     vi.unstubAllGlobals();
+  });
+});
+
+describe('deleteAllData', () => {
+  it('removes every record; reopening starts fresh with default settings', async () => {
+    await database.meta.put({ id: 'x', value: 1 });
+    await deleteAllData(database);
+    const fresh = new AscendDB(database.name);
+    await fresh.open();
+    expect(await fresh.meta.get('x')).toBeUndefined();
+    expect((await fresh.settings.get('settings'))?.wake_time).toBe(DEFAULT_SETTINGS.wake_time);
+    fresh.close();
+    await Dexie.delete(fresh.name);
   });
 });

@@ -34,3 +34,12 @@ export async function openDatabase(database: AscendDB = db): Promise<void> {
   });
   void requestPersistentStorage(database);
 }
+
+/**
+ * Deletes every record on this device (Settings → Reset all data). The caller reloads the
+ * app afterwards, which starts fresh with onboarding. The local crash log is kept.
+ */
+export async function deleteAllData(database: AscendDB = db): Promise<void> {
+  database.close();
+  await database.delete();
+}

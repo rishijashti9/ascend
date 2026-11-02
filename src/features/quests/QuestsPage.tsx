@@ -2,6 +2,7 @@ import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { GAME } from '@/config/game';
 import type { Habit } from '@/core/db/types';
+import type { HabitStreak } from '@/core/engine/streaks';
 import { useHabits } from '@/core/state/habits';
 import { useProgress } from '@/core/state/progress';
 import { Button } from '@/ui/Button';
@@ -9,6 +10,9 @@ import { editProblems, type EditableHabit } from '@/ui/habit/habitEdit';
 import { HabitEditor } from '@/ui/habit/HabitEditor';
 import { useAction } from '@/ui/hooks/useAction';
 import { HabitRow } from './HabitRow';
+
+/** Stable empty value: a new `{}` on every render would make the store re-render forever. */
+const NO_STREAKS: Record<string, HabitStreak> = {};
 
 const NEW_HABIT: EditableHabit = {
   title: '',
@@ -62,7 +66,7 @@ function NewHabit({ onDone }: { onDone: () => void }) {
 }
 
 function Section({ title, habits, hint }: { title: string; habits: Habit[]; hint: string }) {
-  const streaks = useProgress((s) => s.progress?.habitStreaks ?? {});
+  const streaks = useProgress((s) => s.progress?.habitStreaks ?? NO_STREAKS);
   if (habits.length === 0) return null;
   return (
     <section className="flex flex-col gap-2">
@@ -81,7 +85,7 @@ function Section({ title, habits, hint }: { title: string; habits: Habit[]; hint
 /** Quests screen, Daily tab (SPEC 7.3). Weekly, Main and Side tabs arrive in Phase 3. */
 export function QuestsPage() {
   const habits = useHabits((s) => s.habits);
-  const streaks = useProgress((s) => s.progress?.habitStreaks ?? {});
+  const streaks = useProgress((s) => s.progress?.habitStreaks ?? NO_STREAKS);
   const [adding, setAdding] = useState(false);
   const { run } = useAction();
 
