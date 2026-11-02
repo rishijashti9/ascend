@@ -1,4 +1,4 @@
-import { ArrowLeft, Plus } from 'lucide-react';
+import { ArrowLeft, Plus, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useParams } from 'react-router';
 import type { Milestone } from '@/core/db/types';
@@ -7,6 +7,8 @@ import { useGoals } from '@/core/state/goals';
 import { Button } from '@/ui/Button';
 import { useAction } from '@/ui/hooks/useAction';
 import { StatChip } from '@/ui/stats';
+import { PendingPlan } from '@/features/planner/PendingPlan';
+import { PlannerSheet } from '@/features/planner/PlannerSheet';
 import { formatDay } from './format';
 import { MainQuestForm, MilestoneForm } from './forms';
 import { ProgressLine, StatusActions, StatusChip } from './parts';
@@ -89,6 +91,7 @@ export function MainQuestPage() {
   const progress = useGoals((s) => s.mainQuestProgress[id] ?? 0);
   const status = useGoals((s) => s.status);
   const [mode, setMode] = useState<'none' | 'edit' | 'add'>('none');
+  const [planning, setPlanning] = useState(false);
   const { run, busy, error } = useAction();
 
   if (!quest) {
@@ -143,6 +146,11 @@ export function MainQuestPage() {
         />
       ) : (
         <div className="flex flex-wrap gap-2">
+          {quest.status === 'active' && (
+            <Button variant="secondary" onClick={() => setPlanning(true)}>
+              <Sparkles aria-hidden size={18} /> Re-plan
+            </Button>
+          )}
           <Button variant="ghost" onClick={() => setMode('edit')}>
             Edit
           </Button>
@@ -159,6 +167,21 @@ export function MainQuestPage() {
         <p role="alert" className="text-warning-text text-sm">
           {error}
         </p>
+      )}
+
+      <PendingPlan goalId={id} />
+      {planning && (
+        <PlannerSheet mainQuestId={id} onClose={() => setPlanning(false)}>
+          {() => (
+            <div className="flex flex-col gap-3">
+              <p>
+                Your plan is ready. Review it on this goal’s page — nothing changes until you
+                approve.
+              </p>
+              <Button onClick={() => setPlanning(false)}>Review the plan</Button>
+            </div>
+          )}
+        </PlannerSheet>
       )}
 
       <section aria-labelledby="milestones-heading" className="flex flex-col gap-3">

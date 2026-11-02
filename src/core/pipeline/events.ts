@@ -21,6 +21,9 @@ export interface DomainEvents {
   DayClosed: { day: DayString };
   GoalChanged: { goalType: string; goalId: string; change: string; meaningful: boolean };
   MilestoneDone: { milestoneId: string };
+  PlanProposed: { proposalId: string; goalId: string | null };
+  PlanApplied: { proposalId: string | null; historyId: string };
+  PlanUndone: { historyId: string };
   SessionFinished: { sessionId: string; day: DayString; completed: boolean };
   LevelUp: { level: number; stat: Stat | null };
   RankUp: { rank: Rank };

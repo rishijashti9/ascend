@@ -1,6 +1,6 @@
 import { createStore, useStore } from 'zustand';
 import { db as defaultDb, type AscendDB } from '@/core/db/db';
-import type { Dream, MainQuest, Milestone } from '@/core/db/types';
+import type { Dream, MainQuest, Milestone, PlanHistory, PlanProposal } from '@/core/db/types';
 import {
   dreamProgress,
   mainQuestProgress,
@@ -19,6 +19,10 @@ export interface GoalsState {
   milestoneProgress: Record<string, MilestoneProgress>;
   mainQuestProgress: Record<string, number>;
   dreamProgress: Record<string, number>;
+  /** Planner proposals waiting for review, newest first. */
+  proposals: PlanProposal[];
+  /** Plan history (applied plans, newest first) — for "what changed and why" and Undo. */
+  history: PlanHistory[];
 }
 
 export const goalsStore = createStore<GoalsState>(() => ({
@@ -29,6 +33,8 @@ export const goalsStore = createStore<GoalsState>(() => ({
   milestoneProgress: {},
   mainQuestProgress: {},
   dreamProgress: {},
+  proposals: [],
+  history: [],
 }));
 
 export function useGoals<T>(selector: (state: GoalsState) => T): T {
@@ -51,6 +57,8 @@ export async function loadGoals(database: AscendDB = defaultDb): Promise<void> {
       'body_logs',
       'job_applications',
       'focus_sessions',
+      'plan_proposals',
+      'plan_history',
     ] as const;
     const data = await database.transaction('r', [...tables], async () => ({
       dreams: live(await database.dreams.toArray()).sort(byOrder),
@@ -62,6 +70,12 @@ export async function loadGoals(database: AscendDB = defaultDb): Promise<void> {
       bodyLogs: await database.body_logs.toArray(),
       jobs: await database.job_applications.toArray(),
       sessions: await database.focus_sessions.toArray(),
+      proposals: (await database.plan_proposals.where('status').equals('pending').toArray())
+        .filter((p) => p.deleted_at === null)
+        .sort((a, b) => b.created_at.localeCompare(a.created_at)),
+      history: live(await database.plan_history.toArray()).sort((a, b) =>
+        b.created_at.localeCompare(a.created_at),
+      ),
     }));
 
     const mp = Object.fromEntries(data.milestones.map((m) => [m.id, milestoneProgress(m, data)]));
@@ -79,6 +93,8 @@ export async function loadGoals(database: AscendDB = defaultDb): Promise<void> {
       milestoneProgress: mp,
       mainQuestProgress: qp,
       dreamProgress: dp,
+      proposals: data.proposals,
+      history: data.history,
     });
   } catch (error) {
     logError(error, 'goals.load');

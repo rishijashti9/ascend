@@ -9,6 +9,7 @@ import './actions/onboarding';
 import './actions/backup';
 import './actions/goals';
 import './actions/questDefs';
+import './actions/plans';
 
 export * from './events';
 export * from './recordAction';
