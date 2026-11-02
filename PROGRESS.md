@@ -2,9 +2,9 @@
 
 ## Resume here
 
-- **Current task:** none — 1.7 finished. Next is 1.8.
-- **Done so far:** 1.1 scaffold; 1.2 tokens/Tailwind/fonts/themes; 1.3 app shell — routes.tsx, Layout (bottom bar <1024px, sidebar ≥1024px), navigation.ts driven by config/features.ts, More + Settings (version) pages, ErrorBoundary/ErrorScreen, core/errorLog.ts (localStorage). Playwright + Chromium installed. 1.4 time module — src/core/time (clock.ts: now()/offset/tz override; days.ts: dayOf, addDays, diffDays, weekStartOf, dayNumber, instantAt, dayBounds) with DST/leap/tz tests. 1.5 schema — src/core/db (types/*.ts for all 23 tables, db.ts Dexie v1 + indexes + default settings on populate, hlc.ts, open.ts with storage.persist), main.tsx opens DB before render. 1.6 — src/config/game.ts (all balance numbers), src/core/engine/levels.ts (xpToReach, totalXpForLevel, levelFromXp, rankFor, nextRank) + tests. 1.7 — src/core/pipeline: recordAction (Zod-validated envelope + payload, optional action_id dedupe via meta, one Dexie transaction, events emitted after commit), registry (defineAction, ctx.addXpEvent idempotent), events bus, records (newBase/touch), first real action settings.update.
-- **Next step:** task 1.8 — scripts/simulate.ts using src/config/game.ts + src/core/engine/levels.ts (run with `npm run simulate` via tsx or vite-node), realistic 5-year model; paste output into PLAN.md Balance section.
+- **Current task:** none — 1.8 finished. Next is 1.9.
+- **Done so far:** 1.1 scaffold; 1.2 tokens/Tailwind/fonts/themes; 1.3 app shell — routes.tsx, Layout (bottom bar <1024px, sidebar ≥1024px), navigation.ts driven by config/features.ts, More + Settings (version) pages, ErrorBoundary/ErrorScreen, core/errorLog.ts (localStorage). Playwright + Chromium installed. 1.4 time module — src/core/time (clock.ts: now()/offset/tz override; days.ts: dayOf, addDays, diffDays, weekStartOf, dayNumber, instantAt, dayBounds) with DST/leap/tz tests. 1.5 schema — src/core/db (types/*.ts for all 23 tables, db.ts Dexie v1 + indexes + default settings on populate, hlc.ts, open.ts with storage.persist), main.tsx opens DB before render. 1.6 — src/config/game.ts (all balance numbers), src/core/engine/levels.ts (xpToReach, totalXpForLevel, levelFromXp, rankFor, nextRank) + tests. 1.7 — src/core/pipeline: recordAction (Zod-validated envelope + payload, optional action_id dedupe via meta, one Dexie transaction, events emitted after commit), registry (defineAction, ctx.addXpEvent idempotent), events bus, records (newBase/touch), first real action settings.update. 1.8 — scripts/simulate.ts (`npm run simulate`), all balance targets met; PLAN.md Balance updated.
+- **Next step:** task 1.9 — vite-plugin-pwa (manifest, service worker, offline precache incl. fonts latin subsets), original app icon (SVG → PNG sizes incl. maskable), calm "Update ready — reload" prompt (never auto-reload).
 - **Open questions:** none.
 - **Broken:** nothing. `npm run check` passes.
 
@@ -19,7 +19,7 @@
 - [x] 1.5 Schema + Dexie DB + migrations + persist
 - [x] 1.6 Game config + levels/ranks + tests
 - [x] 1.7 Action pipeline + event bus + tests
-- [ ] 1.8 Simulation script + PLAN balance table
+- [x] 1.8 Simulation script + PLAN balance table
 - [ ] 1.9 PWA + app icon + update prompt
 - [ ] 1.10 Developer tools panel
 - [ ] 1.11 Capacitor Android shell + README
@@ -28,7 +28,7 @@
 ## Phase 2 — Core loop
 
 - [ ] 2.1 Habit actions + instance generation
-- [ ] 2.2 XP engine
+- [ ] 2.2 XP engine (also: switch scripts/simulate.ts to the engine's day-total function)
 - [ ] 2.3 Completion actions
 - [ ] 2.4 Day evaluation
 - [ ] 2.5 Streaks, shields, repair

@@ -87,20 +87,26 @@ Migrations: Dexie versioned `version(n).upgrade()`; export files carry `app_vers
 
 ## 4. Balance (SPEC 4.8)
 
-Model: 8 starter habits (≈180 base XP/day if all done at full); core quests done 90% of days, others 72%; 75% of done quests at full; 10% low-energy days (core minimums only); about two 4–13 day breaks per year; shields and streak bonus as specified; 20 simulated users averaged.
+`npm run simulate` (`scripts/simulate.ts`) models a realistic user for 5 years with the real config and level curve: Rishi's 8 starter habits (≈180 base XP/day if all done at full); core quests done 90% of days, others 72% (≈80% overall); 75% of done quests at full; 10% low-energy days (core minimums only); about two 4–13 day breaks per year; shields, Recovery-quest repairs and the streak bonus as in DECISIONS.md; 20 users averaged.
 
-`round(50·n^1.4)` (spec's starting formula) reaches only level ≈48 by year 5. Chosen: **`round(80·n^1.15)`**:
-
-| Year | Level | STR | INT | WIL | Active days | Rank |
-| ---- | ----- | --- | --- | --- | ----------- | ---- |
-| 1    | 27    | 15  | 17  | 13  | 257         | B    |
-| 2    | 37    | 21  | 24  | 19  | 508         | B    |
-| 3    | 45    | 26  | 30  | 23  | 766         | A    |
-| 4    | 52    | 30  | 34  | 26  | 1024        | A    |
-| 5    | 58    | 33  | 38  | 29  | 1274        | S    |
+The spec's starting curve `round(50·n^1.4)` reaches only level ≈48 by year 5, because XP grows roughly linearly with time. Chosen: **`round(80·n^1.15)`**.
 
 Ranks: D L5+14 · C L15+90 · B L25+250 · A L40+600 · S L55+1150 active days.
-_(This is from a quick prototype. Task 1.8 rebuilds it as `scripts/simulate.ts` using the real config and engine, and replaces this table with its output.)_
+
+Output (seed 1, 20 users; 100 users with seed 42 gives the same levels):
+
+| Year | Level | STR | INT | WIL | Active days | Longest streak | Rank |
+| ---- | ----- | --- | --- | --- | ----------- | -------------- | ---- |
+| 1    | 27    | 15  | 18  | 14  | 259         | 36             | B    |
+| 2    | 38    | 22  | 25  | 20  | 513         | 46             | B    |
+| 3    | 46    | 27  | 31  | 24  | 771         | 53             | A    |
+| 4    | 53    | 30  | 35  | 27  | 1025        | 56             | A    |
+| 5    | 59    | 34  | 39  | 31  | 1278        | 57             | S    |
+
+✓ Year 1 level 27 within 25–30
+✓ Year 5 level 59 within 55–60
+✓ Earliest rank S: year 4.3 (not before year 4)
+✓ Users reaching S within 5 years: 20/20
 
 ## 5. Build phases and tasks
 

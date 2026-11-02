@@ -23,14 +23,15 @@ Open the printed address in your browser. Press `Ctrl+C` in PowerShell to stop.
 
 ## Useful commands
 
-| Command           | What it does                                                           |
-| ----------------- | ---------------------------------------------------------------------- |
-| `npm run dev`     | Development server with live reload                                    |
-| `npm run build`   | Production build into `dist/`                                          |
-| `npm run preview` | Serve the production build locally                                     |
-| `npm test`        | Run unit tests once                                                    |
-| `npm run check`   | Type-check + lint + formatting check + tests (run before every commit) |
-| `npm run format`  | Auto-format all files                                                  |
+| Command            | What it does                                                           |
+| ------------------ | ---------------------------------------------------------------------- |
+| `npm run dev`      | Development server with live reload                                    |
+| `npm run build`    | Production build into `dist/`                                          |
+| `npm run preview`  | Serve the production build locally                                     |
+| `npm test`         | Run unit tests once                                                    |
+| `npm run check`    | Type-check + lint + formatting check + tests (run before every commit) |
+| `npm run format`   | Auto-format all files                                                  |
+| `npm run simulate` | 5-year game-balance simulation (after changing `src/config/game.ts`)   |
 
 ## Project docs
 
