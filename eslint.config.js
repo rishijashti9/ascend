@@ -22,7 +22,7 @@ export default tseslint.config(
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       'no-console': ['error', { allow: ['warn', 'error'] }],
     },
-  },,
+  },
   {
     // Command-line scripts print their results.
     files: ['scripts/**/*.ts'],
