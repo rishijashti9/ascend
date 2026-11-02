@@ -104,7 +104,8 @@ In Android Studio: **Build → Build App Bundle(s) / APK(s) → Build APK(s)**. 
 - A day is **active** when every core quest has at least its minimum done. Hard day? Turn on **Low energy**: only core minimums are needed and they still count.
 - Missed a day? A shield covers it automatically if you have one (one per 7 active days, up to 3). Otherwise a small **Recovery quest** appears the next day and can restore the streak.
 - **Quests** is where daily quests are added, edited, paused or archived, and where the 3 core quests are chosen.
-- **Settings** has the theme, day-start hour, wake-up times, backup (export / import), and “Rebuild progress”.
+- **Goals** holds your Dream, its Main Quests and their milestones. Tap **Plan this goal** (or **Re-plan**): answer a few taps and the Goal Planner proposes milestones, this week's quests and any daily quest — untick or edit anything, then approve. Every plan can be undone from **Plan history**. Each new week, this week's quests are planned automatically (with Undo).
+- **Settings** has the theme, day-start hour, wake-up times, Auto-plan, backup (export / import), and “Rebuild progress”.
 
 ## Developer tools (testing only)
 

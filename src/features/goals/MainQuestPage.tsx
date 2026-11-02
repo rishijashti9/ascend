@@ -202,9 +202,17 @@ export function MainQuestPage() {
           Milestones
         </h2>
         {visible.length === 0 && mode !== 'add' && (
-          <p className="text-muted text-sm">
-            No milestones yet. Break this goal into 1–3 month steps.
-          </p>
+          <div className="bg-surface-2 flex flex-col gap-2 rounded-lg p-4">
+            <p className="text-sm">
+              No plan yet. The Goal Planner can break this goal into milestones and weekly quests
+              after a few quick questions — or add milestones yourself.
+            </p>
+            {quest.status === 'active' && (
+              <Button className="self-start" onClick={() => setPlanning('new')}>
+                <Sparkles aria-hidden size={18} /> Plan this goal
+              </Button>
+            )}
+          </div>
         )}
         <ul className="flex flex-col gap-3">
           {visible.map((m) => (

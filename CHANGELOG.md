@@ -4,6 +4,23 @@ All notable changes to ASCEND. Versions follow [semantic versioning](https://sem
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-11-02 — Phase 3: Goals + Goal Planner
+
+### Added
+
+- Goals: dreams → main quests → milestones, with progress calculated from real data (metric, count or weekly quests), deadlines, "why this matters to me", and pause / finish / archive / restore (nothing is deleted by accident).
+- Weekly and side quests: Quests tabs Daily · Weekly · Main · Side, and a "This week" section on Today. Their XP counts on the day they're done.
+- Goal Planner (rule-based): plan templates for exam prep, university application (APS/Germany), learning a skill, portfolio projects, job search, fitness and habit change. A short tap-first interview (answers remembered), a plan sized to your time and deadline, and a preview where every item can be unticked or edited before approving.
+- Plans also follow goal changes: pausing, resuming, finishing or archiving a goal proposes what to do with its linked quests; a finished milestone unlocks the next one (automatically with Auto-plan on).
+- Plan history with exact Undo for every applied plan.
+- Weekly plan: each new week, unfinished weekly quests are carried over and the next steps are added (with Undo).
+- Follow-ups: deadline-risk warnings with one-tap options and a 30-day "Is this goal still important?" check-in. Today lists goals that need a look, including the ones from onboarding that still need a plan.
+- End-to-end test: goal → planner → approve → change → approve → undo.
+
+### Fixed
+
+- End-to-end tests matched the "Today" heading loosely, so after 6 PM they could race ahead of the onboarding save.
+
 ## [0.2.0] — 2026-11-02 — Phase 2: Core loop
 
 ### Added
