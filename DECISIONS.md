@@ -68,3 +68,6 @@ Every answer Rishi gave and every decision made. Newest at the bottom of each se
 - **App icon** (task 1.9): an upward chevron in the accent blue rising above a soft horizon line, on the dark background. Source `public/icon.svg`; all sizes generated with `npm run icons`.
 - **Updates** (task 1.9): the service worker never activates by itself; an "Update ready — Reload" note waits for a tap and can be dismissed. Checks for a new version hourly while open.
 - **Dev tools behaviour** (task 1.10): changing the clock or timezone reloads the app (like opening it later), and the time-travel state is kept in localStorage so it survives reloads. "Reset all data" needs two taps and deletes the whole local database. Note: Chromium on Windows reports the zone as `Asia/Calcutta` (old alias of `Asia/Kolkata`); they are the same zone.
+- **Android app ID: `app.ascend.rishi`** (Rishi chose, 2026-11-02). Permanent — changing it makes a different app with separate data.
+- **No service worker inside the Android app** (task 1.11): the APK carries its own files and updates by installing a new APK; a service worker there could keep serving an old copy. The "Update ready" prompt is web/PWA-only.
+- **Android build needs Java 21** (task 1.11): use Android Studio's bundled Java (README). The laptop's Java 17 stays as it is.

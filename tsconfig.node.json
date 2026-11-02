@@ -15,5 +15,5 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["vite.config.ts", "eslint.config.js", "pwa-assets.config.ts"]
+  "include": ["vite.config.ts", "eslint.config.js", "pwa-assets.config.ts", "capacitor.config.ts"]
 }

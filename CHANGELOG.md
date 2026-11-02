@@ -14,3 +14,4 @@ All notable changes to ASCEND. Versions follow [semantic versioning](https://sem
 - Single action pipeline: every change is validated, written in one transaction, and announced as an event; XP awards can never be counted twice.
 - Installable app (PWA) that works fully offline, original app icon, and a calm "Update ready" prompt.
 - Developer tools (dev builds only): time travel, timezone switch, reset.
+- Android app shell (Capacitor) with launcher icons and splash screen; README guide for building and installing on an Android phone from Windows.

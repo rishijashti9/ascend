@@ -6,3 +6,4 @@ android
 package-lock.json
 SPEC.md
 dev-dist
+assets/
