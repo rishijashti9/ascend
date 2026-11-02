@@ -14,6 +14,7 @@ All notable changes to ASCEND. Versions follow [semantic versioning](https://sem
 - Today screen: low-energy mode, a System message (Day N, welcome back, streak, Daily Clear), the Recovery quest card, and a small check + floating XP when a quest is completed.
 - Quests screen: create, edit (including which days), reorder, pause, archive, restore and delete daily quests; choose up to 3 core quests; see each quest's streak.
 - Settings: theme, day-start hour, week start, wake-up time / window / late cutoff, core quests overview, Rebuild progress, and Reset all data (with confirmation).
+- Export / import: back up everything to a JSON file (download in the browser, share sheet on Android), restore on a new device from onboarding, or import with Replace / Merge (a safety backup is saved first). Weekly backup reminder in the browser; "Export my data" on the error screen.
 
 ## [0.1.0] — 2026-11-02 — Phase 1: Foundation
 

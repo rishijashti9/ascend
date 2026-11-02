@@ -129,4 +129,15 @@ When running `npm run dev`, a small yellow wrench button appears at the bottom-l
 
 ## Backing up your data
 
-Export/import arrives in Phase 2 (task 2.13). This section will explain it then.
+Until sync arrives (Phase 7), your data lives only on the device you use. Back it up:
+
+1. **Export:** Settings → Backup → **Export my data**. In a browser this downloads `ascend-backup-YYYY-MM-DD.json`; in the Android app a share sheet opens — save it to Files, Google Drive or email it to yourself. Keep the file somewhere safe (not only on the same device). Body photos are never included.
+2. **Reminder:** in a browser, Today shows a gentle note when your last export is a week old.
+3. **Restore on a new device or after a reset:** on the first onboarding screen, open **Already use ASCEND? Restore from a backup** and choose the file. Your level, streaks and history come back exactly.
+4. **Import into a device that already has data:** Settings → Backup → **Import a backup**, then pick
+   - **Replace** — the device becomes exactly the backup, or
+   - **Merge** — combine both; the newer change wins and XP is never counted twice.
+
+   A safety backup of the current data is saved first, automatically.
+
+If the app ever shows its error screen, the **Export my data** button there still works, so your data can always be rescued.

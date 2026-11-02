@@ -1,5 +1,7 @@
 import { Monitor, Moon, Plus, Sun, X } from 'lucide-react';
 import type { ThemePreference } from '@/app/theme';
+import { isEnabled } from '@/config/features';
+import { ImportPanel } from '@/features/backup/ImportPanel';
 import type { Settings, Stat } from '@/core/db/types';
 import { addMinutes, formatTime } from '@/data/starter';
 import { Button } from '@/ui/Button';
@@ -26,6 +28,16 @@ export function NameStep({ draft, update }: { draft: Draft; update: Update }) {
         autoComplete="given-name"
         onChange={(e) => update((d) => ({ ...d, name: e.target.value }))}
       />
+      {isEnabled('exportImport') && (
+        <details className="border-border mt-4 rounded-lg border p-4">
+          <summary className="min-h-11 cursor-pointer py-2 font-medium">
+            Already use ASCEND? Restore from a backup
+          </summary>
+          <div className="pt-2">
+            <ImportPanel allowMerge={false} backupFirst={false} />
+          </div>
+        </details>
+      )}
     </div>
   );
 }

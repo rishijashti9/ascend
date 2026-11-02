@@ -224,7 +224,7 @@ export function DataSection() {
   };
   const reset = async () => {
     await deleteAllData();
-    window.location.reload();
+    window.location.assign('/'); // start over at onboarding, not on Settings
   };
 
   return (

@@ -1,5 +1,7 @@
 import { APP_VERSION } from '@/app/version';
+import { isEnabled } from '@/config/features';
 import { useAppState } from '@/core/state/app';
+import { BackupSection } from './BackupSection';
 import {
   AppearanceSection,
   Card,
@@ -26,6 +28,7 @@ export function SettingsPage() {
             settings={settings}
           />
           <CoreSection />
+          {isEnabled('exportImport') && <BackupSection />}
           <DataSection />
         </>
       )}

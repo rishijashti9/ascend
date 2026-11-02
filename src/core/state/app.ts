@@ -9,12 +9,17 @@ export interface AppState {
   status: 'loading' | 'ready';
   profile: Profile | null;
   settings: Settings | null;
+  /** Device-local backup bookkeeping (meta), for the backup reminder. */
+  lastExportAt: string | null;
+  backupSnoozeUntil: string | null;
 }
 
 export const appStore = createStore<AppState>(() => ({
   status: 'loading',
   profile: null,
   settings: null,
+  lastExportAt: null,
+  backupSnoozeUntil: null,
 }));
 
 export function useAppState<T>(selector: (state: AppState) => T): T {
@@ -23,11 +28,20 @@ export function useAppState<T>(selector: (state: AppState) => T): T {
 
 export async function loadAppState(database: AscendDB = defaultDb): Promise<void> {
   try {
-    const [profile, settings] = await Promise.all([
+    const [profile, settings, lastExport, snooze] = await Promise.all([
       database.profile.get('profile'),
       database.settings.get('settings'),
+      database.meta.get('last_export_at'),
+      database.meta.get('backup_snooze_until'),
     ]);
-    appStore.setState({ status: 'ready', profile: profile ?? null, settings: settings ?? null });
+    const text = (v: unknown) => (typeof v === 'string' ? v : null);
+    appStore.setState({
+      status: 'ready',
+      profile: profile ?? null,
+      settings: settings ?? null,
+      lastExportAt: text(lastExport?.value),
+      backupSnoozeUntil: text(snooze?.value),
+    });
   } catch (error) {
     logError(error, 'app-state.load');
   }

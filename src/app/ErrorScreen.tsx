@@ -1,14 +1,27 @@
 import { useState } from 'react';
-import { RotateCw, Copy, Check } from 'lucide-react';
-import { formatErrorLog } from '@/core/errorLog';
+import { RotateCw, Copy, Check, Download } from 'lucide-react';
+import { isEnabled } from '@/config/features';
+import { formatErrorLog, logError } from '@/core/errorLog';
+import { exportBackup } from './files';
 import { Button } from '@/ui/Button';
 
 /**
- * Friendly full-page error screen shown instead of a blank page.
- * "Export my data" is added here when export exists (task 2.13).
+ * Friendly full-page error screen shown instead of a blank page. "Export my data" tries to
+ * save a backup even while the app is broken, so data can always be rescued.
  */
 export function ErrorScreen({ message }: { message?: string }) {
   const [copied, setCopied] = useState(false);
+  const [exportState, setExportState] = useState<'idle' | 'busy' | 'done' | 'failed'>('idle');
+
+  async function exportData() {
+    setExportState('busy');
+    try {
+      setExportState((await exportBackup()) === 'saved' ? 'done' : 'idle');
+    } catch (e) {
+      logError(e, 'error-screen export');
+      setExportState('failed');
+    }
+  }
 
   async function copyDetails() {
     try {
@@ -41,6 +54,20 @@ export function ErrorScreen({ message }: { message?: string }) {
           {copied ? <Check aria-hidden size={18} /> : <Copy aria-hidden size={18} />}
           {copied ? 'Copied' : 'Copy error details'}
         </Button>
+        {isEnabled('exportImport') && (
+          <Button
+            variant="secondary"
+            disabled={exportState === 'busy'}
+            onClick={() => void exportData()}
+          >
+            <Download aria-hidden size={18} />
+            {exportState === 'done'
+              ? 'Exported'
+              : exportState === 'failed'
+                ? 'Export failed — try again'
+                : 'Export my data'}
+          </Button>
+        )}
       </div>
     </main>
   );
