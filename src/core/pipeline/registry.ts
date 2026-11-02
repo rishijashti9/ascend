@@ -34,6 +34,7 @@ export type ActionSource =
   | 'rollover'
   | 'sync'
   | 'import'
+  | 'system' // derived bookkeeping, e.g. unlocking achievements
   | 'dev';
 
 export interface ActionDefinition<S extends z.ZodType = z.ZodType, R = unknown> {

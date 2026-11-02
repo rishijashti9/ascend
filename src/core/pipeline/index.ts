@@ -17,6 +17,7 @@ import './actions/focus';
 import './actions/body';
 import './actions/photos';
 import './actions/reviews';
+import './actions/achievements';
 
 export * from './events';
 export * from './recordAction';

@@ -12,10 +12,11 @@ import { shortDay } from '@/ui/charts/scale';
 import { ProgressBar } from '@/ui/ProgressBar';
 import { STAT_META } from '@/ui/statMeta';
 import { Stat } from '@/features/review/Stat';
+import { AchievementList } from '@/features/achievements/AchievementList';
 import { Heatmap } from './Heatmap';
 import { StatTriangle } from './StatTriangle';
 
-/** Profile / Stats (SPEC 7.8): who you are in numbers. Achievements and titles join in 5.5–5.6. */
+/** Profile / Stats (SPEC 7.8): who you are in numbers. Titles join in 5.6. */
 export function ProfilePage() {
   const progress = useProgress((s) => s.progress);
   const profile = useAppState((s) => s.profile);
@@ -97,6 +98,8 @@ export function ProfilePage() {
           )}
         </ChartCard>
       </div>
+
+      <AchievementList />
 
       <Heatmap perDay={perDay} today={today} startDay={startDay} weekStartsOn={weekStartsOn} />
 

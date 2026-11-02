@@ -37,6 +37,7 @@ export interface DomainEvents {
   SessionFinished: { sessionId: string; day: DayString; completed: boolean };
   LevelUp: { level: number; stat: Stat | null };
   RankUp: { rank: Rank };
+  AchievementUnlocked: { key: string };
   DataImported: { mode: 'replace' | 'merge' };
   DataReset: Record<string, never>;
 }
