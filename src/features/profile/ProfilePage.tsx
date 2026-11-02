@@ -1,6 +1,7 @@
 import { GAME } from '@/config/game';
 import { STATS } from '@/core/db/types';
 import { weakestStat, weeklyXp } from '@/core/engine/profile';
+import { titleName } from '@/core/achievements/titles';
 import { useAppState } from '@/core/state/app';
 import { useFocus } from '@/core/state/focus';
 import { useProgress } from '@/core/state/progress';
@@ -14,9 +15,10 @@ import { STAT_META } from '@/ui/statMeta';
 import { Stat } from '@/features/review/Stat';
 import { AchievementList } from '@/features/achievements/AchievementList';
 import { Heatmap } from './Heatmap';
+import { TitlePicker } from './TitlePicker';
 import { StatTriangle } from './StatTriangle';
 
-/** Profile / Stats (SPEC 7.8): who you are in numbers. Titles join in 5.6. */
+/** Profile / Stats (SPEC 7.8): who you are in numbers. Achievements and titles (5.5–5.6) are included. */
 export function ProfilePage() {
   const progress = useProgress((s) => s.progress);
   const profile = useAppState((s) => s.profile);
@@ -32,6 +34,7 @@ export function ProfilePage() {
   const focusHours = Math.round(sessions.reduce((t, s) => t + s.actual_min, 0) / 6) / 10;
   const weeks = weeklyXp(perDay, today, weekStartsOn);
   const startDay = profile?.start_day ?? today;
+  const title = titleName(profile?.display_title);
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
@@ -44,9 +47,7 @@ export function ProfilePage() {
         <div className="flex items-baseline justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold">{profile?.name ?? 'Player'}</h2>
-            {profile?.display_title && (
-              <p className="text-accent-text text-sm">{profile.display_title}</p>
-            )}
+            {title && <p className="text-accent-text text-sm">{title}</p>}
           </div>
           <p className="text-right">
             <span className="text-2xl font-semibold tabular-nums">Level {level.level}</span>
@@ -63,6 +64,7 @@ export function ProfilePage() {
           {nextRank &&
             ` · Rank ${nextRank.rank} needs level ${nextRank.minLevel} and ${nextRank.minActiveDays} active days`}
         </p>
+        <TitlePicker current={profile?.display_title ?? null} />
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <Stat label="Total XP" value={level.totalXp.toLocaleString()} />
           <Stat label="Days active" value={String(streak.daysActive)} />

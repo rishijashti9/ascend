@@ -18,6 +18,7 @@ import './actions/body';
 import './actions/photos';
 import './actions/reviews';
 import './actions/achievements';
+import './actions/profile';
 
 export * from './events';
 export * from './recordAction';

@@ -1,5 +1,6 @@
 import { Flame, Shield } from 'lucide-react';
 import { STATS } from '@/core/db/types';
+import { titleName } from '@/core/achievements/titles';
 import { useAppState } from '@/core/state/app';
 import { useProgress } from '@/core/state/progress';
 import { dayNumber } from '@/core/time';
@@ -11,6 +12,7 @@ export function StatusHeader({ day }: { day: string | null }) {
   const progress = useProgress((s) => s.progress);
   const profile = useAppState((s) => s.profile);
   if (!progress) return null;
+  const title = titleName(profile?.display_title);
   const { level, rank, streak, stats } = progress;
   const dayN =
     profile?.start_day && day && day >= profile.start_day
@@ -26,6 +28,7 @@ export function StatusHeader({ day }: { day: string | null }) {
         <div>
           <p className="text-muted text-sm">
             {profile?.name ?? 'Player'}
+            {title && <span className="text-accent-text"> · {title}</span>}
             {dayN !== null && <span className="tabular-nums"> · Day {dayN}</span>}
           </p>
           <p className="flex items-baseline gap-2">

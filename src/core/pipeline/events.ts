@@ -38,6 +38,7 @@ export interface DomainEvents {
   LevelUp: { level: number; stat: Stat | null };
   RankUp: { rank: Rank };
   AchievementUnlocked: { key: string };
+  ProfileChanged: { changed: string[] };
   DataImported: { mode: 'replace' | 'merge' };
   DataReset: Record<string, never>;
 }
