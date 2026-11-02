@@ -1,6 +1,7 @@
 import { Download } from 'lucide-react';
 import { useState } from 'react';
-import { exportBackup } from '@/app/files';
+import { exportBackup, exportWithPhotos } from '@/app/files';
+import { useBody } from '@/core/state/body';
 import { isNativeApp } from '@/app/platform';
 import { logError } from '@/core/errorLog';
 import { useAppState } from '@/core/state/app';
@@ -16,14 +17,15 @@ const when = (iso: string) =>
 export function BackupSection() {
   const lastExportAt = useAppState((s) => s.lastExportAt);
   const hasData = useHabits((s) => s.habits.length > 0);
+  const hasPhotos = useBody((s) => s.photos.length > 0);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function exportNow() {
+  async function exportNow(withPhotos = false) {
     setBusy(true);
     setError(null);
     try {
-      await exportBackup();
+      await (withPhotos ? exportWithPhotos() : exportBackup());
     } catch (e) {
       logError(e, 'export');
       setError('Export failed. Please try again.');
@@ -39,12 +41,22 @@ export function BackupSection() {
           <Download aria-hidden size={18} />
           {busy ? 'Exporting…' : 'Export my data'}
         </Button>
+        {hasPhotos && (
+          <Button
+            variant="secondary"
+            className="self-start"
+            disabled={busy}
+            onClick={() => void exportNow(true)}
+          >
+            <Download aria-hidden size={18} /> Export with photos (.zip)
+          </Button>
+        )}
         <p className="text-muted text-xs">
           {lastExportAt ? `Last export: ${when(lastExportAt)}.` : 'No export yet.'}{' '}
           {isNativeApp()
             ? 'Choose where to keep the file (Files, Drive, email…).'
             : 'Your data lives only in this browser until sync arrives — export weekly and keep the file somewhere safe.'}{' '}
-          Photos are never included.
+          Body photos are only included in “Export with photos”.
         </p>
         {error && (
           <p role="alert" className="text-warning-text text-sm">

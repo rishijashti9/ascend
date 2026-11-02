@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { exportBackup } from '@/app/files';
 import { runRollover } from '@/app/rollover';
 import { backupCounts, parseBackup, type Backup } from '@/core/backup/format';
+import { readZip, type ZipContents } from '@/core/backup/zip';
 import { logError } from '@/core/errorLog';
 import { recordAction, type ImportResult } from '@/core/pipeline';
 import { Button } from '@/ui/Button';
@@ -41,18 +42,35 @@ export function ImportPanel({
   const [backup, setBackup] = useState<Backup | null>(null);
   const [mode, setMode] = useState<Mode>('replace');
   const [busy, setBusy] = useState(false);
+  const [photos, setPhotos] = useState<ZipContents['photos']>([]);
   const [message, setMessage] = useState<{ text: string; error: boolean } | null>(null);
 
   async function choose(file: File | undefined) {
     setBackup(null);
     setMessage(null);
+    setPhotos([]);
     if (!file) return;
     let raw: unknown;
-    try {
-      raw = JSON.parse(await file.text());
-    } catch {
-      setMessage({ text: 'That file isn’t a backup (it isn’t valid JSON).', error: true });
-      return;
+    if (file.name.toLowerCase().endsWith('.zip')) {
+      // "Export with photos": the backup plus photos (this device only).
+      try {
+        const contents = readZip(new Uint8Array(await file.arrayBuffer()));
+        raw = contents.backup;
+        setPhotos(contents.photos);
+      } catch (e) {
+        setMessage({
+          text: e instanceof Error ? e.message : 'That .zip couldn’t be read.',
+          error: true,
+        });
+        return;
+      }
+    } else {
+      try {
+        raw = JSON.parse(await file.text());
+      } catch {
+        setMessage({ text: 'That file isn’t a backup (it isn’t valid JSON).', error: true });
+        return;
+      }
     }
     const parsed = parseBackup(raw);
     if (parsed.ok) setBackup(parsed.backup);
@@ -68,6 +86,8 @@ export function ImportPanel({
         setMessage({ text: 'Import stopped: the safety backup wasn’t saved.', error: true });
         return;
       }
+      // Photos first: the data import can switch screens (e.g. leave onboarding) right away.
+      if (photos.length > 0) await recordAction({ type: 'photo.restore', payload: { photos } });
       const { value } = await recordAction<ImportResult>({
         type: 'data.import',
         payload: { mode, backup },
@@ -93,7 +113,7 @@ export function ImportPanel({
           Choose backup file…
           <input
             type="file"
-            accept=".json,application/json"
+            accept=".json,application/json,.zip,application/zip"
             className="sr-only"
             onChange={(e) => void choose(e.target.files?.[0])}
           />
@@ -104,7 +124,8 @@ export function ImportPanel({
         <div className="bg-surface-2 flex flex-col gap-3 rounded-md p-3">
           <p className="text-sm">
             Backup from <strong>{dateOf(backup.exported_at)}</strong>: {counts.habits} daily quests,{' '}
-            {counts.days} days, {counts.xpEvents} XP records.
+            {counts.days} days, {counts.xpEvents} XP records
+            {photos.length > 0 && `, ${photos.length} photo${photos.length === 1 ? '' : 's'}`}.
           </p>
           {allowMerge && (
             <div role="radiogroup" aria-label="Import mode" className="flex flex-col gap-2">
