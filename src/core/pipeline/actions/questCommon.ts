@@ -1,5 +1,6 @@
 import type { CompletedVia, InstanceStatus, QuestInstance } from '@/core/db/types';
 import { netBaseFor, planAward } from '@/core/engine/xp';
+import { refreshDayRecord } from '../days';
 import { appDayOf } from '../helpers';
 import { touch } from '../records';
 import { RuleError, type ActionContext, type ActionSource } from '../registry';
@@ -93,6 +94,7 @@ export async function applyStatus(
     ...touch(ctx.processedAt),
   };
   await ctx.db.quest_instances.put(next);
+  await refreshDayRecord(ctx.db, next.day, ctx.processedAt);
 
   ctx.emit(
     done

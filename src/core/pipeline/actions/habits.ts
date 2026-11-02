@@ -9,6 +9,7 @@ import {
   refreshedSnapshot,
 } from '@/core/engine/instances';
 import { weekdayOf } from '@/core/time';
+import { refreshDayRecord } from '../days';
 import { appDayOf } from '../helpers';
 import { newBase, touch } from '../records';
 import { defineAction, RuleError, type ActionContext } from '../registry';
@@ -52,6 +53,7 @@ async function addTodayInstance(ctx: ActionContext, habit: Habit, today: DayStri
   if (existing && existing.deleted_at === null) return;
   const instance = buildHabitInstance(habit, today, newBase(id, ctx.processedAt));
   await ctx.db.quest_instances.put({ ...instance, core_snapshot: false });
+  await refreshDayRecord(ctx.db, today, ctx.processedAt);
 }
 
 /** Removes today's instance if it is still pending (pause/archive/delete apply from today). */
@@ -67,6 +69,7 @@ async function removeTodayPending(
       deleted_at: ctx.processedAt,
       ...touch(ctx.processedAt),
     });
+    await refreshDayRecord(ctx.db, today, ctx.processedAt);
   }
 }
 
@@ -75,7 +78,7 @@ async function todayStarted(ctx: ActionContext, today: DayString): Promise<boole
   return (await ctx.db.quest_instances.where('day').equals(today).count()) > 0;
 }
 
-const HABIT_TABLES = ['habits', 'quest_instances', 'settings'] as const;
+const HABIT_TABLES = ['habits', 'quest_instances', 'settings', 'days'] as const;
 
 export const createHabit = defineAction({
   type: 'habit.create',
