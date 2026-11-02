@@ -1,6 +1,6 @@
 import { createStore, useStore } from 'zustand';
 import { db as defaultDb, type AscendDB } from '@/core/db/db';
-import type { FocusSession } from '@/core/db/types';
+import type { FocusSession, Stat } from '@/core/db/types';
 import { logError } from '@/core/errorLog';
 import { subscribeAll } from '@/core/pipeline';
 
@@ -9,12 +9,15 @@ export interface FocusState {
   status: 'loading' | 'ready';
   running: FocusSession | null;
   sessions: FocusSession[];
+  /** Title and stat of each linked quest (by instance id). */
+  linked: Record<string, { title: string; stat: Stat }>;
 }
 
 export const focusStore = createStore<FocusState>(() => ({
   status: 'loading',
   running: null,
   sessions: [],
+  linked: {},
 }));
 
 export function useFocus<T>(selector: (state: FocusState) => T): T {
@@ -26,10 +29,20 @@ export async function loadFocus(database: AscendDB = defaultDb): Promise<void> {
     const all = (await database.focus_sessions.toArray())
       .filter((s) => s.deleted_at === null)
       .sort((a, b) => b.started_at.localeCompare(a.started_at));
+    const ids = [
+      ...new Set(all.flatMap((s) => (s.quest_instance_id ? [s.quest_instance_id] : []))),
+    ];
+    const instances = await database.quest_instances.bulkGet(ids);
+    const linked = Object.fromEntries(
+      instances.flatMap((i) =>
+        i ? [[i.id, { title: i.title_snapshot, stat: i.stat_snapshot }] as const] : [],
+      ),
+    );
     focusStore.setState({
       status: 'ready',
       running: all.find((s) => s.ended_at === null) ?? null,
       sessions: all.filter((s) => s.ended_at !== null),
+      linked,
     });
   } catch (error) {
     logError(error, 'focus.load');

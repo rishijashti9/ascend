@@ -9,6 +9,7 @@ import { Button } from '@/ui/Button';
 import { useAction } from '@/ui/hooks/useAction';
 import { STAT_META } from '@/ui/statMeta';
 import { FocusRunner } from './FocusRunner';
+import { SessionHistory } from './SessionHistory';
 
 const chip = (on: boolean) =>
   `min-h-11 rounded-md border px-3 text-sm ${on ? 'border-accent bg-surface-2 font-medium' : 'border-border bg-surface'}`;
@@ -128,6 +129,7 @@ export function FocusPage() {
           {error}
         </p>
       )}
+      <SessionHistory />
     </div>
   );
 }
