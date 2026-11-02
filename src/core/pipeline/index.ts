@@ -5,6 +5,7 @@ import './actions/quests';
 import './actions/days';
 import './actions/rollover';
 import './actions/progress';
+import './actions/onboarding';
 
 export * from './events';
 export * from './recordAction';
@@ -19,5 +20,6 @@ export { appDayOf, ensureInstancesForDay, getSettings } from './helpers';
 export { refreshDayRecord } from './days';
 export { isRecoveryId, recoveryQuestId, refreshStreaks } from './streaks';
 export type { RolloverResult } from './actions/rollover';
+export type { OnboardingPayload } from './actions/onboarding';
 export { DERIVED_VERSION, type RebuildResult } from './actions/progress';
 export { isoNow, newBase, touch } from './records';

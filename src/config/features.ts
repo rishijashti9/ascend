@@ -7,7 +7,7 @@ export const features = {
   today: true,
   settings: true,
   // Phase 2
-  onboarding: false,
+  onboarding: true,
   quests: false,
   exportImport: false,
   // Phase 3

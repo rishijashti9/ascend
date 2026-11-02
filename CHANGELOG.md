@@ -4,6 +4,13 @@ All notable changes to ASCEND. Versions follow [semantic versioning](https://sem
 
 ## [Unreleased]
 
+### Added
+
+- Game engine: XP (streak bonus, soft cap, Daily Clear, top-ups, same-day corrections), completions, active/neutral days, low-energy mode, streaks with shields and Recovery-quest repair, per-quest streaks.
+- Day rollover on open, resume and at the day-start hour; Recovery quest after a missed day.
+- Progress (level, stats, rank, streaks) always computed from stored data, with a consistency check at every start.
+- Onboarding "Awakening": five pre-filled steps — name, wake-up time, daily quests (editable, up to 3 core), Dream and Main Quests, theme, and "start today or tomorrow" when it's late.
+
 ## [0.1.0] — 2026-11-02 — Phase 1: Foundation
 
 ### Added

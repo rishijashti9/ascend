@@ -6,13 +6,21 @@ import { ErrorScreen } from './app/ErrorScreen';
 import { applyTheme } from './app/theme';
 import { openDatabase } from './core/db/open';
 import { installGlobalErrorHandlers, logError } from './core/errorLog';
+import { appStore, startAppState } from './core/state/app';
 import { rebuildProgress, startProgressStore } from './core/state/progress';
 import './styles/index.css';
 
 installGlobalErrorHandlers();
 
-// Follows the system theme until Settings (task 2.12) stores a preference.
-applyTheme('system');
+// Follows the system theme until the stored preference is loaded.
+let stopTheme = applyTheme('system');
+let shownTheme = 'system';
+appStore.subscribe(({ settings }) => {
+  if (!settings || settings.theme === shownTheme) return;
+  stopTheme();
+  shownTheme = settings.theme;
+  stopTheme = applyTheme(settings.theme);
+});
 
 const container = document.getElementById('root');
 if (!container) throw new Error('Root element #root not found');
@@ -30,6 +38,7 @@ async function start(): Promise<void> {
   // Close past days and start today before the first screen (never blocks startup on error).
   await startRollover();
   await startProgressStore();
+  await startAppState();
   root.render(
     <StrictMode>
       <App />

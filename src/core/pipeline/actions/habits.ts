@@ -80,36 +80,45 @@ async function todayStarted(ctx: ActionContext, today: DayString): Promise<boole
 
 const HABIT_TABLES = ['habits', 'quest_instances', 'settings', 'days'] as const;
 
+/**
+ * Validates and stores a new habit (shared by habit.create and onboarding). Today's
+ * instance is added only if today has already started.
+ */
+export async function insertHabit(
+  ctx: ActionContext,
+  payload: z.infer<typeof createHabitSchema>,
+): Promise<Habit> {
+  const { id = crypto.randomUUID(), ...rest } = payload;
+  const fields: HabitFields = {
+    ...HABIT_DEFAULTS,
+    ...rest,
+    schedule: [...(rest.schedule ?? HABIT_DEFAULTS.schedule)],
+    skill_ids: [...(rest.skill_ids ?? [])],
+  };
+  check(fields);
+  if (fields.core && (await activeCoreCount(ctx.db)) >= GAME.maxCoreHabits) {
+    throw new RuleError(`At most ${GAME.maxCoreHabits} core quests`);
+  }
+  const order = await ctx.db.habits.count();
+  const habit: Habit = {
+    ...newBase(id, ctx.processedAt),
+    ...fields,
+    schedule: fields.schedule as Weekday[],
+    status: 'active',
+    order,
+  };
+  await ctx.db.habits.add(habit);
+  const today = await appDayOf(ctx.db, ctx.occurredAt);
+  if (await todayStarted(ctx, today)) await addTodayInstance(ctx, habit, today);
+  ctx.emit({ type: 'HabitChanged', payload: { habitId: habit.id, change: 'created' } });
+  return habit;
+}
+
 export const createHabit = defineAction({
   type: 'habit.create',
   schema: createHabitSchema,
   tables: [...HABIT_TABLES],
-  async run(ctx, payload) {
-    const { id = crypto.randomUUID(), ...rest } = payload;
-    const fields: HabitFields = {
-      ...HABIT_DEFAULTS,
-      ...rest,
-      schedule: [...(rest.schedule ?? HABIT_DEFAULTS.schedule)],
-      skill_ids: [...(rest.skill_ids ?? [])],
-    };
-    check(fields);
-    if (fields.core && (await activeCoreCount(ctx.db)) >= GAME.maxCoreHabits) {
-      throw new RuleError(`At most ${GAME.maxCoreHabits} core quests`);
-    }
-    const order = await ctx.db.habits.count();
-    const habit: Habit = {
-      ...newBase(id, ctx.processedAt),
-      ...fields,
-      schedule: fields.schedule as Weekday[],
-      status: 'active',
-      order,
-    };
-    await ctx.db.habits.add(habit);
-    const today = await appDayOf(ctx.db, ctx.occurredAt);
-    if (await todayStarted(ctx, today)) await addTodayInstance(ctx, habit, today);
-    ctx.emit({ type: 'HabitChanged', payload: { habitId: habit.id, change: 'created' } });
-    return habit;
-  },
+  run: insertHabit,
 });
 
 export const updateHabit = defineAction({
