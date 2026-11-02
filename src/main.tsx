@@ -13,6 +13,7 @@ import { startFocusStore } from './core/state/focus';
 import { startGoals } from './core/state/goals';
 import { startHabits } from './core/state/habits';
 import { startQuests } from './core/state/quests';
+import { startReviews } from './core/state/reviews';
 import { rebuildProgress, startProgressStore } from './core/state/progress';
 import { startToday } from './core/state/today';
 import './styles/index.css';
@@ -52,6 +53,7 @@ async function start(): Promise<void> {
   await startQuests();
   await startFocusStore();
   await startBody();
+  await startReviews();
   startAutoPlanner();
   root.render(
     <StrictMode>

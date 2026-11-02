@@ -6,6 +6,7 @@ import { GoalsPage } from '@/features/goals/GoalsPage';
 import { MainQuestPage } from '@/features/goals/MainQuestPage';
 import { MorePage } from '@/features/more/MorePage';
 import { QuestsPage } from '@/features/quests/QuestsPage';
+import { ReviewPage } from '@/features/review/ReviewPage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
 import { TodayPage } from '@/features/today/TodayPage';
 import { RouteErrorScreen } from './ErrorBoundary';
@@ -16,6 +17,7 @@ const SCREENS: { path: string; feature: FeatureKey; element: React.ReactNode }[]
   { path: 'quests', feature: 'quests', element: <QuestsPage /> },
   { path: 'focus', feature: 'focus', element: <FocusPage /> },
   { path: 'body', feature: 'body', element: <BodyPage /> },
+  { path: 'review', feature: 'review', element: <ReviewPage /> },
   { path: 'goals', feature: 'goals', element: <GoalsPage /> },
   { path: 'goals/:id', feature: 'goals', element: <MainQuestPage /> },
   { path: 'settings', feature: 'settings', element: <SettingsPage /> },
