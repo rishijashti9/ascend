@@ -2,9 +2,9 @@
 
 ## Resume here
 
-- **Current task:** none — 2.4 finished. Next is 2.5.
-- **Done so far:** Phase 1 complete (v0.1.0) — see the Phase 1 checklist and CHANGELOG. Key code: src/core/time (days), src/core/db (schema), src/core/pipeline (recordAction, defineAction, events), src/config/game.ts, src/core/engine/levels.ts, src/dev (dev tools). Live: https://ascend-vert-mu.vercel.app Phase 2: 2.1 — engine/instances.ts, pipeline/helpers.ts (appDayOf, ensureInstancesForDay), actions/habitSchema.ts + habits.ts (habit.create/update/pause/archive/restore/reorder/delete), RuleError, src/test/testDb.ts helper. 2.2 — engine/xp.ts (baseAward, streakMultiplier, awardKey, liveEvents, computeDayXp, netBaseFor, planAward) + 19 tests; simulate.ts now uses computeDayXp. 2.3 — engine/progress.ts, actions/questCommon.ts (guardDay, applyStatus) + quests.ts (quest.complete, quest.logProgress, quest.wakeCheckin + wakeStatusAt, quest.untick). 2.4 — engine/dayEval.ts (evaluateDay, visibleOnLowEnergy), pipeline/days.ts (refreshDayRecord, called from applyStatus + habit today changes), actions/days.ts (day.setLowEnergy).
-- **Next step:** task 2.5 — src/core/engine/streaks.ts: pure computeStreaks(days in order, repairs) → per-day streak_at_start, streak_after, shield_used, shields_after, repaired; player streak/longest/days active; per-habit streaks (scheduled days only, protected on shielded/repaired days for core habits). Rules: DECISIONS 2–3 (shielded/repaired days keep streak, don't increase it, pause shield counter; repair once per rolling 7 days; only when exactly one unprotected miss). Tests.
+- **Current task:** none — 2.5 finished. Next is 2.6.
+- **Done so far:** Phase 1 complete (v0.1.0) — see the Phase 1 checklist and CHANGELOG. Key code: src/core/time (days), src/core/db (schema), src/core/pipeline (recordAction, defineAction, events), src/config/game.ts, src/core/engine/levels.ts, src/dev (dev tools). Live: https://ascend-vert-mu.vercel.app Phase 2: 2.1 — engine/instances.ts, pipeline/helpers.ts (appDayOf, ensureInstancesForDay), actions/habitSchema.ts + habits.ts (habit.create/update/pause/archive/restore/reorder/delete), RuleError, src/test/testDb.ts helper. 2.2 — engine/xp.ts (baseAward, streakMultiplier, awardKey, liveEvents, computeDayXp, netBaseFor, planAward) + 19 tests; simulate.ts now uses computeDayXp. 2.3 — engine/progress.ts, actions/questCommon.ts (guardDay, applyStatus) + quests.ts (quest.complete, quest.logProgress, quest.wakeCheckin + wakeStatusAt, quest.untick). 2.4 — engine/dayEval.ts (evaluateDay, visibleOnLowEnergy), pipeline/days.ts (refreshDayRecord, called from applyStatus + habit today changes), actions/days.ts (day.setLowEnergy). 2.5 — engine/streaks.ts (computeStreaks → per-day streak fields + summary {streak, longest, daysActive, shields, repairable, lastRepairDay}; repairAllowed; computeHabitStreaks) + 24 tests. Pure only — not yet written to `days` records (2.6/2.7 do that).
+- **Next step:** task 2.6 — day rollover job: on open/resume and at the day-start hour, close every unclosed past day in order (create missing days + instances, set closed_at, run computeStreaks and write streak fields to `days`), create the Recovery quest on the return day when `summary.repairable` exists and `repairAllowed`, welcome-back message data. Tests: late, twice, 30 days away, tz change.
 - **Open questions:** none.
 - **Broken:** nothing. `npm run check` passes.
 
@@ -31,7 +31,7 @@
 - [x] 2.2 XP engine (also: switch scripts/simulate.ts to the engine's day-total function)
 - [x] 2.3 Completion actions
 - [x] 2.4 Day evaluation
-- [ ] 2.5 Streaks, shields, repair
+- [x] 2.5 Streaks, shields, repair
 - [ ] 2.6 Day rollover + Recovery quest
 - [ ] 2.7 Derived-state store + rebuild
 - [ ] 2.8 Onboarding
