@@ -32,6 +32,21 @@ When a new version is available, a small "Update ready" note appears. Nothing re
 
 The hosted address is added in task 1.12. Until then you can try it locally with `npm run build` then `npm run preview`.
 
+## Deploy the web app (Vercel)
+
+The web/laptop version is hosted on Vercel's free plan and redeploys automatically on every push to `main`.
+
+**One-time setup**
+
+1. Go to https://vercel.com and choose **Sign Up → Continue with GitHub** (use the GitHub account that owns the `ascend` repo).
+2. Click **Add New… → Project**, find **ascend** in the list and click **Import**. (If it isn't listed, click _Adjust GitHub App Permissions_ and give Vercel access to the `ascend` repository.)
+3. Leave every setting as detected (Framework: **Vite**, build command `npm run build`, output `dist` — these come from `vercel.json`) and click **Deploy**.
+4. After about a minute you get an address like `https://ascend-xxxx.vercel.app`. Open it on the laptop and install it (see _Install as an app_).
+
+**Every update:** just push to `main` — Vercel builds and publishes it. Open apps show "Update ready".
+
+**Privacy:** the site is public, but it contains only the app itself. Your data never leaves your device (until you turn on sync in Phase 7).
+
 ## Android app (APK) — step by step on Windows
 
 The Android app is the same app wrapped with Capacitor. You build it on your laptop with Android Studio and install it on your phone over USB. You only do steps 1–3 once.
@@ -92,6 +107,7 @@ When running `npm run dev`, a small yellow wrench button appears at the bottom-l
 | `npm run dev`           | Development server with live reload                                    |
 | `npm run build`         | Production build into `dist/`                                          |
 | `npm run preview`       | Serve the production build locally                                     |
+| `npm run e2e`           | End-to-end tests in a real browser (phone and laptop sizes)            |
 | `npm test`              | Run unit tests once                                                    |
 | `npm run check`         | Type-check + lint + formatting check + tests (run before every commit) |
 | `npm run format`        | Auto-format all files                                                  |

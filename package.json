@@ -21,7 +21,8 @@
     "icons": "pwa-assets-generator",
     "android:sync": "npm run build && cap sync android",
     "android:open": "cap open android",
-    "icons:android": "tsx --tsconfig tsconfig.scripts.json scripts/android-assets.ts"
+    "icons:android": "tsx --tsconfig tsconfig.scripts.json scripts/android-assets.ts",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "@capacitor/android": "^8.6.0",

@@ -4,6 +4,6 @@
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.scripts.tsbuildinfo",
     "types": ["node", "vite/client"]
   },
-  "include": ["scripts", "src/vite-env.d.ts"],
+  "include": ["scripts", "e2e", "playwright.config.ts", "src/vite-env.d.ts"],
   "exclude": []
 }

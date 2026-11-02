@@ -2,9 +2,9 @@
 
 ## Resume here
 
-- **Current task:** none — 1.11 finished. Next is 1.12 (last task of Phase 1).
+- **Current task:** 1.12 Playwright smoke, Vercel deploy, wrap-up
 - **Done so far:** 1.1 scaffold; 1.2 tokens/Tailwind/fonts/themes; 1.3 app shell — routes.tsx, Layout (bottom bar <1024px, sidebar ≥1024px), navigation.ts driven by config/features.ts, More + Settings (version) pages, ErrorBoundary/ErrorScreen, core/errorLog.ts (localStorage). Playwright + Chromium installed. 1.4 time module — src/core/time (clock.ts: now()/offset/tz override; days.ts: dayOf, addDays, diffDays, weekStartOf, dayNumber, instantAt, dayBounds) with DST/leap/tz tests. 1.5 schema — src/core/db (types/*.ts for all 23 tables, db.ts Dexie v1 + indexes + default settings on populate, hlc.ts, open.ts with storage.persist), main.tsx opens DB before render. 1.6 — src/config/game.ts (all balance numbers), src/core/engine/levels.ts (xpToReach, totalXpForLevel, levelFromXp, rankFor, nextRank) + tests. 1.7 — src/core/pipeline: recordAction (Zod-validated envelope + payload, optional action_id dedupe via meta, one Dexie transaction, events emitted after commit), registry (defineAction, ctx.addXpEvent idempotent), events bus, records (newBase/touch), first real action settings.update. 1.8 — scripts/simulate.ts (`npm run simulate`), all balance targets met; PLAN.md Balance updated. 1.9 — vite-plugin-pwa (prompt mode, offline precache, verified offline in Chromium), icon public/icon.svg → PNGs via `npm run icons`, UpdatePrompt. 1.10 — src/dev (DevTools panel: set time, +1/+7/N days, real time, timezone override, two-tap reset; clock persisted in localStorage; dynamic import only in DEV, verified absent from dist). 1.11 — Capacitor 8 Android project (android/, app id app.ascend.rishi, min API 24, target 36, needs Java 21 = Android Studio JBR), launcher icons + splash via `npm run icons:android`, service worker disabled in native app, README Windows/Android guide. APK not built here: Android SDK not installed on this laptop (Rishi follows README).
-- **Next step:** task 1.12 — playwright.config.ts + e2e/smoke.spec.ts (app loads, nav, offline), `npm run e2e`; vercel.json (SPA rewrites, no-cache for sw.js); ask Rishi to connect Vercel to the GitHub repo (or use Vercel CLI); README deploy steps; Phase 1 wrap-up summary.
+- **Next step:** 1.12 remaining: Rishi connects Vercel to the GitHub repo (README "Deploy the web app"), then put the live URL in README, check it loads/installs/works offline, mark 1.12 done, Phase 1 wrap-up. Done in 1.12 so far: playwright.config.ts + e2e/smoke.spec.ts (10 passing), vercel.json, README deploy steps.
 - **Open questions:** none.
 - **Broken:** nothing. `npm run check` passes.
 
@@ -23,7 +23,7 @@
 - [x] 1.9 PWA + app icon + update prompt
 - [x] 1.10 Developer tools panel
 - [x] 1.11 Capacitor Android shell + README
-- [ ] 1.12 Playwright smoke, Vercel deploy, wrap-up
+- [~] 1.12 Playwright smoke, Vercel deploy, wrap-up
 
 ## Phase 2 — Core loop
 
