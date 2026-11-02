@@ -2,9 +2,9 @@
 
 ## Resume here
 
-- **Current task:** none — 1.3 finished. Next is 1.4.
-- **Done so far:** 1.1 scaffold; 1.2 tokens/Tailwind/fonts/themes; 1.3 app shell — routes.tsx, Layout (bottom bar <1024px, sidebar ≥1024px), navigation.ts driven by config/features.ts, More + Settings (version) pages, ErrorBoundary/ErrorScreen, core/errorLog.ts (localStorage). Playwright + Chromium installed.
-- **Next step:** task 1.4 — src/core/time: clock.ts (now() + dev offset), dayOf(instant, tz, dayStartHour) → YYYY-MM-DD, weekStart(day, weekStartsOn), dayNumber(startDay, day), date-string helpers; tests for midnight, day-start, tz change, leap years, DST zone.
+- **Current task:** none — 1.4 finished. Next is 1.5.
+- **Done so far:** 1.1 scaffold; 1.2 tokens/Tailwind/fonts/themes; 1.3 app shell — routes.tsx, Layout (bottom bar <1024px, sidebar ≥1024px), navigation.ts driven by config/features.ts, More + Settings (version) pages, ErrorBoundary/ErrorScreen, core/errorLog.ts (localStorage). Playwright + Chromium installed. 1.4 time module — src/core/time (clock.ts: now()/offset/tz override; days.ts: dayOf, addDays, diffDays, weekStartOf, dayNumber, instantAt, dayBounds) with DST/leap/tz tests.
+- **Next step:** task 1.5 — install dexie (+ fake-indexeddb for tests); src/core/db/types.ts (all record types), db.ts (Dexie v1, all tables + indexes), migrations runner before first render, navigator.storage.persist(); tests.
 - **Open questions:** none.
 - **Broken:** nothing. `npm run check` passes.
 
@@ -15,7 +15,7 @@
 - [x] 1.1 Scaffold, tooling, docs, git + GitHub
 - [x] 1.2 Design tokens, Tailwind, fonts, themes, contrast test
 - [x] 1.3 App shell, navigation, feature flags, error boundary
-- [ ] 1.4 Time module + tests
+- [x] 1.4 Time module + tests
 - [ ] 1.5 Schema + Dexie DB + migrations + persist
 - [ ] 1.6 Game config + levels/ranks + tests
 - [ ] 1.7 Action pipeline + event bus + tests

@@ -56,7 +56,7 @@ supabase/         SQL migrations + edge functions (Phase 7–8)
 
 ## 3. Data model (complete in Phase 1)
 
-All tables from SPEC.md section 10, plus `meta`, `plan_proposals`, `photos`, `error_log`. Every record: `id` (UUID or deterministic), `created_at`, `updated_at`, `deleted_at`, `schema_version`, `hlc`.
+All tables from SPEC.md section 10, plus `meta`, `plan_proposals`, `photos`. (Crash log: localStorage, see DECISIONS.) Every record: `id` (UUID or deterministic), `created_at`, `updated_at`, `deleted_at`, `schema_version`, `hlc`.
 
 | Table                   | Key fields / notes                                                                                                                                                                                                                         | Indexes                   |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------- |
@@ -82,7 +82,6 @@ All tables from SPEC.md section 10, plus `meta`, `plan_proposals`, `photos`, `er
 | plan_proposals          | goal_type, goal_id, items, status (pending/applied/rejected), auto_apply_at                                                                                                                                                                | status                    |
 | pending_actions         | action, payload, occurred_at, source, processed_at                                                                                                                                                                                         | processed_at              |
 | meta                    | key, value                                                                                                                                                                                                                                 | —                         |
-| error_log               | at, message, stack, app_version                                                                                                                                                                                                            | at                        |
 
 Migrations: Dexie versioned `version(n).upgrade()`; export files carry `app_version` + `schema_version`, and importers upgrade old files step by step.
 
