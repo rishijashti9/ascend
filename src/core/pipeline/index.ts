@@ -8,6 +8,7 @@ import './actions/progress';
 import './actions/onboarding';
 import './actions/backup';
 import './actions/goals';
+import './actions/questDefs';
 
 export * from './events';
 export * from './recordAction';
@@ -24,5 +25,6 @@ export { isRecoveryId, recoveryQuestId, refreshStreaks } from './streaks';
 export type { RolloverResult } from './actions/rollover';
 export type { OnboardingPayload } from './actions/onboarding';
 export type { ImportResult } from './actions/backup';
+export type { QuestDefInput } from './actions/questDefs';
 export { DERIVED_VERSION, type RebuildResult } from './actions/progress';
 export { isoNow, newBase, touch } from './records';

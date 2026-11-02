@@ -28,12 +28,21 @@ const fmt = (v: number, m: Measure) => `${v.toLocaleString()}${UNIT[m] ? ` ${UNI
 /** Quick amounts for additive measures (one tap, no typing). */
 const QUICK: Partial<Record<Measure, number[]>> = { minutes: [10, 25], count: [1, 5] };
 
-export function StatusLine({ status, pop = false }: { status: InstanceStatus; pop?: boolean }) {
+export function StatusLine({
+  status,
+  pop = false,
+  single = false,
+}: {
+  status: InstanceStatus;
+  pop?: boolean;
+  /** One-version quests just say "Done". */
+  single?: boolean;
+}) {
   if (isDone(status)) {
     return (
       <span className="text-success-text flex items-center gap-1 text-sm font-medium">
         <Check aria-hidden size={16} className={pop ? 'animate-check-pop' : ''} />
-        {DONE_LABEL[status]}
+        {single ? 'Done' : DONE_LABEL[status]}
       </span>
     );
   }
@@ -103,15 +112,20 @@ function NumericInput({ quest, act: run, busy }: { quest: TodayQuest; act: Act; 
 export function QuestCard({
   quest,
   lowEnergy = false,
+  note,
 }: {
   quest: TodayQuest;
   lowEnergy?: boolean;
+  /** Extra line for weekly/side quests, e.g. the goal it serves or its due day. */
+  note?: string;
 }) {
   const { act: run, busy, error, float } = useQuestAction();
   const { instance, progress } = quest;
   const m = instance.measure_snapshot;
   const done = isDone(instance.status);
   const id = instance.id;
+  // Weekly and side quests have one version: a single "Done" tap, or one target to reach.
+  const single = instance.source_type === 'quest';
 
   return (
     <li
@@ -125,19 +139,21 @@ export function QuestCard({
             <h3 className="font-medium">{instance.title_snapshot}</h3>
             <StatChip stat={instance.stat_snapshot} />
           </div>
-          {m === 'check' ? (
+          {m === 'check' && !single && (
             <p className="text-muted text-sm">
               {instance.full_version_snapshot} · minimum: {instance.min_version_snapshot}
             </p>
-          ) : (
+          )}
+          {m !== 'check' && (
             <p className="text-muted text-sm tabular-nums">
-              {fmt(progress, m)} / {fmt(instance.target_snapshot ?? 0, m)} · minimum{' '}
-              {fmt(instance.min_snapshot ?? 0, m)}
+              {fmt(progress, m)} / {fmt(instance.target_snapshot ?? 0, m)}
+              {!single && ` · minimum ${fmt(instance.min_snapshot ?? 0, m)}`}
             </p>
           )}
+          {note && <p className="text-muted text-xs">{note}</p>}
         </div>
         <div className="flex shrink-0 items-center gap-1">
-          <StatusLine status={instance.status} pop={float !== null} />
+          <StatusLine status={instance.status} pop={float !== null} single={single} />
           {done && (
             <Button
               variant="ghost"
@@ -160,7 +176,17 @@ export function QuestCard({
         />
       )}
 
-      {m === 'check' && instance.status === 'pending' && (
+      {m === 'check' && single && instance.status === 'pending' && (
+        <Button
+          disabled={busy}
+          onClick={() =>
+            void run({ type: 'quest.complete', payload: { instanceId: id, version: 'full' } })
+          }
+        >
+          Done
+        </Button>
+      )}
+      {m === 'check' && !single && instance.status === 'pending' && (
         <div className={`flex gap-2 ${lowEnergy ? 'flex-row-reverse' : ''}`}>
           <Button
             variant={lowEnergy ? 'secondary' : 'primary'}

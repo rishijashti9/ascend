@@ -3,10 +3,10 @@ import type { ProgressEntry, QuestInstance } from '@/core/db/types';
 import { higherStatus, isDone, progressValue, statusForValue } from '@/core/engine/progress';
 import { wakeStatusAt } from '@/core/engine/wake';
 import { currentTimeZone } from '@/core/time';
-import { getSettings } from '../helpers';
+import { appDayOf, getSettings } from '../helpers';
 import { newBase } from '../records';
 import { defineAction, RuleError, type ActionContext } from '../registry';
-import { applyStatus, guardDay, loadInstance, QUEST_TABLES } from './questCommon';
+import { applyStatus, guardDay, loadInstance, QUEST_TABLES, spanOf } from './questCommon';
 
 /**
  * Quest completion actions (SPEC 4.8). Every XP change goes through applyStatus,
@@ -22,7 +22,7 @@ export const completeQuest = defineAction({
   tables: [...QUEST_TABLES],
   async run(ctx, { instanceId: id, version }) {
     const instance = await loadInstance(ctx, id);
-    await guardDay(ctx, instance);
+    const day = await guardDay(ctx, instance);
     if (instance.measure_snapshot !== 'check') {
       throw new RuleError('This quest is completed by logging progress');
     }
@@ -33,7 +33,7 @@ export const completeQuest = defineAction({
     if (instance.status === 'done_full' && to === 'done_min') {
       throw new RuleError('Already done in full. Un-tick first to change it.');
     }
-    return applyStatus(ctx, instance, to);
+    return applyStatus(ctx, instance, to, day);
   },
 });
 
@@ -55,7 +55,7 @@ export const logProgress = defineAction({
   tables: [...QUEST_TABLES],
   async run(ctx, { instanceId: id, amount, source, refId }) {
     const instance = await loadInstance(ctx, id);
-    await guardDay(ctx, instance);
+    const day = await guardDay(ctx, instance);
     if (instance.measure_snapshot === 'check') {
       throw new RuleError('This quest is completed with Full or Minimum');
     }
@@ -68,21 +68,22 @@ export const logProgress = defineAction({
     const entry: ProgressEntry = {
       ...newBase(undefined, ctx.processedAt),
       quest_instance_id: id,
-      day: instance.day,
+      day,
       source,
       amount,
       occurred_at: ctx.occurredAt,
       ref_id: refId,
     };
     await ctx.db.progress_entries.add(entry);
-    ctx.emit({ type: 'ProgressAdded', payload: { instanceId: id, day: instance.day, amount } });
-    return syncStatusWithProgress(ctx, instance);
+    ctx.emit({ type: 'ProgressAdded', payload: { instanceId: id, day, amount } });
+    return syncStatusWithProgress(ctx, instance, day);
   },
 });
 
 async function syncStatusWithProgress(
   ctx: ActionContext,
   instance: QuestInstance,
+  day: string,
 ): Promise<QuestInstance> {
   const entries = await ctx.db.progress_entries
     .where('quest_instance_id')
@@ -91,7 +92,7 @@ async function syncStatusWithProgress(
   const value = progressValue(instance.measure_snapshot, entries);
   const reached = statusForValue(value, instance.target_snapshot, instance.min_snapshot);
   const next = higherStatus(instance.status, reached);
-  return next === instance.status ? instance : applyStatus(ctx, instance, next);
+  return next === instance.status ? instance : applyStatus(ctx, instance, next, day);
 }
 
 /**
@@ -108,7 +109,7 @@ export const wakeCheckin = defineAction({
     if (instance.auto_source_snapshot !== 'wake_checkin') {
       throw new RuleError('This quest is not the wake-up check-in');
     }
-    await guardDay(ctx, instance);
+    const day = await guardDay(ctx, instance);
     if (isDone(instance.status)) return instance;
     const status = wakeStatusAt(
       Date.parse(ctx.occurredAt),
@@ -117,7 +118,7 @@ export const wakeCheckin = defineAction({
       currentTimeZone(),
     );
     if (status === 'missed') throw new RuleError('The wake-up window has closed for today');
-    return applyStatus(ctx, instance, status);
+    return applyStatus(ctx, instance, status, day);
   },
 });
 
@@ -132,7 +133,15 @@ export const untickQuest = defineAction({
   tables: [...QUEST_TABLES],
   async run(ctx, { instanceId: id }) {
     const instance = await loadInstance(ctx, id);
-    await guardDay(ctx, instance);
+    const day = await guardDay(ctx, instance);
+    // Weekly and side quests stay open for days, but a correction is still same-day only.
+    if (
+      instance.completed_at &&
+      (await spanOf(ctx, instance)) !== 'day' &&
+      (await appDayOf(ctx.db, instance.completed_at)) !== day
+    ) {
+      throw new RuleError('Only a same-day mistake can be undone');
+    }
     if (instance.measure_snapshot !== 'check') {
       const entries = await ctx.db.progress_entries.where('quest_instance_id').equals(id).toArray();
       const value = progressValue(instance.measure_snapshot, entries);
@@ -142,7 +151,7 @@ export const untickQuest = defineAction({
         await ctx.db.progress_entries.add({
           ...newBase(undefined, ctx.processedAt),
           quest_instance_id: id,
-          day: instance.day,
+          day,
           source: 'manual',
           amount: additive ? -value : 0,
           occurred_at: ctx.occurredAt,
@@ -150,7 +159,7 @@ export const untickQuest = defineAction({
         });
       }
     }
-    return applyStatus(ctx, instance, 'pending');
+    return applyStatus(ctx, instance, 'pending', day);
   },
 });
 

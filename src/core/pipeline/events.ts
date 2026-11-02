@@ -13,6 +13,7 @@ export interface DomainEvents {
     habitId: string;
     change: 'created' | 'updated' | 'paused' | 'archived' | 'restored';
   };
+  QuestChanged: { questId: string; change: 'created' | 'updated' | 'archived' | 'restored' };
   QuestCompleted: { instanceId: string; day: DayString; status: string };
   QuestUncompleted: { instanceId: string; day: DayString };
   ProgressAdded: { instanceId: string; day: DayString; amount: number };

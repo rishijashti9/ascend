@@ -12,6 +12,7 @@ import { QuestCard } from './QuestCard';
 import { RecoveryCard } from './RecoveryCard';
 import { StatusHeader } from './StatusHeader';
 import { SystemMessage } from './SystemMessage';
+import { ThisWeek } from './ThisWeek';
 import { WakeCard } from './WakeCard';
 
 /** Low-energy mode (SPEC 4.8): today only, on and off any time before the day closes. */
@@ -100,6 +101,7 @@ export function TodayPage() {
               : `Show ${hidden} hidden quest${hidden === 1 ? '' : 's'}`}
           </Button>
         )}
+        <ThisWeek />
       </section>
     </div>
   );

@@ -76,7 +76,8 @@ describe('Goals screens', () => {
       ['IELTS 7.5', 'Small'],
       ['Applications sent', 'Large'],
     ] as const) {
-      await userEvent.click(screen.getByRole('button', { name: 'Milestone' }));
+      // The form closes just after the new milestone appears; wait for the button to return.
+      await userEvent.click(await screen.findByRole('button', { name: 'Milestone' }));
       const form = screen.getByRole('form', { name: 'New milestone' });
       await userEvent.type(within(form).getByLabelText('Milestone'), title);
       await userEvent.selectOptions(within(form).getByLabelText('Size'), size);
@@ -94,7 +95,7 @@ describe('Goals screens', () => {
         '25',
       ),
     );
-  });
+  }, 15_000); // lots of typing: slow when the whole suite runs in parallel
 
   it('archive and restore a dream (nothing is deleted)', async () => {
     await createDreamAndQuest();

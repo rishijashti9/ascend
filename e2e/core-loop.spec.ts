@@ -22,7 +22,7 @@ test('onboarding: answers are saved and Today greets by name', async ({ page }) 
   await page.getByRole('radio', { name: /Dark/ }).click();
   await page.getByRole('button', { name: 'Begin' }).click();
 
-  await expect(page.getByRole('heading', { name: 'Today' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
   await expect(page.getByText('Rishi J')).toBeVisible();
   await expect(page.getByText('Day 1', { exact: false }).first()).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
@@ -92,7 +92,7 @@ test('export → wipe → import gives identical progress', async ({ page }, tes
   await page.getByText('Already use ASCEND? Restore from a backup').click();
   await page.getByLabel(/Choose backup file/).setInputFiles(file);
   await page.getByRole('button', { name: 'Import' }).click();
-  await expect(page.getByRole('heading', { name: 'Today' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
   await expect(page.getByText('3 / 8 done')).toBeVisible();
   expect(await page.getByRole('region', { name: 'Status' }).innerText()).toBe(before);
 });

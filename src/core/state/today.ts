@@ -4,6 +4,7 @@ import type { DayString, Quest, QuestInstance } from '@/core/db/types';
 import { progressValue } from '@/core/engine/progress';
 import { logError } from '@/core/errorLog';
 import { appDayOf, isoNow, subscribeAll } from '@/core/pipeline';
+import { currentTimeZone, dayOf, weekStartOf } from '@/core/time';
 
 /** One quest card on Today: the instance plus its current numeric progress. */
 export interface TodayQuest {
@@ -19,8 +20,12 @@ export interface TodayState {
   day: DayString | null;
   /** Daily quests in the order Rishi set. */
   daily: TodayQuest[];
-  /** Weekly, side and recovery quests due today. */
+  /** Today's Recovery quest (if any). */
   other: TodayQuest[];
+  /** This week's weekly quests. */
+  week: TodayQuest[];
+  /** Open side quests (and ones finished today). */
+  side: TodayQuest[];
   lowEnergy: boolean;
 }
 
@@ -29,6 +34,8 @@ export const todayStore = createStore<TodayState>(() => ({
   day: null,
   daily: [],
   other: [],
+  week: [],
+  side: [],
   lowEnergy: false,
 }));
 
@@ -43,9 +50,26 @@ export async function loadToday(database: AscendDB = defaultDb): Promise<void> {
       ['settings', 'quest_instances', 'progress_entries', 'habits', 'quests', 'days'],
       async () => {
         const day = await appDayOf(database, isoNow());
-        const instances = (
-          await database.quest_instances.where('day').equals(day).toArray()
-        ).filter((i) => i.deleted_at === null);
+        const settings = await database.settings.get('settings');
+        const weekStart = weekStartOf(day, settings?.week_start ?? 1);
+        const todays = await database.quest_instances.where('day').equals(day).toArray();
+        const weekly =
+          weekStart === day
+            ? []
+            : await database.quest_instances.where('day').equals(weekStart).toArray();
+        const sideQuests = (await database.quests.where('type').equals('side').toArray()).filter(
+          (q) => q.deleted_at === null && (q.status === 'active' || q.status === 'done'),
+        );
+        const sideInstances = (
+          await database.quest_instances.bulkGet(sideQuests.map((q) => q.id))
+        ).filter((i): i is QuestInstance => i !== undefined);
+        const instances = [
+          ...new Map(
+            [...todays, ...weekly, ...sideInstances]
+              .filter((i) => i.deleted_at === null)
+              .map((i) => [i.id, i] as const),
+          ).values(),
+        ];
         const entries = await database.progress_entries
           .where('quest_instance_id')
           .anyOf(instances.map((i) => i.id))
@@ -69,15 +93,33 @@ export async function loadToday(database: AscendDB = defaultDb): Promise<void> {
             instance.source_type === 'quest' ? (questById.get(instance.source_id) ?? null) : null,
         });
         const daily = instances
-          .filter((i) => i.source_type === 'habit')
+          .filter((i) => i.source_type === 'habit' && i.day === day)
           .sort((a, b) => (order.get(a.source_id) ?? 0) - (order.get(b.source_id) ?? 0))
           .map(toQuest);
-        const other = instances.filter((i) => i.source_type === 'quest').map(toQuest);
+        const ofType = (type: string) =>
+          instances
+            .filter((i) => i.source_type === 'quest' && questById.get(i.source_id)?.type === type)
+            .map(toQuest);
+        // Finished side quests stay visible for the rest of the day they were done.
+        const doneEarlier = (q: TodayQuest) =>
+          q.instance.completed_at !== null &&
+          dayOf(
+            Date.parse(q.instance.completed_at),
+            currentTimeZone(),
+            settings?.day_start_hour ?? 3,
+          ) < day;
+        const other = ofType('recovery').filter((q) => q.instance.day === day);
+        const week = ofType('weekly').filter((q) => q.instance.day === weekStart);
+        const side = ofType('side').filter(
+          (q) => q.instance.status === 'pending' || !doneEarlier(q),
+        );
         return {
           status: 'ready' as const,
           day,
           daily,
           other,
+          week,
+          side,
           lowEnergy: dayRecord?.low_energy ?? false,
         };
       },

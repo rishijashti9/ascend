@@ -16,7 +16,7 @@ export async function onboard(page: Page) {
   await expect(page.getByRole('heading', { name: 'Welcome' })).toBeVisible();
   for (let i = 0; i < 4; i++) await page.getByRole('button', { name: 'Next' }).click();
   await page.getByRole('button', { name: 'Begin' }).click();
-  await expect(page.getByRole('heading', { name: 'Today' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
 }
 
 /** The card (list item) of a quest on Today, found by its title. */

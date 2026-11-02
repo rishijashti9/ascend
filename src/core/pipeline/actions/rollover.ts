@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { DayRecord, DayString, Quest, QuestInstance } from '@/core/db/types';
+import { isRecoveryId } from '@/core/engine/instances';
 import { isDone } from '@/core/engine/progress';
 import { repairAllowed, type StreakSummary } from '@/core/engine/streaks';
 import { addDays, daysBetween } from '@/core/time';
@@ -76,7 +77,11 @@ async function closeDay(ctx: ActionContext, day: DayString, first: DayString | n
   const { db, processedAt } = ctx;
   if (first !== null && day >= first) await ensureInstancesForDay(db, day);
 
-  const instances = await db.quest_instances.where('day').equals(day).toArray();
+  // Only that day's daily quests and its Recovery quest close; weekly quests run all week
+  // and side quests stay open until done or archived.
+  const instances = (await db.quest_instances.where('day').equals(day).toArray()).filter(
+    (i) => i.source_type === 'habit' || isRecoveryId(i.id),
+  );
   for (const instance of instances) {
     if (instance.deleted_at === null && instance.status === 'pending') {
       await db.quest_instances.put({ ...instance, status: 'missed', ...touch(processedAt) });
@@ -84,7 +89,8 @@ async function closeDay(ctx: ActionContext, day: DayString, first: DayString | n
   }
   const quests = await db.quests.where('due_day').equals(day).toArray();
   for (const quest of quests) {
-    if (quest.deleted_at !== null || quest.status !== 'active') continue;
+    if (quest.deleted_at !== null || quest.status !== 'active' || quest.type !== 'recovery')
+      continue;
     const instance = instances.find((i) => i.id === quest.id);
     const status = instance && isDone(instance.status) ? 'done' : 'not_done';
     await db.quests.put({ ...quest, status, ...touch(processedAt) });

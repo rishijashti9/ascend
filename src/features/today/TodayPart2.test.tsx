@@ -74,7 +74,9 @@ describe('Today part 2', () => {
     await onboard();
     await show();
     await tap(card('Workout'), 'Full');
-    await waitFor(() => expect(within(card('Workout')).getByText('+25 XP')).toBeInTheDocument());
+    await waitFor(() => expect(within(card('Workout')).getByText('+25 XP')).toBeInTheDocument(), {
+      timeout: 3000, // the save can take >1 s when the whole suite runs in parallel
+    });
   });
 
   it('low energy hides non-core quests not done yet; they can be shown again', async () => {

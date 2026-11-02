@@ -1,5 +1,6 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router';
 import { db } from '@/core/db/db';
 import { clearSubscribers, recordAction } from '@/core/pipeline';
 import { startHabits } from '@/core/state/habits';
@@ -21,7 +22,11 @@ beforeEach(async () => {
   for (const h of starters) await recordAction({ type: 'habit.create', payload: h });
   await startHabits();
   await startProgressStore();
-  render(<QuestsPage />);
+  render(
+    <MemoryRouter>
+      <QuestsPage />
+    </MemoryRouter>,
+  );
 });
 afterEach(() => {
   clearSubscribers();

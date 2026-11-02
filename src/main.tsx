@@ -9,6 +9,7 @@ import { installGlobalErrorHandlers, logError } from './core/errorLog';
 import { appStore, startAppState } from './core/state/app';
 import { startGoals } from './core/state/goals';
 import { startHabits } from './core/state/habits';
+import { startQuests } from './core/state/quests';
 import { rebuildProgress, startProgressStore } from './core/state/progress';
 import { startToday } from './core/state/today';
 import './styles/index.css';
@@ -45,6 +46,7 @@ async function start(): Promise<void> {
   await startToday();
   await startHabits();
   await startGoals();
+  await startQuests();
   root.render(
     <StrictMode>
       <App />

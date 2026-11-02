@@ -5,7 +5,7 @@ test('first visit: onboarding, then Today, with no console errors', async ({ pag
   const errors = watchErrors(page);
   await onboard(page);
   await page.reload();
-  await expect(page.getByRole('heading', { name: 'Today' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
   expect(errors).toEqual([]);
 });
 
@@ -35,7 +35,7 @@ test('follows the dark system theme', async ({ browser }) => {
 
 test('keeps working offline after the first visit', async ({ page, context }) => {
   await onboard(page);
-  await expect(page.getByRole('heading', { name: 'Today' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
   await page.evaluate(async () => {
     await navigator.serviceWorker.ready;
   });
@@ -44,13 +44,13 @@ test('keeps working offline after the first visit', async ({ page, context }) =>
   await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
   await context.setOffline(true);
   await page.reload();
-  await expect(page.getByRole('heading', { name: 'Today' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
   await context.setOffline(false);
 });
 
 test('unknown addresses go back to Today', async ({ page }) => {
   await onboard(page);
   await page.goto('/this-page-does-not-exist');
-  await expect(page.getByRole('heading', { name: 'Today' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
   await expect(page).toHaveURL(/\/$/);
 });
