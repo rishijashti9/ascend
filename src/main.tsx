@@ -9,6 +9,7 @@ import { installGlobalErrorHandlers, logError } from './core/errorLog';
 import { startAutoPlanner } from './core/planner/auto';
 import { startAchievements } from './core/achievements/auto';
 import { startAchievementsStore } from './core/state/achievements';
+import { startMoments } from './core/state/moments';
 import { appStore, startAppState } from './core/state/app';
 import { startBody } from './core/state/body';
 import { startFocusStore } from './core/state/focus';
@@ -59,6 +60,7 @@ async function start(): Promise<void> {
   await startAchievementsStore();
   startAutoPlanner();
   startAchievements();
+  startMoments();
   root.render(
     <StrictMode>
       <App />

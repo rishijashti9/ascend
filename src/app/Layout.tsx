@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from 'react-router';
 import { AchievementToast } from '@/features/achievements/AchievementToast';
+import { LevelUpMoment } from '@/features/moments/LevelUpMoment';
 import { MORE_ITEM, primaryNav, secondaryNav, type NavItem } from './navigation';
 
 function SidebarLink({ item }: { item: NavItem }) {
@@ -58,6 +59,7 @@ export function Layout() {
         <Outlet />
       </main>
       <AchievementToast />
+      <LevelUpMoment />
 
       <nav
         aria-label="Main"
