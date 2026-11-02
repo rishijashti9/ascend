@@ -49,6 +49,9 @@ async function createDreamAndQuest() {
   await userEvent.type(within(questForm).getByLabelText('Deadline (optional)'), '2027-10-01');
   await userEvent.type(within(questForm).getByLabelText('Why this matters to me'), 'Research labs');
   await save(questForm, 'Add main quest');
+  // A new main quest opens the Goal Planner on its page (SPEC 6.3); close it and go back.
+  await userEvent.click(await screen.findByRole('button', { name: 'Close planner' }));
+  await userEvent.click(screen.getByRole('link', { name: 'Goals' }));
   return screen.findByRole('link', { name: /MS in Germany/ });
 }
 
@@ -57,7 +60,7 @@ describe('Goals screens', () => {
     expect(screen.getByText(/No dream yet/)).toBeInTheDocument();
   });
 
-  it('creates a dream with its why, then a main quest with a deadline', async () => {
+  it('creates a dream with its why, then a main quest with a deadline (the planner opens)', async () => {
     const link = await createDreamAndQuest();
     expect(screen.getByText('“Build humanoids”')).toBeInTheDocument();
     expect(link).toHaveTextContent('0 of 0 milestones · by 1 Oct 2027');

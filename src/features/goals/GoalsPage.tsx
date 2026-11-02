@@ -1,11 +1,12 @@
 import { ChevronDown, ChevronRight, Plus } from 'lucide-react';
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import type { Dream, MainQuest } from '@/core/db/types';
 import { useGoals } from '@/core/state/goals';
 import { Button } from '@/ui/Button';
 import { useAction } from '@/ui/hooks/useAction';
 import { StatChip } from '@/ui/stats';
+import { PendingPlan } from '@/features/planner/PendingPlan';
 import { DreamForm, MainQuestForm } from './forms';
 import { formatDay } from './format';
 import { ProgressLine, StatusActions, StatusChip } from './parts';
@@ -41,7 +42,8 @@ function DreamCard({ dream }: { dream: Dream }) {
   const allQuests = useGoals((s) => s.mainQuests);
   const quests = allQuests.filter((q) => q.dream_id === dream.id);
   const [mode, setMode] = useState<'none' | 'manage' | 'edit' | 'add'>('none');
-  const { run, busy, error } = useAction();
+  const { run, runFor, busy, error } = useAction();
+  const navigate = useNavigate();
 
   const visible = quests.filter((q) => q.status !== 'archived');
   const archived = quests.filter((q) => q.status === 'archived');
@@ -66,6 +68,7 @@ function DreamCard({ dream }: { dream: Dream }) {
         </button>
       </div>
       <ProgressLine value={progress} label={`${dream.title} progress`} />
+      <PendingPlan goalId={dream.id} />
 
       {mode === 'manage' && (
         <div className="border-border flex flex-col gap-2 border-t pt-3">
@@ -122,9 +125,15 @@ function DreamCard({ dream }: { dream: Dream }) {
           saveLabel="Add main quest"
           onCancel={() => setMode('none')}
           onSave={(v) =>
-            void run({ type: 'mainQuest.create', payload: { ...v, dream_id: dream.id } }).then(
-              (ok) => ok && setMode('none'),
-            )
+            void runFor<MainQuest>({
+              type: 'mainQuest.create',
+              payload: { ...v, dream_id: dream.id },
+            }).then((created) => {
+              if (!created) return;
+              setMode('none');
+              // A new main quest is planned right away (SPEC 6.3).
+              void navigate(`/goals/${created.id}?plan=new`);
+            })
           }
         />
       ) : (

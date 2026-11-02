@@ -59,7 +59,10 @@ function emitGoal(
   change: string,
   meaningful: boolean,
 ) {
-  ctx.emit({ type: 'GoalChanged', payload: { goalType, goalId, change, meaningful } });
+  ctx.emit({
+    type: 'GoalChanged',
+    payload: { goalType, goalId, change, meaningful, source: ctx.source },
+  });
 }
 
 /** True if any of `keys` differs between before and after (JSON compare for objects). */

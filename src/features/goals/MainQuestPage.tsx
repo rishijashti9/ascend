@@ -1,17 +1,24 @@
 import { ArrowLeft, Plus, Sparkles } from 'lucide-react';
 import { useState } from 'react';
-import { Link, useParams } from 'react-router';
+import { Link, useParams, useSearchParams } from 'react-router';
 import type { Milestone } from '@/core/db/types';
 import type { MilestoneProgress } from '@/core/engine/goals';
 import { useGoals } from '@/core/state/goals';
 import { Button } from '@/ui/Button';
 import { useAction } from '@/ui/hooks/useAction';
 import { StatChip } from '@/ui/stats';
-import { PendingPlan } from '@/features/planner/PendingPlan';
+import { ImpactPreview, PendingPlan } from '@/features/planner/PendingPlan';
 import { PlannerSheet } from '@/features/planner/PlannerSheet';
 import { formatDay } from './format';
 import { MainQuestForm, MilestoneForm } from './forms';
 import { ProgressLine, StatusActions, StatusChip } from './parts';
+
+/** The just-made plan, inside the planner sheet. */
+function SheetPreview({ proposalId, onDone }: { proposalId: string; onDone: () => void }) {
+  const proposal = useGoals((s) => s.proposals.find((p) => p.id === proposalId));
+  if (!proposal) return <p className="text-muted">Preparing the preview…</p>;
+  return <ImpactPreview proposal={proposal} onDone={onDone} />;
+}
 
 function describe(m: Milestone, p: MilestoneProgress): string {
   if (m.target_type === 'metric' && m.current_source?.kind === 'body_metric') {
@@ -91,7 +98,13 @@ export function MainQuestPage() {
   const progress = useGoals((s) => s.mainQuestProgress[id] ?? 0);
   const status = useGoals((s) => s.status);
   const [mode, setMode] = useState<'none' | 'edit' | 'add'>('none');
-  const [planning, setPlanning] = useState(false);
+  const [params, setParams] = useSearchParams();
+  // `?plan=new` (just created) or `?plan=deadline` opens the planner straight away (SPEC 6.3).
+  const [planning, setPlanning] = useState<string | null>(() => params.get('plan'));
+  const closePlanner = () => {
+    setPlanning(null);
+    if (params.has('plan')) setParams({}, { replace: true });
+  };
   const { run, busy, error } = useAction();
 
   if (!quest) {
@@ -139,15 +152,19 @@ export function MainQuestPage() {
           error={error}
           onCancel={() => setMode('none')}
           onSave={(v) =>
-            void run({ type: 'mainQuest.update', payload: { id, changes: v } }).then(
-              (ok) => ok && setMode('none'),
-            )
+            void run({ type: 'mainQuest.update', payload: { id, changes: v } }).then((ok) => {
+              if (!ok) return;
+              setMode('none');
+              // A new deadline is a meaningful change: re-plan to fit it.
+              if (v.target_date !== quest.target_date && quest.status === 'active')
+                setPlanning('deadline');
+            })
           }
         />
       ) : (
         <div className="flex flex-wrap gap-2">
           {quest.status === 'active' && (
-            <Button variant="secondary" onClick={() => setPlanning(true)}>
+            <Button variant="secondary" onClick={() => setPlanning('replan')}>
               <Sparkles aria-hidden size={18} /> Re-plan
             </Button>
           )}
@@ -171,16 +188,8 @@ export function MainQuestPage() {
 
       <PendingPlan goalId={id} />
       {planning && (
-        <PlannerSheet mainQuestId={id} onClose={() => setPlanning(false)}>
-          {() => (
-            <div className="flex flex-col gap-3">
-              <p>
-                Your plan is ready. Review it on this goal’s page — nothing changes until you
-                approve.
-              </p>
-              <Button onClick={() => setPlanning(false)}>Review the plan</Button>
-            </div>
-          )}
+        <PlannerSheet mainQuestId={id} trigger={planning} onClose={closePlanner}>
+          {(proposalId) => <SheetPreview proposalId={proposalId} onDone={closePlanner} />}
         </PlannerSheet>
       )}
 

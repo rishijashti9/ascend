@@ -19,7 +19,14 @@ export interface DomainEvents {
   ProgressAdded: { instanceId: string; day: DayString; amount: number };
   DayChanged: { day: DayString };
   DayClosed: { day: DayString };
-  GoalChanged: { goalType: string; goalId: string; change: string; meaningful: boolean };
+  GoalChanged: {
+    goalType: string;
+    goalId: string;
+    change: string;
+    meaningful: boolean;
+    /** 'planner' when the change came from an applied plan (the planner doesn't react to itself). */
+    source: string;
+  };
   MilestoneDone: { milestoneId: string };
   PlanProposed: { proposalId: string; goalId: string | null };
   PlanApplied: { proposalId: string | null; historyId: string };

@@ -10,6 +10,7 @@ import './actions/backup';
 import './actions/goals';
 import './actions/questDefs';
 import './actions/plans';
+import './actions/planApply';
 
 export * from './events';
 export * from './recordAction';

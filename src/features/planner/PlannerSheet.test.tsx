@@ -48,11 +48,15 @@ describe('Planner sheet', () => {
     await userEvent.click(within(sheet).getByRole('radio', { name: 'Some experience' }));
     await userEvent.click(within(sheet).getByRole('radio', { name: 'Unclear next step' }));
     await userEvent.click(within(sheet).getByRole('button', { name: 'Make my plan' }));
-    await userEvent.click(await within(sheet).findByRole('button', { name: 'Review the plan' }));
 
-    const card = await screen.findByRole('region', { name: 'Plan waiting for review' });
-    expect(card).toHaveTextContent(/Milestone: Core robotics skills: guided practice/);
-    expect(card).toHaveTextContent(/This week: /);
+    const preview = await within(sheet).findByRole('region', { name: 'Plan waiting for review' });
+    expect(preview).toHaveTextContent(/Milestone: Core robotics skills: guided practice/);
+    expect(preview).toHaveTextContent(/This week: /);
+    await userEvent.click(within(preview).getByRole('button', { name: 'Approve all' }));
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+    expect(
+      await screen.findByRole('heading', { name: 'Core robotics skills: guided practice' }),
+    ).toBeInTheDocument();
     expect((await db.main_quests.get(questId))?.planner_context).toMatchObject({
       level: 'some',
       obstacle: 'unclear',
@@ -83,18 +87,18 @@ describe('Planner sheet', () => {
     );
   });
 
-  it('"Not now" removes the waiting plan', async () => {
+  it('"Not now" sets the plan aside and changes nothing', async () => {
     await userEvent.click(await screen.findByRole('button', { name: /Re-plan/ }));
     const sheet = screen.getByRole('dialog');
     await userEvent.click(await within(sheet).findByRole('button', { name: 'Next' }));
     await userEvent.click(within(sheet).getByRole('button', { name: 'Make my plan' }));
-    await userEvent.click(await within(sheet).findByRole('button', { name: 'Review the plan' }));
-    const card = await screen.findByRole('region', { name: 'Plan waiting for review' });
-    await userEvent.click(within(card).getByRole('button', { name: 'Not now' }));
+    const preview = await within(sheet).findByRole('region', { name: 'Plan waiting for review' });
+    await userEvent.click(within(preview).getByRole('button', { name: 'Not now' }));
     await waitFor(() =>
       expect(
         screen.queryByRole('region', { name: 'Plan waiting for review' }),
       ).not.toBeInTheDocument(),
     );
+    expect(await db.milestones.count()).toBe(0);
   }, 15_000);
 });
