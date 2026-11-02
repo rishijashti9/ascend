@@ -2,6 +2,7 @@ import { LocalNotifications, type LocalNotificationSchema } from '@capacitor/loc
 import { logError } from '@/core/errorLog';
 import { nowMs } from '@/core/time';
 import type {
+  ExactAlarms,
   Notifier,
   NotificationTap,
   NotifyPermission,
@@ -30,6 +31,8 @@ export function notificationId(key: string): number {
 
 const toPermission = (state: string): NotifyPermission =>
   state === 'granted' ? 'granted' : state === 'denied' ? 'denied' : 'prompt';
+
+const toExact = (state: string): ExactAlarms => (state === 'granted' ? 'granted' : 'denied');
 
 function toSchema(n: PlannedNotification, at: number): LocalNotificationSchema {
   return {
@@ -81,7 +84,11 @@ export function createAndroidNotifier(): Notifier {
     async sync(list) {
       await setup();
       const pending = await LocalNotifications.getPending();
-      const ours = pending.notifications.filter((p) => (p.extra as { ascend?: boolean })?.ascend);
+      // Ours, except Settings tests (a test waiting 2 minutes must survive a re-plan).
+      const ours = pending.notifications.filter((p) => {
+        const x = p.extra as { ascend?: boolean; kind?: string } | undefined;
+        return x?.ascend && x.kind !== 'test';
+      });
       if (ours.length > 0)
         await LocalNotifications.cancel({ notifications: ours.map((p) => ({ id: p.id })) });
       const now = Date.now();
@@ -94,7 +101,15 @@ export function createAndroidNotifier(): Notifier {
     },
     async showNow(n) {
       await setup();
-      await LocalNotifications.schedule({ notifications: [toSchema(n, Date.now() + 1000)] });
+      await LocalNotifications.schedule({
+        notifications: [toSchema(n, Math.max(n.at, Date.now() + 1000))],
+      });
+    },
+    async exactAlarms() {
+      return toExact((await LocalNotifications.checkExactNotificationSetting()).exact_alarm);
+    },
+    async openExactAlarmSettings() {
+      return toExact((await LocalNotifications.changeExactNotificationSetting()).exact_alarm);
     },
     onTap(handler: (tap: NotificationTap) => void) {
       const handle = LocalNotifications.addListener('localNotificationActionPerformed', (e) => {

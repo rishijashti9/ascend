@@ -39,14 +39,21 @@ export interface NotificationTap {
 
 export type NotifyPermission = 'granted' | 'denied' | 'prompt' | 'unsupported';
 
+/** Android 12+ "Alarms & reminders": without it, Android may deliver a reminder late. */
+export type ExactAlarms = 'granted' | 'denied' | 'unsupported';
+
 export interface Notifier {
   readonly platform: 'android' | 'browser';
   permission(): Promise<NotifyPermission>;
   requestPermission(): Promise<NotifyPermission>;
   /** Replace everything ASCEND has scheduled with this list (past ones are ignored). */
   sync(list: readonly PlannedNotification[]): Promise<void>;
-  /** Show one right away (the Settings test). */
+  /** Show one now — or at `n.at` if that's in the future (the Settings tests). Never cancelled by sync. */
   showNow(n: PlannedNotification): Promise<void>;
+  /** Whether reminders can fire at the exact minute (Android 12+). */
+  exactAlarms(): Promise<ExactAlarms>;
+  /** Opens the system screen to allow exact alarms; returns the state afterwards. */
+  openExactAlarmSettings(): Promise<ExactAlarms>;
   /** Listen for taps. Returns an unsubscribe function. */
   onTap(handler: (tap: NotificationTap) => void): () => void;
 }

@@ -10,12 +10,15 @@ const plugin = vi.hoisted(() => ({
     notifications: [
       { id: 1, title: 'mine', body: '', extra: { ascend: true } },
       { id: 2, title: 'someone else', body: '', extra: {} },
+      { id: 3, title: 'a test', body: '', extra: { ascend: true, kind: 'test' } },
     ],
   })),
   cancel: vi.fn(async () => undefined),
   schedule: vi.fn(async () => ({ notifications: [] })),
   checkPermissions: vi.fn(async () => ({ display: 'prompt-with-rationale' })),
   requestPermissions: vi.fn(async () => ({ display: 'granted' })),
+  checkExactNotificationSetting: vi.fn(async () => ({ exact_alarm: 'denied' })),
+  changeExactNotificationSetting: vi.fn(async () => ({ exact_alarm: 'granted' })),
   listener: null as null | ((e: unknown) => void),
   addListener: vi.fn(async (_name: string, fn: (e: unknown) => void) => {
     plugin.listener = fn;
@@ -100,6 +103,17 @@ describe('Android notifier', () => {
         at: NOW,
       },
     ]);
+  });
+
+  it('exact alarms: checks, opens the system screen; a delayed test is scheduled for its time', async () => {
+    const n = createAndroidNotifier();
+    expect(await n.exactAlarms()).toBe('denied');
+    expect(await n.openExactAlarmSettings()).toBe('granted');
+    await n.showNow(planned('test:x', NOW + 120_000, { kind: 'test' }));
+    const [[arg]] = plugin.schedule.mock.calls as unknown as [
+      [{ notifications: { schedule: { at: Date } }[] }],
+    ];
+    expect(arg.notifications[0]?.schedule.at.getTime()).toBe(NOW + 120_000);
   });
 
   it('ids are stable, positive and differ per key', () => {

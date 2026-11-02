@@ -24,6 +24,8 @@ function fakeNotifier(platform: 'android' | 'browser', permission: string) {
     requestPermission: vi.fn(async () => 'granted' as const),
     sync: vi.fn(async () => undefined),
     showNow: vi.fn(async (p: PlannedNotification) => void shown.push(p)),
+    exactAlarms: vi.fn(async () => 'granted' as const),
+    openExactAlarmSettings: vi.fn(async () => 'granted' as const),
     onTap: (h) => {
       tapHandler = h;
       return () => (tapHandler = null);

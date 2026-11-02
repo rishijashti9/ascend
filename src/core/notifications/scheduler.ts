@@ -5,6 +5,17 @@ import { currentTimeZone, nowMs } from '@/core/time';
 import { planNotifications, type PlanInput } from './plan';
 import type { Notifier, PlannedNotification } from './types';
 
+/** The running scheduler's forced re-plan (e.g. exact alarms were just allowed). */
+let active: (() => Promise<PlannedNotification[]>) | null = null;
+
+/**
+ * Re-schedules everything even if the plan didn't change — needed after exact alarms are
+ * allowed, because reminders already set were scheduled as inexact.
+ */
+export function rescheduleAll(): Promise<PlannedNotification[]> {
+  return active ? active() : Promise.resolve([]);
+}
+
 /** Reads everything the planner needs. */
 export async function loadPlanInput(database: AscendDB): Promise<PlanInput> {
   return database.transaction(
@@ -39,6 +50,7 @@ export function startNotificationScheduler(
   delayMs = 1000,
 ): { stop: () => void; refresh: () => Promise<PlannedNotification[]> } {
   let last = '';
+  let force = false;
   let timer: ReturnType<typeof setTimeout> | null = null;
   let chain: Promise<PlannedNotification[]> = Promise.resolve([]);
 
@@ -47,7 +59,8 @@ export function startNotificationScheduler(
       try {
         const list = planNotifications(await loadPlanInput(database));
         const signature = JSON.stringify(list);
-        if (signature !== last) {
+        if (signature !== last || force) {
+          force = false;
           await notifier.sync(list);
           last = signature;
         }
@@ -64,10 +77,15 @@ export function startNotificationScheduler(
     timer = setTimeout(() => void refresh(), delayMs);
   });
   void refresh();
+  active = () => {
+    force = true;
+    return refresh();
+  };
   return {
     stop: () => {
       unsubscribe();
       if (timer) clearTimeout(timer);
+      active = null;
     },
     refresh,
   };

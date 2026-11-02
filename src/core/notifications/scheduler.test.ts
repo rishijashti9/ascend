@@ -2,7 +2,7 @@ import type { Habit } from '@/core/db/types';
 import { clearSubscribers, ensureInstancesForDay, newBase } from '@/core/pipeline';
 import { setNow } from '@/core/time';
 import { createTestDb, ist } from '@/test/testDb';
-import { startNotificationScheduler } from './scheduler';
+import { rescheduleAll, startNotificationScheduler } from './scheduler';
 import type { Notifier, PlannedNotification } from './types';
 
 let t: Awaited<ReturnType<typeof createTestDb>>;
@@ -14,6 +14,8 @@ const notifier: Notifier = {
   requestPermission: async () => 'granted',
   sync: async (list) => void synced.push([...list]),
   showNow: async () => undefined,
+  exactAlarms: async () => 'granted',
+  openExactAlarmSettings: async () => 'granted',
   onTap: () => () => undefined,
 };
 
@@ -89,5 +91,17 @@ describe('notification scheduler', () => {
     expect(keys[0]).toBe('wake:2026-11-03');
     expect(keys).toContain('welcome_back:2026-11-10');
     s.stop();
+  });
+
+  it('rescheduleAll re-sends an unchanged plan (exact alarms were just allowed)', async () => {
+    const s = startNotificationScheduler(notifier, t.db, 0);
+    await s.refresh();
+    await s.refresh();
+    expect(synced).toHaveLength(1);
+    await rescheduleAll();
+    expect(synced).toHaveLength(2);
+    expect(synced[1]).toEqual(synced[0]);
+    s.stop();
+    expect(await rescheduleAll()).toEqual([]); // nothing running
   });
 });

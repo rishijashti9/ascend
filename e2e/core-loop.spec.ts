@@ -77,6 +77,9 @@ test('export → wipe → import gives identical progress', async ({ page }, tes
   await questCard(page, 'Workout').getByRole('button', { name: 'Full' }).click();
   await questCard(page, 'Journal').getByRole('button', { name: 'Minimum' }).click();
   await expect(page.getByText('3 / 8 done')).toBeVisible();
+  // The XP total can update a moment after the done count: read it once it has settled
+  // (late wake-up 13 + Workout 25 + Journal minimum 5).
+  await expect(page.getByText(/^43 total$/)).toBeVisible();
   const before = await page.getByRole('region', { name: 'Status' }).innerText();
 
   await page.goto('/settings');

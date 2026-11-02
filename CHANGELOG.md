@@ -4,6 +4,11 @@ All notable changes to ASCEND. Versions follow [semantic versioning](https://sem
 
 ## [Unreleased]
 
+### Added
+
+- Android: Settings → Notifications checks “exact timing” (Alarms & reminders) and opens the system screen to allow it, so the wake-up check-in arrives at the exact minute; Today points it out while it's off.
+- Android: a step-by-step guide to stop the phone from closing ASCEND (battery optimisation) for Samsung, Xiaomi / Redmi / POCO, Realme, Oppo / OnePlus, Vivo / iQOO and other phones — opened at your phone's brand — plus a 2-minute test to try with the phone locked.
+
 ## [0.6.0] — 2026-11-03 — Phase 6: Notifications
 
 ### Added

@@ -13,9 +13,10 @@ import { Button } from '@/ui/Button';
 import { Select, TextInput } from '@/ui/Field';
 import { useAction } from '@/ui/hooks/useAction';
 
-export function Card({ title, children }: { title: string; children: ReactNode }) {
+export function Card({ title, id, children }: { title: string; id?: string; children: ReactNode }) {
   return (
     <section
+      id={id}
       aria-label={title}
       className="border-border bg-surface shadow-card flex flex-col gap-4 rounded-lg border p-4"
     >

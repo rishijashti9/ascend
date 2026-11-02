@@ -74,7 +74,16 @@ export function createBrowserNotifier(browserNotificationsOn: () => boolean): No
       }
     },
     async showNow(n) {
-      fire(n);
+      const delay = n.at - nowMs();
+      if (delay > 1000) setTimeout(() => fire(n), delay);
+      else fire(n);
+    },
+    // Browsers have no exact alarms; reminders only come while ASCEND is open anyway.
+    async exactAlarms() {
+      return 'unsupported';
+    },
+    async openExactAlarmSettings() {
+      return 'unsupported';
     },
     onTap(handler) {
       handlers.add(handler);

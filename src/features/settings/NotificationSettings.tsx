@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router';
 import { getNotifier } from '@/app/notify';
 import type { Settings } from '@/core/db/types';
 import { addMinutes, minuteInQuietHours, REMINDER_TIME } from '@/core/notifications/plan';
@@ -7,6 +8,7 @@ import { useToday } from '@/core/state/today';
 import { Button } from '@/ui/Button';
 import { useAction } from '@/ui/hooks/useAction';
 import { Switch } from '@/ui/Switch';
+import { ReliableReminders } from './ReliableReminders';
 import { Card } from './sections';
 
 type Toggle = 'wake_checkin' | 'morning_briefing' | 'quest_reminders' | 'evening_winddown';
@@ -49,9 +51,14 @@ export function NotificationSettings({ settings }: { settings: Settings }) {
   const n = settings.notifications;
   const android = notifier.platform === 'android';
 
+  const { hash } = useLocation();
   useEffect(() => {
     void notifier.permission().then(setPermission);
   }, [notifier]);
+  // Opened from Today's "Fix it": bring this card into view.
+  useEffect(() => {
+    if (hash === '#notifications') document.getElementById('notifications')?.scrollIntoView();
+  }, [hash]);
 
   const ask = async () => setPermission(await notifier.requestPermission());
   const test = async () => {
@@ -83,7 +90,7 @@ export function NotificationSettings({ settings }: { settings: Settings }) {
   ].filter((x): x is string => typeof x === 'string');
 
   return (
-    <Card title="Notifications">
+    <Card title="Notifications" id="notifications">
       <p className="text-muted text-sm">
         {android
           ? 'Reminders are scheduled on this phone a week ahead, so they arrive even when ASCEND is closed or offline.'
@@ -236,6 +243,8 @@ export function NotificationSettings({ settings }: { settings: Settings }) {
         If you don’t open ASCEND for a week, reminders stop by themselves — except one gentle note.
         They start again the next time you open it.
       </p>
+
+      {android && permission === 'granted' && <ReliableReminders wakeTime={settings.wake_time} />}
 
       {canShow && (
         <div className="flex flex-wrap items-center gap-3">
