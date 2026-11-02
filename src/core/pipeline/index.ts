@@ -7,6 +7,7 @@ import './actions/rollover';
 import './actions/progress';
 import './actions/onboarding';
 import './actions/backup';
+import './actions/goals';
 
 export * from './events';
 export * from './recordAction';
