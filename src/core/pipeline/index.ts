@@ -1,6 +1,7 @@
 // Registers every action (importing the module defines it).
 import './actions/settings';
 import './actions/habits';
+import './actions/quests';
 
 export * from './events';
 export * from './recordAction';
