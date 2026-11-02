@@ -2,9 +2,9 @@
 
 ## Resume here
 
-- **Current task:** none — 2.1 finished. Next is 2.2.
-- **Done so far:** Phase 1 complete (v0.1.0) — see the Phase 1 checklist and CHANGELOG. Key code: src/core/time (days), src/core/db (schema), src/core/pipeline (recordAction, defineAction, events), src/config/game.ts, src/core/engine/levels.ts, src/dev (dev tools). Live: https://ascend-vert-mu.vercel.app Phase 2: 2.1 — engine/instances.ts, pipeline/helpers.ts (appDayOf, ensureInstancesForDay), actions/habitSchema.ts + habits.ts (habit.create/update/pause/archive/restore/reorder/delete), RuleError, src/test/testDb.ts helper.
-- **Next step:** task 2.2 — src/core/engine/xp.ts: pure day-total function (events in occurred_at order → streak bonus from streak_at_start → soft cap → round; per-stat amounts; Daily Clear +20 separate), award amounts (full/min/late/topup/correction), idempotency key builder; tests for every 4.8 rule; switch scripts/simulate.ts to use it.
+- **Current task:** none — 2.2 finished. Next is 2.3.
+- **Done so far:** Phase 1 complete (v0.1.0) — see the Phase 1 checklist and CHANGELOG. Key code: src/core/time (days), src/core/db (schema), src/core/pipeline (recordAction, defineAction, events), src/config/game.ts, src/core/engine/levels.ts, src/dev (dev tools). Live: https://ascend-vert-mu.vercel.app Phase 2: 2.1 — engine/instances.ts, pipeline/helpers.ts (appDayOf, ensureInstancesForDay), actions/habitSchema.ts + habits.ts (habit.create/update/pause/archive/restore/reorder/delete), RuleError, src/test/testDb.ts helper. 2.2 — engine/xp.ts (baseAward, streakMultiplier, awardKey, liveEvents, computeDayXp, netBaseFor, planAward) + 19 tests; simulate.ts now uses computeDayXp.
+- **Next step:** task 2.3 — completion actions in src/core/pipeline/actions/quests.ts: quest.complete (full/min tap for check quests), quest.addProgress (progress entries; auto min→full status upgrade with top-up), quest.wakeCheckin (on time ≤ wake+window, late until 07:00 cutoff, after = refused), quest.untick (same day only, correction), closed-day guard for UI actions, late-arriving actions (source widget/notification/sync) accepted for their original day. Tests.
 - **Open questions:** none.
 - **Broken:** nothing. `npm run check` passes.
 
@@ -28,7 +28,7 @@
 ## Phase 2 — Core loop
 
 - [x] 2.1 Habit actions + instance generation
-- [ ] 2.2 XP engine (also: switch scripts/simulate.ts to the engine's day-total function)
+- [x] 2.2 XP engine (also: switch scripts/simulate.ts to the engine's day-total function)
 - [ ] 2.3 Completion actions
 - [ ] 2.4 Day evaluation
 - [ ] 2.5 Streaks, shields, repair

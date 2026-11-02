@@ -8,8 +8,9 @@
  * Targets: ~level 25–30 after year 1, ~55–60 after year 5, rank S not before year 4–5.
  */
 import { GAME, type Rank } from '@/config/game';
-import type { Difficulty, Stat } from '@/core/db/types';
+import { STATS, type Difficulty, type Stat } from '@/core/db/types';
 import { levelFromXp, rankFor } from '@/core/engine/levels';
+import { computeDayXp } from '@/core/engine/xp';
 
 // ---- The user's real starter quests (DECISIONS.md) ----
 const HABITS: { name: string; stat: Stat; difficulty: Difficulty; core: boolean }[] = [
@@ -44,21 +45,21 @@ function rng(seed: number) {
   return () => (s = (s * 16807) % 2147483647) / 2147483647;
 }
 
-/** Day total per SPEC 4.8: streak bonus (start-of-day streak), then soft cap, then round. */
-function applyDayRules(
+/** The day's XP through the real engine (SPEC 4.8 order of operations). */
+function dayXp(
   baseAwards: { stat: Stat; base: number }[],
   streakAtStart: number,
-): { stat: Stat; xp: number }[] {
-  const bonus = Math.min(GAME.streakBonus.max, GAME.streakBonus.perDay * streakAtStart);
-  let dayTotal = 0;
-  return baseAwards.map(({ stat, base }) => {
-    const withBonus = base * (1 + bonus);
-    const { threshold, factor } = GAME.softCap;
-    const below = Math.max(0, Math.min(withBonus, threshold - dayTotal));
-    const capped = below + (withBonus - below) * factor;
-    dayTotal += capped;
-    return { stat, xp: Math.round(capped) };
-  });
+  dailyClear: boolean,
+) {
+  const events = baseAwards.map(({ stat, base }, i) => ({
+    occurred_at: `2026-01-01T${String(i).padStart(2, '0')}:00:00.000Z`,
+    stat,
+    base_amount: base,
+    reason: 'quest_full' as const,
+    ref_id: `q${i}`,
+    idempotency_key: `q${i}:quest_full:0`,
+  }));
+  return computeDayXp(events, streakAtStart, dailyClear);
 }
 
 interface YearRow {
@@ -128,11 +129,9 @@ function simulateUser(seed: number): { rows: YearRow[]; sDay: number | null } {
       pendingRepair = null;
     }
 
-    for (const { stat, xp } of applyDayRules(awards, streak)) {
-      statXp[stat] += xp;
-      total += xp;
-    }
-    if (allDone && awards.length > 0) total += GAME.dailyClearBonus;
+    const day = dayXp(awards, streak, allDone && awards.length > 0);
+    for (const stat of STATS) statXp[stat] += day.byStat[stat];
+    total += day.total;
 
     if (coreOk) {
       activeDays++;
