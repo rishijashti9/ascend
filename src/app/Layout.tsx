@@ -1,5 +1,7 @@
 import { NavLink, Outlet } from 'react-router';
 import { AchievementToast } from '@/features/achievements/AchievementToast';
+import { isEnabled } from '@/config/features';
+import { NotificationBridge } from '@/features/notifications/NotificationBridge';
 import { LevelUpMoment } from '@/features/moments/LevelUpMoment';
 import { MORE_ITEM, primaryNav, secondaryNav, type NavItem } from './navigation';
 
@@ -56,6 +58,7 @@ export function Layout() {
       </aside>
 
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 pt-[max(1.5rem,env(safe-area-inset-top))] pb-24 sm:px-6 lg:px-10 lg:pb-10">
+        {isEnabled('notifications') && <NotificationBridge />}
         <Outlet />
       </main>
       <AchievementToast />

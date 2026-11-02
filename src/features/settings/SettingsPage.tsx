@@ -2,6 +2,7 @@ import { APP_VERSION } from '@/app/version';
 import { isEnabled } from '@/config/features';
 import { useAppState } from '@/core/state/app';
 import { BackupSection } from './BackupSection';
+import { NotificationSettings } from './NotificationSettings';
 import { PlannerSettings } from './PlannerSettings';
 import {
   AppearanceSection,
@@ -29,6 +30,7 @@ export function SettingsPage() {
             settings={settings}
           />
           <CoreSection />
+          {isEnabled('notifications') && <NotificationSettings settings={settings} />}
           {isEnabled('goals') && <PlannerSettings settings={settings} />}
           {isEnabled('exportImport') && <BackupSection />}
           <DataSection />
