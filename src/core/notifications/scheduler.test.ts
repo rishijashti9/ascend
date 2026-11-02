@@ -41,6 +41,13 @@ beforeEach(async () => {
     })
   ).value as Habit;
   await ensureInstancesForDay(t.db, '2026-11-02');
+  // Only the wake-up check-in here (the other kinds have their own planner tests).
+  await t.run({
+    type: 'settings.update',
+    payload: {
+      notifications: { morning_briefing: false, quest_reminders: false, evening_winddown: false },
+    },
+  });
 });
 afterEach(async () => {
   clearSubscribers();

@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
 import { setNotifier } from '@/app/notify';
@@ -160,5 +160,37 @@ describe('Notification settings and banners', () => {
     expect(await screen.findByText(/Notifications are blocked for ASCEND/)).toBeInTheDocument();
     expect(screen.getByText(/scheduled on this phone a week ahead/)).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Send a test' })).not.toBeInTheDocument();
+  });
+
+  it('each reminder has its own switch; the wind-down time can be changed', async () => {
+    setNotifier(fakeNotifier('browser', 'granted').n);
+    await startAppState();
+    const { useAppState } = await import('@/core/state/app');
+    function Live() {
+      const settings = useAppState((x) => x.settings);
+      return settings ? <NotificationSettings settings={settings} /> : null;
+    }
+    render(
+      <MemoryRouter>
+        <Live />
+      </MemoryRouter>,
+    );
+    for (const name of [
+      'Wake-up check-in',
+      'Morning briefing',
+      'Core quest reminder',
+      'Evening wind-down',
+    ])
+      expect(screen.getByRole('switch', { name })).toBeChecked();
+    await userEvent.click(screen.getByRole('switch', { name: 'Morning briefing' }));
+    await waitFor(async () =>
+      expect((await db.settings.get('settings'))?.notifications.morning_briefing).toBe(false),
+    );
+    const time = screen.getByLabelText('Wind-down time');
+    fireEvent.change(time, { target: { value: '22:15' } });
+    await waitFor(async () =>
+      expect((await db.settings.get('settings'))?.notifications.evening_time).toBe('22:15'),
+    );
+    expect(await screen.findByText(/At 22:15: a nudge/)).toBeInTheDocument();
   });
 });

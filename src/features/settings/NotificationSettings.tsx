@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getNotifier } from '@/app/notify';
 import type { Settings } from '@/core/db/types';
+import { REMINDER_TIME } from '@/core/notifications/plan';
 import type { NotifyPermission } from '@/core/notifications/types';
 import { useToday } from '@/core/state/today';
 import { Button } from '@/ui/Button';
@@ -8,13 +9,29 @@ import { useAction } from '@/ui/hooks/useAction';
 import { Switch } from '@/ui/Switch';
 import { Card } from './sections';
 
-type Toggle = 'wake_checkin';
+type Toggle = 'wake_checkin' | 'morning_briefing' | 'quest_reminders' | 'evening_winddown';
 const KINDS: { key: Toggle; label: string; hint: (s: Settings) => string }[] = [
   {
     key: 'wake_checkin',
     label: 'Wake-up check-in',
     hint: (s) =>
       `At ${s.wake_time}: “Day N. Are you up?” with an “I’m up” button — the moment you tap is what counts.`,
+  },
+  {
+    key: 'morning_briefing',
+    label: 'Morning briefing',
+    hint: () => 'When the wake-up window ends: how many quests today, and where to start.',
+  },
+  {
+    key: 'quest_reminders',
+    label: 'Core quest reminder',
+    hint: () =>
+      `At ${REMINDER_TIME}, only if core quests are still open — the minimum versions count.`,
+  },
+  {
+    key: 'evening_winddown',
+    label: 'Evening wind-down',
+    hint: (s) => `At ${s.notifications.evening_time}: a nudge for the 1-minute check-in.`,
   },
 ];
 
@@ -129,6 +146,25 @@ export function NotificationSettings({ settings }: { settings: Settings }) {
           </li>
         ))}
       </ul>
+      {n.evening_winddown && (
+        <label className="flex items-center justify-between gap-4 text-sm">
+          <span>Wind-down time</span>
+          <input
+            type="time"
+            value={n.evening_time}
+            disabled={busy}
+            onChange={(e) => {
+              if (/^\d{2}:\d{2}$/.test(e.target.value)) {
+                void run({
+                  type: 'settings.update',
+                  payload: { notifications: { evening_time: e.target.value } },
+                });
+              }
+            }}
+            className="border-border bg-surface min-h-11 rounded-md border px-3 text-base"
+          />
+        </label>
+      )}
 
       {canShow && (
         <div className="flex flex-wrap items-center gap-3">
