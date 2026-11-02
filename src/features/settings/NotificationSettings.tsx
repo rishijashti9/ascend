@@ -8,6 +8,16 @@ import { useAction } from '@/ui/hooks/useAction';
 import { Switch } from '@/ui/Switch';
 import { Card } from './sections';
 
+type Toggle = 'wake_checkin';
+const KINDS: { key: Toggle; label: string; hint: (s: Settings) => string }[] = [
+  {
+    key: 'wake_checkin',
+    label: 'Wake-up check-in',
+    hint: (s) =>
+      `At ${s.wake_time}: “Day N. Are you up?” with an “I’m up” button — the moment you tap is what counts.`,
+  },
+];
+
 /**
  * Notifications (SPEC 7.11, 8): what this device can really do, said plainly — Android
  * schedules reminders a week ahead and works offline; a browser only reminds while ASCEND is
@@ -98,6 +108,27 @@ export function NotificationSettings({ settings }: { settings: Settings }) {
           />
         </div>
       )}
+
+      <ul className="divide-border flex flex-col divide-y">
+        {KINDS.map((k) => (
+          <li key={k.key} className="flex items-start justify-between gap-4 py-3">
+            <div>
+              <p className="font-medium" id={`notify-${k.key}`}>
+                {k.label}
+              </p>
+              <p className="text-muted text-sm">{k.hint(settings)}</p>
+            </div>
+            <Switch
+              on={n[k.key]}
+              labelledBy={`notify-${k.key}`}
+              disabled={busy}
+              onChange={(on) =>
+                void run({ type: 'settings.update', payload: { notifications: { [k.key]: on } } })
+              }
+            />
+          </li>
+        ))}
+      </ul>
 
       {canShow && (
         <div className="flex flex-wrap items-center gap-3">

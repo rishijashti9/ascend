@@ -10,6 +10,9 @@ import { startAutoPlanner } from './core/planner/auto';
 import { startAchievements } from './core/achievements/auto';
 import { startAchievementsStore } from './core/state/achievements';
 import { startMoments } from './core/state/moments';
+import { getNotifier } from './app/notify';
+import { isEnabled } from './config/features';
+import { startNotificationScheduler } from './core/notifications/scheduler';
 import { startSuggestion } from './core/state/suggestion';
 import { appStore, startAppState } from './core/state/app';
 import { startBody } from './core/state/body';
@@ -63,6 +66,7 @@ async function start(): Promise<void> {
   startAutoPlanner();
   startAchievements();
   startMoments();
+  if (isEnabled('notifications')) startNotificationScheduler(getNotifier());
   root.render(
     <StrictMode>
       <App />
