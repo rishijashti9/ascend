@@ -2,7 +2,6 @@ import { GAME } from '@/config/game';
 import type { Settings, Stat } from '@/core/db/types';
 import type { ThemePreference } from '@/app/theme';
 import type { OnboardingPayload } from '@/core/pipeline';
-import { HABIT_DEFAULTS, habitProblems } from '@/core/pipeline/actions/habitSchema';
 import {
   STARTER_DREAM,
   STARTER_HABITS,
@@ -12,6 +11,7 @@ import {
   wakeWording,
   type StarterHabit,
 } from '@/data/starter';
+import { editProblems } from '@/ui/habit/habitEdit';
 
 /** Everything the five onboarding steps edit, kept in memory until "Begin". */
 export interface Draft {
@@ -45,14 +45,7 @@ export function withWakeWording(habit: StarterHabit, wakeTime: string, timing: T
 }
 
 /** Problems with one quest, in plain words (empty = fine). */
-export function questProblems(h: StarterHabit): string[] {
-  return habitProblems({
-    ...HABIT_DEFAULTS,
-    ...habitFieldsOf(h),
-    schedule: [...HABIT_DEFAULTS.schedule],
-    skill_ids: [],
-  });
-}
+export const questProblems = (h: StarterHabit): string[] => editProblems(h);
 
 export const coreCount = (d: Draft) => d.habits.filter((h) => h.selected && h.core).length;
 export const canAddCore = (d: Draft) => coreCount(d) < GAME.maxCoreHabits;

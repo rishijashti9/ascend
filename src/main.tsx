@@ -7,6 +7,7 @@ import { applyTheme } from './app/theme';
 import { openDatabase } from './core/db/open';
 import { installGlobalErrorHandlers, logError } from './core/errorLog';
 import { appStore, startAppState } from './core/state/app';
+import { startHabits } from './core/state/habits';
 import { rebuildProgress, startProgressStore } from './core/state/progress';
 import { startToday } from './core/state/today';
 import './styles/index.css';
@@ -41,6 +42,7 @@ async function start(): Promise<void> {
   await startProgressStore();
   await startAppState();
   await startToday();
+  await startHabits();
   root.render(
     <StrictMode>
       <App />

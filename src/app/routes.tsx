@@ -1,6 +1,7 @@
 import { Navigate, type RouteObject } from 'react-router';
 import { isEnabled, type FeatureKey } from '@/config/features';
 import { MorePage } from '@/features/more/MorePage';
+import { QuestsPage } from '@/features/quests/QuestsPage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
 import { TodayPage } from '@/features/today/TodayPage';
 import { RouteErrorScreen } from './ErrorBoundary';
@@ -8,6 +9,7 @@ import { Layout } from './Layout';
 
 /** Screens by path. A route exists only while its feature flag is on. */
 const SCREENS: { path: string; feature: FeatureKey; element: React.ReactNode }[] = [
+  { path: 'quests', feature: 'quests', element: <QuestsPage /> },
   { path: 'settings', feature: 'settings', element: <SettingsPage /> },
 ];
 

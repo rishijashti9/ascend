@@ -204,8 +204,10 @@ export const reorderHabits = defineAction({
   async run(ctx, { ids }) {
     for (const [order, id] of ids.entries()) {
       const habit = await getHabit(ctx.db, id);
-      if (habit.order !== order)
+      if (habit.order !== order) {
         await ctx.db.habits.put({ ...habit, order, ...touch(ctx.processedAt) });
+        ctx.emit({ type: 'HabitChanged', payload: { habitId: id, change: 'updated' } });
+      }
     }
     return ids.length;
   },
