@@ -1,16 +1,18 @@
 # PROGRESS.md
 
 ## Resume here
-- **Current task:** none. PLAN.md is written and waiting for Rishi's "go".
-- **Done so far:** SPEC.md read, questions answered (DECISIONS.md), PLAN.md, CLAUDE.md. Git repo initialised; planning docs pushed to private GitHub repo `rishijashti9/ascend` (branch `main`).
-- **Next step:** after "go", start task 1.1 (scaffold Vite + React + TS strict, ESLint/Prettier, Vitest, README, CHANGELOG, .env.example).
+
+- **Current task:** none — 1.1 finished. Next is 1.2.
+- **Done so far:** 1.1 — Vite + React 19 + TS 6 strict scaffold, ESLint, Prettier, Vitest (jsdom), README, CHANGELOG, .env.example; pushed to `rishijashti9/ascend`.
+- **Next step:** task 1.2 — design tokens (src/styles/tokens.css), Tailwind v4, bundled Inter + Space Grotesk (@fontsource), theme switch, WCAG contrast unit test.
 - **Open questions:** none.
-- **Broken:** nothing (no code yet).
+- **Broken:** nothing. `npm run check` passes.
 
 `[ ]` not started · `[~]` in progress · `[x]` done
 
 ## Phase 1 — Foundation
-- [ ] 1.1 Scaffold, tooling, docs, git + GitHub
+
+- [x] 1.1 Scaffold, tooling, docs, git + GitHub
 - [ ] 1.2 Design tokens, Tailwind, fonts, themes, contrast test
 - [ ] 1.3 App shell, navigation, feature flags, error boundary
 - [ ] 1.4 Time module + tests
@@ -24,6 +26,7 @@
 - [ ] 1.12 Playwright smoke, Vercel deploy, wrap-up
 
 ## Phase 2 — Core loop
+
 - [ ] 2.1 Habit actions + instance generation
 - [ ] 2.2 XP engine
 - [ ] 2.3 Completion actions
@@ -41,6 +44,7 @@
 - [ ] 2.15 E2E + wrap-up → 1 week of daily use
 
 ## Phase 3 — Goals + Goal Planner
+
 - [ ] 3.1 Goal actions + progress
 - [ ] 3.2 Vision & Goals screens
 - [ ] 3.3 Weekly + side quests
@@ -53,6 +57,7 @@
 - [ ] 3.10 Onboarding goals planner run + E2E
 
 ## Phase 4 — Focus & Body
+
 - [ ] 4.1 Focus engine + actions
 - [ ] 4.2 Focus screen
 - [ ] 4.3 Session history
@@ -61,6 +66,7 @@
 - [ ] 4.6 Charts + E2E
 
 ## Phase 5 — Reviews & progress
+
 - [ ] 5.1 Daily check-in
 - [ ] 5.2 Weekly review
 - [ ] 5.3 Monthly/yearly summaries
@@ -71,12 +77,14 @@
 - [ ] 5.8 Difficulty suggestions + E2E
 
 ## Phase 6 — Notifications
+
 - [ ] 6.1 Notification service
 - [ ] 6.2 Wake-up check-in
 - [ ] 6.3 Briefing, reminders, wind-down
 - [ ] 6.4 Quiet hours, pause, rescheduling
 
 ## Phase 7 — Sync & accounts
+
 - [ ] 7.1 Supabase schema + RLS
 - [ ] 7.2 Auth
 - [ ] 7.3 Sync engine
@@ -87,6 +95,7 @@
 - [ ] 7.8 Sync tests
 
 ## Phase 8 — AI coach
+
 - [ ] 8.1 AIProvider + Edge Function
 - [ ] 8.2 Budget, rate limit, cache
 - [ ] 8.3 AI Goal Planner
@@ -95,6 +104,7 @@
 - [ ] 8.6 Guardrails + tests
 
 ## Phase 9 — Career tools
+
 - [ ] 9.1 Skills data + levels
 - [ ] 9.2 Skill tree UI
 - [ ] 9.3 Job tracker actions
@@ -102,6 +112,7 @@
 - [ ] 9.5 Follow-ups + planner hooks
 
 ## Phase 10 — Android native & polish
+
 - [ ] 10.1 Health Connect
 - [ ] 10.2 Widgets
 - [ ] 10.3 Pending-actions queue

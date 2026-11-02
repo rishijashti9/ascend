@@ -10,16 +10,16 @@ Every answer Rishi gave and every decision made. Newest at the bottom of each se
 - Wake time 5:00 AM, wake-up window 20 min. Day-start hour **3:00 AM**. Week starts Monday. Timezone from device (Asia/Kolkata now).
 - Starter daily quests (all every day, incl. weekends):
 
-| Quest | Stat | Difficulty | Measure | Full | Minimum | Core |
-|---|---|---|---|---|---|---|
-| Wake up on time | WIL | Normal | check (wake check-in) | "I'm up" by 5:20 | late check-in | yes |
-| AI & Robotics study (phone-free) | INT | Hard | minutes | 150 | 30 | yes |
-| Workout | STR | Normal | check | 30 min workout | 10 push-ups | yes |
-| Game dev study (phone-free) | INT | Normal | minutes | 60 | 15 | |
-| Walk | STR | Easy | steps | 8,000 | 3,000 | |
-| Sleep | STR | Normal | sleep_hours | 7.5 | 6.5 | |
-| Journal | WIL | Easy | check | 10 min writing | 3 lines (one win, one lesson) | |
-| Meditate | WIL | Easy | minutes | 10 | 2 | |
+| Quest                            | Stat | Difficulty | Measure               | Full             | Minimum                       | Core |
+| -------------------------------- | ---- | ---------- | --------------------- | ---------------- | ----------------------------- | ---- |
+| Wake up on time                  | WIL  | Normal     | check (wake check-in) | "I'm up" by 5:20 | late check-in                 | yes  |
+| AI & Robotics study (phone-free) | INT  | Hard       | minutes               | 150              | 30                            | yes  |
+| Workout                          | STR  | Normal     | check                 | 30 min workout   | 10 push-ups                   | yes  |
+| Game dev study (phone-free)      | INT  | Normal     | minutes               | 60               | 15                            |      |
+| Walk                             | STR  | Easy       | steps                 | 8,000            | 3,000                         |      |
+| Sleep                            | STR  | Normal     | sleep_hours           | 7.5              | 6.5                           |      |
+| Journal                          | WIL  | Easy       | check                 | 10 min writing   | 3 lines (one win, one lesson) |      |
+| Meditate                         | WIL  | Easy       | minutes               | 10               | 2                             |      |
 
 - Career learning 3–4 h/day, 70% AI & Robotics / 30% game dev. Phone-free deep work is merged into the study quests.
 - No job-application quest for now (job search paused; Jobs screen hidden until switched on).
@@ -30,8 +30,8 @@ Every answer Rishi gave and every decision made. Newest at the bottom of each se
 ## Answers to pre-build questions (2026-11-02)
 
 1. **Wake-up timing**
-   - a. A tap *before* wake time counts as on time (`done_full`).
-   - b. **Late cutoff is 7:00 AM.** Tap between wake time + window (5:20) and 7:00 → `done_late`. After 7:00 the "I'm up" button disappears and the wake-up quest is **missed** for that day. *(Rishi changed this from the suggested noon.)* The cutoff is a setting (`wake_late_cutoff`, default 07:00).
+   - a. A tap _before_ wake time counts as on time (`done_full`).
+   - b. **Late cutoff is 7:00 AM.** Tap between wake time + window (5:20) and 7:00 → `done_late`. After 7:00 the "I'm up" button disappears and the wake-up quest is **missed** for that day. _(Rishi changed this from the suggested noon.)_ The cutoff is a setting (`wake_late_cutoff`, default 07:00).
 2. **Shields/repair and streak count**
    - a. A shielded or repaired day **keeps** the streak but does **not** increase it.
    - b. Shielded/repaired days do **not** count toward the 7 consecutive active days that earn a shield (the 7-day counter pauses on them, it doesn't reset).
@@ -54,3 +54,5 @@ Every answer Rishi gave and every decision made. Newest at the bottom of each se
 - **Libraries**: React 19, TypeScript strict, Vite, Tailwind CSS v4 (reads the CSS-variable tokens), React Router, Zustand, Dexie (IndexedDB), Zod (validating imports and AI output), Recharts, Lucide icons, vite-plugin-pwa, Capacitor; Vitest + fake-indexeddb + Playwright for tests. Fonts from `@fontsource` packages so they're bundled into the build (no Google Fonts link).
 - **Extra tables beyond spec section 10**: `meta` (key/value: last rollover, cache version), `plan_proposals` (planner output waiting for approval), `photos` (image blobs, separate from `body_logs`, never synced), `error_log` (local crash log). Every record also gets `hlc` (hybrid logical clock string) from day one, so Phase 7 sync needs no migration.
 - **Dev test-data generator** moves from Phase 1 to Phase 2 (task 2.14): realistic data needs the quest-completion actions that Phase 2 builds. Phase 1 dev tools = date travel, jump N days, reset.
+- **TypeScript 6.0, not 7.0** (task 1.1): typescript-eslint doesn't support TypeScript 7 yet (needs < 6.1). Upgrade when it does.
+- **Known dev-only audit warning** (task 1.1): `npm audit` reports a moderate `minimatch` issue inside ESLint's dependencies. It only affects the lint tool on this laptop, never the app. The suggested "fix" downgrades typescript-eslint, so it's left alone until ESLint updates.
