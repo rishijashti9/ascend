@@ -6,7 +6,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom"],
+    "types": ["vite/client"],
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
@@ -20,5 +20,6 @@
     "noEmit": true,
     "paths": { "@/*": ["./src/*"] }
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx", "src/test"]
 }

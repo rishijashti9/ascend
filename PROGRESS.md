@@ -2,9 +2,9 @@
 
 ## Resume here
 
-- **Current task:** none — 1.1 finished. Next is 1.2.
-- **Done so far:** 1.1 — Vite + React 19 + TS 6 strict scaffold, ESLint, Prettier, Vitest (jsdom), README, CHANGELOG, .env.example; pushed to `rishijashti9/ascend`.
-- **Next step:** task 1.2 — design tokens (src/styles/tokens.css), Tailwind v4, bundled Inter + Space Grotesk (@fontsource), theme switch, WCAG contrast unit test.
+- **Current task:** none — 1.2 finished. Next is 1.3.
+- **Done so far:** 1.1 scaffold; 1.2 design tokens (src/styles/tokens.css, AA-checked by tokens.test.ts), Tailwind v4 mapped to tokens (src/styles/index.css), bundled Inter + Space Grotesk, theme.ts (system/light/dark via data-theme).
+- **Next step:** task 1.3 — React Router, layout with 5-tab bottom bar (mobile) + sidebar (desktop), More page, src/config/features.ts flags, error boundary (Export my data / Reload) + local error log.
 - **Open questions:** none.
 - **Broken:** nothing. `npm run check` passes.
 
@@ -13,7 +13,7 @@
 ## Phase 1 — Foundation
 
 - [x] 1.1 Scaffold, tooling, docs, git + GitHub
-- [ ] 1.2 Design tokens, Tailwind, fonts, themes, contrast test
+- [x] 1.2 Design tokens, Tailwind, fonts, themes, contrast test
 - [ ] 1.3 App shell, navigation, feature flags, error boundary
 - [ ] 1.4 Time module + tests
 - [ ] 1.5 Schema + Dexie DB + migrations + persist
