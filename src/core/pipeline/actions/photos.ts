@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import type { BodyLog, Photo } from '@/core/db/types';
+import type { Photo } from '@/core/db/types';
 import { appDayOf } from '../helpers';
 import { newBase, touch } from '../records';
 import { defineAction, RuleError } from '../registry';
-import { bodyLogId } from './body';
+import { bodyLogId, emptyBodyLog } from './bodySync';
 
 /**
  * Body photos (SPEC 7.6, DECISIONS): kept on this device only — never synced and never in the
@@ -16,21 +16,6 @@ const image = z
   .refine((b) => b.size > 0 && b.size <= 15_000_000, 'image too large');
 const TABLES = ['photos', 'body_logs', 'settings'] as const;
 
-function emptyLog(d: string, at: string): BodyLog {
-  return {
-    ...newBase(bodyLogId(d), at),
-    day: d,
-    weight: null,
-    waist: null,
-    sleep_hours: null,
-    steps: null,
-    workout_notes: null,
-    photo_id: null,
-    source: 'manual',
-    manual_override: false,
-  };
-}
-
 export const addPhoto = defineAction({
   type: 'photo.add',
   schema: z
@@ -41,7 +26,7 @@ export const addPhoto = defineAction({
     const today = await appDayOf(ctx.db, ctx.occurredAt);
     const d = p.day ?? today;
     if (d > today) throw new RuleError('That day hasn’t happened yet');
-    const log = (await ctx.db.body_logs.get(bodyLogId(d))) ?? emptyLog(d, ctx.processedAt);
+    const log = (await ctx.db.body_logs.get(bodyLogId(d))) ?? emptyBodyLog(d, ctx.processedAt);
     // One photo per day: a new one replaces the old.
     if (log.photo_id) await ctx.db.photos.delete(log.photo_id);
     const photo: Photo = {
@@ -100,7 +85,7 @@ export const restorePhotos = defineAction({
         blob: p.blob,
       });
       const log =
-        (await ctx.db.body_logs.get(bodyLogId(p.day))) ?? emptyLog(p.day, ctx.processedAt);
+        (await ctx.db.body_logs.get(bodyLogId(p.day))) ?? emptyBodyLog(p.day, ctx.processedAt);
       if (!log.photo_id || !(await ctx.db.photos.get(log.photo_id))) {
         await ctx.db.body_logs.put({ ...log, photo_id: p.id, ...touch(ctx.processedAt) });
       }

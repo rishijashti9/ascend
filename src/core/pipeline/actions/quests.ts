@@ -6,6 +6,7 @@ import { currentTimeZone } from '@/core/time';
 import { appDayOf, getSettings } from '../helpers';
 import { newBase } from '../records';
 import { defineAction, RuleError, type ActionContext } from '../registry';
+import { bodyFieldFor, setBodyMetric } from './bodySync';
 import { applyStatus, guardDay, loadInstance, QUEST_TABLES, spanOf } from './questCommon';
 
 /**
@@ -76,9 +77,21 @@ export const logProgress = defineAction({
     };
     await ctx.db.progress_entries.add(entry);
     ctx.emit({ type: 'ProgressAdded', payload: { instanceId: id, day, amount } });
+    await shareWithBodyLog(ctx, instance);
     return syncStatusWithProgress(ctx, instance, day);
   },
 });
+
+/** Steps and sleep: the quest's day total is also that day's Body value (task 4.7). */
+async function shareWithBodyLog(ctx: ActionContext, instance: QuestInstance): Promise<void> {
+  const field = instance.source_type === 'habit' ? bodyFieldFor(instance.measure_snapshot) : null;
+  if (!field) return;
+  const entries = await ctx.db.progress_entries
+    .where('quest_instance_id')
+    .equals(instance.id)
+    .toArray();
+  await setBodyMetric(ctx, instance.day, field, progressValue(instance.measure_snapshot, entries));
+}
 
 async function syncStatusWithProgress(
   ctx: ActionContext,
@@ -159,6 +172,9 @@ export const untickQuest = defineAction({
         });
       }
     }
+    // An undone steps/sleep entry clears that day's Body value too (one number, both places).
+    const field = instance.source_type === 'habit' ? bodyFieldFor(instance.measure_snapshot) : null;
+    if (field) await setBodyMetric(ctx, instance.day, field, null);
     return applyStatus(ctx, instance, 'pending', day);
   },
 });

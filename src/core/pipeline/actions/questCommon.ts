@@ -14,6 +14,7 @@ export const QUEST_TABLES = [
   'settings',
   'days',
   'quests',
+  'body_logs', // steps & sleep are shared with the Body log (bodySync.ts)
 ] as const;
 
 /** Sources that deliver real actions which may arrive after their day has closed. */

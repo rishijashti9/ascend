@@ -4,6 +4,10 @@ All notable changes to ASCEND. Versions follow [semantic versioning](https://sem
 
 ## [Unreleased]
 
+### Changed
+
+- Steps and sleep are one number per day: entering them on the Walk / Sleep quest updates the Body log and its charts, and entering them in Body updates the quests. Undo / clearing works in both places.
+
 ## [0.4.0] — 2026-11-02 — Phase 4: Focus & Body
 
 ### Added

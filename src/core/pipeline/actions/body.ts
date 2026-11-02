@@ -1,15 +1,19 @@
 import { z } from 'zod';
 import type { BodyLog } from '@/core/db/types';
 import { appDayOf } from '../helpers';
-import { newBase, touch } from '../records';
+import { touch } from '../records';
 import { defineAction, RuleError, type ActionContext } from '../registry';
 import { QUEST_TABLES } from './questCommon';
-import { logProgress } from './quests';
+import { bodyFieldFor, bodyLogId, emptyBodyLog } from './bodySync';
+import { logProgress, untickQuest } from './quests';
+
+export { bodyLogId };
 
 /**
  * Body logs (SPEC 7.6): one record per day — weight, waist, sleep, steps, workout notes.
- * A manual entry always wins over Health Connect (SPEC 6.4). Today's steps and sleep also go
- * into the matching daily quest (auto source steps / sleep), so nothing is entered twice.
+ * A manual entry always wins over Health Connect (SPEC 6.4). Steps and sleep are one number per
+ * day: today's go into the matching Walk / Sleep quest too, and entering them on the quest
+ * updates this log (bodySync.ts) — both always show the same value.
  */
 const day = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const nullable = <T extends z.ZodType>(t: T) => t.nullable().optional();
@@ -30,23 +34,33 @@ export const bodyLogSchema = z
     'nothing to log',
   );
 
-export const bodyLogId = (d: string) => `body:${d}`;
-
-/** Feeds today's steps / sleep into the daily quest that measures them (if there is one). */
-async function feedQuest(ctx: ActionContext, d: string, source: 'steps' | 'sleep', amount: number) {
-  const instances = await ctx.db.quest_instances.where('day').equals(d).toArray();
-  const quest = instances.find(
+/**
+ * Today's steps / sleep go into every daily quest that measures them, so both screens show the
+ * same number; clearing the value here undoes the quest's entry (same as Undo on its card).
+ */
+async function shareWithQuests(
+  ctx: ActionContext,
+  d: string,
+  field: 'steps' | 'sleep_hours',
+  value: number | null,
+) {
+  const instances = (await ctx.db.quest_instances.where('day').equals(d).toArray()).filter(
     (i) =>
       i.deleted_at === null &&
       i.source_type === 'habit' &&
-      i.auto_source_snapshot === source &&
+      bodyFieldFor(i.measure_snapshot) === field &&
       i.status !== 'missed',
   );
-  if (!quest) return;
-  await logProgress.run(
-    ctx,
-    logProgress.schema.parse({ instanceId: quest.id, amount, source: 'manual' }),
-  );
+  for (const quest of instances) {
+    if (value === null) {
+      await untickQuest.run(ctx, untickQuest.schema.parse({ instanceId: quest.id }));
+    } else {
+      await logProgress.run(
+        ctx,
+        logProgress.schema.parse({ instanceId: quest.id, amount: value, source: 'manual' }),
+      );
+    }
+  }
 }
 
 export const logBody = defineAction({
@@ -59,18 +73,7 @@ export const logBody = defineAction({
     if (d > today) throw new RuleError('That day hasn’t happened yet');
     const id = bodyLogId(d);
     const existing = await ctx.db.body_logs.get(id);
-    const base: BodyLog = existing ?? {
-      ...newBase(id, ctx.processedAt),
-      day: d,
-      weight: null,
-      waist: null,
-      sleep_hours: null,
-      steps: null,
-      workout_notes: null,
-      photo_id: null,
-      source: 'manual',
-      manual_override: false,
-    };
+    const base: BodyLog = existing ?? emptyBodyLog(d, ctx.processedAt);
     const next: BodyLog = {
       ...base,
       ...Object.fromEntries(Object.entries(fields).filter(([, v]) => v !== undefined)),
@@ -84,10 +87,12 @@ export const logBody = defineAction({
     };
     await ctx.db.body_logs.put(next);
 
+    // Past days are history: a closed day's quests never change (SPEC 4.8), only its log does.
     if (d === today) {
-      if (typeof fields.steps === 'number') await feedQuest(ctx, d, 'steps', fields.steps);
-      if (typeof fields.sleep_hours === 'number')
-        await feedQuest(ctx, d, 'sleep', fields.sleep_hours);
+      if (fields.steps !== undefined) await shareWithQuests(ctx, d, 'steps', fields.steps);
+      if (fields.sleep_hours !== undefined) {
+        await shareWithQuests(ctx, d, 'sleep_hours', fields.sleep_hours);
+      }
     }
     ctx.emit({ type: 'BodyLogged', payload: { day: d } });
     return next;

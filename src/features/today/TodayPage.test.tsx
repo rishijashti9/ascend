@@ -95,6 +95,8 @@ describe('TodayPage', () => {
     await userEvent.type(within(walk).getByPlaceholderText('Total steps'), '8500');
     await userEvent.click(within(walk).getByRole('button', { name: 'Save' }));
     await waitFor(() => expect(within(walk).getByText('Done · Full')).toBeInTheDocument());
+    // One number in both places: the Body log has today's steps too (task 4.7).
+    expect((await db.body_logs.get('body:2026-11-02'))?.steps).toBe(8500);
   });
 
   it('"I\'m up" before the window ends counts as on time', async () => {
