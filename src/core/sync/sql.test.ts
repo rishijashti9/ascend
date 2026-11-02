@@ -1,0 +1,229 @@
+// @vitest-environment node
+import { readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { PGlite } from '@electric-sql/pglite';
+import { incomingWins, sortKey } from './merge';
+
+/**
+ * The Supabase migration, run for real in Postgres (PGlite) with a stand-in for Supabase's
+ * `auth` schema and roles: Row Level Security, push_records' conflict rules, and the same
+ * cases checked against the TypeScript rules in merge.ts.
+ */
+const MIGRATIONS = join(process.cwd(), 'supabase', 'migrations');
+const A = '11111111-1111-1111-1111-111111111111';
+const B = '22222222-2222-2222-2222-222222222222';
+
+let pg: PGlite;
+
+async function as(user: string | null) {
+  await pg.exec('reset role');
+  if (user) {
+    await pg.query(`select set_config('request.jwt.claim.sub', $1, false)`, [user]);
+    await pg.exec('set role authenticated');
+  } else {
+    await pg.query(`select set_config('request.jwt.claim.sub', '', false)`);
+    await pg.exec('set role anon');
+  }
+}
+const hlc = (ms: number, counter = 0, device = 'dev1') =>
+  `${String(ms).padStart(15, '0')}-${counter.toString(36).padStart(4, '0')}-${device}`;
+const push = async (records: unknown[]) =>
+  (
+    await pg.query<{ r: { accepted: number; kept: number } }>('select push_records($1) as r', [
+      JSON.stringify(records),
+    ])
+  ).rows[0]?.r;
+const rows = async () =>
+  (
+    await pg.query<{
+      tbl: string;
+      id: string;
+      hlc: string;
+      data: Record<string, unknown>;
+      seq: string;
+    }>('select tbl, id, hlc, data, seq from sync_records order by seq')
+  ).rows;
+
+beforeAll(async () => {
+  pg = new PGlite();
+  await pg.exec(`
+    create schema auth;
+    create table auth.users (id uuid primary key);
+    create function auth.uid() returns uuid language sql stable as
+      $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
+    create role anon;
+    create role authenticated;
+    grant usage on schema public, auth to anon, authenticated;
+    grant execute on function auth.uid() to anon, authenticated;
+    insert into auth.users values ('${A}'), ('${B}');
+  `);
+  for (const file of readdirSync(MIGRATIONS).sort()) {
+    await pg.exec(readFileSync(join(MIGRATIONS, file), 'utf8'));
+  }
+}, 60_000);
+afterAll(async () => {
+  await pg.close();
+});
+beforeEach(async () => {
+  await pg.exec('reset role; delete from sync_records;');
+});
+
+describe('Supabase migration (run in Postgres)', () => {
+  it('a user only ever sees their own rows; anonymous users can’t read or write', async () => {
+    await as(A);
+    expect(await push([{ tbl: 'habits', id: 'h1', hlc: hlc(1000), data: { title: 'A' } }])).toEqual(
+      { accepted: 1, kept: 0 },
+    );
+    await as(B);
+    await push([{ tbl: 'habits', id: 'h1', hlc: hlc(5000), data: { title: 'B' } }]);
+    expect((await rows()).map((r) => r.data.title)).toEqual(['B']);
+    await as(A);
+    expect((await rows()).map((r) => r.data.title)).toEqual(['A']);
+    // No direct writes, even to own rows.
+    await expect(pg.exec(`update sync_records set data = '{}'::jsonb`)).rejects.toThrow();
+    await expect(
+      pg.exec(
+        `insert into sync_records (tbl, id, hlc, sort_key, data) values ('habits','x','${hlc(1)}','x','{}')`,
+      ),
+    ).rejects.toThrow();
+    await as(null);
+    await expect(rows()).rejects.toThrow();
+    await expect(push([])).rejects.toThrow();
+  });
+
+  it('last write wins by HLC; a clock in the future is capped at the server time', async () => {
+    await as(A);
+    const now = Date.now();
+    await push([{ tbl: 'habits', id: 'h', hlc: hlc(now - 1000), data: { v: 1 } }]);
+    expect(await push([{ tbl: 'habits', id: 'h', hlc: hlc(now - 2000), data: { v: 0 } }])).toEqual({
+      accepted: 0,
+      kept: 1,
+    });
+    await push([{ tbl: 'habits', id: 'h', hlc: hlc(now - 500), data: { v: 2 } }]);
+    expect((await rows())[0]?.data.v).toBe(2);
+    // A phone a year ahead writes "now + 1 year": stored, but ranked at the received time…
+    await push([
+      { tbl: 'habits', id: 'h', hlc: hlc(now + 31_536_000_000, 0, 'bad'), data: { v: 3 } },
+    ]);
+    expect((await rows())[0]?.data.v).toBe(3);
+    // …so a normal later write still replaces it.
+    await new Promise((r) => setTimeout(r, 5));
+    await push([{ tbl: 'habits', id: 'h', hlc: hlc(Date.now() + 2), data: { v: 4 } }]);
+    expect((await rows())[0]?.data.v).toBe(4);
+  });
+
+  it('xp events are append-only; a completion beats a rollover’s missed; days follow the low-energy choice', async () => {
+    await as(A);
+    await push([{ tbl: 'xp_events', id: 'award:i1:0', hlc: hlc(1000), data: { amount: 25 } }]);
+    expect(
+      await push([{ tbl: 'xp_events', id: 'award:i1:0', hlc: hlc(9000), data: { amount: 99 } }]),
+    ).toEqual({ accepted: 0, kept: 1 });
+
+    await push([
+      { tbl: 'quest_instances', id: 'q:d1', hlc: hlc(9000, 0, 'b'), data: { status: 'missed' } },
+    ]);
+    await push([
+      { tbl: 'quest_instances', id: 'q:d1', hlc: hlc(5000, 0, 'a'), data: { status: 'done_full' } },
+    ]);
+    expect((await rows()).find((r) => r.id === 'q:d1')?.data.status).toBe('done_full');
+    expect(
+      await push([
+        { tbl: 'quest_instances', id: 'q:d1', hlc: hlc(9999), data: { status: 'missed' } },
+      ]),
+    ).toEqual({ accepted: 0, kept: 1 });
+
+    await push([
+      {
+        tbl: 'days',
+        id: 'd1',
+        hlc: hlc(1000),
+        data: { low_energy: true, low_energy_set_at: '2026-11-02T08:00:00Z' },
+      },
+    ]);
+    // A later recompute on another device (newer hlc) without that choice doesn't undo it.
+    await push([
+      {
+        tbl: 'days',
+        id: 'd1',
+        hlc: hlc(8000),
+        data: { low_energy: false, low_energy_set_at: null },
+      },
+    ]);
+    expect((await rows()).find((r) => r.id === 'd1')?.data.low_energy).toBe(true);
+  });
+
+  it('every accepted write gets a higher seq (pull cursor); reset clears only my cloud copy', async () => {
+    await as(A);
+    await push([
+      { tbl: 'habits', id: 'a', hlc: hlc(1), data: {} },
+      { tbl: 'habits', id: 'b', hlc: hlc(1), data: {} },
+    ]);
+    const before = (await rows()).map((r) => Number(r.seq));
+    await push([{ tbl: 'habits', id: 'a', hlc: hlc(2), data: {} }]);
+    const after = await rows();
+    expect(Number(after.at(-1)?.seq)).toBeGreaterThan(Math.max(...before));
+    expect(after.at(-1)?.id).toBe('a');
+    await as(B);
+    await push([{ tbl: 'habits', id: 'mine', hlc: hlc(1), data: {} }]);
+    await as(A);
+    await pg.query('select reset_my_cloud_data()');
+    expect(await rows()).toEqual([]);
+    await as(B);
+    expect((await rows()).map((r) => r.id)).toEqual(['mine']);
+  });
+
+  it('rejects unknown tables, bad clocks and oversized batches', async () => {
+    await as(A);
+    await expect(push([{ tbl: 'photos', id: 'p', hlc: hlc(1), data: {} }])).rejects.toThrow();
+    await expect(push([{ tbl: 'habits', id: 'p', hlc: 'yesterday', data: {} }])).rejects.toThrow();
+    await expect(
+      push(
+        Array.from({ length: 501 }, (_, i) => ({
+          tbl: 'habits',
+          id: `x${i}`,
+          hlc: hlc(1),
+          data: {},
+        })),
+      ),
+    ).rejects.toThrow();
+  });
+});
+
+describe('the TypeScript rules match the SQL rules', () => {
+  const cases: [string, Record<string, unknown>, string, Record<string, unknown>, string][] = [
+    ['habits', {}, hlc(1), {}, hlc(2)],
+    ['habits', {}, hlc(2), {}, hlc(1)],
+    ['habits', {}, hlc(2), {}, hlc(2)],
+    ['xp_events', {}, hlc(1), {}, hlc(2)],
+    ['quest_instances', { status: 'missed' }, hlc(9), { status: 'done_min' }, hlc(1)],
+    ['quest_instances', { status: 'done_late' }, hlc(1), { status: 'missed' }, hlc(9)],
+    ['quest_instances', { status: 'done_full' }, hlc(1), { status: 'pending' }, hlc(9)],
+    ['days', { low_energy_set_at: 'b' }, hlc(1), { low_energy_set_at: 'a' }, hlc(9)],
+    ['days', { low_energy_set_at: null }, hlc(1), { low_energy_set_at: 'a' }, hlc(0)],
+    ['days', { low_energy_set_at: 'a' }, hlc(1), { low_energy_set_at: 'a' }, hlc(2)],
+  ];
+  it.each(cases)('%s', async (tbl, oldData, oldSort, newData, newSort) => {
+    const sql = (
+      await pg.query<{ w: boolean }>('select sync_incoming_wins($1, $2, $3, $4, $5) as w', [
+        tbl,
+        JSON.stringify(oldData),
+        oldSort,
+        JSON.stringify(newData),
+        newSort,
+      ])
+    ).rows[0]?.w;
+    expect(incomingWins(tbl, oldData, oldSort, newData, newSort)).toBe(sql);
+  });
+
+  it('sort keys match', async () => {
+    for (const [h, received] of [
+      [hlc(5000, 3, 'x'), 9000],
+      [hlc(9000, 3, 'x'), 5000],
+    ] as const) {
+      const sql = (
+        await pg.query<{ k: string }>('select sync_sort_key($1, $2) as k', [h, received])
+      ).rows[0]?.k;
+      expect(sortKey(h, received)).toBe(sql);
+    }
+  });
+});
