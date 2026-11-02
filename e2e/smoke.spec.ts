@@ -36,7 +36,7 @@ test('navigation: Today → More → Settings shows the version', async ({ page,
 test('follows the dark system theme', async ({ browser }) => {
   const context = await browser.newContext({ colorScheme: 'dark' });
   const page = await context.newPage();
-  await page.goto('http://localhost:4173/');
+  await page.goto(test.info().project.use.baseURL ?? '/');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await context.close();
 });

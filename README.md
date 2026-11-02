@@ -2,7 +2,9 @@
 
 A personal leveling system for real life: daily quests, stats, levels and ranks, built for calm daily use over many years. Works offline; your data stays on your device.
 
-> Status: Phase 1 (Foundation) in progress. See `PROGRESS.md`.
+**Live app:** https://ascend-vert-mu.vercel.app
+
+> Status: Phase 1 (Foundation) complete. See `PROGRESS.md`.
 
 ## Requirements (Windows)
 
@@ -30,7 +32,7 @@ ASCEND works offline once loaded. To install it:
 
 When a new version is available, a small "Update ready" note appears. Nothing reloads until you tap **Reload**.
 
-The hosted address is added in task 1.12. Until then you can try it locally with `npm run build` then `npm run preview`.
+Live address: **https://ascend-vert-mu.vercel.app**. To try a local production build instead: `npm run build` then `npm run preview`.
 
 ## Deploy the web app (Vercel)
 

@@ -71,3 +71,4 @@ Every answer Rishi gave and every decision made. Newest at the bottom of each se
 - **Android app ID: `app.ascend.rishi`** (Rishi chose, 2026-11-02). Permanent — changing it makes a different app with separate data.
 - **No service worker inside the Android app** (task 1.11): the APK carries its own files and updates by installing a new APK; a service worker there could keep serving an old copy. The "Update ready" prompt is web/PWA-only.
 - **Android build needs Java 21** (task 1.11): use Android Studio's bundled Java (README). The laptop's Java 17 stays as it is.
+- **Hosting live** (task 1.12): https://ascend-vert-mu.vercel.app, connected to GitHub `main` (auto-deploy). `sw.js` served with `no-cache` so updates are found promptly.

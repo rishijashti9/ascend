@@ -4,6 +4,8 @@ All notable changes to ASCEND. Versions follow [semantic versioning](https://sem
 
 ## [Unreleased]
 
+## [0.1.0] — 2026-11-02 — Phase 1: Foundation
+
 ### Added
 
 - Project setup: React + TypeScript (strict) + Vite, ESLint, Prettier, Vitest.
@@ -14,4 +16,6 @@ All notable changes to ASCEND. Versions follow [semantic versioning](https://sem
 - Single action pipeline: every change is validated, written in one transaction, and announced as an event; XP awards can never be counted twice.
 - Installable app (PWA) that works fully offline, original app icon, and a calm "Update ready" prompt.
 - Developer tools (dev builds only): time travel, timezone switch, reset.
+- Hosted at https://ascend-vert-mu.vercel.app (auto-deploys from GitHub).
+- End-to-end smoke tests (Playwright) for phone and laptop sizes, runnable against the live site.
 - Android app shell (Capacitor) with launcher icons and splash screen; README guide for building and installing on an Android phone from Windows.
