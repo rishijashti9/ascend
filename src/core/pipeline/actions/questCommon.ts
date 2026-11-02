@@ -1,3 +1,4 @@
+import { dropCarriedCopies, restoreCarriedCopies } from './carryCleanup';
 import type { CompletedVia, DayString, InstanceStatus, QuestInstance } from '@/core/db/types';
 import { addDays } from '@/core/time';
 import { netBaseFor, planAward } from '@/core/engine/xp';
@@ -15,6 +16,7 @@ export const QUEST_TABLES = [
   'days',
   'quests',
   'body_logs', // steps & sleep are shared with the Body log (bodySync.ts)
+  'plan_history', // a finished weekly quest drops its carried copy (carryCleanup.ts)
 ] as const;
 
 /** Sources that deliver real actions which may arrive after their day has closed. */
@@ -141,6 +143,8 @@ export async function applyStatus(
         status: done ? 'done' : 'active',
         ...touch(ctx.processedAt),
       });
+      if (done) await dropCarriedCopies(ctx, quest);
+      else await restoreCarriedCopies(ctx, quest);
     }
   }
 

@@ -15,6 +15,19 @@ import { PLAN_TABLES } from './planApply';
  */
 type Row = BaseRecord & Record<string, unknown>;
 
+/** Same record content, ignoring write metadata (a re-save with no change isn't an edit). */
+const META = new Set(['hlc', 'updated_at', 'schema_version']);
+function sameContent(a: Row, b: Row): boolean {
+  const strip = (r: Row) =>
+    JSON.stringify(
+      Object.keys(r)
+        .sort()
+        .filter((k) => !META.has(k))
+        .map((k) => [k, r[k]]),
+    );
+  return strip(a) === strip(b);
+}
+
 export const undoPlan = defineAction({
   type: 'plan.undo',
   schema: z.object({ id: z.string().min(1) }).strict(),
@@ -29,10 +42,23 @@ export const undoPlan = defineAction({
     // The state right after the plan, per record (its last change wins).
     const last = new Map<string, PlanChange>();
     for (const c of history.changes) last.set(`${c.entity}|${c.id}`, c);
+    // Later System changes that are still in place (e.g. a carried copy removed because its
+    // original was finished) don't block an exact undo: their result is allowed too.
+    const later = (await ctx.db.plan_history.toArray()).filter(
+      (h) => h.id !== id && !h.undone_at && !h.deleted_at && h.created_at >= history.created_at,
+    );
     for (const c of last.values()) {
       const current = (await ctx.db.table(c.entity).get(c.id)) as Row | undefined;
       const after = c.after as Row | null;
-      if (after && current && current.hlc !== after.hlc) {
+      const allowed = [
+        after,
+        ...later.flatMap((h) =>
+          h.changes
+            .filter((x) => x.entity === c.entity && x.id === c.id)
+            .map((x) => x.after as Row | null),
+        ),
+      ];
+      if (after && current && !allowed.some((a) => a && sameContent(current, a))) {
         const name = typeof current.title === 'string' ? `“${current.title}”` : 'Something';
         throw new RuleError(`${name} was changed after this plan, so it can’t be undone exactly.`);
       }
