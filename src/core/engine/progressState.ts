@@ -51,8 +51,17 @@ export interface ProgressState {
   habitStreaks: Record<string, HabitStreak>;
   /** Today's XP so far and the streak it started with (for the streak bonus). */
   today: { day: DayString; xp: DayXp; streakAtStart: number };
-  /** Every day with a record or XP: final XP, active, Daily Clear (history, heatmap, reviews). */
-  perDay: Record<DayString, { xp: number; active: boolean; dailyClear: boolean }>;
+  /** Every day with a record or XP (history, heatmap, reviews). */
+  perDay: Record<DayString, DaySummary>;
+}
+
+/** One day at a glance: final XP, active, Daily Clear, streak after it, quests completed. */
+export interface DaySummary {
+  xp: number;
+  active: boolean;
+  dailyClear: boolean;
+  streak: number;
+  questsDone: number;
 }
 
 const RANK_ORDER: readonly Rank[] = GAME.ranks.map((r) => r.rank);
@@ -97,6 +106,8 @@ export function computeProgress(input: ProgressInput): ProgressState {
       xp: xp.total,
       active: record?.active ?? false,
       dailyClear: record?.daily_clear ?? false,
+      streak: 0,
+      questsDone: 0,
     };
   }
 
@@ -106,6 +117,15 @@ export function computeProgress(input: ProgressInput): ProgressState {
       .map((i) => i.day),
   );
   const streaks = computeStreaks(toStreakInputs(days, recovered));
+  for (const d of streaks.days) {
+    const summary = perDay[d.day];
+    if (summary) summary.streak = d.streak_after;
+  }
+  for (const i of input.instances) {
+    const summary = perDay[i.day];
+    if (summary && i.deleted_at === null && !isRecoveryId(i.id) && isDone(i.status))
+      summary.questsDone++;
+  }
   const habitStreaks = computeHabitStreaks(
     input.instances
       .filter((i) => i.deleted_at === null && i.source_type === 'habit')

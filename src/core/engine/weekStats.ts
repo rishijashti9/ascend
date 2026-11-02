@@ -1,5 +1,6 @@
 import type { DayString, FocusSession, Quest } from '@/core/db/types';
 import { addDays } from '@/core/time';
+import type { DaySummary } from './progressState';
 
 /** A week at a glance for the weekly review (SPEC 7.7), pure. */
 export interface WeekStats {
@@ -16,7 +17,7 @@ export interface WeekStats {
 export function weekStats(input: {
   weekStart: DayString;
   today: DayString;
-  perDay: Record<DayString, { xp: number; active: boolean; dailyClear: boolean }>;
+  perDay: Record<DayString, Pick<DaySummary, 'xp' | 'active' | 'dailyClear'>>;
   sessions: readonly Pick<FocusSession, 'day' | 'actual_min'>[];
   weeklyQuests: readonly Pick<Quest, 'week_start' | 'status'>[];
 }): WeekStats {

@@ -13,18 +13,10 @@ import { formatDay } from '@/features/goals/format';
 import { Button } from '@/ui/Button';
 import { Field } from '@/ui/Field';
 import { useAction } from '@/ui/hooks/useAction';
+import { Stat } from './Stat';
 
 const TEXTAREA =
   'border-border bg-surface text-text focus-visible:border-accent w-full rounded-md border p-3 text-base outline-none';
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex flex-col">
-      <span className="text-muted text-xs">{label}</span>
-      <span className="text-lg font-semibold">{value}</span>
-    </div>
-  );
-}
 
 type Quest = Extract<ProposalItem, { kind: 'quest.create' }>;
 

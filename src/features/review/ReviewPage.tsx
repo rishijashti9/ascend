@@ -5,20 +5,24 @@ import { useToday } from '@/core/state/today';
 import { formatDay } from '@/features/goals/format';
 import { weekStartOf } from '@/core/time';
 import { DailyCheckIn } from './DailyCheckIn';
+import { PeriodSummary } from './PeriodSummary';
 import { WeeklyReview } from './WeeklyReview';
 
 const TABS = [
   { id: 'daily', label: 'Daily' },
   { id: 'weekly', label: 'Weekly' },
+  { id: 'monthly', label: 'Monthly' },
+  { id: 'yearly', label: 'Yearly' },
 ] as const;
+type Tab = (typeof TABS)[number]['id'];
 
-/** Review (SPEC 7.7): the daily check-in and the weekly review. */
+/** Review (SPEC 7.7): daily check-in, weekly review, monthly and yearly summaries. */
 export function ReviewPage() {
   const reviews = useReviews((s) => s.reviews);
   const day = useToday((s) => s.day);
   const weekStartsOn = useAppState((s) => s.settings?.week_start ?? 1);
   const [params, setParams] = useSearchParams();
-  const tab = params.get('tab') === 'weekly' ? 'weekly' : 'daily';
+  const tab: Tab = TABS.find((t) => t.id === params.get('tab'))?.id ?? 'daily';
   if (!day) return null;
   const daily = reviews.filter((r) => r.type === 'daily');
   const today = daily.find((r) => r.period === day);
@@ -53,6 +57,8 @@ export function ReviewPage() {
           weekStart={weekStartOf(day, weekStartsOn)}
           today={day}
         />
+      ) : tab === 'monthly' || tab === 'yearly' ? (
+        <PeriodSummary key={tab} type={tab} today={day} />
       ) : (
         <DailyCheckIn key={day} day={day} existing={today} />
       )}
