@@ -1,12 +1,5 @@
-import { Brain, Dumbbell, Flame, type LucideIcon } from 'lucide-react';
 import type { Stat } from '@/core/db/types';
-
-/** Each stat has a colour, an icon and a label — never colour alone (SPEC 8). */
-const STAT_META: Record<Stat, { label: string; icon: LucideIcon; text: string }> = {
-  STR: { label: 'Strength', icon: Dumbbell, text: 'text-str-text' },
-  INT: { label: 'Intellect', icon: Brain, text: 'text-int-text' },
-  WIL: { label: 'Willpower', icon: Flame, text: 'text-wil-text' },
-};
+import { STAT_META } from './statMeta';
 
 export function StatChip({ stat }: { stat: Stat }) {
   const { icon: Icon, text, label } = STAT_META[stat];

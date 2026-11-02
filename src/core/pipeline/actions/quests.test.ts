@@ -156,7 +156,12 @@ describe('quest.wakeCheckin (tap time counts)', () => {
   it('5:20 exactly is still on time; 5:21 is late', async () => {
     const id = await setup('wake');
     setNow(ist(2026, 11, 2, 5, 20));
-    await t.run({ type: 'quest.wakeCheckin', payload: { instanceId: id } });
+    // Pin the tap time: the test clock keeps running, so "now" can drift past 5:20:00.000.
+    await t.run({
+      type: 'quest.wakeCheckin',
+      payload: { instanceId: id },
+      occurred_at: new Date(ist(2026, 11, 2, 5, 20)).toISOString(),
+    });
     expect(await statusOf(id)).toBe('done_full');
 
     await t.cleanup();

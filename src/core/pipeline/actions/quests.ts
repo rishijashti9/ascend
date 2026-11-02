@@ -1,7 +1,8 @@
 import { z } from 'zod';
 import type { ProgressEntry, QuestInstance } from '@/core/db/types';
 import { higherStatus, isDone, progressValue, statusForValue } from '@/core/engine/progress';
-import { currentTimeZone, instantAt } from '@/core/time';
+import { wakeStatusAt } from '@/core/engine/wake';
+import { currentTimeZone } from '@/core/time';
 import { getSettings } from '../helpers';
 import { newBase } from '../records';
 import { defineAction, RuleError, type ActionContext } from '../registry';
@@ -120,19 +121,6 @@ export const wakeCheckin = defineAction({
   },
 });
 
-export function wakeStatusAt(
-  tapMs: number,
-  day: string,
-  settings: { wake_time: string; wake_window_min: number; wake_late_cutoff: string },
-  tz: string,
-): 'done_full' | 'done_late' | 'missed' {
-  const onTimeUntil = instantAt(day, settings.wake_time, tz) + settings.wake_window_min * 60_000;
-  const lateUntil = instantAt(day, settings.wake_late_cutoff, tz);
-  if (tapMs <= onTimeUntil) return 'done_full';
-  if (tapMs <= lateUntil) return 'done_late';
-  return 'missed';
-}
-
 /**
  * Same-day un-tick (correcting a mistaken tap). Writes a compensating XP event and,
  * for numeric quests, a compensating progress entry so progress returns to zero.
@@ -165,3 +153,5 @@ export const untickQuest = defineAction({
     return applyStatus(ctx, instance, 'pending');
   },
 });
+
+export { wakeStatusAt };
