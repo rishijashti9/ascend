@@ -21,6 +21,17 @@ npm run dev        # starts the app at http://localhost:5173
 
 Open the printed address in your browser. Press `Ctrl+C` in PowerShell to stop.
 
+## Install as an app (PWA)
+
+ASCEND works offline once loaded. To install it:
+
+- **Laptop (Chrome or Edge):** open the app, then click the install icon at the right end of the address bar (or menu → _Install ASCEND_).
+- **Phone (Chrome):** menu → _Add to Home screen_. (For daily use on Android, the APK in a later section is recommended.)
+
+When a new version is available, a small "Update ready" note appears. Nothing reloads until you tap **Reload**.
+
+The hosted address is added in task 1.12. Until then you can try it locally with `npm run build` then `npm run preview`.
+
 ## Useful commands
 
 | Command            | What it does                                                           |
@@ -31,6 +42,7 @@ Open the printed address in your browser. Press `Ctrl+C` in PowerShell to stop.
 | `npm test`         | Run unit tests once                                                    |
 | `npm run check`    | Type-check + lint + formatting check + tests (run before every commit) |
 | `npm run format`   | Auto-format all files                                                  |
+| `npm run icons`    | Regenerate all app icons from `public/icon.svg`                        |
 | `npm run simulate` | 5-year game-balance simulation (after changing `src/config/game.ts`)   |
 
 ## Project docs
