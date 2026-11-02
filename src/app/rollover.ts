@@ -10,10 +10,23 @@ import { currentTimeZone, dayBounds, dayOf, nowMs } from '@/core/time';
  */
 
 let latest: RolloverResult | null = null;
+let welcome: WelcomeBack | null = null;
 
-/** The most recent rollover result (welcome-back message data). */
+/** After days away: shown once in today's System message (kept for the rest of that day). */
+export interface WelcomeBack {
+  day: string;
+  daysAway: number;
+  shieldsUsed: number;
+}
+
+/** The most recent rollover result. */
 export function latestRollover(): RolloverResult | null {
   return latest;
+}
+
+/** Welcome-back data for today, if the app was just reopened after days away. */
+export function welcomeBack(today: string | null): WelcomeBack | null {
+  return welcome && welcome.day === today ? welcome : null;
 }
 
 export async function runRollover(database: AscendDB = defaultDb): Promise<RolloverResult | null> {
@@ -23,6 +36,10 @@ export async function runRollover(database: AscendDB = defaultDb): Promise<Rollo
       { db: database },
     );
     latest = result.value ?? latest;
+    // A later run the same day (app resumed) must not erase the welcome-back note.
+    if (latest && latest.daysAway > 0) {
+      welcome = { day: latest.today, daysAway: latest.daysAway, shieldsUsed: latest.shieldsUsed };
+    }
     return latest;
   } catch (error) {
     logError(error, 'rollover');

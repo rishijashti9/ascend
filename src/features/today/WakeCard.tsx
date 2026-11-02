@@ -5,10 +5,11 @@ import type { TodayQuest } from '@/core/state/today';
 import { currentTimeZone, instantAt } from '@/core/time';
 import { addMinutes, formatTime } from '@/data/starter';
 import { Button } from '@/ui/Button';
-import { useAction } from '@/ui/hooks/useAction';
 import { useNow } from '@/ui/hooks/useNow';
 import { StatChip } from '@/ui/stats';
+import { XpFloat } from '@/ui/XpFloat';
 import { StatusLine } from './QuestCard';
+import { useQuestAction } from './useQuestAction';
 
 /**
  * The wake-up quest, at the top of Today (SPEC 4.8): one "I'm up" tap. On time until wake
@@ -17,7 +18,7 @@ import { StatusLine } from './QuestCard';
 export function WakeCard({ quest }: { quest: TodayQuest }) {
   const settings = useAppState((s) => s.settings);
   const now = useNow();
-  const { run, busy, error } = useAction();
+  const { act: run, busy, error, float } = useQuestAction();
   const { instance } = quest;
   if (!settings) return null;
 
@@ -28,7 +29,7 @@ export function WakeCard({ quest }: { quest: TodayQuest }) {
   const beforeWake = now < instantAt(instance.day, settings.wake_time, currentTimeZone());
 
   return (
-    <li className="border-border bg-surface shadow-card flex flex-col gap-3 rounded-lg border p-4">
+    <li className="border-border bg-surface shadow-card relative flex flex-col gap-3 rounded-lg border p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-x-2">
@@ -43,7 +44,7 @@ export function WakeCard({ quest }: { quest: TodayQuest }) {
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-1">
-          <StatusLine status={instance.status} />
+          <StatusLine status={instance.status} pop={float !== null} />
           {!pending && instance.status !== 'missed' && (
             <Button
               variant="ghost"
@@ -76,6 +77,7 @@ export function WakeCard({ quest }: { quest: TodayQuest }) {
           {error}
         </p>
       )}
+      <XpFloat float={float} />
     </li>
   );
 }

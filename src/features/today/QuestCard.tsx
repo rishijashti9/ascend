@@ -4,9 +4,10 @@ import type { InstanceStatus, Measure } from '@/core/db/types';
 import { isDone } from '@/core/engine/progress';
 import type { TodayQuest } from '@/core/state/today';
 import { Button } from '@/ui/Button';
-import { useAction } from '@/ui/hooks/useAction';
 import { ProgressBar } from '@/ui/ProgressBar';
 import { StatChip } from '@/ui/stats';
+import { XpFloat } from '@/ui/XpFloat';
+import { useQuestAction, type Act } from './useQuestAction';
 
 const UNIT: Record<Measure, string> = {
   check: '',
@@ -27,11 +28,11 @@ const fmt = (v: number, m: Measure) => `${v.toLocaleString()}${UNIT[m] ? ` ${UNI
 /** Quick amounts for additive measures (one tap, no typing). */
 const QUICK: Partial<Record<Measure, number[]>> = { minutes: [10, 25], count: [1, 5] };
 
-export function StatusLine({ status }: { status: InstanceStatus }) {
+export function StatusLine({ status, pop = false }: { status: InstanceStatus; pop?: boolean }) {
   if (isDone(status)) {
     return (
       <span className="text-success-text flex items-center gap-1 text-sm font-medium">
-        <Check aria-hidden size={16} />
+        <Check aria-hidden size={16} className={pop ? 'animate-check-pop' : ''} />
         {DONE_LABEL[status]}
       </span>
     );
@@ -40,7 +41,7 @@ export function StatusLine({ status }: { status: InstanceStatus }) {
   return null;
 }
 
-function NumericInput({ quest, run, busy }: { quest: TodayQuest } & ReturnType<typeof useAction>) {
+function NumericInput({ quest, act: run, busy }: { quest: TodayQuest; act: Act; busy: boolean }) {
   const { instance } = quest;
   const m = instance.measure_snapshot;
   const total = m === 'steps' || m === 'sleep_hours';
@@ -99,9 +100,14 @@ function NumericInput({ quest, run, busy }: { quest: TodayQuest } & ReturnType<t
 }
 
 /** One daily quest: Full/Minimum taps for check quests, progress input for numeric ones. */
-export function QuestCard({ quest }: { quest: TodayQuest }) {
-  const action = useAction();
-  const { run, busy, error } = action;
+export function QuestCard({
+  quest,
+  lowEnergy = false,
+}: {
+  quest: TodayQuest;
+  lowEnergy?: boolean;
+}) {
+  const { act: run, busy, error, float } = useQuestAction();
   const { instance, progress } = quest;
   const m = instance.measure_snapshot;
   const done = isDone(instance.status);
@@ -109,7 +115,7 @@ export function QuestCard({ quest }: { quest: TodayQuest }) {
 
   return (
     <li
-      className={`border-border bg-surface shadow-card flex flex-col gap-3 rounded-lg border p-4 ${
+      className={`border-border bg-surface shadow-card relative flex flex-col gap-3 rounded-lg border p-4 ${
         instance.status === 'missed' ? 'opacity-70' : ''
       }`}
     >
@@ -131,7 +137,7 @@ export function QuestCard({ quest }: { quest: TodayQuest }) {
           )}
         </div>
         <div className="flex shrink-0 items-center gap-1">
-          <StatusLine status={instance.status} />
+          <StatusLine status={instance.status} pop={float !== null} />
           {done && (
             <Button
               variant="ghost"
@@ -155,8 +161,9 @@ export function QuestCard({ quest }: { quest: TodayQuest }) {
       )}
 
       {m === 'check' && instance.status === 'pending' && (
-        <div className="flex gap-2">
+        <div className={`flex gap-2 ${lowEnergy ? 'flex-row-reverse' : ''}`}>
           <Button
+            variant={lowEnergy ? 'secondary' : 'primary'}
             className="flex-1"
             disabled={busy}
             onClick={() =>
@@ -166,7 +173,7 @@ export function QuestCard({ quest }: { quest: TodayQuest }) {
             Full
           </Button>
           <Button
-            variant="secondary"
+            variant={lowEnergy ? 'primary' : 'secondary'}
             className="flex-1"
             disabled={busy}
             onClick={() =>
@@ -190,7 +197,7 @@ export function QuestCard({ quest }: { quest: TodayQuest }) {
         </Button>
       )}
       {m !== 'check' && instance.status !== 'done_full' && instance.status !== 'missed' && (
-        <NumericInput quest={quest} {...action} />
+        <NumericInput quest={quest} act={run} busy={busy} />
       )}
 
       {error && (
@@ -198,6 +205,7 @@ export function QuestCard({ quest }: { quest: TodayQuest }) {
           {error}
         </p>
       )}
+      <XpFloat float={float} />
     </li>
   );
 }

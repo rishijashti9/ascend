@@ -43,7 +43,10 @@ export function StatusHeader({ day }: { day: string | null }) {
             Rank {rank}
           </span>
           <span className="flex items-center gap-3 text-sm tabular-nums">
-            <span className="flex items-center gap-1" aria-label={`Streak ${streak.streak} days`}>
+            <span
+              className="flex items-center gap-1"
+              aria-label={`Streak ${streak.streak} day${streak.streak === 1 ? '' : 's'}`}
+            >
               <Flame aria-hidden size={16} className="text-warning-text" />
               {streak.streak}
             </span>

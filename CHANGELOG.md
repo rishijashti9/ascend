@@ -11,6 +11,7 @@ All notable changes to ASCEND. Versions follow [semantic versioning](https://sem
 - Progress (level, stats, rank, streaks) always computed from stored data, with a consistency check at every start.
 - Onboarding "Awakening": five pre-filled steps — name, wake-up time, daily quests (editable, up to 3 core), Dream and Main Quests, theme, and "start today or tomorrow" when it's late.
 - Today screen: level, XP bar, rank, streak, shields and the three stats; quest cards with Full/Minimum taps, quick minute buttons, step and sleep totals, the "I'm up" wake-up check-in, and Undo.
+- Today screen: low-energy mode, a System message (Day N, welcome back, streak, Daily Clear), the Recovery quest card, and a small check + floating XP when a quest is completed.
 
 ## [0.1.0] — 2026-11-02 — Phase 1: Foundation
 

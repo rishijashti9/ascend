@@ -1,6 +1,6 @@
 import { createStore, useStore } from 'zustand';
 import { db as defaultDb, type AscendDB } from '@/core/db/db';
-import type { DayString, QuestInstance } from '@/core/db/types';
+import type { DayString, Quest, QuestInstance } from '@/core/db/types';
 import { progressValue } from '@/core/engine/progress';
 import { logError } from '@/core/errorLog';
 import { appDayOf, isoNow, subscribeAll } from '@/core/pipeline';
@@ -10,6 +10,8 @@ export interface TodayQuest {
   instance: QuestInstance;
   /** Sum (minutes/count) or latest total (steps/sleep); 0 for check quests. */
   progress: number;
+  /** For weekly/side/recovery quests: the quest record (e.g. which day a Recovery quest repairs). */
+  quest: Quest | null;
 }
 
 export interface TodayState {
@@ -19,6 +21,7 @@ export interface TodayState {
   daily: TodayQuest[];
   /** Weekly, side and recovery quests due today. */
   other: TodayQuest[];
+  lowEnergy: boolean;
 }
 
 export const todayStore = createStore<TodayState>(() => ({
@@ -26,6 +29,7 @@ export const todayStore = createStore<TodayState>(() => ({
   day: null,
   daily: [],
   other: [],
+  lowEnergy: false,
 }));
 
 export function useToday<T>(selector: (state: TodayState) => T): T {
@@ -36,7 +40,7 @@ export async function loadToday(database: AscendDB = defaultDb): Promise<void> {
   try {
     const state = await database.transaction(
       'r',
-      ['settings', 'quest_instances', 'progress_entries', 'habits'],
+      ['settings', 'quest_instances', 'progress_entries', 'habits', 'quests', 'days'],
       async () => {
         const day = await appDayOf(database, isoNow());
         const instances = (
@@ -49,6 +53,11 @@ export async function loadToday(database: AscendDB = defaultDb): Promise<void> {
         const habits = await database.habits.bulkGet(
           instances.filter((i) => i.source_type === 'habit').map((i) => i.source_id),
         );
+        const quests = await database.quests.bulkGet(
+          instances.filter((i) => i.source_type === 'quest').map((i) => i.source_id),
+        );
+        const questById = new Map(quests.flatMap((q) => (q ? [[q.id, q] as const] : [])));
+        const dayRecord = await database.days.get(day);
         const order = new Map(habits.flatMap((h) => (h ? [[h.id, h.order] as const] : [])));
         const toQuest = (instance: QuestInstance): TodayQuest => ({
           instance,
@@ -56,13 +65,21 @@ export async function loadToday(database: AscendDB = defaultDb): Promise<void> {
             instance.measure_snapshot,
             entries.filter((e) => e.quest_instance_id === instance.id),
           ),
+          quest:
+            instance.source_type === 'quest' ? (questById.get(instance.source_id) ?? null) : null,
         });
         const daily = instances
           .filter((i) => i.source_type === 'habit')
           .sort((a, b) => (order.get(a.source_id) ?? 0) - (order.get(b.source_id) ?? 0))
           .map(toQuest);
         const other = instances.filter((i) => i.source_type === 'quest').map(toQuest);
-        return { status: 'ready' as const, day, daily, other };
+        return {
+          status: 'ready' as const,
+          day,
+          daily,
+          other,
+          lowEnergy: dayRecord?.low_energy ?? false,
+        };
       },
     );
     todayStore.setState(state);
