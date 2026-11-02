@@ -42,9 +42,13 @@ export function systemMessage(m: MessageInput): string {
   if (m.recovery?.done && m.recovery.restores) {
     return `Streak restored at ${plural(m.streakAtStart, 'day')}. Back on the path.`;
   }
-  if (m.dailyClear) return `Daily Clear. Every quest done — ${day.slice(0, -1)} is complete.`;
+  if (m.dailyClear) {
+    // On a low-energy day the core minimums are all Daily Clear needs.
+    return m.lowEnergy
+      ? 'Minimums met — Daily Clear on a low-energy day. Rest is part of the climb.'
+      : `Daily Clear. Every quest done — ${day.slice(0, -1)} is complete.`;
+  }
   if (m.coreTotal > 0 && m.coreDone === m.coreTotal) {
-    if (m.lowEnergy) return 'Minimums met. Rest is part of the climb.';
     const left = m.dailyTotal - m.dailyDone;
     return `Core quests done — today counts. ${plural(left, 'quest')} left for Daily Clear.`;
   }

@@ -46,7 +46,9 @@ describe('systemMessage', () => {
     expect(msg({ coreDone: 3, dailyDone: 5 })).toBe(
       'Core quests done — today counts. 3 quests left for Daily Clear.',
     );
-    expect(msg({ coreDone: 3, lowEnergy: true })).toMatch(/Minimums met/);
+    expect(msg({ coreDone: 3, lowEnergy: true, dailyClear: true })).toMatch(
+      /^Minimums met — Daily Clear on a low-energy day/,
+    );
   });
 
   it('Day 1, low energy, streak milestones and evening reminder', () => {

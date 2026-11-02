@@ -98,9 +98,17 @@ In Android Studio: **Build → Build App Bundle(s) / APK(s) → Build APK(s)**. 
 - The Android app and a browser PWA on the same phone keep **separate data**. Recommended: the Android app on the phone, the PWA on the laptop, and sync between them (Phase 7).
 - Android launcher icons and splash screen are generated from the app symbol with `npm run icons:android`.
 
+## Using ASCEND day to day
+
+- **Today** is home: tap “I’m up” when you wake (on time until wake time + window, late until the cutoff), then Full or Minimum on each quest, or log minutes / steps / sleep. Undo fixes a mistaken tap the same day.
+- A day is **active** when every core quest has at least its minimum done. Hard day? Turn on **Low energy**: only core minimums are needed and they still count.
+- Missed a day? A shield covers it automatically if you have one (one per 7 active days, up to 3). Otherwise a small **Recovery quest** appears the next day and can restore the streak.
+- **Quests** is where daily quests are added, edited, paused or archived, and where the 3 core quests are chosen.
+- **Settings** has the theme, day-start hour, wake-up times, backup (export / import), and “Rebuild progress”.
+
 ## Developer tools (testing only)
 
-When running `npm run dev`, a small yellow wrench button appears at the bottom-left. It lets you change the app's date and time, jump forward N days, switch timezone, and reset all data. Changing the clock reloads the app, like opening it later. These tools are **removed from production builds and the Android app**.
+When running `npm run dev`, a small yellow wrench button appears at the bottom-left. It lets you change the app's date and time, jump forward N days, switch timezone, generate 30 days / 1 year / 2 years of realistic test data, and reset all data. Changing the clock reloads the app, like opening it later. These tools are **removed from production builds and the Android app**.
 
 ## Useful commands
 

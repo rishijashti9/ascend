@@ -4,6 +4,8 @@ All notable changes to ASCEND. Versions follow [semantic versioning](https://sem
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-11-02 — Phase 2: Core loop
+
 ### Added
 
 - Game engine: XP (streak bonus, soft cap, Daily Clear, top-ups, same-day corrections), completions, active/neutral days, low-energy mode, streaks with shields and Recovery-quest repair, per-quest streaks.
@@ -16,6 +18,11 @@ All notable changes to ASCEND. Versions follow [semantic versioning](https://sem
 - Settings: theme, day-start hour, week start, wake-up time / window / late cutoff, core quests overview, Rebuild progress, and Reset all data (with confirmation).
 - Export / import: back up everything to a JSON file (download in the browser, share sheet on Android), restore on a new device from onboarding, or import with Replace / Merge (a safety backup is saved first). Weekly backup reminder in the browser; "Export my data" on the error screen.
 - Developer tools (dev builds only): generate 30 days, 1 year or 2 years of realistic test data.
+- End-to-end tests: onboarding, completing a quest, a low-energy day, and export → wipe → import.
+
+### Fixed
+
+- On a low-energy day, finishing the core minimums now shows its own kind System message (it was hidden behind the Daily Clear message).
 
 ## [0.1.0] — 2026-11-02 — Phase 1: Foundation
 

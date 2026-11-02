@@ -1,23 +1,5 @@
-import { expect, test, type Page } from '@playwright/test';
-
-/** Collects console errors and page crashes so every test can assert "no console errors". */
-function watchErrors(page: Page): string[] {
-  const errors: string[] = [];
-  page.on('pageerror', (e) => errors.push(e.message));
-  page.on('console', (m) => {
-    if (m.type() === 'error') errors.push(m.text());
-  });
-  return errors;
-}
-
-/** A fresh browser starts with onboarding: confirm the pre-filled answers. */
-async function onboard(page: Page) {
-  await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'Welcome' })).toBeVisible();
-  for (let i = 0; i < 4; i++) await page.getByRole('button', { name: 'Next' }).click();
-  await page.getByRole('button', { name: 'Begin' }).click();
-  await expect(page.getByRole('heading', { name: 'Today' })).toBeVisible();
-}
+import { expect, test } from '@playwright/test';
+import { onboard, watchErrors } from './helpers';
 
 test('first visit: onboarding, then Today, with no console errors', async ({ page }) => {
   const errors = watchErrors(page);
