@@ -32,6 +32,10 @@ When a new version is available, a small "Update ready" note appears. Nothing re
 
 The hosted address is added in task 1.12. Until then you can try it locally with `npm run build` then `npm run preview`.
 
+## Developer tools (testing only)
+
+When running `npm run dev`, a small yellow wrench button appears at the bottom-left. It lets you change the app's date and time, jump forward N days, switch timezone, and reset all data. Changing the clock reloads the app, like opening it later. These tools are **removed from production builds and the Android app**.
+
 ## Useful commands
 
 | Command            | What it does                                                           |
