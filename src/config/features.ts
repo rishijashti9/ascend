@@ -11,7 +11,7 @@ export const features = {
   quests: true,
   exportImport: true,
   // Phase 3
-  goals: false,
+  goals: true,
   // Phase 4
   focus: false,
   body: false,
