@@ -39,7 +39,8 @@ export function DailyBars({
   const values = bars.flatMap((b) => (b.value === null ? [] : [b.value]));
   if (values.length === 0) return null;
 
-  const ticks = niceTicks(0, Math.max(...values, target?.value ?? 0));
+  // Never below zero, and at least 0–1 when every value is zero.
+  const ticks = niceTicks(0, Math.max(...values, target?.value ?? 0) || 1);
   const hi = ticks.at(-1) ?? 1;
   const plotW = width - PAD.left - PAD.right;
   const plotH = H - PAD.top - PAD.bottom;

@@ -5,6 +5,7 @@ import { FocusPage } from '@/features/focus/FocusPage';
 import { GoalsPage } from '@/features/goals/GoalsPage';
 import { MainQuestPage } from '@/features/goals/MainQuestPage';
 import { MorePage } from '@/features/more/MorePage';
+import { ProfilePage } from '@/features/profile/ProfilePage';
 import { QuestsPage } from '@/features/quests/QuestsPage';
 import { ReviewPage } from '@/features/review/ReviewPage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
@@ -20,6 +21,7 @@ const SCREENS: { path: string; feature: FeatureKey; element: React.ReactNode }[]
   { path: 'review', feature: 'review', element: <ReviewPage /> },
   { path: 'goals', feature: 'goals', element: <GoalsPage /> },
   { path: 'goals/:id', feature: 'goals', element: <MainQuestPage /> },
+  { path: 'profile', feature: 'profile', element: <ProfilePage /> },
   { path: 'settings', feature: 'settings', element: <SettingsPage /> },
 ];
 

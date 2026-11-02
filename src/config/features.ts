@@ -17,7 +17,7 @@ export const features = {
   body: true,
   // Phase 5
   review: true,
-  profile: false,
+  profile: true,
   // Phase 9 (Jobs also needs to be switched on in Settings)
   skills: false,
   jobs: false,
