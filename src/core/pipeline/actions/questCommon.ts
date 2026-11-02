@@ -17,7 +17,8 @@ export const QUEST_TABLES = [
 ] as const;
 
 /** Sources that deliver real actions which may arrive after their day has closed. */
-const DELAYED_SOURCES: ActionSource[] = ['widget', 'notification', 'sync', 'health'];
+// 'focus': a session that ends after the day-start hour still counts for the day it began.
+const DELAYED_SOURCES: ActionSource[] = ['widget', 'notification', 'sync', 'health', 'focus'];
 
 export async function loadInstance(ctx: ActionContext, id: string): Promise<QuestInstance> {
   const instance = await ctx.db.quest_instances.get(id);

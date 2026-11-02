@@ -31,6 +31,7 @@ export interface DomainEvents {
   PlanProposed: { proposalId: string; goalId: string | null };
   PlanApplied: { proposalId: string | null; historyId: string };
   PlanUndone: { historyId: string };
+  SessionStarted: { sessionId: string };
   SessionFinished: { sessionId: string; day: DayString; completed: boolean };
   LevelUp: { level: number; stat: Stat | null };
   RankUp: { rank: Rank };

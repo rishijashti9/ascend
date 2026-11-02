@@ -13,6 +13,7 @@ import './actions/plans';
 import './actions/planApply';
 import './actions/planUndo';
 import './actions/planWeekly';
+import './actions/focus';
 
 export * from './events';
 export * from './recordAction';
