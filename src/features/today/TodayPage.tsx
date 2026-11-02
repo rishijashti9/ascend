@@ -8,6 +8,7 @@ import { useToday } from '@/core/state/today';
 import { Button } from '@/ui/Button';
 import { useAction } from '@/ui/hooks/useAction';
 import { BackupReminder } from './BackupReminder';
+import { GoalNudges } from './GoalNudges';
 import { QuestCard } from './QuestCard';
 import { RecoveryCard } from './RecoveryCard';
 import { StatusHeader } from './StatusHeader';
@@ -54,6 +55,7 @@ export function TodayPage() {
         <h1 className="text-xl font-semibold">Today</h1>
         <StatusHeader day={day} />
         <SystemMessage />
+        <GoalNudges />
         <BackupReminder />
       </div>
 

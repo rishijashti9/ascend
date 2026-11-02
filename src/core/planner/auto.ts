@@ -1,7 +1,8 @@
 import { db as defaultDb, type AscendDB } from '@/core/db/db';
 import { logError } from '@/core/errorLog';
 import { recordAction, subscribe, type DomainEvents } from '@/core/pipeline';
-import { planMilestoneWeek, planStatusChange } from './followups';
+import type { PlanProposal } from '@/core/db/types';
+import { planMilestoneWeek, planNextMilestone, planStatusChange } from './followups';
 import { loadPlannerState } from './state';
 import type { ProposalItem } from './types';
 
@@ -20,9 +21,11 @@ async function propose(
   trigger: string,
   summary: string,
   items: ProposalItem[],
+  /** Routine follow-up + Auto-plan on → applied straight away (with Undo) (SPEC 6.2). */
+  autoApply = false,
 ) {
   if (items.length === 0) return;
-  await recordAction(
+  const { value } = await recordAction<PlanProposal>(
     {
       type: 'plan.propose',
       source: 'planner',
@@ -30,6 +33,16 @@ async function propose(
     },
     { db: database },
   );
+  if (autoApply && value) {
+    await recordAction(
+      {
+        type: 'plan.apply',
+        source: 'planner',
+        payload: { id: value.id, selected: items.filter((i) => i.selected).map((i) => i.id) },
+      },
+      { db: database },
+    );
+  }
 }
 
 export async function reactToGoalChange(
@@ -70,6 +83,23 @@ export async function reactToGoalChange(
         items,
       );
     }
+    return;
+  }
+
+  if (e.goalType === 'milestone' && e.change === 'done') {
+    // A milestone finished: unlock the next one and plan its week (SPEC 6.3 step 5).
+    const done = state.milestones.find((m) => m.id === e.goalId);
+    const goal = done && state.mainQuests.find((q) => q.id === done.main_quest_id);
+    if (!done || !goal || goal.status !== 'active') return;
+    const settings = await database.settings.get('settings');
+    await propose(
+      database,
+      { type: 'main_quest', id: goal.id },
+      'milestone_done',
+      `“${done.title}” is done — next up:`,
+      planNextMilestone(state, done, goal),
+      settings?.auto_plan ?? false,
+    );
     return;
   }
 

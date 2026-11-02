@@ -2,6 +2,7 @@ import { APP_VERSION } from '@/app/version';
 import { isEnabled } from '@/config/features';
 import { useAppState } from '@/core/state/app';
 import { BackupSection } from './BackupSection';
+import { PlannerSettings } from './PlannerSettings';
 import {
   AppearanceSection,
   Card,
@@ -28,6 +29,7 @@ export function SettingsPage() {
             settings={settings}
           />
           <CoreSection />
+          {isEnabled('goals') && <PlannerSettings settings={settings} />}
           {isEnabled('exportImport') && <BackupSection />}
           <DataSection />
         </>

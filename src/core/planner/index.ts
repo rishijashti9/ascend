@@ -13,3 +13,4 @@ export { planMilestoneWeek, planNextMilestone, planStatusChange } from './follow
 export { loadPlannerState } from './state';
 export { reactToGoalChange, startAutoPlanner } from './auto';
 export { MAX_WEEKLY, planWeek, runWeeklyPlan } from './weekly';
+export { CHECKIN_DAYS, goalNudges, type Nudge } from './nudges';

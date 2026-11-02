@@ -11,6 +11,7 @@ import { ImpactPreview, PendingPlan } from '@/features/planner/PendingPlan';
 import { PlanHistoryList } from '@/features/planner/PlanHistory';
 import { PlannerSheet } from '@/features/planner/PlannerSheet';
 import { formatDay } from './format';
+import { FollowUps } from './FollowUps';
 import { MainQuestForm, MilestoneForm } from './forms';
 import { ProgressLine, StatusActions, StatusChip } from './parts';
 
@@ -187,6 +188,7 @@ export function MainQuestPage() {
         </p>
       )}
 
+      <FollowUps mainQuestId={id} onReplan={() => setPlanning('replan')} />
       <PendingPlan goalId={id} />
       <PlanHistoryList goalId={id} limit={3} />
       {planning && (
