@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './app/App';
+import { startRollover } from './app/rollover';
 import { ErrorScreen } from './app/ErrorScreen';
 import { applyTheme } from './app/theme';
 import { openDatabase } from './core/db/open';
@@ -23,6 +24,8 @@ async function start(): Promise<void> {
 
   // Database migrations run before any screen loads (SPEC 9).
   await openDatabase();
+  // Close past days and start today before the first screen (never blocks startup on error).
+  await startRollover();
   root.render(
     <StrictMode>
       <App />

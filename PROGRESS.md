@@ -2,9 +2,9 @@
 
 ## Resume here
 
-- **Current task:** none — 2.5 finished. Next is 2.6.
-- **Done so far:** Phase 1 complete (v0.1.0) — see the Phase 1 checklist and CHANGELOG. Key code: src/core/time (days), src/core/db (schema), src/core/pipeline (recordAction, defineAction, events), src/config/game.ts, src/core/engine/levels.ts, src/dev (dev tools). Live: https://ascend-vert-mu.vercel.app Phase 2: 2.1 — engine/instances.ts, pipeline/helpers.ts (appDayOf, ensureInstancesForDay), actions/habitSchema.ts + habits.ts (habit.create/update/pause/archive/restore/reorder/delete), RuleError, src/test/testDb.ts helper. 2.2 — engine/xp.ts (baseAward, streakMultiplier, awardKey, liveEvents, computeDayXp, netBaseFor, planAward) + 19 tests; simulate.ts now uses computeDayXp. 2.3 — engine/progress.ts, actions/questCommon.ts (guardDay, applyStatus) + quests.ts (quest.complete, quest.logProgress, quest.wakeCheckin + wakeStatusAt, quest.untick). 2.4 — engine/dayEval.ts (evaluateDay, visibleOnLowEnergy), pipeline/days.ts (refreshDayRecord, called from applyStatus + habit today changes), actions/days.ts (day.setLowEnergy). 2.5 — engine/streaks.ts (computeStreaks → per-day streak fields + summary {streak, longest, daysActive, shields, repairable, lastRepairDay}; repairAllowed; computeHabitStreaks) + 24 tests. Pure only — not yet written to `days` records (2.6/2.7 do that).
-- **Next step:** task 2.6 — day rollover job: on open/resume and at the day-start hour, close every unclosed past day in order (create missing days + instances, set closed_at, run computeStreaks and write streak fields to `days`), create the Recovery quest on the return day when `summary.repairable` exists and `repairAllowed`, welcome-back message data. Tests: late, twice, 30 days away, tz change.
+- **Current task:** none — 2.6 finished. Next is 2.7.
+- **Done so far:** Phase 1 complete (v0.1.0) — see the Phase 1 checklist and CHANGELOG. Key code: src/core/time (days), src/core/db (schema), src/core/pipeline (recordAction, defineAction, events), src/config/game.ts, src/core/engine/levels.ts, src/dev (dev tools). Live: https://ascend-vert-mu.vercel.app Phase 2: 2.1 — engine/instances.ts, pipeline/helpers.ts (appDayOf, ensureInstancesForDay), actions/habitSchema.ts + habits.ts (habit.create/update/pause/archive/restore/reorder/delete), RuleError, src/test/testDb.ts helper. 2.2 — engine/xp.ts (baseAward, streakMultiplier, awardKey, liveEvents, computeDayXp, netBaseFor, planAward) + 19 tests; simulate.ts now uses computeDayXp. 2.3 — engine/progress.ts, actions/questCommon.ts (guardDay, applyStatus) + quests.ts (quest.complete, quest.logProgress, quest.wakeCheckin + wakeStatusAt, quest.untick). 2.4 — engine/dayEval.ts (evaluateDay, visibleOnLowEnergy), pipeline/days.ts (refreshDayRecord, called from applyStatus + habit today changes), actions/days.ts (day.setLowEnergy). 2.5 — engine/streaks.ts (computeStreaks → per-day streak fields + summary {streak, longest, daysActive, shields, repairable, lastRepairDay}; repairAllowed; computeHabitStreaks) + 24 tests. 2.6 — pipeline/streaks.ts (refreshStreaks writes streak fields to `days`; called from refreshDayRecord when active/neutral/closed changes and from applyStatus for Recovery quests), actions/rollover.ts (`day.rollover` → RolloverResult {today, closedDays, daysAway, shieldsUsed, streak, recoveryQuestId}), data/recovery.ts, app/rollover.ts (startRollover at startup/resume/day-start timer; latestRollover() for the welcome-back message) + 11 tests.
+- **Next step:** task 2.7 — derived-state store (Zustand): level/XP/stats/rank from xp_events (computeDayXp per day with days.streak_at_start + daily_clear), streak summary, per-habit streaks (computeHabitStreaks), refreshed on DomainEvents (subscribeAll); startup consistency check (cache version/checksum in `meta`); "Rebuild progress" function. Ranks never go down (store highest rank reached).
 - **Open questions:** none.
 - **Broken:** nothing. `npm run check` passes.
 
@@ -32,7 +32,7 @@
 - [x] 2.3 Completion actions
 - [x] 2.4 Day evaluation
 - [x] 2.5 Streaks, shields, repair
-- [ ] 2.6 Day rollover + Recovery quest
+- [x] 2.6 Day rollover + Recovery quest
 - [ ] 2.7 Derived-state store + rebuild
 - [ ] 2.8 Onboarding
 - [ ] 2.9 Today part 1

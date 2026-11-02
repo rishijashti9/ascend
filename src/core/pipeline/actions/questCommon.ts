@@ -3,6 +3,7 @@ import { netBaseFor, planAward } from '@/core/engine/xp';
 import { refreshDayRecord } from '../days';
 import { appDayOf } from '../helpers';
 import { touch } from '../records';
+import { isRecoveryId, refreshStreaks } from '../streaks';
 import { RuleError, type ActionContext, type ActionSource } from '../registry';
 
 /** Tables every completion action touches. */
@@ -95,6 +96,8 @@ export async function applyStatus(
   };
   await ctx.db.quest_instances.put(next);
   await refreshDayRecord(ctx.db, next.day, ctx.processedAt);
+  // A Recovery quest doesn't change the day's result, but can repair a missed day.
+  if (isRecoveryId(next.id)) await refreshStreaks(ctx.db, ctx.processedAt);
 
   ctx.emit(
     done

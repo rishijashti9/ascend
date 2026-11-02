@@ -19,14 +19,16 @@ export async function appDayOf(db: AscendDB, iso: string): Promise<DayString> {
 }
 
 /**
- * Makes sure every habit scheduled on `day` has an instance. Never overwrites an
- * existing instance (so completions and snapshots are kept). Returns how many were created.
+ * Makes sure every habit scheduled on `day` (and created by then) has an instance. Never
+ * overwrites an existing instance (so completions and snapshots are kept). Returns how many were created.
  */
 export async function ensureInstancesForDay(db: AscendDB, day: DayString): Promise<number> {
   const habits = await db.habits.where('status').equals('active').toArray();
   let created = 0;
   for (const habit of habits) {
     if (!isScheduled(habit, day)) continue;
+    // Never back-fill a day from before the habit existed (rollover closing past days).
+    if ((await appDayOf(db, habit.created_at)) > day) continue;
     const id = habitInstanceId(habit.id, day);
     const existing = await db.quest_instances.get(id);
     if (existing && existing.deleted_at === null) continue;
