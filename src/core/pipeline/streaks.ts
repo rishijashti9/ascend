@@ -1,8 +1,11 @@
 import type { AscendDB } from '@/core/db/db';
-import type { DayString, IsoTime } from '@/core/db/types';
+import type { IsoTime } from '@/core/db/types';
+import { isRecoveryId, recoveryQuestId } from '@/core/engine/instances';
 import { isDone } from '@/core/engine/progress';
-import { computeStreaks, type StreakSummary } from '@/core/engine/streaks';
+import { computeStreaks, toStreakInputs, type StreakSummary } from '@/core/engine/streaks';
 import { touch } from './records';
+
+export { isRecoveryId, recoveryQuestId };
 
 /**
  * Writes the streak fields of every `days` record from the pure streak engine (task 2.5).
@@ -10,30 +13,18 @@ import { touch } from './records';
  * result, a day closing, or a Recovery quest being (un)completed.
  */
 
-/** Recovery quests have a deterministic id per day, so two devices never create two. */
-export function recoveryQuestId(day: DayString): string {
-  return `recovery:${day}`;
-}
-
-export function isRecoveryId(id: string): boolean {
-  return id.startsWith('recovery:');
-}
-
 export async function refreshStreaks(db: AscendDB, at: IsoTime): Promise<StreakSummary> {
   const days = (await db.days.toArray()).filter((d) => d.deleted_at === null);
-  const recoveries = await db.quest_instances.where(':id').startsWith('recovery:').toArray();
+  const recoveries = await db.quest_instances
+    .where(':id')
+    .startsWith(recoveryQuestId(''))
+    .toArray();
   const recoveredDays = new Set(
-    recoveries.filter((i) => i.deleted_at === null && isDone(i.status)).map((i) => i.day),
+    recoveries
+      .filter((i) => i.deleted_at === null && isRecoveryId(i.id) && isDone(i.status))
+      .map((i) => i.day),
   );
-  const { days: computed, summary } = computeStreaks(
-    days.map((d) => ({
-      day: d.day,
-      active: d.active,
-      neutral: d.neutral,
-      open: d.closed_at === null,
-      recovered: recoveredDays.has(d.day),
-    })),
-  );
+  const { days: computed, summary } = computeStreaks(toStreakInputs(days, recoveredDays));
   for (const [i, record] of days.entries()) {
     const next = computed[i];
     if (!next) continue;

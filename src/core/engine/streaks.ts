@@ -51,6 +51,20 @@ export interface StreakResult {
   summary: StreakSummary;
 }
 
+/** Streak inputs from stored day records (in day order) and the days a Recovery quest was done. */
+export function toStreakInputs(
+  days: readonly Pick<DayRecord, 'day' | 'active' | 'neutral' | 'closed_at'>[],
+  recoveredDays: ReadonlySet<DayString>,
+): StreakDayInput[] {
+  return days.map((d) => ({
+    day: d.day,
+    active: d.active,
+    neutral: d.neutral,
+    open: d.closed_at === null,
+    recovered: recoveredDays.has(d.day),
+  }));
+}
+
 /** May a Recovery quest completed on `day` repair a missed day (rolling 7-day limit)? */
 export function repairAllowed(lastRepairDay: DayString | null, day: DayString): boolean {
   return lastRepairDay === null || diffDays(lastRepairDay, day) >= GAME.repairWindowDays;

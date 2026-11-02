@@ -10,6 +10,15 @@ export function habitInstanceId(habitId: string, day: DayString): string {
   return `${habitId}:${day}`;
 }
 
+/** Recovery quests have a deterministic id per day, so two devices never create two. */
+export function recoveryQuestId(day: DayString): string {
+  return `recovery:${day}`;
+}
+
+export function isRecoveryId(id: string): boolean {
+  return id.startsWith('recovery:');
+}
+
 /** A habit is scheduled on a day if it is active and the weekday is in its schedule. */
 export function isScheduled(habit: Habit, day: DayString): boolean {
   return (

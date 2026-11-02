@@ -6,6 +6,7 @@ import { ErrorScreen } from './app/ErrorScreen';
 import { applyTheme } from './app/theme';
 import { openDatabase } from './core/db/open';
 import { installGlobalErrorHandlers, logError } from './core/errorLog';
+import { rebuildProgress, startProgressStore } from './core/state/progress';
 import './styles/index.css';
 
 installGlobalErrorHandlers();
@@ -24,8 +25,11 @@ async function start(): Promise<void> {
 
   // Database migrations run before any screen loads (SPEC 9).
   await openDatabase();
+  // Consistency check: stored day fields must match their quests (fixes only what's wrong).
+  await rebuildProgress().catch((error: unknown) => logError(error, 'consistency check'));
   // Close past days and start today before the first screen (never blocks startup on error).
   await startRollover();
+  await startProgressStore();
   root.render(
     <StrictMode>
       <App />
