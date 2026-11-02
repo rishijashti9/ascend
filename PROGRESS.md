@@ -2,9 +2,9 @@
 
 ## Resume here
 
-- **Current task:** none — 1.4 finished. Next is 1.5.
-- **Done so far:** 1.1 scaffold; 1.2 tokens/Tailwind/fonts/themes; 1.3 app shell — routes.tsx, Layout (bottom bar <1024px, sidebar ≥1024px), navigation.ts driven by config/features.ts, More + Settings (version) pages, ErrorBoundary/ErrorScreen, core/errorLog.ts (localStorage). Playwright + Chromium installed. 1.4 time module — src/core/time (clock.ts: now()/offset/tz override; days.ts: dayOf, addDays, diffDays, weekStartOf, dayNumber, instantAt, dayBounds) with DST/leap/tz tests.
-- **Next step:** task 1.5 — install dexie (+ fake-indexeddb for tests); src/core/db/types.ts (all record types), db.ts (Dexie v1, all tables + indexes), migrations runner before first render, navigator.storage.persist(); tests.
+- **Current task:** none — 1.5 finished. Next is 1.6.
+- **Done so far:** 1.1 scaffold; 1.2 tokens/Tailwind/fonts/themes; 1.3 app shell — routes.tsx, Layout (bottom bar <1024px, sidebar ≥1024px), navigation.ts driven by config/features.ts, More + Settings (version) pages, ErrorBoundary/ErrorScreen, core/errorLog.ts (localStorage). Playwright + Chromium installed. 1.4 time module — src/core/time (clock.ts: now()/offset/tz override; days.ts: dayOf, addDays, diffDays, weekStartOf, dayNumber, instantAt, dayBounds) with DST/leap/tz tests. 1.5 schema — src/core/db (types/*.ts for all 23 tables, db.ts Dexie v1 + indexes + default settings on populate, hlc.ts, open.ts with storage.persist), main.tsx opens DB before render.
+- **Next step:** task 1.6 — src/config/game.ts (XP by difficulty, min/late 50%, soft cap 300, streak 2%/30%, daily clear 20, curve 80·n^1.15, ranks, shield rules) + src/core/engine/levels.ts (xpForLevel, levelFromXp with progress, rankFor(level, activeDays)) + tests.
 - **Open questions:** none.
 - **Broken:** nothing. `npm run check` passes.
 
@@ -16,7 +16,7 @@
 - [x] 1.2 Design tokens, Tailwind, fonts, themes, contrast test
 - [x] 1.3 App shell, navigation, feature flags, error boundary
 - [x] 1.4 Time module + tests
-- [ ] 1.5 Schema + Dexie DB + migrations + persist
+- [x] 1.5 Schema + Dexie DB + migrations + persist
 - [ ] 1.6 Game config + levels/ranks + tests
 - [ ] 1.7 Action pipeline + event bus + tests
 - [ ] 1.8 Simulation script + PLAN balance table
