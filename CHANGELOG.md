@@ -4,6 +4,18 @@ All notable changes to ASCEND. Versions follow [semantic versioning](https://sem
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-11-02 — Phase 4: Focus & Body
+
+### Added
+
+- Focus: pick a minutes quest (its minutes go into the quest — never double XP) or a stat (1 XP per focused minute), 25/5 or 50/10, then a minimal full-screen timer that keeps the screen on. Ending early still counts the minutes for a linked quest. A face-down honesty check at the end, and "Did you finish?" if the app was closed past the end. Session history with this week's minutes per stat and minutes per day this month. "Start focus" on Today; Focus is in the bottom bar.
+- Body: daily weight, waist, sleep, steps and workout notes (today's steps and sleep also fill in the Walk and Sleep quests), the last 14 days in a table, and trend charts (weight and waist with your milestone target, sleep and steps against your quest goals) — each with a table view.
+- Body photos: one per day, kept only on this device, shrunk before saving. "Export with photos" saves a .zip that restores them (and all data) on a new device.
+
+### Fixed
+
+- Photos are restored before the data import, so leaving the screen right after importing can't cut the photo restore short.
+
 ## [0.3.0] — 2026-11-02 — Phase 3: Goals + Goal Planner
 
 ### Added

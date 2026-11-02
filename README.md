@@ -105,6 +105,8 @@ In Android Studio: **Build → Build App Bundle(s) / APK(s) → Build APK(s)**. 
 - Missed a day? A shield covers it automatically if you have one (one per 7 active days, up to 3). Otherwise a small **Recovery quest** appears the next day and can restore the streak.
 - **Quests** is where daily quests are added, edited, paused or archived, and where the 3 core quests are chosen.
 - **Goals** holds your Dream, its Main Quests and their milestones. Tap **Plan this goal** (or **Re-plan**): answer a few taps and the Goal Planner proposes milestones, this week's quests and any daily quest — untick or edit anything, then approve. Every plan can be undone from **Plan history**. Each new week, this week's quests are planned automatically (with Undo).
+- **Focus** (or “Start focus” on Today): pick a minutes quest or a stat and a length; the minutes count toward the quest, or give 1 XP per minute.
+- **Body** (in More): log weight, waist, sleep, steps and workouts; see trends; add a private daily photo (kept only on this device — use “Export with photos” to carry photos to a new device).
 - **Settings** has the theme, day-start hour, wake-up times, Auto-plan, backup (export / import), and “Rebuild progress”.
 
 ## Developer tools (testing only)

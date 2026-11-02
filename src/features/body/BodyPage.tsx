@@ -6,6 +6,7 @@ import { formatDay } from '@/features/goals/format';
 import { Button } from '@/ui/Button';
 import { Field, TextInput } from '@/ui/Field';
 import { useAction } from '@/ui/hooks/useAction';
+import { BodyTrends } from './BodyTrends';
 import { Photos } from './Photos';
 
 type Draft = Record<'weight' | 'waist' | 'sleep_hours' | 'steps' | 'workout_notes', string>;
@@ -144,6 +145,7 @@ export function BodyPage() {
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
       <h1 className="text-xl font-semibold">Body</h1>
       <LogForm key={day} day={day} log={todayLog} />
+      <BodyTrends today={day} />
       <Photos day={day} />
       {recent.length > 0 && (
         <section aria-label="Recent days" className="flex flex-col gap-2">

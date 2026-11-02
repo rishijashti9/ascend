@@ -6,6 +6,7 @@ import { useToday } from '@/core/state/today';
 import { weekStartOf } from '@/core/time';
 import { formatDay } from '@/features/goals/format';
 import { STAT_META } from '@/ui/statMeta';
+import { FocusTrend } from './FocusTrend';
 import { byDay, statOf, weekSummary } from './history';
 
 const time = (iso: string) =>
@@ -56,6 +57,7 @@ export function SessionHistory() {
         </ul>
       </section>
 
+      <FocusTrend />
       <section aria-label="Session history" className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold">History</h2>
         {byDay(sessions).map(([d, list]) => (
