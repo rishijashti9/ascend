@@ -193,4 +193,30 @@ describe('Notification settings and banners', () => {
     );
     expect(await screen.findByText(/At 22:15: a nudge/)).toBeInTheDocument();
   });
+
+  it('quiet hours: on/off and times; a reminder inside them is called out', async () => {
+    setNotifier(fakeNotifier('browser', 'granted').n);
+    await startAppState();
+    const { useAppState } = await import('@/core/state/app');
+    function Live() {
+      const settings = useAppState((x) => x.settings);
+      return settings ? <NotificationSettings settings={settings} /> : null;
+    }
+    render(
+      <MemoryRouter>
+        <Live />
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('switch', { name: 'Quiet hours' })).toBeChecked();
+    expect(screen.getByText(/If you don’t open ASCEND for a week/)).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('Quiet hours from'), { target: { value: '20:30' } });
+    expect(
+      await screen.findByText(
+        'The wind-down at 21:00 falls inside quiet hours, so it won’t arrive.',
+      ),
+    ).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('switch', { name: 'Quiet hours' }));
+    await waitFor(async () => expect((await db.settings.get('settings'))?.quiet_hours).toBeNull());
+    expect(screen.queryByText(/inside quiet hours/)).not.toBeInTheDocument();
+  });
 });

@@ -19,7 +19,7 @@ export const features = {
   review: true,
   profile: true,
   // Phase 6
-  notifications: false,
+  notifications: true,
   // Phase 9 (Jobs also needs to be switched on in Settings)
   skills: false,
   jobs: false,

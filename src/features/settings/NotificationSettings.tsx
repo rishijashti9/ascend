@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getNotifier } from '@/app/notify';
 import type { Settings } from '@/core/db/types';
-import { REMINDER_TIME } from '@/core/notifications/plan';
+import { addMinutes, minuteInQuietHours, REMINDER_TIME } from '@/core/notifications/plan';
 import type { NotifyPermission } from '@/core/notifications/types';
 import { useToday } from '@/core/state/today';
 import { Button } from '@/ui/Button';
@@ -67,13 +67,27 @@ export function NotificationSettings({ settings }: { settings: Settings }) {
     setTested(true);
   };
   const canShow = android ? permission === 'granted' : true;
+  const held = [
+    n.morning_briefing &&
+      minuteInQuietHours(
+        addMinutes(settings.wake_time, settings.wake_window_min),
+        settings.quiet_hours,
+      ) &&
+      'The morning briefing',
+    n.quest_reminders &&
+      minuteInQuietHours(REMINDER_TIME, settings.quiet_hours) &&
+      'The core quest reminder',
+    n.evening_winddown &&
+      minuteInQuietHours(n.evening_time, settings.quiet_hours) &&
+      `The wind-down at ${n.evening_time}`,
+  ].filter((x): x is string => typeof x === 'string');
 
   return (
     <Card title="Notifications">
       <p className="text-muted text-sm">
         {android
           ? 'Reminders are scheduled on this phone a week ahead, so they arrive even when ASCEND is closed or offline.'
-          : 'In a browser, reminders appear only while ASCEND is open — as a banner at the top of the screen. Browsers can’t schedule them ahead, so don’t rely on this for waking up; the Android app can.'}
+          : 'In a browser, reminders appear only while ASCEND is open — as a small banner at the top. Browsers can’t schedule them ahead, so don’t rely on this for waking up; the Android app can.'}
       </p>
 
       {android && permission === 'prompt' && (
@@ -165,6 +179,63 @@ export function NotificationSettings({ settings }: { settings: Settings }) {
           />
         </label>
       )}
+
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="font-medium" id="quiet-hours-label">
+            Quiet hours
+          </p>
+          <p className="text-muted text-sm">
+            Nothing arrives during quiet hours — except the wake-up check-in, which you asked for.
+          </p>
+        </div>
+        <Switch
+          on={settings.quiet_hours !== null}
+          labelledBy="quiet-hours-label"
+          disabled={busy}
+          onChange={(on) =>
+            void run({
+              type: 'settings.update',
+              payload: { quiet_hours: on ? { start: '22:00', end: '04:45' } : null },
+            })
+          }
+        />
+      </div>
+      {settings.quiet_hours && (
+        <div className="flex flex-wrap gap-4 text-sm">
+          {(['start', 'end'] as const).map((edge) => (
+            <label key={edge} className="flex items-center gap-2">
+              <span>{edge === 'start' ? 'From' : 'Until'}</span>
+              <input
+                type="time"
+                aria-label={edge === 'start' ? 'Quiet hours from' : 'Quiet hours until'}
+                value={settings.quiet_hours?.[edge] ?? ''}
+                disabled={busy}
+                onChange={(e) => {
+                  const quiet = settings.quiet_hours;
+                  if (quiet && /^\d{2}:\d{2}$/.test(e.target.value)) {
+                    void run({
+                      type: 'settings.update',
+                      payload: { quiet_hours: { ...quiet, [edge]: e.target.value } },
+                    });
+                  }
+                }}
+                className="border-border bg-surface min-h-11 rounded-md border px-3 text-base"
+              />
+            </label>
+          ))}
+        </div>
+      )}
+      {held.length > 0 && (
+        <p className="text-warning-text text-sm">
+          {held.join(' and ')} {held.length === 1 ? 'falls' : 'fall'} inside quiet hours, so{' '}
+          {held.length === 1 ? 'it' : 'they'} won’t arrive.
+        </p>
+      )}
+      <p className="text-muted text-sm">
+        If you don’t open ASCEND for a week, reminders stop by themselves — except one gentle note.
+        They start again the next time you open it.
+      </p>
 
       {canShow && (
         <div className="flex flex-wrap items-center gap-3">

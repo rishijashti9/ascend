@@ -30,9 +30,15 @@ export function NotificationBridge() {
 
   if (notices.length === 0 && !message) return null;
   return (
-    <div className="mb-4 flex flex-col gap-2" aria-live="polite">
+    <div
+      className="fixed inset-x-4 top-[max(0.75rem,env(safe-area-inset-top))] z-40 mx-auto flex max-w-md flex-col gap-2 lg:left-auto lg:right-6"
+      aria-live="polite"
+    >
       {message && (
-        <p role="alert" className="text-warning-text text-sm">
+        <p
+          role="alert"
+          className="border-border bg-surface text-warning-text shadow-card rounded-lg border px-4 py-3 text-sm"
+        >
           {message}
         </p>
       )}
@@ -40,7 +46,7 @@ export function NotificationBridge() {
         <div
           key={n.key}
           role="status"
-          className="border-border bg-surface flex items-start gap-3 rounded-lg border px-4 py-3 text-sm"
+          className="border-border bg-surface shadow-card flex items-start gap-3 rounded-lg border px-4 py-3 text-sm"
         >
           <Bell aria-hidden size={18} className="text-accent-text mt-0.5 shrink-0" />
           <div className="flex min-w-0 flex-1 flex-col gap-2">

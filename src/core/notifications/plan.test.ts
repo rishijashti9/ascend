@@ -2,7 +2,9 @@ import { DEFAULT_SETTINGS } from '@/config/defaults';
 import type { Habit } from '@/core/db/types';
 import { newBase } from '@/core/pipeline';
 import { ist } from '@/test/testDb';
-import { appInstant, planNotifications, type PlanInput } from './plan';
+import { appInstant, inQuietHours, planNotifications, type PlanInput } from './plan';
+
+const plan = planNotifications;
 
 const TZ = 'Asia/Kolkata';
 const wake: Habit = {
@@ -48,9 +50,11 @@ const input = (over: Partial<PlanInput> = {}): PlanInput => ({
   ...over,
 });
 
+const wakes = (i: PlanInput) => planNotifications(i).filter((n) => n.kind === 'wake');
+
 describe('planNotifications: wake-up check-in', () => {
   it('one per scheduled day for 7 days at wake time, with Day N and the I’m up instance', () => {
-    const list = planNotifications(input());
+    const list = wakes(input());
     expect(list).toHaveLength(7);
     expect(list[0]).toEqual({
       key: 'wake:2026-11-02',
@@ -67,7 +71,7 @@ describe('planNotifications: wake-up check-in', () => {
 
   it('skips today once done or once the time has passed, unscheduled days, and before Day 1', () => {
     expect(
-      planNotifications(
+      wakes(
         input({
           todayInstances: [
             {
@@ -81,29 +85,23 @@ describe('planNotifications: wake-up check-in', () => {
         }),
       )[0]?.key,
     ).toBe('wake:2026-11-03');
-    expect(planNotifications(input({ now: ist(2026, 11, 2, 6, 0) }))[0]?.key).toBe(
-      'wake:2026-11-03',
-    );
+    expect(wakes(input({ now: ist(2026, 11, 2, 6, 0) }))[0]?.key).toBe('wake:2026-11-03');
     const weekdays = { ...wake, schedule: [1, 2, 3, 4, 5] } as Habit; // Mon–Fri
-    expect(planNotifications(input({ habits: [weekdays] })).map((n) => n.day)).toEqual([
+    expect(wakes(input({ habits: [weekdays] })).map((n) => n.day)).toEqual([
       '2026-11-02',
       '2026-11-03',
       '2026-11-04',
       '2026-11-05',
       '2026-11-06',
     ]);
-    expect(planNotifications(input({ startDay: '2026-11-05' }))[0]?.title).toBe(
-      'Day 1. Are you up?',
-    );
-    expect(planNotifications(input({ startDay: null }))).toEqual([]);
+    expect(wakes(input({ startDay: '2026-11-05' }))[0]?.title).toBe('Day 1. Are you up?');
+    expect(wakes(input({ startDay: null }))).toEqual([]);
   });
 
   it('respects the switch and a paused wake-up quest', () => {
     const off = only([]);
-    expect(planNotifications(input({ settings: off }))).toEqual([]);
-    expect(planNotifications(input({ habits: [{ ...wake, status: 'paused' } as Habit] }))).toEqual(
-      [],
-    );
+    expect(wakes(input({ settings: off }))).toEqual([]);
+    expect(wakes(input({ habits: [{ ...wake, status: 'paused' } as Habit] }))).toEqual([]);
   });
 
   it('a clock time before the day-start hour belongs to the next calendar date', () => {
@@ -138,6 +136,7 @@ const inst = (id: string, status: 'pending' | 'done_full', core: boolean) => ({
 });
 
 describe('planNotifications: briefing, reminder, wind-down', () => {
+  const planNotifications = (i: PlanInput) => plan(i).filter((n) => n.kind !== 'welcome_back');
   const all = only(['morning_briefing', 'quest_reminders', 'evening_winddown']);
   const habits = [wake, study, journal];
 
@@ -202,11 +201,47 @@ describe('planNotifications: briefing, reminder, wind-down', () => {
   });
 
   it('every kind follows its switch and the evening time', () => {
-    const late = { ...all, notifications: { ...all.notifications, evening_time: '22:30' } };
+    const late = {
+      ...all,
+      quiet_hours: null,
+      notifications: { ...all.notifications, evening_time: '22:30' },
+    };
     const wind = planNotifications(input({ settings: late, habits })).find(
       (n) => n.kind === 'winddown',
     );
     expect(wind?.at).toBe(ist(2026, 11, 2, 22, 30));
     expect(planNotifications(input({ settings: only([]), habits }))).toEqual([]);
+  });
+});
+
+describe('planNotifications: quiet hours and a week away', () => {
+  const all = only(['wake_checkin', 'morning_briefing', 'quest_reminders', 'evening_winddown']);
+
+  it('quiet hours (past midnight) hold every reminder except the wake-up check-in', () => {
+    const quiet = { ...all, quiet_hours: { start: '20:00', end: '05:30' } };
+    const kinds = plan(input({ settings: quiet }))
+      .filter((n) => n.day === '2026-11-03')
+      .map((n) => n.kind);
+    // 05:00 wake kept; 05:20 briefing and 21:00 wind-down held; 18:00 reminder sent.
+    expect(kinds).toEqual(['wake', 'reminder']);
+    expect(inQuietHours(ist(2026, 11, 2, 23, 0), quiet.quiet_hours, TZ)).toBe(true);
+    expect(inQuietHours(ist(2026, 11, 2, 5, 30), quiet.quiet_hours, TZ)).toBe(false);
+    expect(inQuietHours(ist(2026, 11, 2, 12, 0), { start: '12:00', end: '13:00' }, TZ)).toBe(true);
+    expect(inQuietHours(ist(2026, 11, 2, 12, 0), null, TZ)).toBe(false);
+  });
+
+  it('reminders cover only the 7 days after ASCEND was last opened, then one gentle note', () => {
+    const list = plan(input({ settings: all }));
+    const last = list.at(-1);
+    expect(last).toMatchObject({
+      kind: 'welcome_back',
+      day: '2026-11-09',
+      at: ist(2026, 11, 9, 6, 20),
+      title: 'No pressure.',
+    });
+    expect(list.filter((n) => n.kind !== 'welcome_back').every((n) => n.day < '2026-11-09')).toBe(
+      true,
+    );
+    expect(plan(input({ settings: only([]) }))).toEqual([]); // all off → no note either
   });
 });

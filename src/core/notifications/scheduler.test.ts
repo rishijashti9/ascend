@@ -1,5 +1,6 @@
 import type { Habit } from '@/core/db/types';
 import { clearSubscribers, ensureInstancesForDay, newBase } from '@/core/pipeline';
+import { setNow } from '@/core/time';
 import { createTestDb, ist } from '@/test/testDb';
 import { startNotificationScheduler } from './scheduler';
 import type { Notifier, PlannedNotification } from './types';
@@ -74,6 +75,19 @@ describe('notification scheduler', () => {
     await t.run({ type: 'settings.update', payload: { notifications: { wake_checkin: false } } });
     await s.refresh();
     expect(synced.at(-1)).toEqual([]);
+    s.stop();
+  });
+
+  it('the day rollover re-plans from the new day', async () => {
+    const s = startNotificationScheduler(notifier, t.db, 0);
+    await s.refresh();
+    expect(synced[0]?.[0]?.key).toBe('wake:2026-11-02');
+    setNow(ist(2026, 11, 3, 4, 30));
+    await t.run({ type: 'day.rollover', payload: {} });
+    await s.refresh();
+    const keys = (synced.at(-1) ?? []).map((n) => n.key);
+    expect(keys[0]).toBe('wake:2026-11-03');
+    expect(keys).toContain('welcome_back:2026-11-10');
     s.stop();
   });
 });

@@ -1,7 +1,7 @@
 import type { DayString, Habit, QuestInstance, Settings } from '@/core/db/types';
 import { isRecoveryId, isScheduled } from '@/core/engine/instances';
 import { isDone } from '@/core/engine/progress';
-import { addDays, dayNumber, instantAt, parseTime } from '@/core/time';
+import { addDays, dayNumber, instantAt, localParts, parseTime } from '@/core/time';
 import type { PlannedNotification } from './types';
 
 /**
@@ -15,7 +15,10 @@ export interface PlanInput {
   now: number;
   tz: string;
   today: DayString;
-  settings: Pick<Settings, 'wake_time' | 'wake_window_min' | 'day_start_hour' | 'notifications'>;
+  settings: Pick<
+    Settings,
+    'wake_time' | 'wake_window_min' | 'day_start_hour' | 'notifications' | 'quiet_hours'
+  >;
   startDay: DayString | null;
   habits: readonly Habit[];
   /** Today's quest instances (later days have none yet). */
@@ -32,9 +35,25 @@ export const REMINDER_TIME = '18:00';
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
-function addMinutes(hhmm: string, minutes: number): string {
+export function addMinutes(hhmm: string, minutes: number): string {
   const t = (parseTime(hhmm) + minutes) % (24 * 60);
   return `${String(Math.floor(t / 60)).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`;
+}
+
+/** True if the instant falls inside quiet hours (which may run past midnight). */
+export function inQuietHours(at: number, quiet: Settings['quiet_hours'], tz: string): boolean {
+  const p = localParts(at, tz);
+  return minuteInQuietHours(p.hour * 60 + p.minute, quiet);
+}
+
+/** True if a clock time (minutes after midnight, or "HH:MM") falls inside quiet hours. */
+export function minuteInQuietHours(time: number | string, quiet: Settings['quiet_hours']): boolean {
+  if (!quiet) return false;
+  const m = typeof time === 'string' ? parseTime(time) : time;
+  const start = parseTime(quiet.start);
+  const end = parseTime(quiet.end);
+  if (start === end) return false;
+  return start < end ? m >= start && m < end : m >= start || m < end;
 }
 
 /** The instant a clock time happens within an app day (times before the day-start hour belong to the next calendar date). */
@@ -140,5 +159,28 @@ export function planNotifications(input: PlanInput): PlannedNotification[] {
       });
     }
   }
-  return list.filter((n) => n.at > input.now).sort((a, b) => a.at - b.at);
+
+  // Away for a week (SPEC 7): everything above lies within 7 days of the last time ASCEND was
+  // opened, so if it isn't opened again, reminders simply stop — except this one gentle note.
+  const anyOn = n.wake_checkin || n.morning_briefing || n.quest_reminders || n.evening_winddown;
+  if (anyOn) {
+    const day = addDays(input.today, DAYS_AHEAD);
+    list.push({
+      key: `welcome_back:${day}`,
+      kind: 'welcome_back',
+      at: at(day, addMinutes(settings.wake_time, settings.wake_window_min + 60)),
+      day,
+      title: 'No pressure.',
+      body: 'Your quests are here whenever you’re ready. Reminders resume when you open ASCEND.',
+      path: '/',
+    });
+  }
+
+  return (
+    list
+      .filter((x) => x.at > input.now)
+      // Quiet hours hold everything except the wake-up check-in you asked to be woken by.
+      .filter((x) => x.kind === 'wake' || !inQuietHours(x.at, settings.quiet_hours, tz))
+      .sort((a, b) => a.at - b.at)
+  );
 }

@@ -4,6 +4,17 @@ All notable changes to ASCEND. Versions follow [semantic versioning](https://sem
 
 ## [Unreleased]
 
+## [0.6.0] — 2026-11-03 — Phase 6: Notifications
+
+### Added
+
+- Wake-up check-in: at your wake time, “Day N. Are you up?” with an “I’m up” button — the moment you tap is what counts, even if the app opens later.
+- Morning briefing (how many quests today, where to start), a core quest reminder at 18:00 only while core quests are still open, and an evening wind-down that opens the 1-minute check-in. Each has its own switch; the wind-down time can be changed.
+- Quiet hours (default 22:00–04:45): nothing arrives inside them except the wake-up check-in; Settings points out a reminder that falls inside them.
+- If ASCEND isn't opened for a week, reminders stop by themselves — except one gentle note.
+- Android: reminders are scheduled a week ahead on the phone and work offline (re-planned after every change and every new day). Web: reminders show as a banner while ASCEND is open, with optional browser notifications — Settings says plainly what each can do. “Send a test” in Settings.
+- End-to-end test: notifications on the web (settings, test banner, a reminder coming due).
+
 ## [0.5.0] — 2026-11-03 — Phase 5: Reviews & progress
 
 ### Added

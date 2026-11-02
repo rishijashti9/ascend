@@ -110,6 +110,7 @@ In Android Studio: **Build → Build App Bundle(s) / APK(s) → Build APK(s)**. 
 - **Review** (in More): the 1-minute evening check-in, the weekly review (look back, then confirm next week's quests), and monthly / yearly summaries.
 - **Profile** (in More): level, rank, stats triangle, XP per week, the active-days calendar, achievements, and the title you choose to show.
 - The System sometimes suggests a lighter or harder load on Today — one tap applies it (with Undo), or “Not now”.
+- **Notifications** (Settings): on the Android app, the wake-up check-in, morning briefing, core quest reminder and evening wind-down arrive even when ASCEND is closed; tap “I’m up” on the wake-up one and the tap time counts. In a browser they only appear while ASCEND is open. Quiet hours hold everything except the wake-up check-in.
 - **Settings** has the theme, day-start hour, wake-up times, Auto-plan, backup (export / import), and “Rebuild progress”.
 
 ## Developer tools (testing only)
