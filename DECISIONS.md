@@ -72,3 +72,4 @@ Every answer Rishi gave and every decision made. Newest at the bottom of each se
 - **No service worker inside the Android app** (task 1.11): the APK carries its own files and updates by installing a new APK; a service worker there could keep serving an old copy. The "Update ready" prompt is web/PWA-only.
 - **Android build needs Java 21** (task 1.11): use Android Studio's bundled Java (README). The laptop's Java 17 stays as it is.
 - **Hosting live** (task 1.12): https://ascend-vert-mu.vercel.app, connected to GitHub `main` (auto-deploy). `sw.js` served with `no-cache` so updates are found promptly.
+- **Same-day un-tick can lower the level** (Rishi, 2026-11-02): if correcting a mistaken tap on the same day drops total XP (or a stat's XP) below a level threshold, the level goes back down. It happens **quietly**: no "level down" message, animation or notification — the number simply corrects. No level is ever lowered for any other reason.
