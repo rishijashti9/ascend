@@ -65,3 +65,14 @@ describe('roadmaps (SPEC 6.7 B)', () => {
         expect(step.checkOfficial, step.title).toBeDefined();
   });
 });
+
+describe('health knowledge', () => {
+  it('has WHO activity, sleep (AASM/SRS), Indian diet (ICMR-NIN) and wellbeing guidance', () => {
+    const g = new Map(pack().guidelines.map((x) => [x.id, x]));
+    expect(g.get('activity-aerobic')?.numbers.moderate_min_week).toBe(150);
+    expect(g.get('activity-strength')?.numbers.strength_days_week).toBe(2);
+    expect(g.get('sleep-duration')?.numbers.min_hours).toBe(7);
+    expect(g.get('diet-plate')?.sources).toContain('icmr-nin-2024');
+    expect(g.get('mental-wellbeing')).toBeDefined();
+  });
+});

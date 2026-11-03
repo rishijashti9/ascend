@@ -127,8 +127,14 @@ export const helplineSchema = z
     phones: z.array(z.string().min(3)).min(1),
     hours: z.string(),
     url,
-    /** When the number was last verified against the official site. */
-    verified: z.string().regex(/^\d{4}-\d{2}$/),
+    /**
+     * When the number was last verified against the official site, or null if it couldn't be
+     * checked automatically — the app then always shows the official link next to it.
+     */
+    verified: z
+      .string()
+      .regex(/^\d{4}-\d{2}$/)
+      .nullable(),
     sources: z.array(id).min(1),
   })
   .strict();
