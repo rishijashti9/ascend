@@ -52,7 +52,38 @@ export const DIFFICULTY = {
   easeAfterDays: 7,
   raiseAfterDays: 14,
   maxEased: 2,
+  /** How far back a quest remembers which targets worked and which didn't. */
+  memoryDays: 90,
+  /** No raise within this many days of the target being lowered (settle first). */
+  raiseCooldownDays: 42,
 } as const;
+
+interface TargetSpan {
+  target: number;
+  days: number;
+  full: number;
+}
+
+/**
+ * The targets a quest had in the last `memoryDays` and how each went. Used as hysteresis: a
+ * raise never goes back up to a target that recently failed, and an ease goes back to the
+ * last target that worked instead of cutting blindly — so it settles instead of swinging.
+ */
+function targetHistory(
+  obs: readonly { day: DayString; target: number | null; status: string }[],
+  today: DayString,
+): TargetSpan[] {
+  const from = addDays(today, -DIFFICULTY.memoryDays);
+  const map = new Map<number, TargetSpan>();
+  for (const o of obs) {
+    if (o.day < from || o.target === null) continue;
+    const e = map.get(o.target) ?? { target: o.target, days: 0, full: 0 };
+    e.days++;
+    if (o.status === 'done_full') e.full++;
+    map.set(o.target, e);
+  }
+  return [...map.values()];
+}
 
 /** Measures whose target can be nudged (sleep is a health number, not a challenge). */
 const ADJUSTABLE = new Set<Habit['measure']>(['minutes', 'count', 'steps']);
@@ -97,9 +128,9 @@ export function difficultySuggestion({ input, snoozedUntil }: DifficultyInput): 
     .filter((h) => h.status === 'active' && ADJUSTABLE.has(h.measure) && h.target_value)
     .sort((a, b) => a.order - b.order)
     .map((h) => {
-      const obs = observationsOf(input, h.id).filter(
-        (o) => o.target === h.target_value && !o.lowEnergy,
-      );
+      const all = observationsOf(input, h.id).filter((o) => !o.lowEnergy);
+      const history = targetHistory(all, today);
+      const obs = all.filter((o) => o.target === h.target_value);
       const est = betaEstimate(
         obs.map((o) => ({ day: o.day, success: o.status === 'done_full' })),
         today,
@@ -117,7 +148,31 @@ export function difficultySuggestion({ input, snoozedUntil }: DifficultyInput): 
               fullDays: obs.filter((o) => o.status === 'done_full').length,
               days: obs.length,
             };
-      return { h, obs, est, change };
+      // A lower target that recently worked → ease back to it; a higher one that recently
+      // failed → never raise up to it again (for `memoryDays`).
+      const worked = history
+        .filter(
+          (t) =>
+            t.target < (h.target_value ?? 0) && t.days >= 7 && t.full / t.days >= DIFFICULTY.aim,
+        )
+        .sort((a, b) => b.target - a.target)[0];
+      const failed = history
+        .filter(
+          (t) =>
+            t.target > (h.target_value ?? 0) &&
+            t.days >= 7 &&
+            t.full / t.days < DIFFICULTY.easeBelow,
+        )
+        .sort((a, b) => a.target - b.target)[0];
+      // The last day the target went down (a lowered target settles before any raise).
+      let lastEase = '';
+      for (let i = 1; i < all.length; i++) {
+        const prev = all[i - 1]?.target ?? null;
+        const cur = all[i]?.target ?? null;
+        if (prev !== null && cur !== null && cur < prev) lastEase = all[i]?.day ?? lastEase;
+      }
+      const settled = !lastEase || addDays(lastEase, DIFFICULTY.raiseCooldownDays) <= today;
+      return { h, obs, est, change, worked, failed, settled };
     });
 
   // 2. Too hard right now → smaller targets (the hardest first).
@@ -131,7 +186,9 @@ export function difficultySuggestion({ input, snoozedUntil }: DifficultyInput): 
       )
       .sort((a, b) => a.est.p - b.est.p)
       .flatMap((j) => {
-        const c = j.change(smallerTarget(j.h, j.est.p));
+        const smaller = smallerTarget(j.h, j.est.p);
+        const to = j.worked && smaller !== null ? Math.max(smaller, j.worked.target) : smaller;
+        const c = j.change(to);
         return c ? [c] : [];
       })
       .slice(0, DIFFICULTY.maxEased);
@@ -145,10 +202,19 @@ export function difficultySuggestion({ input, snoozedUntil }: DifficultyInput): 
         (j) =>
           j.obs.length >= DIFFICULTY.raiseAfterDays &&
           j.est.p > DIFFICULTY.raiseAbove &&
-          j.est.confidence === 'confident',
+          j.est.confidence === 'confident' &&
+          j.settled,
       )
-      .sort((a, b) => b.est.p - a.est.p)[0];
-    const c = pick?.change(largerTarget(pick.h));
+      .map((j) => {
+        const larger = largerTarget(j.h);
+        const step = stepOf(j.h.measure);
+        const cap = j.failed ? j.failed.target - step : null;
+        const to = larger !== null && cap !== null ? Math.min(larger, cap) : larger;
+        return { j, to: to !== null && j.h.target_value && to > j.h.target_value ? to : null };
+      })
+      .filter((x) => x.to !== null)
+      .sort((a, b) => b.j.est.p - a.j.est.p)[0];
+    const c = pick ? pick.j.change(pick.to) : null;
     if (c) return { kind: 'raise', changes: [c] };
   }
   return null;

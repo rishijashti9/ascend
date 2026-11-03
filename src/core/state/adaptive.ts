@@ -1,6 +1,7 @@
 import { createStore, useStore } from 'zustand';
 import { habitModels, type HabitModel } from '@/core/adaptive/habits';
-import { loadAdaptiveInput, type AdaptiveInput } from '@/core/adaptive/input';
+import type { AdaptiveInput } from '@/core/adaptive/input';
+import { loadAdaptiveInput } from '@/core/adaptive/load';
 import {
   completionWindow,
   focusWindow,

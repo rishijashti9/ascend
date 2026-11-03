@@ -1,5 +1,5 @@
 import type { AscendDB } from '@/core/db/db';
-import { loadAdaptiveInput } from '@/core/adaptive/input';
+import { loadAdaptiveInput } from '@/core/adaptive/load';
 import { weeklyCapacity } from '@/core/adaptive/patterns';
 import { jobStats } from '@/core/engine/jobs';
 import { goalsStore } from '@/core/state/goals';

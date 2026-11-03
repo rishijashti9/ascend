@@ -2,7 +2,7 @@ import { habitFieldsOf, STARTER_DREAM, STARTER_HABITS, STARTER_MAIN_QUESTS } fro
 import { setNow } from '@/core/time';
 import { createTestDb, ist } from '@/test/testDb';
 import { habitModels } from './habits';
-import { loadAdaptiveInput } from './input';
+import { loadAdaptiveInput } from './load';
 
 let t: Awaited<ReturnType<typeof createTestDb>>;
 beforeEach(async () => {

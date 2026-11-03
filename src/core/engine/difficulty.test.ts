@@ -129,3 +129,36 @@ describe('adaptive difficulty (aim: full on ~4 days in 5)', () => {
     expect(s?.changes.map((c) => c.habitId)).toEqual(['walk', 'code']);
   });
 });
+
+describe('hysteresis (settles instead of swinging)', () => {
+  it('eases back to the last target that worked, not lower', () => {
+    const instances = [
+      ...history('study', 100, 30, () => 'done_full').map((i) => ({
+        ...i,
+        day: addDays(i.day, -10),
+      })),
+      ...history('study', 110, 10, () => 'missed'),
+    ];
+    const s = run({ instances, habits: [{ ...study, target_value: 110 }] });
+    expect(s?.changes[0]).toMatchObject({ from: 110, to: 100 });
+  });
+
+  it('never raises back up to a target that recently failed, and waits 6 weeks after an ease', () => {
+    const failed = history('walk', 10000, 10, () => 'missed', { measure: 'steps' }).map((i) => ({
+      ...i,
+      day: addDays(i.day, -60),
+    }));
+    const now = history('walk', 8000, 50, () => 'done_full', { measure: 'steps' });
+    const s = run({ instances: [...failed, ...now] });
+    expect(s).toMatchObject({ kind: 'raise', changes: [{ habitId: 'walk', to: 9000 }] });
+    // Lowered 20 days ago → too soon to raise.
+    const recent = [
+      ...history('walk', 9000, 10, () => 'missed', { measure: 'steps' }).map((i) => ({
+        ...i,
+        day: addDays(i.day, -20),
+      })),
+      ...history('walk', 8000, 20, () => 'done_full', { measure: 'steps' }),
+    ];
+    expect(run({ instances: recent })).toBeNull();
+  });
+});

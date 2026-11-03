@@ -108,6 +108,17 @@ Output (seed 1, 20 users; 100 users with seed 42 gives the same levels):
 ✓ Earliest rank S: year 4.3 (not before year 4)
 ✓ Users reaching S within 5 years: 20/20
 
+### Adaptive difficulty (Phase 8, `npm run simulate`, second table)
+
+30 simulated users with one minutes quest each and a real sustainable amount (40–140 min/day); 3 in 4 start above it. Missing the full target again and again also makes them skip the minimum more often. With the Adaptive System on, the real `difficultySuggestion` runs every day and 80 % of suggestions are accepted. Last 90 days of year 1:
+
+| Targets  | Done (≥ minimum) | Done in full |
+| -------- | ---------------- | ------------ |
+| Fixed    | 73%              | 40%          |
+| Adaptive | 92%              | 81%          |
+
+✓ No raise within a month of an ease (0) · ✓ at most 4 direction changes a year (avg 4.4 changes) · ✓ 30/30 targets settle within 25 % of real capacity. Same picture for seeds 1–4 (asserted in `simulateAdaptive.test.ts`).
+
 ## 5. Build phases and tasks
 
 Each task: ~1–5 files, app builds and runs afterwards, type-check + tests pass, one commit, push.

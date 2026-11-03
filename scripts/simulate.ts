@@ -11,6 +11,7 @@ import { GAME, type Rank } from '@/config/game';
 import { STATS, type Difficulty, type Stat } from '@/core/db/types';
 import { levelFromXp, rankFor } from '@/core/engine/levels';
 import { computeDayXp } from '@/core/engine/xp';
+import { simulateAdaptive } from '@/core/adaptive/simulateAdaptive';
 
 // ---- The user's real starter quests (DECISIONS.md) ----
 const HABITS: { name: string; stat: Stat; difficulty: Difficulty; core: boolean }[] = [
@@ -203,3 +204,33 @@ const checks = [
 ] as const;
 console.log('');
 for (const [label, ok] of checks) console.log(`${ok ? '✓' : '✗'} ${label}`);
+
+// ---- Adaptive difficulty (SPEC 6.7 A): fixed targets vs the Adaptive System ----
+const sim = simulateAdaptive(30, seed0);
+const pct = (x: number) => `${Math.round(x * 100)}%`;
+console.log(`\nAdaptive difficulty — ${sim.users} simulated users, 1 year, one minutes quest each`);
+console.log('(3 in 4 start above what they can sustain; last 90 days shown)\n');
+console.log('| Targets | Done (≥ minimum) | Done in full |');
+console.log('|---|---|---|');
+console.log(`| Fixed | ${pct(sim.fixed.adherence)} | ${pct(sim.fixed.fullRate)} |`);
+console.log(`| Adaptive | ${pct(sim.adaptive.adherence)} | ${pct(sim.adaptive.fullRate)} |`);
+const simChecks = [
+  [
+    `Adherence improves (+${pct(sim.adaptive.adherence - sim.fixed.adherence)})`,
+    sim.adaptive.adherence > sim.fixed.adherence + 0.05,
+  ],
+  [
+    `No back-and-forth within a month (${sim.quickReversals} quick reversals)`,
+    sim.quickReversals === 0,
+  ],
+  [
+    `At most ~one re-test a quarter (max ${sim.maxReversals} direction changes a year, avg ${sim.avgChanges.toFixed(1)} changes)`,
+    sim.maxReversals <= 6,
+  ],
+  [
+    `Targets settle near real capacity: ${sim.nearCapacity}/${sim.users}`,
+    sim.nearCapacity >= sim.users * 0.66,
+  ],
+] as const;
+console.log('');
+for (const [label, ok] of simChecks) console.log(`${ok ? '✓' : '✗'} ${label}`);
