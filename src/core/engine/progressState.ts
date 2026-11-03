@@ -40,6 +40,8 @@ export interface ProgressInput {
     'id' | 'source_type' | 'source_id' | 'day' | 'status' | 'core_snapshot' | 'deleted_at'
   >[];
   today: DayString;
+  /** Final XP of compacted days (SPEC 6.7 D), used instead of their removed XP events. */
+  compactedXp?: ReadonlyMap<DayString, DayXp>;
 }
 
 export interface ProgressState {
@@ -82,7 +84,10 @@ export function computeProgress(input: ProgressInput): ProgressState {
     eventsByDay.set(e.day, list);
   }
 
-  const allDays = [...new Set([...dayRecord.keys(), ...eventsByDay.keys()])].sort();
+  const compacted = input.compactedXp ?? new Map<DayString, DayXp>();
+  const allDays = [
+    ...new Set([...dayRecord.keys(), ...eventsByDay.keys(), ...compacted.keys()]),
+  ].sort();
   const statXp: Record<Stat, number> = { STR: 0, INT: 0, WIL: 0 };
   let total = 0;
   let activeSoFar = 0;
@@ -92,11 +97,13 @@ export function computeProgress(input: ProgressInput): ProgressState {
 
   for (const day of allDays) {
     const record = dayRecord.get(day);
-    const xp = computeDayXp(
-      eventsByDay.get(day) ?? [],
-      record?.streak_at_start ?? 0,
-      record?.daily_clear ?? false,
-    );
+    const xp =
+      compacted.get(day) ??
+      computeDayXp(
+        eventsByDay.get(day) ?? [],
+        record?.streak_at_start ?? 0,
+        record?.daily_clear ?? false,
+      );
     for (const s of STATS) statXp[s] += xp.byStat[s];
     total += xp.total;
     if (record?.active) activeSoFar++;
