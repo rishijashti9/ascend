@@ -15,7 +15,8 @@ export const setLowEnergy = defineAction({
     const today = await appDayOf(ctx.db, ctx.processedAt);
     const record = await refreshDayRecord(ctx.db, today, ctx.processedAt, {
       low_energy: on,
-      low_energy_set_at: on ? ctx.processedAt : null,
+      // When the choice was made (on or off): sync decides a day's low-energy by this.
+      low_energy_set_at: ctx.processedAt,
     });
     ctx.emit({ type: 'DayChanged', payload: { day: today } });
     return record;

@@ -21,6 +21,7 @@ import './actions/achievements';
 import './actions/profile';
 import './actions/moments';
 import './actions/difficulty';
+import './actions/sync';
 
 export * from './events';
 export * from './recordAction';

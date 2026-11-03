@@ -1,5 +1,6 @@
 import { logError } from '@/core/errorLog';
 import { db, type AscendDB } from './db';
+import { observeHlc } from './hlc';
 
 export type PersistResult = 'granted' | 'denied' | 'unsupported';
 
@@ -27,6 +28,9 @@ export async function requestPersistentStorage(database: AscendDB = db): Promise
  */
 export async function openDatabase(database: AscendDB = db): Promise<void> {
   await database.open();
+  // Local writes must sort after everything already pushed, even if the clock went back.
+  const pushed = (await database.meta.get('sync:push_hlc'))?.value;
+  if (typeof pushed === 'string') observeHlc(pushed);
   // Another tab with an older version open would block upgrades: ask it to close.
   database.on('versionchange', () => {
     database.close();

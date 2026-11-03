@@ -40,6 +40,7 @@ export interface DomainEvents {
   AchievementUnlocked: { key: string };
   ProfileChanged: { changed: string[] };
   SuggestionAnswered: { kind: string; applied: boolean };
+  DataSynced: { applied: number; days: string[] };
   DataImported: { mode: 'replace' | 'merge' };
   DataReset: Record<string, never>;
 }

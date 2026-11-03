@@ -91,8 +91,9 @@ describe('day.setLowEnergy', () => {
       low_energy: false,
       active: true,
       daily_clear: false,
-      low_energy_set_at: null,
     });
+    // The time of the choice is kept (on or off): sync decides low energy by it.
+    expect(day?.low_energy_set_at).not.toBeNull();
     expect((await t.db.quest_instances.get(workout))?.status).toBe('done_min');
   });
 
