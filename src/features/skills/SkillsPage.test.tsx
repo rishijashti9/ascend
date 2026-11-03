@@ -62,7 +62,7 @@ describe('Skills screen', () => {
     expect(await screen.findByRole('region', { name: 'Robotics' })).toBeInTheDocument();
     expect(screen.getByRole('region', { name: 'Game development' })).toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: /^ROS 2, level 0 of 5, 2.3 hours/ }),
+      screen.getByRole('button', { name: /^ROS 2 ?, level 0 of 5, ?2\.3 h/ }),
     ).toBeInTheDocument();
     const balance = screen.getByRole('region', { name: 'Study balance' });
     expect(balance).toHaveTextContent('70 / 30');
@@ -90,6 +90,17 @@ describe('Skills screen', () => {
     await userEvent.selectOptions(within(sheet).getByLabelText('Level'), '3');
     await waitFor(() => expect(sheet).toHaveTextContent('set by you (computed: 1)'));
     expect((await db.skills.get(ROS))?.manual_level_override).toBe(3);
+  });
+
+  it('keyboard: focus moves into the sheet, Escape closes it and focus comes back', async () => {
+    const node = await screen.findByRole('button', { name: /^ROS 2 ?, level/ });
+    node.focus();
+    await userEvent.keyboard('{Enter}');
+    const sheet = screen.getByRole('dialog', { name: 'ROS 2' });
+    expect(within(sheet).getByRole('button', { name: 'Close' })).toHaveFocus();
+    await userEvent.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(screen.getByRole('button', { name: /^ROS 2 ?, level/ })).toHaveFocus();
   });
 
   it('adds a skill in a new branch that stays out of the split', async () => {

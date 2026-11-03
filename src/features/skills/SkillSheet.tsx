@@ -8,6 +8,7 @@ import { useSkills } from '@/core/state/skills';
 import { Button } from '@/ui/Button';
 import { Select, TextInput } from '@/ui/Field';
 import { useAction } from '@/ui/hooks/useAction';
+import { useDialog } from '@/ui/hooks/useDialog';
 import { ProgressBar } from '@/ui/ProgressBar';
 import { Stat } from '@/features/review/Stat';
 import { formatMinutes, hours } from './format';
@@ -24,6 +25,7 @@ export function SkillSheet({ skillId, onClose }: { skillId: string; onClose: () 
   const side = useQuests((s) => s.side);
   const [adding, setAdding] = useState(false);
   const { run, busy, error } = useAction();
+  const closeRef = useDialog(onClose);
   if (!skill || !progress) return null;
 
   const linked = [
@@ -54,6 +56,7 @@ export function SkillSheet({ skillId, onClose }: { skillId: string; onClose: () 
           </div>
           <button
             type="button"
+            ref={closeRef}
             aria-label="Close"
             onClick={onClose}
             className="text-muted flex size-11 items-center justify-center rounded-md"

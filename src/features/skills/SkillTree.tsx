@@ -108,7 +108,6 @@ function SkillNode({
     <button
       type="button"
       onClick={() => onOpen(skill)}
-      aria-label={`${skill.name}, level ${level} of ${MAX_SKILL_LEVEL}, ${h} hours`}
       className="hover:bg-surface-2 flex min-h-11 w-full items-center gap-2 rounded-md py-1 pr-2 text-left"
     >
       <span aria-hidden className="bg-border h-px w-4 shrink-0" />
@@ -120,10 +119,14 @@ function SkillNode({
       >
         {level}
       </span>
-      <span className="min-w-0 flex-1 truncate">{skill.name}</span>
-      <span aria-hidden className="text-muted text-xs tabular-nums">
-        {h > 0 ? `${h} h` : ''}
+      <span className="min-w-0 flex-1 truncate">
+        {skill.name}
+        <span className="sr-only">
+          , level {level} of {MAX_SKILL_LEVEL}
+          {h > 0 ? ', ' : ''}
+        </span>
       </span>
+      <span className="text-muted text-xs tabular-nums">{h > 0 ? `${h} h` : ''}</span>
       <LevelPips level={level} />
     </button>
   );

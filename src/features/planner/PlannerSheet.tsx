@@ -1,3 +1,4 @@
+import { useDialog } from '@/ui/hooks/useDialog';
 import { Sparkles, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { db } from '@/core/db/db';
@@ -57,11 +58,7 @@ export function PlannerSheet({
     });
   }, [mainQuestId]);
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
+  const closeRef = useDialog(onClose);
 
   const questions = goal && template ? interviewFor(template, goal) : [];
   const analysis = state && goal ? analyze(state, goal) : null;
@@ -109,6 +106,7 @@ export function PlannerSheet({
           </div>
           <button
             type="button"
+            ref={closeRef}
             aria-label="Close planner"
             onClick={onClose}
             className="text-muted flex size-11 items-center justify-center rounded-md"

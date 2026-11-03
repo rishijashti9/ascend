@@ -32,6 +32,11 @@ public abstract class AscendWidget extends AppWidgetProvider {
     /** The medium widget adds a "Start focus" button. */
     abstract boolean showFocus();
 
+    /** Quest rows (44 dp each, task 10.5): 2 on the small widget, 4 on the medium one. */
+    int maxRows() {
+        return showFocus() ? 4 : 2;
+    }
+
     @Override
     public void onUpdate(Context context, AppWidgetManager manager, int[] ids) {
         for (int id : ids) manager.updateAppWidget(id, render(context, id));
@@ -98,7 +103,7 @@ public abstract class AscendWidget extends AppWidgetProvider {
         views.setViewVisibility(R.id.message, View.GONE);
         long wakeUntil = snap.optLong("wakeUntil", 0);
         for (int i = 0; i < ROWS.length; i++) {
-            JSONObject q = i < count ? quests.optJSONObject(i) : null;
+            JSONObject q = i < count && i < maxRows() ? quests.optJSONObject(i) : null;
             if (q == null) {
                 views.setViewVisibility(ROWS[i], View.GONE);
                 continue;

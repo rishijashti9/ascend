@@ -28,7 +28,7 @@ test('career tools: skills from focus time, then an application gives INT XP', a
   await expect(page.getByRole('dialog', { name: 'Focus session' })).toBeHidden();
 
   await page.goto('/skills');
-  await expect(page.getByRole('button', { name: /^ROS 2, level 0 of 5, 0.4 hours/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^ROS 2 ?, level 0 of 5, ?0\.4 h/ })).toBeVisible();
   await expect(page.getByRole('region', { name: 'Study balance' })).toContainText('100 / 0');
 
   // Jobs stay hidden until switched on in Settings.

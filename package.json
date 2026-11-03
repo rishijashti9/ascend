@@ -22,7 +22,8 @@
     "android:sync": "npm run build && cap sync android",
     "android:open": "cap open android",
     "icons:android": "tsx --tsconfig tsconfig.scripts.json scripts/android-assets.ts",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "perf": "vitest run --config vitest.perf.config.ts"
   },
   "dependencies": {
     "@capacitor/android": "^8.6.0",
@@ -48,6 +49,7 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
     "@capacitor/assets": "^4.0.0",
     "@capacitor/cli": "^8.6.0",
     "@electric-sql/pglite": "^0.5.10",

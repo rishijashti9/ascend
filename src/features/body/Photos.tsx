@@ -6,6 +6,7 @@ import { useBody } from '@/core/state/body';
 import { formatDay } from '@/features/goals/format';
 import { Button } from '@/ui/Button';
 import { useAction } from '@/ui/hooks/useAction';
+import { useDialog } from '@/ui/hooks/useDialog';
 import { resizeImage } from '@/ui/image';
 
 /** Object URLs for photo blobs, released when the list changes or the screen closes. */
@@ -84,51 +85,19 @@ export function Photos({ day }: { day: string }) {
         </ul>
       )}
       {open && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={`Photo from ${formatDay(open.day)}`}
-          className="bg-bg fixed inset-0 z-40 flex flex-col gap-3 overflow-y-auto p-4"
-        >
-          <div className="flex items-center justify-between">
-            <p className="font-medium">{formatDay(open.day)}</p>
-            <button
-              type="button"
-              aria-label="Close photo"
-              onClick={() => setOpen(null)}
-              className="text-muted flex size-11 items-center justify-center rounded-md"
-            >
-              <X aria-hidden size={20} />
-            </button>
-          </div>
-          <img
-            src={urls[open.id]}
-            alt={`Body photo from ${formatDay(open.day)}`}
-            className="mx-auto max-h-[75dvh] rounded-md object-contain"
-          />
-          {confirmDelete ? (
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              <span className="text-sm">Delete this photo for good?</span>
-              <Button
-                disabled={busy}
-                onClick={() =>
-                  void run({ type: 'photo.delete', payload: { id: open.id } }).then(
-                    (ok) => ok && setOpen(null),
-                  )
-                }
-              >
-                Delete
-              </Button>
-              <Button variant="secondary" onClick={() => setConfirmDelete(false)}>
-                Keep it
-              </Button>
-            </div>
-          ) : (
-            <Button variant="ghost" className="self-center" onClick={() => setConfirmDelete(true)}>
-              Delete photo…
-            </Button>
-          )}
-        </div>
+        <PhotoViewer
+          photo={open}
+          url={urls[open.id]}
+          busy={busy}
+          confirmDelete={confirmDelete}
+          setConfirmDelete={setConfirmDelete}
+          onDelete={() =>
+            void run({ type: 'photo.delete', payload: { id: open.id } }).then(
+              (ok) => ok && setOpen(null),
+            )
+          }
+          onClose={() => setOpen(null)}
+        />
       )}
       {error && (
         <p role="alert" className="text-warning-text text-sm">
@@ -136,5 +105,67 @@ export function Photos({ day }: { day: string }) {
         </p>
       )}
     </section>
+  );
+}
+
+/** One photo full screen (Escape or ✕ closes it; focus starts on ✕). */
+function PhotoViewer({
+  photo: open,
+  url,
+  busy,
+  confirmDelete,
+  setConfirmDelete,
+  onDelete,
+  onClose,
+}: {
+  photo: Photo;
+  url: string | undefined;
+  busy: boolean;
+  confirmDelete: boolean;
+  setConfirmDelete: (v: boolean) => void;
+  onDelete: () => void;
+  onClose: () => void;
+}) {
+  const closeRef = useDialog(onClose);
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Photo from ${formatDay(open.day)}`}
+      className="bg-bg fixed inset-0 z-40 flex flex-col gap-3 overflow-y-auto p-4"
+    >
+      <div className="flex items-center justify-between">
+        <p className="font-medium">{formatDay(open.day)}</p>
+        <button
+          type="button"
+          ref={closeRef}
+          aria-label="Close photo"
+          onClick={onClose}
+          className="text-muted flex size-11 items-center justify-center rounded-md"
+        >
+          <X aria-hidden size={20} />
+        </button>
+      </div>
+      <img
+        src={url}
+        alt={`Body photo from ${formatDay(open.day)}`}
+        className="mx-auto max-h-[75dvh] rounded-md object-contain"
+      />
+      {confirmDelete ? (
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          <span className="text-sm">Delete this photo for good?</span>
+          <Button disabled={busy} onClick={onDelete}>
+            Delete
+          </Button>
+          <Button variant="secondary" onClick={() => setConfirmDelete(false)}>
+            Keep it
+          </Button>
+        </div>
+      ) : (
+        <Button variant="ghost" className="self-center" onClick={() => setConfirmDelete(true)}>
+          Delete photo…
+        </Button>
+      )}
+    </div>
   );
 }
