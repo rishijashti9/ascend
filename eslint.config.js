@@ -5,7 +5,18 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['dist', 'dev-dist', 'coverage', 'android', 'playwright-report', 'test-results'] },
+  {
+    ignores: [
+      'dist',
+      'dev-dist',
+      'coverage',
+      'android',
+      'playwright-report',
+      'test-results',
+      // Deno code that runs on Supabase (checked by Deno there, not by this app's TypeScript).
+      'supabase/functions',
+    ],
+  },
   {
     extends: [js.configs.recommended, ...tseslint.configs.strict],
     files: ['**/*.{ts,tsx}'],

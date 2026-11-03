@@ -11,6 +11,7 @@ import { useAccount } from '@/core/state/account';
 import { getSupabase } from '@/core/sync/client';
 import { supabaseBackend } from '@/core/sync/backend';
 import { Button } from '@/ui/Button';
+import { DeleteEverything } from './DeleteEverything';
 import { Card } from './sections';
 
 type Cloud = { records: number; bytes: number } | 'unknown' | 'signed_out' | 'loading';
@@ -149,6 +150,7 @@ export function MyDataPage() {
           </div>
         </Card>
       )}
+      <DeleteEverything />
     </div>
   );
 }
