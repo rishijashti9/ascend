@@ -232,6 +232,16 @@ describe('Supabase migration (run in Postgres)', () => {
     await expect(pg.query(`select compact_my_records('2025-02-15')`)).rejects.toThrow(/first day/);
   });
 
+  it('ask_take counts questions per user per day, stops at the limit, and only the server may call it', async () => {
+    await pg.exec('reset role');
+    const take = async () =>
+      (await pg.query<{ n: number }>(`select ask_take('${A}', 2) as n`)).rows[0]?.n;
+    expect([await take(), await take(), await take()]).toEqual([1, 2, -1]);
+    await as(A);
+    await expect(pg.query(`select ask_take('${A}', 99)`)).rejects.toThrow();
+    await expect(pg.query('select * from ask_usage')).rejects.toThrow(/permission denied/);
+  });
+
   it('rejects unknown tables, bad clocks and oversized batches', async () => {
     await as(A);
     await expect(push([{ tbl: 'photos', id: 'p', hlc: hlc(1), data: {} }])).rejects.toThrow();
