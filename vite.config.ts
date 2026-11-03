@@ -60,7 +60,7 @@ export default defineConfig({
     // Screen tests click through whole flows; on a busy laptop they can pass the 5 s default.
     testTimeout: 15_000,
     // This laptop has 8 GB of RAM: 7 parallel jsdom workers made it swap until workers failed
-    // to start. 3 workers is steadier (and no slower).
-    maxWorkers: 3,
+    // to start. 2 workers is steadier.
+    maxWorkers: 2,
   },
 });

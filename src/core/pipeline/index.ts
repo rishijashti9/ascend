@@ -29,6 +29,7 @@ import './actions/pending';
 import './actions/learning';
 import './actions/learningWeeks';
 import './actions/burnout';
+import './actions/compass';
 
 export * from './events';
 export * from './recordAction';

@@ -9,6 +9,23 @@ export interface Profile extends BaseRecord {
   onboarded_at: IsoTime | null;
   /** Key of the chosen unlocked title (achievement), or null. */
   display_title: string | null;
+  /** Growth Compass (Phase 8, optional — older records simply have none). */
+  compass?: CompassProfile;
+}
+
+/** Growth Compass answers kept on the profile (synced, never sent to any online AI). */
+export interface CompassProfile {
+  /** Career discovery answers (interest item → 0/1/2, strength ids, value ids). */
+  discovery?: {
+    interests: Record<string, 0 | 1 | 2>;
+    strengths: string[];
+    values: string[];
+    at: IsoTime;
+  };
+  /** The career the user is working towards (knowledge-pack id). */
+  target_career?: string | null;
+  /** Guided health check-in (task 8.19). */
+  health?: Record<string, unknown>;
 }
 
 export interface NotificationSettings {
