@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { isEnabled } from '@/config/features';
+import { isAvailable } from '@/config/features';
 import { FACT_TABLES, readFacts } from '@/core/achievements/facts';
 import type { AchievementUnlocked } from '@/core/db/types';
 import { achievementProgress } from '@/core/engine/achievements';
@@ -18,15 +18,16 @@ export const achievementId = (key: string) => `ach:${key}`;
 export const checkAchievements = defineAction({
   type: 'achievements.check',
   schema: z.object({}).strict(),
-  tables: [...FACT_TABLES, 'achievements_unlocked'],
+  tables: [...FACT_TABLES, 'achievements_unlocked', 'settings'],
   async run(ctx) {
     const facts = await readFacts(ctx.db, ctx.occurredAt);
     const have = new Set(
       (await ctx.db.achievements_unlocked.toArray()).map((a) => a.achievement_key),
     );
     const unlocked: string[] = [];
+    const settings = await ctx.db.settings.get('settings');
     for (const def of ACHIEVEMENTS) {
-      if (have.has(def.key) || (def.feature && !isEnabled(def.feature))) continue;
+      if (have.has(def.key) || (def.feature && !isAvailable(def.feature, settings))) continue;
       if (!achievementProgress(def, facts).met) continue;
       const record: AchievementUnlocked = {
         ...newBase(achievementId(def.key), ctx.processedAt),

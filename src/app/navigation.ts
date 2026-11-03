@@ -12,7 +12,7 @@ import {
   User,
   type LucideIcon,
 } from 'lucide-react';
-import { isEnabled, type FeatureKey } from '@/config/features';
+import { isAvailable, isEnabled, type FeatureKey } from '@/config/features';
 
 export interface NavItem {
   path: string;
@@ -45,6 +45,7 @@ export function primaryNav(): NavItem[] {
   return PRIMARY.filter((item) => isEnabled(item.feature));
 }
 
-export function secondaryNav(): NavItem[] {
-  return SECONDARY.filter((item) => isEnabled(item.feature));
+/** Jobs shows only once it's switched on in Settings. */
+export function secondaryNav(settings?: { jobs_enabled?: boolean } | null): NavItem[] {
+  return SECONDARY.filter((item) => isAvailable(item.feature, settings));
 }

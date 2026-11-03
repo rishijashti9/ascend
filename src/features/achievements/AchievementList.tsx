@@ -1,5 +1,6 @@
 import { Award, Lock } from 'lucide-react';
-import { isEnabled } from '@/config/features';
+import { isAvailable } from '@/config/features';
+import { useAppState } from '@/core/state/app';
 import { achievementProgress } from '@/core/engine/achievements';
 import { useAchievements } from '@/core/state/achievements';
 import { ACHIEVEMENTS } from '@/data/achievements';
@@ -13,8 +14,9 @@ import { ProgressBar } from '@/ui/ProgressBar';
 export function AchievementList() {
   const unlocked = useAchievements((s) => s.unlocked);
   const facts = useAchievements((s) => s.facts);
+  const settings = useAppState((s) => s.settings);
   if (!facts) return null;
-  const visible = ACHIEVEMENTS.filter((a) => !a.feature || isEnabled(a.feature));
+  const visible = ACHIEVEMENTS.filter((a) => !a.feature || isAvailable(a.feature, settings));
   const done = visible
     .filter((a) => unlocked[a.key])
     .sort((a, b) =>

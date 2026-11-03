@@ -22,6 +22,7 @@ import { StatTriangle } from './StatTriangle';
 export function ProfilePage() {
   const progress = useProgress((s) => s.progress);
   const profile = useAppState((s) => s.profile);
+  const settings = useAppState((s) => s.settings);
   const weekStartsOn = useAppState((s) => (s.settings?.week_start ?? 1) as Weekday);
   const sessions = useFocus((s) => s.sessions);
   const today = useToday((s) => s.day);
@@ -34,7 +35,7 @@ export function ProfilePage() {
   const focusHours = Math.round(sessions.reduce((t, s) => t + s.actual_min, 0) / 6) / 10;
   const weeks = weeklyXp(perDay, today, weekStartsOn);
   const startDay = profile?.start_day ?? today;
-  const title = titleName(profile?.display_title);
+  const title = titleName(profile?.display_title, settings);
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">

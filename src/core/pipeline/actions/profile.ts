@@ -8,13 +8,14 @@ import { achievementId } from './achievements';
 export const setTitle = defineAction({
   type: 'profile.setTitle',
   schema: z.object({ key: z.string().min(1).max(100).nullable() }).strict(),
-  tables: ['profile', 'achievements_unlocked'],
+  tables: ['profile', 'achievements_unlocked', 'settings'],
   async run(ctx, { key }) {
     const profile = await ctx.db.profile.get('profile');
     if (!profile) throw new RuleError('Finish setting up first');
     if (key !== null) {
       const unlocked = await ctx.db.achievements_unlocked.get(achievementId(key));
-      if (!visibleAchievement(key) || !unlocked || unlocked.deleted_at !== null) {
+      const settings = await ctx.db.settings.get('settings');
+      if (!visibleAchievement(key, settings) || !unlocked || unlocked.deleted_at !== null) {
         throw new RuleError('That title isn’t unlocked yet');
       }
     }

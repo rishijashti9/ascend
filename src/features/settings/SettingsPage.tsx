@@ -3,6 +3,7 @@ import { isEnabled } from '@/config/features';
 import { useAppState } from '@/core/state/app';
 import { AccountSection } from './AccountSection';
 import { BackupSection } from './BackupSection';
+import { JobsSettings } from './JobsSettings';
 import { NotificationSettings } from './NotificationSettings';
 import { PlannerSettings } from './PlannerSettings';
 import {
@@ -34,6 +35,7 @@ export function SettingsPage() {
           <CoreSection />
           {isEnabled('notifications') && <NotificationSettings settings={settings} />}
           {isEnabled('goals') && <PlannerSettings settings={settings} />}
+          {isEnabled('jobs') && <JobsSettings settings={settings} />}
           {isEnabled('exportImport') && <BackupSection />}
           <DataSection />
         </>

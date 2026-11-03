@@ -3,6 +3,7 @@ import { AchievementToast } from '@/features/achievements/AchievementToast';
 import { isEnabled } from '@/config/features';
 import { NotificationBridge } from '@/features/notifications/NotificationBridge';
 import { LevelUpMoment } from '@/features/moments/LevelUpMoment';
+import { useAppState } from '@/core/state/app';
 import { MORE_ITEM, primaryNav, secondaryNav, type NavItem } from './navigation';
 
 function SidebarLink({ item }: { item: NavItem }) {
@@ -44,7 +45,7 @@ function TabLink({ item }: { item: NavItem }) {
 /** Mobile: content + bottom tab bar. Desktop (≥1024px): left sidebar with every item. */
 export function Layout() {
   const primary = primaryNav();
-  const secondary = secondaryNav();
+  const secondary = secondaryNav(useAppState((s) => s.settings));
 
   return (
     <div className="bg-bg min-h-dvh lg:flex">

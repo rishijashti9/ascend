@@ -28,6 +28,7 @@ import { startHabits } from './core/state/habits';
 import { startQuests } from './core/state/quests';
 import { startReviews } from './core/state/reviews';
 import { startSkills } from './core/state/skills';
+import { startJobs } from './core/state/jobs';
 import { rebuildProgress, startProgressStore } from './core/state/progress';
 import { startToday } from './core/state/today';
 import { recordAction } from './core/pipeline';
@@ -78,6 +79,7 @@ async function start(): Promise<void> {
   await startReviews();
   await startAchievementsStore();
   if (isEnabled('skills')) await startSkills();
+  if (isEnabled('jobs')) await startJobs();
   if (isEnabled('sync')) {
     await startAccount();
     startAuthRedirects((notice) => accountStore.setState({ notice }));

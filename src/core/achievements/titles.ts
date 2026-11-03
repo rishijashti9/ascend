@@ -1,4 +1,4 @@
-import { isEnabled } from '@/config/features';
+import { isAvailable } from '@/config/features';
 import { ACHIEVEMENTS, type AchievementDef } from '@/data/achievements';
 
 /**
@@ -6,13 +6,19 @@ import { ACHIEVEMENTS, type AchievementDef } from '@/data/achievements';
  * profile and Today. The profile stores the achievement key; the name comes from the data
  * file, so renaming an achievement there renames the title too.
  */
-export function visibleAchievement(key: string | null | undefined): AchievementDef | null {
+export function visibleAchievement(
+  key: string | null | undefined,
+  settings?: { jobs_enabled?: boolean } | null,
+): AchievementDef | null {
   if (!key) return null;
   const def = ACHIEVEMENTS.find((a) => a.key === key);
-  return def && (!def.feature || isEnabled(def.feature)) ? def : null;
+  return def && (!def.feature || isAvailable(def.feature, settings)) ? def : null;
 }
 
 /** The displayed title's name, or null (none chosen, or no longer a known achievement). */
-export function titleName(key: string | null | undefined): string | null {
-  return visibleAchievement(key)?.name ?? null;
+export function titleName(
+  key: string | null | undefined,
+  settings?: { jobs_enabled?: boolean } | null,
+): string | null {
+  return visibleAchievement(key, settings)?.name ?? null;
 }

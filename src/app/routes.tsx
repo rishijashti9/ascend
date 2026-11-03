@@ -10,6 +10,7 @@ import { QuestsPage } from '@/features/quests/QuestsPage';
 import { ReviewPage } from '@/features/review/ReviewPage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
 import { SkillsPage } from '@/features/skills/SkillsPage';
+import { JobsPage } from '@/features/jobs/JobsPage';
 import { TodayPage } from '@/features/today/TodayPage';
 import { RouteErrorScreen } from './ErrorBoundary';
 import { Layout } from './Layout';
@@ -23,6 +24,7 @@ const SCREENS: { path: string; feature: FeatureKey; element: React.ReactNode }[]
   { path: 'goals', feature: 'goals', element: <GoalsPage /> },
   { path: 'goals/:id', feature: 'goals', element: <MainQuestPage /> },
   { path: 'skills', feature: 'skills', element: <SkillsPage /> },
+  { path: 'jobs', feature: 'jobs', element: <JobsPage /> },
   { path: 'profile', feature: 'profile', element: <ProfilePage /> },
   { path: 'settings', feature: 'settings', element: <SettingsPage /> },
 ];

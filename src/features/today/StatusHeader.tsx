@@ -11,8 +11,9 @@ import { STAT_META } from '@/ui/statMeta';
 export function StatusHeader({ day }: { day: string | null }) {
   const progress = useProgress((s) => s.progress);
   const profile = useAppState((s) => s.profile);
+  const settings = useAppState((s) => s.settings);
   if (!progress) return null;
-  const title = titleName(profile?.display_title);
+  const title = titleName(profile?.display_title, settings);
   const { level, rank, streak, stats } = progress;
   const dayN =
     profile?.start_day && day && day >= profile.start_day

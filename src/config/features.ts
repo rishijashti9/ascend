@@ -24,11 +24,23 @@ export const features = {
   sync: true,
   // Phase 9 (Jobs also needs to be switched on in Settings)
   skills: true,
-  jobs: false,
+  jobs: true,
 } as const satisfies Record<string, boolean>;
 
 export type FeatureKey = keyof typeof features;
 
 export function isEnabled(key: FeatureKey): boolean {
   return features[key];
+}
+
+/**
+ * Built AND wanted: the Job tracker is also switched on in Settings (SPEC 6.5 — Rishi's job
+ * search is paused, so it stays hidden until he turns it on).
+ */
+export function isAvailable(
+  key: FeatureKey,
+  settings: { jobs_enabled?: boolean } | null | undefined,
+): boolean {
+  if (!isEnabled(key)) return false;
+  return key !== 'jobs' || settings?.jobs_enabled === true;
 }
