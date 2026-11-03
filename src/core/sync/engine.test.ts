@@ -136,4 +136,68 @@ describe('sync engine', () => {
     await sync(laptop);
     expect(await laptop.habits.get('future')).toBeUndefined();
   });
+
+  describe('recompute after sync', () => {
+    it('minutes logged on two devices add up: the quest completes once, with one award', async () => {
+      const h = (await run(phone)(habit('Study'))).value as Habit; // target 60
+      await sync(phone);
+      await sync(laptop);
+      for (const db of [phone, laptop]) await ensureInstancesForDay(db, '2026-11-02');
+      const id = `${h.id}:2026-11-02`;
+      await run(phone)({
+        type: 'quest.logProgress',
+        payload: { instanceId: id, amount: 40, source: 'focus' },
+      });
+      await run(laptop)({ type: 'quest.logProgress', payload: { instanceId: id, amount: 20 } });
+      // Each device alone: past the minimum, not the full 60.
+      expect((await phone.quest_instances.get(id))?.status).toBe('done_min');
+      expect((await laptop.quest_instances.get(id))?.status).toBe('done_min');
+
+      await sync(phone);
+      await sync(laptop); // laptop sees both entries → 60 → done
+      await sync(phone);
+      await sync(laptop);
+      for (const db of [phone, laptop]) {
+        expect((await db.quest_instances.get(id))?.status).toBe('done_full');
+        expect(await db.progress_entries.where('quest_instance_id').equals(id).count()).toBe(2);
+      }
+      const keys = async (db: AscendDB) =>
+        (await db.xp_events.where('ref_id').equals(id).toArray())
+          .map((e) => e.idempotency_key)
+          .sort();
+      expect(await keys(phone)).toEqual(await keys(laptop));
+      expect((await keys(phone)).length).toBeGreaterThan(0);
+    });
+
+    it('a completion that arrives after the other device closed the day turns missed into active', async () => {
+      setNow(ist(2026, 11, 1, 10));
+      const h = (
+        await run(phone)({
+          ...habit('Workout'),
+          payload: { ...habit('Workout').payload, core: true },
+        })
+      ).value as Habit;
+      await sync(phone);
+      await sync(laptop);
+
+      // Day 2 on the phone (offline): the core quest is done.
+      setNow(ist(2026, 11, 2, 10));
+      await ensureInstancesForDay(phone, '2026-11-02');
+      const id = `${h.id}:2026-11-02`;
+      await run(phone)({ type: 'quest.logProgress', payload: { instanceId: id, amount: 60 } });
+      expect((await phone.days.get('2026-11-02'))?.active).toBe(true);
+
+      // The laptop is opened on day 3 first: day 2 closes as missed there.
+      setNow(ist(2026, 11, 3, 10));
+      await run(laptop)({ type: 'day.rollover', payload: {} });
+      expect((await laptop.days.get('2026-11-02'))?.active ?? false).toBe(false);
+
+      await sync(phone);
+      await sync(laptop);
+      expect((await laptop.quest_instances.get(id))?.status).toBe('done_full');
+      const day = await laptop.days.get('2026-11-02');
+      expect(day?.active).toBe(true);
+      expect(day?.streak_after).toBe(1);
+    });
+  });
 });

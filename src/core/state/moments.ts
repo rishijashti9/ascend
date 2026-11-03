@@ -24,8 +24,11 @@ export function dismissMoment(): void {
  * Watches progress: whenever it changes, records it (moments.record) and queues the moment it
  * returns. After an import or reset the next record is silent — restored levels aren't new.
  */
+const SYNC_QUIET_MS = 5000;
+
 export function startMoments(database: AscendDB = defaultDb): () => void {
   let silent = false;
+  let syncQuietUntil = 0;
   let chain = Promise.resolve();
   const record = () => {
     const progress = progressStore.getState().progress;
@@ -38,7 +41,7 @@ export function startMoments(database: AscendDB = defaultDb): () => void {
         INT: progress.stats.INT.level,
         WIL: progress.stats.WIL.level,
       },
-      silent,
+      silent: silent || Date.now() < syncQuietUntil,
     };
     silent = false;
     chain = chain.then(async () => {
@@ -59,6 +62,11 @@ export function startMoments(database: AscendDB = defaultDb): () => void {
   const offReset = subscribe('DataReset', () => {
     silent = true;
   });
+  // Levels earned on another device are celebrated there, not again here. Only for a few
+  // seconds: a sync that doesn't change progress mustn't silence the next real level-up.
+  const offSync = subscribe('DataSynced', () => {
+    syncQuietUntil = Date.now() + SYNC_QUIET_MS;
+  });
   const offProgress = progressStore.subscribe((state, prev) => {
     if (state.progress !== prev.progress) record();
   });
@@ -66,6 +74,7 @@ export function startMoments(database: AscendDB = defaultDb): () => void {
   return () => {
     offImport();
     offReset();
+    offSync();
     offProgress();
   };
 }

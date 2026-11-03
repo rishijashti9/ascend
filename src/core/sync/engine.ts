@@ -83,5 +83,8 @@ export async function syncOnce(
 ): Promise<{ pushed: number; pulled: number; days: string[] }> {
   const pushed = await pushChanges(db, backend);
   const { pulled, days } = await pullChanges(db, backend);
+  if (days.length > 0) {
+    await recordAction({ type: 'sync.recompute', source: 'sync', payload: { days } }, { db });
+  }
   return { pushed, pulled, days };
 }

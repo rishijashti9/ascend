@@ -93,7 +93,7 @@ async function shareWithBodyLog(ctx: ActionContext, instance: QuestInstance): Pr
   await setBodyMetric(ctx, instance.day, field, progressValue(instance.measure_snapshot, entries));
 }
 
-async function syncStatusWithProgress(
+export async function syncStatusWithProgress(
   ctx: ActionContext,
   instance: QuestInstance,
   day: string,

@@ -2,7 +2,12 @@ import { z } from 'zod';
 import { SCHEMA_VERSION, type TableName } from '@/core/db/db';
 import { observeHlc } from '@/core/db/hlc';
 import { incomingWins, SYNCED_TABLES } from '@/core/sync/merge';
+import { isRecoveryId } from '@/core/engine/instances';
+import { refreshDayRecord } from '../days';
 import { defineAction } from '../registry';
+import { refreshStreaks } from '../streaks';
+import { QUEST_TABLES } from './questCommon';
+import { syncStatusWithProgress } from './quests';
 
 /** Device-local sync bookkeeping (in `meta`, which never syncs). */
 export const SYNC_META = {
@@ -104,5 +109,48 @@ export const markPushed = defineAction({
       await ctx.db.meta.put({ id: SYNC_META.pushHlc, value: hlc });
     }
     return true;
+  },
+});
+
+/**
+ * After records arrive from another device (SPEC 9: "the progress engine recomputes derived
+ * values"): numeric quests are re-checked against all their progress entries — focus minutes
+ * from one device and manual minutes from another add up — then the touched days are
+ * re-evaluated (closed days too: a completion that arrives late turns a missed day active)
+ * and streaks recomputed. Status only ever goes up here; XP uses the usual award keys, so two
+ * devices recomputing the same thing still produce one award.
+ */
+export const recomputeAfterSync = defineAction({
+  type: 'sync.recompute',
+  schema: z.object({ days: z.array(z.string().regex(/^\d{4}-\d{2}-\d{2}$/)).max(2000) }).strict(),
+  tables: [...QUEST_TABLES, 'xp_events'] as TableName[],
+  async run(ctx, { days }) {
+    const touched = new Set(days);
+    for (const day of days) {
+      for (const instance of await ctx.db.quest_instances.where('day').equals(day).toArray()) {
+        if (
+          instance.deleted_at ||
+          instance.measure_snapshot === 'check' ||
+          isRecoveryId(instance.id)
+        )
+          continue;
+        const entries = await ctx.db.progress_entries
+          .where('quest_instance_id')
+          .equals(instance.id)
+          .toArray();
+        if (entries.length === 0) continue;
+        // The XP day is the day the last minutes came in (weekly quests span a week).
+        const xpDay = entries.reduce((d, e) => (e.day > d ? e.day : d), instance.day);
+        const next = await syncStatusWithProgress(ctx, instance, xpDay);
+        if (next !== instance) touched.add(xpDay);
+      }
+    }
+    for (const day of [...touched].sort()) {
+      await refreshDayRecord(ctx.db, day, ctx.processedAt);
+      ctx.emit({ type: 'DayChanged', payload: { day } });
+    }
+    // Streak fields may have come from the other device's view: recompute them here.
+    await refreshStreaks(ctx.db, ctx.processedAt);
+    return [...touched].sort();
   },
 });
