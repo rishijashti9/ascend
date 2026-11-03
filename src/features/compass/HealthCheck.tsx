@@ -7,6 +7,7 @@ import { useAdaptive } from '@/core/state/adaptive';
 import { useAppState } from '@/core/state/app';
 import { currentTimeZone } from '@/core/time';
 import { Button } from '@/ui/Button';
+import { HealthPlan } from './HealthPlan';
 import { useAction } from '@/ui/hooks/useAction';
 
 const STATUS: Record<GapStatus, { label: string; cls: string }> = {
@@ -217,6 +218,7 @@ export function HealthCheck() {
         General guidance for healthy adults, not medical advice. For pain, illness or anything that
         worries you, please see a doctor.
       </p>
+      <HealthPlan />
       <Button variant="ghost" className="self-start" onClick={() => setEditing(true)}>
         <Pencil aria-hidden size={16} /> Update check-in
       </Button>

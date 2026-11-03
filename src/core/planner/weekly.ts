@@ -115,6 +115,37 @@ export function planWeek(state: PlannerState): ProposalItem[] {
       break;
     }
   }
+  // Career–health balance: after a heavy, tired week, one study step fewer and a recovery quest
+  // on the health goal (SPEC 6.7 B). Never more load.
+  const balance = state.balance;
+  if (balance?.needed) {
+    const health = state.mainQuests.find((q) => q.status === 'active' && q.stat === 'STR');
+    const milestone = health
+      ? state.milestones
+          .filter((m) => m.main_quest_id === health.id && m.status === 'active')
+          .sort((a, b) => a.order - b.order)[0]
+      : undefined;
+    const kept = items.slice(0, Math.max(1, weeklyLimit(state) - 1));
+    if (health) {
+      kept.push({
+        id: 'rec1',
+        kind: 'quest.create',
+        selected: true,
+        reason: [balance.why, balance.sleepInsight].filter(Boolean).join(' '),
+        data: {
+          type: 'weekly',
+          title: 'Two recovery evenings: an easy walk and an early night',
+          stat: 'STR',
+          difficulty: 'easy',
+          week_start: state.weekStart,
+          linked_goal_type: milestone ? 'milestone' : 'main_quest',
+          linked_goal_id: milestone?.id ?? health.id,
+          carried_over_from: null,
+        },
+      });
+    }
+    return kept;
+  }
   return items.slice(0, weeklyLimit(state));
 }
 

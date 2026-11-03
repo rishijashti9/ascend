@@ -1,3 +1,4 @@
+import type { Balance } from '@/core/adaptive/balance';
 import type { Capacity } from '@/core/adaptive/patterns';
 import type { JobStats } from '@/core/engine/jobs';
 import type {
@@ -32,6 +33,8 @@ export interface PlannerState {
   capacity?: Capacity | null;
   /** This week's focus goal (main quest id) — its steps come first in the weekly plan. */
   focusGoalId?: string | null;
+  /** Career–health balance (SPEC 6.7 B): room for recovery after a heavy, tired week. */
+  balance?: Balance | null;
 }
 
 /** Learned capacity, only when it's at least "likely". */

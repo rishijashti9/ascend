@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router';
 import { db } from '@/core/db/db';
 import { clearSubscribers, newBase } from '@/core/pipeline';
 import { adaptiveStore, computeAdaptive } from '@/core/state/adaptive';
@@ -23,7 +24,11 @@ beforeEach(async () => {
 afterEach(() => clearSubscribers());
 
 it('check-in → health picture against the guidelines, with sources and the not-medical-advice note', async () => {
-  render(<HealthCheck />);
+  render(
+    <MemoryRouter>
+      <HealthCheck />
+    </MemoryRouter>,
+  );
   const click = (name: string) => userEvent.click(screen.getByRole('button', { name }));
   await click('A little');
   await click('1');
