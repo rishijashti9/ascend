@@ -14,6 +14,7 @@ import { JobsPage } from '@/features/jobs/JobsPage';
 import { KnowsPage } from '@/features/knows/KnowsPage';
 import { MyDataPage } from '@/features/settings/MyDataPage';
 import { CompassPage } from '@/features/compass/CompassPage';
+import { AskPage } from '@/features/ask/AskPage';
 import { TodayPage } from '@/features/today/TodayPage';
 import { RouteErrorScreen } from './ErrorBoundary';
 import { Layout } from './Layout';
@@ -33,6 +34,7 @@ const SCREENS: { path: string; feature: FeatureKey; element: React.ReactNode }[]
   { path: 'knows', feature: 'adaptive', element: <KnowsPage /> },
   { path: 'my-data', feature: 'settings', element: <MyDataPage /> },
   { path: 'compass', feature: 'compass', element: <CompassPage /> },
+  { path: 'ask', feature: 'ask', element: <AskPage /> },
 ];
 
 export function buildRoutes(): RouteObject[] {

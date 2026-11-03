@@ -24,6 +24,7 @@ const SCREENS = [
   '/compass',
   '/compass?tab=health',
   '/my-data',
+  '/ask',
   '/settings',
   '/more',
 ];

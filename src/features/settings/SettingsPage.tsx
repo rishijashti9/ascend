@@ -2,6 +2,7 @@ import { APP_VERSION } from '@/app/version';
 import { isEnabled } from '@/config/features';
 import { useAppState } from '@/core/state/app';
 import { AccountSection } from './AccountSection';
+import { AskSettings } from './AskSettings';
 import { BackupSection } from './BackupSection';
 import { JobsSettings } from './JobsSettings';
 import { HealthSettings } from './HealthSettings';
@@ -36,6 +37,7 @@ export function SettingsPage() {
           <CoreSection />
           {isEnabled('notifications') && <NotificationSettings settings={settings} />}
           {isEnabled('goals') && <PlannerSettings settings={settings} />}
+          {isEnabled('ask') && <AskSettings settings={settings} />}
           {isEnabled('jobs') && <JobsSettings settings={settings} />}
           {isEnabled('health') && <HealthSettings settings={settings} />}
           {isEnabled('exportImport') && <BackupSection />}

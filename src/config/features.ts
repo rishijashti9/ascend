@@ -31,6 +31,7 @@ export const features = {
   // Phase 8 (Adaptive System, Growth Compass, Ask the System)
   adaptive: true,
   compass: true,
+  ask: true,
 } as const satisfies Record<string, boolean>;
 
 export type FeatureKey = keyof typeof features;
