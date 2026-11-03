@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { getNotifier } from '@/app/notify';
 import { logError } from '@/core/errorLog';
-import { handleTap } from '@/core/notifications/taps';
+import { handleTap, LEARNED_KINDS } from '@/core/notifications/taps';
+import { recordAction } from '@/core/pipeline';
 import { dismissNotice, useNotices } from '@/core/state/notices';
 import { nowMs } from '@/core/time';
 
@@ -16,6 +17,20 @@ export function NotificationBridge() {
   const navigate = useNavigate();
   const notices = useNotices((s) => s.notices);
   const [message, setMessage] = useState<string | null>(null);
+
+  useEffect(
+    () =>
+      getNotifier().onDelivered?.((n) => {
+        if (!LEARNED_KINDS.has(n.kind)) return;
+        void recordAction({
+          type: 'learning.notification',
+          payload: { key: n.key, kind: n.kind, outcome: 'delivered' },
+          occurred_at: new Date(n.at).toISOString(),
+          action_id: `notification-delivered:${n.key}`,
+        }).catch((error: unknown) => logError(error, 'learning.notification'));
+      }),
+    [],
+  );
 
   useEffect(
     () =>

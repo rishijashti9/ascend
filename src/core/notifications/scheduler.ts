@@ -1,6 +1,7 @@
 import { db as defaultDb, type AscendDB } from '@/core/db/db';
 import { logError } from '@/core/errorLog';
-import { appDayOf, getSettings, isoNow, subscribeAll } from '@/core/pipeline';
+import { appDayOf, getSettings, isoNow, recordAction, subscribeAll } from '@/core/pipeline';
+import { LEARNED_KINDS } from './taps';
 import { currentTimeZone, nowMs } from '@/core/time';
 import { planNotifications, type PlanInput } from './plan';
 import type { Notifier, PlannedNotification } from './types';
@@ -69,6 +70,17 @@ export function startNotificationScheduler(
           force = false;
           await notifier.sync(list);
           last = signature;
+          await recordAction(
+            {
+              type: 'learning.notificationsPlanned',
+              payload: {
+                items: list
+                  .filter((n) => LEARNED_KINDS.has(n.kind))
+                  .map((n) => ({ key: n.key, kind: n.kind, at: new Date(n.at).toISOString() })),
+              },
+            },
+            { db: database },
+          );
         }
         return list;
       } catch (error) {

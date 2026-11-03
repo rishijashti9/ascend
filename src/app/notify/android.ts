@@ -111,6 +111,14 @@ export function createAndroidNotifier(): Notifier {
     async openExactAlarmSettings() {
       return toExact((await LocalNotifications.changeExactNotificationSetting()).exact_alarm);
     },
+    onDelivered(handler) {
+      const handle = LocalNotifications.addListener('localNotificationReceived', (n) => {
+        const x = (n.extra ?? {}) as Record<string, unknown>;
+        if (!x.ascend) return;
+        handler({ key: String(x.key), kind: x.kind as PlannedNotification['kind'], at: nowMs() });
+      });
+      return () => void handle.then((h) => h.remove());
+    },
     onTap(handler: (tap: NotificationTap) => void) {
       const handle = LocalNotifications.addListener('localNotificationActionPerformed', (e) => {
         const x = (e.notification.extra ?? {}) as Record<string, unknown>;

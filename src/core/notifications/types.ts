@@ -63,4 +63,16 @@ export interface Notifier {
   openExactAlarmSettings(): Promise<ExactAlarms>;
   /** Listen for taps. Returns an unsubscribe function. */
   onTap(handler: (tap: NotificationTap) => void): () => void;
+  /**
+   * Listen for reminders actually shown — only where the platform reports it (Android: while
+   * ASCEND is open; web: in-app banners). Used by the Adaptive System (SPEC 6.7 A).
+   */
+  onDelivered?(handler: (n: DeliveredNotification) => void): () => void;
+}
+
+export interface DeliveredNotification {
+  key: string;
+  kind: NotificationKind;
+  /** When it was shown (epoch ms). */
+  at: number;
 }

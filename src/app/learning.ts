@@ -10,6 +10,7 @@ export function startLearningRecorder(): () => void {
   const tick = () => {
     void recordAction({ type: 'learning.appOpen', payload: {} })
       .then(() => recordAction({ type: 'learning.closeDays', payload: {} }))
+      .then(() => recordAction({ type: 'learning.closeWeeks', payload: {} }))
       .catch((error: unknown) => logError(error, 'learning.appOpen'));
   };
   tick();

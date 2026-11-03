@@ -1,6 +1,7 @@
 import { logError } from '@/core/errorLog';
 import type {
   Notifier,
+  DeliveredNotification,
   NotificationTap,
   NotifyPermission,
   PlannedNotification,
@@ -29,11 +30,13 @@ const toTap = (n: PlannedNotification, wakeUp: boolean): NotificationTap => ({
 export function createBrowserNotifier(browserNotificationsOn: () => boolean): Notifier {
   const timers = new Map<string, ReturnType<typeof setTimeout>>();
   const handlers = new Set<(tap: NotificationTap) => void>();
+  const delivered = new Set<(n: DeliveredNotification) => void>();
   const supported = () => typeof window !== 'undefined' && 'Notification' in window;
 
   function fire(n: PlannedNotification) {
     timers.delete(n.key);
     pushNotice(n);
+    for (const h of delivered) h({ key: n.key, kind: n.kind, at: nowMs() });
     if (!browserNotificationsOn() || !supported() || Notification.permission !== 'granted') return;
     try {
       const shown = new Notification(n.title, { body: n.body, tag: n.key });
@@ -88,6 +91,10 @@ export function createBrowserNotifier(browserNotificationsOn: () => boolean): No
     onTap(handler) {
       handlers.add(handler);
       return () => handlers.delete(handler);
+    },
+    onDelivered(handler) {
+      delivered.add(handler);
+      return () => delivered.delete(handler);
     },
   };
 }
