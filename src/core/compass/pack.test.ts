@@ -35,3 +35,33 @@ describe('Growth Compass knowledge pack (SPEC 6.7 B)', () => {
     expect(problems).toContain('skill b: unknown source nope');
   });
 });
+
+describe('roadmaps (SPEC 6.7 B)', () => {
+  it('has the required roadmaps and guides', () => {
+    const ids = pack().roadmaps.map((r) => r.id);
+    for (const id of [
+      'ai-ml',
+      'ros2',
+      'cpp',
+      'robotics-math',
+      'robot-simulation',
+      'unreal-engine',
+      'ielts',
+      'gre',
+      'germany-masters',
+      'spaced-repetition',
+      'deep-work',
+      'restart-after-break',
+    ])
+      expect(ids).toContain(id);
+  });
+
+  it('changeable facts point to the official site', () => {
+    const germany = pack().roadmaps.find((r) => r.id === 'germany-masters');
+    const aps = germany?.steps.find((s) => s.title.startsWith('APS'));
+    expect(aps?.checkOfficial).toBe('https://www.aps-india.de/');
+    for (const step of germany?.steps ?? [])
+      if (/deadline|fee|amount|processing|waiting/i.test(step.detail))
+        expect(step.checkOfficial, step.title).toBeDefined();
+  });
+});

@@ -66,6 +66,13 @@ export const SOURCES: z.input<typeof sourceSchema>[] = [
     url: 'https://www.ets.org/gre.html',
     checked: '2026-11',
   },
+  {
+    id: 'german-missions-india',
+    title: 'German Missions in India — student visa',
+    publisher: 'Federal Foreign Office, Germany',
+    url: 'https://india.diplo.de/',
+    checked: '2026-11',
+  },
   // ---- Official learning documentation ----
   {
     id: 'ros2-docs',
@@ -209,6 +216,21 @@ export const SOURCES: z.input<typeof sourceSchema>[] = [
       'Lally et al. (2010) How are habits formed: Modelling habit formation in the real world. European Journal of Social Psychology 40(6)',
     publisher: 'Wiley',
     url: 'https://doi.org/10.1002/ejsp.674',
+    checked: '2026-11',
+  },
+  {
+    id: 'ophir-2009',
+    title: 'Ophir, Nass & Wagner (2009) Cognitive control in media multitaskers. PNAS 106(37)',
+    publisher: 'Proceedings of the National Academy of Sciences',
+    url: 'https://doi.org/10.1073/pnas.0903620106',
+    checked: '2026-11',
+  },
+  {
+    id: 'ward-2017',
+    title:
+      'Ward et al. (2017) Brain Drain: The Mere Presence of One’s Own Smartphone Reduces Available Cognitive Capacity. J. Assoc. Consumer Research 2(2)',
+    publisher: 'University of Chicago Press',
+    url: 'https://doi.org/10.1086/691462',
     checked: '2026-11',
   },
   // ---- Health ----
