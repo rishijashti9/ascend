@@ -8,7 +8,8 @@ import { defineAction } from '../registry';
  * phone's native queue into `pending_actions` (so nothing is lost if the app closes halfway),
  * then each is run through the normal pipeline with its real tap time and marked processed.
  */
-export const WIDGET_ACTIONS = ['quest.complete', 'quest.wakeCheckin'] as const;
+/** Also queued by the phone: "I'm on a break" tapped on the screen-time reminder (Phase 11). */
+export const WIDGET_ACTIONS = ['quest.complete', 'quest.wakeCheckin', 'screen.takeBreak'] as const;
 
 const tap = z
   .object({

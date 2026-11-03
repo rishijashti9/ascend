@@ -41,6 +41,10 @@ import { startJobs } from './core/state/jobs';
 import { rebuildProgress, startProgressStore } from './core/state/progress';
 import { startToday } from './core/state/today';
 import { recordAction } from './core/pipeline';
+import { screenBridge } from './app/screenTime';
+import { readScreenTime } from './core/screentime/reader';
+import { startScreenTime } from './core/screentime/runner';
+import { db } from './core/db/db';
 import './styles/index.css';
 
 installGlobalErrorHandlers();
@@ -85,6 +89,10 @@ async function start(): Promise<void> {
     }
   };
   if (widgets) await runQueue().catch((error: unknown) => logError(error, 'pending.startup'));
+  // Screen time (Phase 11, Android): yesterday's final totals first, so its Digital discipline
+  // quest is judged on real numbers when the day closes.
+  const screen = isEnabled('screenTime') && isNativeApp();
+  if (screen) await readScreenTime(screenBridge, db);
   // Close past days and start today before the first screen (never blocks startup on error).
   await startRollover();
   void runWeeklyLocalBackup();
@@ -131,6 +139,15 @@ async function start(): Promise<void> {
       if (document.visibilityState === 'visible') {
         void runQueue().catch((error: unknown) => logError(error, 'pending.resume'));
       }
+    });
+  }
+  if (screen) {
+    startScreenTime(screenBridge, db, (listener) => {
+      const onVisible = () => {
+        if (document.visibilityState === 'visible') listener();
+      };
+      document.addEventListener('visibilitychange', onVisible);
+      return () => document.removeEventListener('visibilitychange', onVisible);
     });
   }
   if (isEnabled('health') && isNativeApp()) {
