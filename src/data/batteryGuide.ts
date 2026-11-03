@@ -2,7 +2,7 @@
  * Keeping reminders alive on phones that kill background apps (Rishi's request, task 6.5).
  * Many Android brands stop scheduled alarms of apps they think are idle unless the app is
  * allowed to run in the background. ASCEND can't change these settings itself, so this is a
- * step-by-step guide per brand. Menu names differ a little between versions — the steps say
+ * step-by-step guide per brand (Nothing Phone added in task 6.6). Menu names differ a little between versions — the steps say
  * what to look for.
  */
 export interface BrandGuide {
@@ -63,6 +63,15 @@ export const BATTERY_GUIDES: readonly BrandGuide[] = [
       'Settings → Battery → Background power consumption management → ASCEND → Allow (or “Allow high background power consumption”).',
       'Settings → Apps → Autostart (sometimes under i Manager → App manager) → turn on ASCEND.',
       'Open recent apps, pull down on ASCEND’s card to lock it.',
+    ],
+  },
+  {
+    id: 'nothing',
+    name: 'Nothing Phone',
+    matches: ['nothing'],
+    steps: [
+      'Settings → Apps → See all apps → ASCEND → Battery → choose Unrestricted.',
+      'Settings → Apps → Special app access → Alarms & reminders → ASCEND → turn on “Allow setting alarms and reminders”.',
     ],
   },
   {

@@ -51,6 +51,7 @@ describe('battery guides', () => {
     expect(guideFor('OPPO').id).toBe('oppo');
     expect(guideFor('OnePlus').id).toBe('oppo');
     expect(guideFor('vivo').id).toBe('vivo');
+    expect(guideFor('Nothing').id).toBe('nothing');
     expect(guideFor('Google').id).toBe('other');
     expect(guideFor(null).id).toBe('other');
     for (const g of BATTERY_GUIDES) expect(g.steps.length).toBeGreaterThan(0);
