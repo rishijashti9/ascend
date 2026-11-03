@@ -4,6 +4,23 @@ All notable changes to ASCEND. Versions follow [semantic versioning](https://sem
 
 ## [Unreleased]
 
+## [0.8.0] — 2026-11-03 — Phase 9: Career tools
+
+### Added
+
+- **Skills** (in More): a skill tree that starts as your roadmap — AI & ML, Robotics, Game development, Engineering — with branches and skills you can rename, add, nest, reorder, archive or delete. Levels 0–5 come from real practice: focus sessions tagged with a skill, quests linked to it (minutes, or 30 min per finished quest) and finished projects with a link as proof (needed for levels 4 and 5). A level can also be set by hand.
+- The **70/30 study balance**: this week's AI & Robotics vs Games time with your aim marked, earlier weeks one tap back.
+- Skill pickers in the daily quest editor, the weekly / side quest form and the Focus setup. Daily quests remember their skills per day, so relinking never moves past hours.
+- **Jobs** (switch on in Settings → Job tracker): applications through Saved → Applied → Assessment → Interview → Offer / Rejected / Ghosted, as a list on the phone and a board on the laptop. Logging an application completes an "Applied: <company>" quest (Easy, INT) — or ticks your "Send N applications" quest — and an interview completes an "Interview: <company>" quest (Normal). A mistaken stage change on the same day takes the XP back.
+- Job stats (applications per week, response rate, where most applications end), follow-up reminders 7 days after applying (notification at 10:00 and a Today card), and Goal Planner suggestions from the stats (mock interview, timed assessment practice, a sharper CV).
+- Android: a battery guide for Nothing Phone (Nothing OS).
+
+### Changed
+
+- The job-search plan's "Send N tailored applications" weekly quest is counted, so each logged application ticks it off.
+- The Applicant and Persistent achievements only appear once the job tracker is switched on.
+- Phase 8 (AI coach) comes after this release.
+
 ## [0.7.0] — 2026-11-03 — Phase 7: Sync & accounts
 
 ### Added
