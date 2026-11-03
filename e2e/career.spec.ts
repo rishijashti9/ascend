@@ -35,7 +35,10 @@ test('career tools: skills from focus time, then an application gives INT XP', a
   await page.goto('/more');
   await expect(page.getByRole('link', { name: 'Jobs' })).toHaveCount(0);
   await page.goto('/settings');
-  await page.getByRole('switch', { name: 'Show the job tracker' }).click();
+  const jobsSwitch = page.getByRole('switch', { name: 'Show the job tracker' });
+  await jobsSwitch.click();
+  // Wait for the setting to be saved before leaving the page.
+  await expect(jobsSwitch).toBeChecked();
   await page.goto('/more');
   await page.getByRole('link', { name: 'Jobs' }).last().click();
 

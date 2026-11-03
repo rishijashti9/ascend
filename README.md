@@ -150,7 +150,10 @@ Settings → Notifications → **Reliable reminders** has "Exact timing" and a b
 - **Profile** (in More): level, rank, stats triangle, XP per week, the active-days calendar, achievements, and the title you choose to show.
 - The System sometimes suggests a lighter or harder load on Today — one tap applies it (with Undo), or “Not now”.
 - **Notifications** (Settings): on the Android app, the wake-up check-in, morning briefing, core quest reminder and evening wind-down arrive even when ASCEND is closed; tap “I’m up” on the wake-up one and the tap time counts. In a browser they only appear while ASCEND is open. Quiet hours hold everything except the wake-up check-in.
-- **Settings** has the theme, day-start hour, wake-up times, Auto-plan, backup (export / import), and “Rebuild progress”.
+- **Settings** has the theme, day-start hour, wake-up times, Auto-plan, Ask the System, backup (export / import), My data and “Rebuild progress”.
+- **The Adaptive System** learns quietly on this device from numbers only (never your journal): which quests tend to slip on which days (marked “at risk” on Today), when you really focus, how much you really get done in a week. Today shows one “Now:” line with the best next quest and why, and at most **one suggestion card** at a time — a smaller or bigger target aiming at about 4 good days in 5, a better reminder time, a lighter week when you’re running down, or a goal running behind. Nothing changes without your tap, and everything can be undone. **Profile → What the System knows about you** lists everything it has learned, with how sure it is; clear any item, reset one quest or everything, or export the learning data as CSV.
+- **Growth Compass** (in More): career and health guidance from trusted sources (O*NET, ESCO, DAAD, official docs, WHO, ICMR-NIN), worked out on the device. _Career_: find careers that fit you (interests, strengths, values), pick a target, see the skills still missing in learning order and when you’d be ready at your real pace, and turn it into a plan for approval; roadmaps for AI/ML, ROS 2, C++, robotics maths, simulation, Unreal, IELTS, GRE and the Master’s-in-Germany (APS) route, and study guides. _Health_: a one-minute check-in, your picture against WHO and sleep guidelines from your real data, and a safe, gradual health plan. Not medical advice — for pain or illness it always says to see a doctor.
+- **Ask** (in More, switch on in Settings → Ask the System): ask career and health questions in your own words. It uses Google Gemini’s free tier through your sync account; only the question and progress numbers are sent — never health data, journal text, mood or photos — and free-tier questions may be used by Google. Off-topic questions are declined; when it can’t answer (offline, daily limit, not set up), the Growth Compass answers instead. Suggested quests are only added after you approve them.
 
 ## Developer tools (testing only)
 
@@ -182,6 +185,13 @@ When running `npm run dev`, a small yellow wrench button appears at the bottom-l
 - `DECISIONS.md` — every decision made (wins over SPEC.md where they differ)
 - `PROGRESS.md` — where the build is right now
 - `CHANGELOG.md` — what changed in each version
+
+## My data, compaction and deleting everything
+
+Settings → Data → **My data** shows what is stored on this device and in your cloud account, how much space it takes, and everything ever sent outside ASCEND (only Ask the System questions — when and how long, never their content). From there:
+
+- **Compact old history**: when your history gets big, keep a short monthly summary of anything older than 1, 2 or 3 years and remove the day-by-day detail. A full export is saved first and you see exactly what would change before confirming. Levels, XP, ranks, streaks, skill levels and achievements stay exactly the same; other signed-in devices tidy up the same way by themselves.
+- **Delete everything**: a final export first, then your cloud data (and your account, if you tick it), then this device.
 
 ## Backing up your data
 
@@ -217,3 +227,21 @@ Supabase's free tier pauses a project after about a week without activity. Your 
 ### Database changes (developers)
 
 The server schema lives in `supabase/migrations`. With the Supabase CLI logged in (`npx supabase login`) and the project linked (`npx supabase link --project-ref cyvrymsjizkpvtyqqflu`), apply new migrations with `npx supabase db push`. The SQL rules are tested locally in PGlite as part of `npm run test`.
+
+### Phase 8 server setup (once, in PowerShell from the project folder)
+
+Phase 8 adds three migrations (new synced tables, cloud usage, compaction clean-up, Ask the System limits) and two Edge Functions. Until they are applied, the app keeps working: the new data stays on your devices and Ask the System falls back to the Growth Compass.
+
+```powershell
+npx supabase login
+npx supabase link --project-ref cyvrymsjizkpvtyqqflu
+npx supabase db push
+npx supabase functions deploy delete-account
+npx supabase functions deploy ask
+# Gemini key from https://aistudio.google.com/apikey — type it here, never paste it into a chat:
+$key = Read-Host "Gemini API key"
+npx supabase secrets set GEMINI_API_KEY=$key
+Remove-Variable key
+```
+
+Then switch on Settings → **Ask the System**.

@@ -4,6 +4,21 @@ All notable changes to ASCEND. Versions follow [semantic versioning](https://sem
 
 ## [Unreleased]
 
+## [0.10.0] — 2026-11-03 — Phase 8: Adaptive System, Growth Compass, Ask the System
+
+### Added
+
+- **Adaptive System** (on the device, numbers only): quests likely to slip today are marked; a “Now:” line suggests the best next quest and why; adaptive difficulty aims each quest at about 4 good days in 5 (and never swings back and forth); a better reminder time from when you really finish quests; plans sized to what you really get done; pace forecasts for goals with early warnings and catch-up options; a focus goal of the week; an early warning when you’re running down, with a lighter week on offer. One suggestion card at a time; everything undoable. **What the System knows about you** (Profile) with confidence levels, clear / reset, and a learning-data CSV export.
+- **Growth Compass** (More → Compass): 89 careers with sources and a skill graph (deep for robotics, AI, vision, controls, embedded, simulation, game programming and technical art), career discovery, gap analysis with readiness at your real pace, roadmaps and study guides, a health check-in and picture against WHO / sleep guidelines, and safe health plans — all turned into Goal Planner proposals you approve. Strict health safety rules (see a doctor, safe weight change, never less sleep, helpline for sustained low mood).
+- **Ask the System** (More → Ask, off by default): career and health questions answered by Gemini’s free tier with sources, scope-locked, with calm fallbacks to the Compass.
+- **My data** (Settings → Data): what’s stored where, space used, everything ever sent outside, exports, **compaction** of old history into summaries (progress unchanged) and **Delete everything**.
+- Onboarding starter templates: AI/robotics, fitness, study & exams, career & skills, discipline & calm.
+
+### Changed
+
+- The core-quest reminder time is now adjustable (the System may suggest a better one).
+- The old 3-hard-days / 7-perfect-days difficulty rules are replaced by adaptive difficulty.
+
 ## [0.9.0] — 2026-11-03 — Phase 10: Android native & polish
 
 ### Added
