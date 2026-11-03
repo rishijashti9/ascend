@@ -1,3 +1,5 @@
+import { Link } from 'react-router';
+import { isEnabled } from '@/config/features';
 import { GAME } from '@/config/game';
 import { STATS } from '@/core/db/types';
 import { weakestStat, weeklyXp } from '@/core/engine/profile';
@@ -66,6 +68,11 @@ export function ProfilePage() {
             ` · Rank ${nextRank.rank} needs level ${nextRank.minLevel} and ${nextRank.minActiveDays} active days`}
         </p>
         <TitlePicker current={profile?.display_title ?? null} />
+        {isEnabled('adaptive') && (
+          <Link to="/knows" className="text-accent-text inline-flex min-h-11 items-center text-sm">
+            What the System knows about you →
+          </Link>
+        )}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <Stat label="Total XP" value={level.totalXp.toLocaleString()} />
           <Stat label="Days active" value={String(streak.daysActive)} />

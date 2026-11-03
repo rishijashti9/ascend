@@ -80,7 +80,7 @@ describe('Today part 2', () => {
     await show();
     await tap(card('Workout'), 'Full');
     await waitFor(() => expect(within(card('Workout')).getByText('+25 XP')).toBeInTheDocument(), {
-      timeout: 3000, // the save can take >1 s when the whole suite runs in parallel
+      timeout: 8000, // the save can take seconds when the whole suite runs in parallel
     });
   });
 

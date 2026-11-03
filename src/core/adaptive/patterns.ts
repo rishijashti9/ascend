@@ -7,7 +7,7 @@ import {
   type Weekday,
 } from '@/core/time';
 import type { AdaptiveInput } from './input';
-import { learnFrom } from './input';
+import { learnSince } from './input';
 import {
   ADAPTIVE,
   betaEstimate,
@@ -77,7 +77,7 @@ function bestWindow(
 
 /** When focus really happens: sessions (by minutes) and minutes quests' completion times. */
 export function focusWindow(input: AdaptiveInput): HourWindow | null {
-  const from = learnFrom(input.events, null);
+  const from = learnSince(input.events, 'focus_window');
   const points = [
     ...input.focus
       .filter((f) => f.day >= from && f.day < input.today)
@@ -93,7 +93,7 @@ export function focusWindow(input: AdaptiveInput): HourWindow | null {
 
 /** When quests usually get done (any quest, or core only) — a reminder fits just before. */
 export function completionWindow(input: AdaptiveInput, coreOnly = false): HourWindow | null {
-  const from = learnFrom(input.events, null);
+  const from = learnSince(input.events, coreOnly ? 'core_window' : 'completion_window');
   const points = input.instances
     .filter(
       (i) =>
@@ -123,7 +123,7 @@ export interface Capacity {
 }
 
 export function weeklyCapacity(input: AdaptiveInput): Capacity | null {
-  const from = learnFrom(input.events, null);
+  const from = learnSince(input.events, 'capacity');
   const ws = input.settings.week_start as Weekday;
   const thisWeek = weekStartOf(input.today, ws);
   const weeks = new Map<DayString, { done: number; planned: number }>();
@@ -181,7 +181,7 @@ export interface SuggestionWelcome {
 export const MAX_GAP_DAYS = 7;
 
 export function suggestionWelcome(input: AdaptiveInput, type: string): SuggestionWelcome {
-  const from = learnFrom(input.events, null);
+  const from = learnSince(input.events, `welcome:${type}`);
   const answers = input.events.filter(
     (e) =>
       e.kind === 'suggestion' &&

@@ -11,6 +11,7 @@ import { ReviewPage } from '@/features/review/ReviewPage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
 import { SkillsPage } from '@/features/skills/SkillsPage';
 import { JobsPage } from '@/features/jobs/JobsPage';
+import { KnowsPage } from '@/features/knows/KnowsPage';
 import { TodayPage } from '@/features/today/TodayPage';
 import { RouteErrorScreen } from './ErrorBoundary';
 import { Layout } from './Layout';
@@ -27,6 +28,7 @@ const SCREENS: { path: string; feature: FeatureKey; element: React.ReactNode }[]
   { path: 'jobs', feature: 'jobs', element: <JobsPage /> },
   { path: 'profile', feature: 'profile', element: <ProfilePage /> },
   { path: 'settings', feature: 'settings', element: <SettingsPage /> },
+  { path: 'knows', feature: 'adaptive', element: <KnowsPage /> },
 ];
 
 export function buildRoutes(): RouteObject[] {

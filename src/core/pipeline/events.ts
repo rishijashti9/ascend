@@ -43,6 +43,8 @@ export interface DomainEvents {
   SkillChanged: { skillId: string | null };
   JobChanged: { jobId: string; change: 'created' | 'updated' | 'stage' | 'deleted' };
   SuggestionAnswered: { kind: string; applied: boolean };
+  /** An answer, reset or cleared item changed what the Adaptive System learns from. */
+  LearningChanged: { kind: 'answer' | 'reset' | 'forget' };
   DataSynced: { applied: number; days: string[] };
   SyncLinked: { clearLocal: boolean };
   DataImported: { mode: 'replace' | 'merge' };

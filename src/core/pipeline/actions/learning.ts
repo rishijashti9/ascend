@@ -41,6 +41,37 @@ export const recordAnswer = defineAction({
   tables: ['learning_events', 'settings'],
   async run(ctx, p) {
     await writeLearning(ctx, { kind: 'suggestion', ...p });
+    ctx.emit({ type: 'LearningChanged', payload: { kind: 'answer' } });
+    return true;
+  },
+});
+
+/**
+ * "Reset learning" (SPEC 6.7 A): models ignore everything before today for one daily quest,
+ * or for everything (`habit_id` null). Nothing is deleted — the history stays.
+ */
+export const resetLearning = defineAction({
+  type: 'learning.reset',
+  schema: z.object({ habit_id: z.string().min(1).nullable() }).strict(),
+  tables: ['learning_events', 'settings'],
+  async run(ctx, { habit_id }) {
+    await writeLearning(ctx, { kind: 'reset', type: 'reset', ref_id: habit_id });
+    ctx.emit({ type: 'LearningChanged', payload: { kind: 'reset' } });
+    return true;
+  },
+});
+
+/**
+ * "Clear" one item on "What the System knows about you": that item starts learning afresh
+ * from today (e.g. `focus_window`, `capacity`, `welcome:plan_weekly`).
+ */
+export const forgetItem = defineAction({
+  type: 'learning.forget',
+  schema: z.object({ key: z.string().regex(/^[a-z0-9_:]{1,60}$/) }).strict(),
+  tables: ['learning_events', 'settings'],
+  async run(ctx, { key }) {
+    await writeLearning(ctx, { kind: 'forget', type: key });
+    ctx.emit({ type: 'LearningChanged', payload: { kind: 'forget' } });
     return true;
   },
 });

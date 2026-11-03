@@ -81,6 +81,13 @@ export function forgotten(events: readonly LearningEvent[]): Map<string, DayStri
   return map;
 }
 
+/** Day from which an item learns: the latest overall reset or the day it was cleared. */
+export function learnSince(events: readonly LearningEvent[], key: string): DayString {
+  const reset = learnFrom(events, null);
+  const cleared = forgotten(events).get(key) ?? '';
+  return cleared > reset ? cleared : reset;
+}
+
 export async function loadAdaptiveInput(
   db: AscendDB,
   tz: string,

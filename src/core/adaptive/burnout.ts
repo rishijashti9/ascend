@@ -1,7 +1,7 @@
 import { isDone } from '@/core/engine/progress';
 import { addDays, diffDays, type DayString } from '@/core/time';
 import type { AdaptiveInput } from './input';
-import { learnFrom } from './input';
+import { learnFrom, learnSince } from './input';
 
 /**
  * Early burnout warning (SPEC 6.7 A), pure. Looks at the last two weeks against the two before:
@@ -62,7 +62,10 @@ export function burnoutWarning(
   if (lowDays >= 3) signals.push({ key: 'low_energy', text: `${lowDays} low-energy days` });
 
   const sleep = input.sleep.filter(
-    (s) => diffDays(s.day, input.today) <= 7 && s.day <= input.today,
+    (s) =>
+      diffDays(s.day, input.today) <= 7 &&
+      s.day <= input.today &&
+      s.day >= learnSince(input.events, 'sleep'),
   );
   const avgSleep = mean(sleep.map((s) => s.value));
   const short = Math.min(6.5, (sleepTarget ?? 7.5) - 0.75);
@@ -70,7 +73,9 @@ export function burnoutWarning(
     signals.push({ key: 'short_sleep', text: `short sleep (${avgSleep.toFixed(1)} h a night)` });
   }
 
-  const energy = input.energy.filter((e) => diffDays(e.day, input.today) <= 7);
+  const energy = input.energy.filter(
+    (e) => diffDays(e.day, input.today) <= 7 && e.day >= learnSince(input.events, 'energy'),
+  );
   const avgEnergy = mean(energy.map((e) => e.value));
   if (avgEnergy !== null && energy.length >= 3 && avgEnergy <= 2.2) {
     signals.push({ key: 'low_energy_checkins', text: 'low energy in your check-ins' });
