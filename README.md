@@ -156,3 +156,23 @@ Until sync arrives (Phase 7), your data lives only on the device you use. Back i
    A safety backup of the current data is saved first, automatically.
 
 If the app ever shows its error screen, the **Export my data** button there still works, so your data can always be rescued.
+
+## Sync between your phone and laptop (optional)
+
+ASCEND works fully offline without an account. Signing in (Settings → **Account**: Google or an email link) keeps devices in sync through Supabase (project `ascend`, region eu-west-1).
+
+- **Recommended setup:** the Android app on the phone and the installed web app (PWA) on the laptop, both signed in to the same account. The Android app and a browser on the same phone keep separate data, so don't use both on one phone.
+- **First sign-in:** if the account is empty, this device's data is uploaded. On a fresh install, onboarding offers "Sign in to bring your data here". If both have data, ASCEND asks: merge, keep this device's data, or use the account's data — and saves a backup file first.
+- **Photos never sync** — they stay on the device they were taken on (use "Export with photos" to move them).
+
+### If Settings says "Sync paused"
+
+Supabase's free tier pauses a project after about a week without activity. Your data is safe on every device; ASCEND keeps working and retries by itself (after 1, 5, 15 minutes, then hourly). To wake the project:
+
+1. Go to https://supabase.com/dashboard and open the **ascend** project.
+2. If it shows **Project paused**, click **Restore project** and wait a few minutes until it's active.
+3. Back in ASCEND, Settings → Account → **Sync now**. Everything changed in the meantime syncs up.
+
+### Database changes (developers)
+
+The server schema lives in `supabase/migrations`. With the Supabase CLI logged in (`npx supabase login`) and the project linked (`npx supabase link --project-ref cyvrymsjizkpvtyqqflu`), apply new migrations with `npx supabase db push`. The SQL rules are tested locally in PGlite as part of `npm run test`.

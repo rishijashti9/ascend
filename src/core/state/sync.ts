@@ -5,6 +5,7 @@ import { subscribeAll } from '@/core/pipeline';
 import { SyncUnavailable, type SyncBackend } from '@/core/sync/backend';
 import { syncOnce } from '@/core/sync/engine';
 import { connect, linkStatus, type LinkChoice } from '@/core/sync/link';
+import { nowMs } from '@/core/time';
 import { accountStore } from './account';
 
 /** Sync status for the Account section and the quiet "Sync paused" note. */
@@ -13,12 +14,15 @@ export interface SyncState {
     'off' | 'checking' | 'needs_choice' | 'syncing' | 'synced' | 'paused' | 'offline' | 'error';
   lastSyncedAt: number | null;
   message: string | null;
+  /** When sync started failing (offline / paused / error), or null while it works. */
+  failingSince: number | null;
 }
 
 export const syncStore = createStore<SyncState>(() => ({
   status: 'off',
   lastSyncedAt: null,
   message: null,
+  failingSince: null,
 }));
 
 export function useSync<T>(selector: (state: SyncState) => T): T {
@@ -27,6 +31,8 @@ export function useSync<T>(selector: (state: SyncState) => T): T {
 
 const AFTER_CHANGE_MS = 5000;
 const EVERY_MS = 5 * 60_000;
+/** While sync fails, retry after 1, 5, 15, then every 60 minutes (a paused project wakes slowly). */
+export const RETRY_MS = [60_000, 5 * 60_000, 15 * 60_000, 60 * 60_000];
 
 export interface SyncRunner {
   /** Run a round now (no-op when signed out or waiting for the first-sign-in choice). */
@@ -47,19 +53,40 @@ export const syncRunner = (): SyncRunner | null => active;
  */
 export function startSync(
   makeBackend: () => SyncBackend | null,
-  options: { database?: AscendDB; onLocalDataReplaced?: () => void } = {},
+  options: {
+    database?: AscendDB;
+    onLocalDataReplaced?: () => void;
+    /** Retry delays while failing (tests use short ones). */
+    retryMs?: readonly number[];
+  } = {},
 ): SyncRunner {
   const database = options.database ?? defaultDb;
   let running: Promise<void> | null = null;
   let again = false;
   let timer: ReturnType<typeof setTimeout> | null = null;
+  let retry: ReturnType<typeof setTimeout> | null = null;
+  let failures = 0;
+
+  const scheduleRetry = () => {
+    if (retry) clearTimeout(retry);
+    const delays = options.retryMs ?? RETRY_MS;
+    const delay = delays[Math.min(failures - 1, delays.length - 1)] ?? 60 * 60_000;
+    retry = setTimeout(() => {
+      retry = null;
+      void run();
+    }, delay);
+  };
 
   const fail = (error: unknown) => {
+    failures++;
+    scheduleRetry();
+    const failingSince = syncStore.getState().failingSince ?? nowMs();
     if (error instanceof SyncUnavailable) {
       const status =
         error.reason === 'offline' ? 'offline' : error.reason === 'paused' ? 'paused' : 'error';
       syncStore.setState({
         status,
+        failingSince,
         message:
           error.reason === 'auth'
             ? 'Your sign-in has expired. Sign in again to keep syncing.'
@@ -67,7 +94,7 @@ export function startSync(
       });
     } else {
       logError(error, 'sync');
-      syncStore.setState({ status: 'error', message: null });
+      syncStore.setState({ status: 'error', failingSince, message: null });
     }
   };
 
@@ -99,7 +126,15 @@ export function startSync(
           if (link === 'download') options.onLocalDataReplaced?.();
         }
       }
-      syncStore.setState({ status: 'synced', lastSyncedAt: Date.now(), message: null });
+      failures = 0;
+      if (retry) clearTimeout(retry);
+      retry = null;
+      syncStore.setState({
+        status: 'synced',
+        lastSyncedAt: nowMs(),
+        message: null,
+        failingSince: null,
+      });
     } catch (error) {
       fail(error);
     }
@@ -121,6 +156,7 @@ export function startSync(
   };
 
   const soon = () => {
+    if (failures > 0) return; // the retry timer is in charge while sync fails
     if (timer) clearTimeout(timer);
     timer = setTimeout(() => void run(), AFTER_CHANGE_MS);
   };
@@ -135,7 +171,9 @@ export function startSync(
       if (s.userId) void run();
     }
   });
-  const interval = setInterval(() => void run(), EVERY_MS);
+  const interval = setInterval(() => {
+    if (failures === 0) void run();
+  }, EVERY_MS);
   const onOnline = () => void run();
   const onVisible = () => {
     if (document.visibilityState === 'visible') void run();
@@ -155,6 +193,7 @@ export function startSync(
       offAccount();
       clearInterval(interval);
       if (timer) clearTimeout(timer);
+      if (retry) clearTimeout(retry);
       window.removeEventListener('online', onOnline);
       document.removeEventListener('visibilitychange', onVisible);
       active = null;

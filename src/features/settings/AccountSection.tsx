@@ -8,6 +8,7 @@ import { Button } from '@/ui/Button';
 import { Field } from '@/ui/Field';
 import { Card } from './sections';
 import { SyncChoice } from './SyncChoice';
+import { SyncStatusLine } from './SyncStatusLine';
 
 /**
  * Account (SPEC 7.11, DECISIONS: magic link + Google, no passwords). Optional: ASCEND works
@@ -50,7 +51,7 @@ export function AccountSection() {
           <p>
             Signed in as <span className="font-medium">{email ?? 'your account'}</span>
           </p>
-          {syncStatus === 'needs_choice' && <SyncChoice />}
+          {syncStatus === 'needs_choice' ? <SyncChoice /> : <SyncStatusLine />}
           <p className="text-muted text-sm">
             Signing out keeps everything on this device; it only stops syncing.
           </p>

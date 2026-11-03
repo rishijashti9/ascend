@@ -18,6 +18,7 @@ import { RecoveryCard } from './RecoveryCard';
 import { StatusHeader } from './StatusHeader';
 import { DifficultyCard } from './DifficultyCard';
 import { ReminderSetupCard } from './ReminderSetupCard';
+import { SyncPausedNote } from './SyncPausedNote';
 import { SystemMessage } from './SystemMessage';
 import { ThisWeek } from './ThisWeek';
 import { WakeCard } from './WakeCard';
@@ -73,6 +74,7 @@ export function TodayPage() {
         <SystemMessage />
         <DifficultyCard />
         <ReminderSetupCard />
+        <SyncPausedNote />
         <GoalNudges />
         <WeeklyReviewPrompt />
         <MonthlyReviewPrompt />
