@@ -10,6 +10,7 @@ import { useAppState } from '@/core/state/app';
 import { useToday } from '@/core/state/today';
 import { Button } from '@/ui/Button';
 import { useAction } from '@/ui/hooks/useAction';
+import { ScreenTimeToday } from '@/features/screentime/ScreenTimeCard';
 import { BackupReminder } from './BackupReminder';
 import { CheckInPrompt } from './CheckInPrompt';
 import { MonthlyReviewPrompt, WeeklyReviewPrompt } from './WeeklyReviewPrompt';
@@ -77,6 +78,7 @@ export function TodayPage() {
         <SystemMessage />
         <WhatNow next={next} />
         <SuggestionSlot />
+        {isEnabled('screenTime') && <ScreenTimeToday />}
         <ReminderSetupCard />
         <SyncPausedNote />
         <FollowUpsCard />

@@ -44,6 +44,7 @@ import { recordAction } from './core/pipeline';
 import { screenBridge } from './app/screenTime';
 import { readScreenTime } from './core/screentime/reader';
 import { startScreenTime } from './core/screentime/runner';
+import { startScreenStore } from './core/state/screen';
 import { db } from './core/db/db';
 import './styles/index.css';
 
@@ -114,6 +115,8 @@ async function start(): Promise<void> {
   await startAchievementsStore();
   if (isEnabled('skills')) await startSkills();
   if (isEnabled('jobs')) await startJobs();
+  // Screen time numbers also show on the laptop (synced from the phone).
+  if (isEnabled('screenTime')) await startScreenStore();
   if (isEnabled('sync')) {
     await startAccount();
     startAuthRedirects((notice) => accountStore.setState({ notice }));

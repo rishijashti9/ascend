@@ -6,6 +6,7 @@ import { AskSettings } from './AskSettings';
 import { BackupSection } from './BackupSection';
 import { JobsSettings } from './JobsSettings';
 import { HealthSettings } from './HealthSettings';
+import { ScreenTimeSettings } from '@/features/screentime/ScreenTimeSettings';
 import { NotificationSettings } from './NotificationSettings';
 import { PlannerSettings } from './PlannerSettings';
 import {
@@ -40,6 +41,11 @@ export function SettingsPage() {
           {isEnabled('ask') && <AskSettings settings={settings} />}
           {isEnabled('jobs') && <JobsSettings settings={settings} />}
           {isEnabled('health') && <HealthSettings settings={settings} />}
+          {isEnabled('screenTime') && (
+            <div id="screen-time">
+              <ScreenTimeSettings />
+            </div>
+          )}
           {isEnabled('exportImport') && <BackupSection />}
           <DataSection />
         </>

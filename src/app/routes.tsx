@@ -14,6 +14,7 @@ import { JobsPage } from '@/features/jobs/JobsPage';
 import { KnowsPage } from '@/features/knows/KnowsPage';
 import { MyDataPage } from '@/features/settings/MyDataPage';
 import { CompassPage } from '@/features/compass/CompassPage';
+import { ScreenTimePage } from '@/features/screentime/ScreenTimePage';
 import { AskPage } from '@/features/ask/AskPage';
 import { TodayPage } from '@/features/today/TodayPage';
 import { RouteErrorScreen } from './ErrorBoundary';
@@ -35,6 +36,7 @@ const SCREENS: { path: string; feature: FeatureKey; element: React.ReactNode }[]
   { path: 'my-data', feature: 'settings', element: <MyDataPage /> },
   { path: 'compass', feature: 'compass', element: <CompassPage /> },
   { path: 'ask', feature: 'ask', element: <AskPage /> },
+  { path: 'screen-time', feature: 'screenTime', element: <ScreenTimePage /> },
 ];
 
 export function buildRoutes(): RouteObject[] {

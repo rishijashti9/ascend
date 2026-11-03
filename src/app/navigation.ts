@@ -8,6 +8,7 @@ import {
   Network,
   NotebookPen,
   Settings,
+  Smartphone,
   Sun,
   Target,
   Timer,
@@ -39,6 +40,7 @@ const SECONDARY: NavItem[] = [
   { path: '/compass', label: 'Compass', icon: Compass, feature: 'compass' },
   { path: '/ask', label: 'Ask', icon: MessageCircleQuestion, feature: 'ask' },
   { path: '/jobs', label: 'Jobs', icon: Briefcase, feature: 'jobs' },
+  { path: '/screen-time', label: 'Screen time', icon: Smartphone, feature: 'screenTime' },
   { path: '/profile', label: 'Profile', icon: User, feature: 'profile' },
   { path: '/settings', label: 'Settings', icon: Settings, feature: 'settings' },
 ];
