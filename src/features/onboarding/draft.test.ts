@@ -1,4 +1,5 @@
-import { initialDraft, stepProblem, toPayload } from './draft';
+import { STARTER_TEMPLATES } from '@/data/starterTemplates';
+import { applyTemplate, coreCount, initialDraft, stepProblem, toPayload } from './draft';
 
 const timing = { wake_window_min: 20, wake_late_cutoff: '07:00' };
 
@@ -40,5 +41,32 @@ describe('onboarding draft', () => {
       timing,
     );
     expect(p).toMatchObject({ dream: null, main_quests: [] });
+  });
+});
+
+describe('starter templates by goal type (SPEC 6.7)', () => {
+  it('every template is valid onboarding input: quests pass the editor, ≤ 3 core, a dream', () => {
+    for (const t of STARTER_TEMPLATES) {
+      const d = applyTemplate(initialDraft(), t.id);
+      expect(d.template).toBe(t.id);
+      expect(stepProblem(d, 2), t.id).toBeNull();
+      expect(coreCount(d), t.id).toBeLessThanOrEqual(3);
+      expect(coreCount(d), t.id).toBeGreaterThan(0);
+      expect(d.dream.title.length, t.id).toBeGreaterThan(5);
+      expect(new Set(d.habits.map((h) => h.key)).size, t.id).toBe(d.habits.length);
+    }
+  });
+
+  it('the default is Rishi’s own set; the wake-up wording follows the chosen wake time', () => {
+    expect(initialDraft().template).toBe('ai-robotics');
+    const d = applyTemplate({ ...initialDraft(), wakeTime: '06:30' }, 'fitness');
+    expect(d.habits.find((h) => h.key === 'wake')?.full_version).toMatch(/6:50 AM/);
+    expect(d.mainQuests.map((m) => m.title)).toContain('A steady training habit');
+  });
+
+  it('covers fitness, study/exams, career/skills and discipline', () => {
+    expect(STARTER_TEMPLATES.map((t) => t.id)).toEqual(
+      expect.arrayContaining(['fitness', 'study', 'career', 'discipline', 'ai-robotics']),
+    );
   });
 });

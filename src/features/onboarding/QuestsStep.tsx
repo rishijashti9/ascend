@@ -5,7 +5,8 @@ import type { StarterHabit } from '@/data/starter';
 import { habitSummary } from '@/ui/habit/habitEdit';
 import { HabitEditor } from '@/ui/habit/HabitEditor';
 import { StatChip } from '@/ui/stats';
-import { canAddCore, type Draft } from './draft';
+import { STARTER_TEMPLATES } from '@/data/starterTemplates';
+import { applyTemplate, canAddCore, type Draft } from './draft';
 
 type Update = (fn: (d: Draft) => Draft) => void;
 
@@ -83,6 +84,31 @@ export function QuestsStep({ draft, update }: { draft: Draft; update: Update }) 
         minimum still counts. Mark up to {GAME.maxCoreHabits} as <strong>core</strong>: doing at
         least their minimum makes a day active and keeps your streak.
       </p>
+      <fieldset className="flex flex-col gap-2">
+        <legend className="text-sm font-medium">Start from</legend>
+        <div className="flex flex-wrap gap-2">
+          {STARTER_TEMPLATES.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              aria-pressed={draft.template === t.id}
+              title={t.description}
+              onClick={() => update((d) => applyTemplate(d, t.id))}
+              className={`min-h-11 rounded-full border px-3 text-sm ${
+                draft.template === t.id
+                  ? 'bg-accent-fill text-on-accent border-transparent'
+                  : 'border-border bg-surface'
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+        <p className="text-muted text-sm">
+          {STARTER_TEMPLATES.find((t) => t.id === draft.template)?.description} Everything below
+          stays editable.
+        </p>
+      </fieldset>
       <ul className="flex flex-col gap-2">
         {draft.habits.map((h) => (
           <QuestRow key={h.key} habit={h} draft={draft} update={update} />

@@ -12,6 +12,8 @@ import {
   type StarterHabit,
 } from '@/data/starter';
 import { editProblems } from '@/ui/habit/habitEdit';
+import { DEFAULT_SETTINGS } from '@/config/defaults';
+import { DEFAULT_TEMPLATE, STARTER_TEMPLATES } from '@/data/starterTemplates';
 
 /** Everything the five onboarding steps edit, kept in memory until "Begin". */
 export interface Draft {
@@ -22,6 +24,8 @@ export interface Draft {
   mainQuests: { title: string; stat: Stat }[];
   theme: ThemePreference;
   start: 'today' | 'tomorrow';
+  /** Starter template the quests, dream and main quests came from (all still editable). */
+  template: string;
 }
 
 export function initialDraft(): Draft {
@@ -33,6 +37,20 @@ export function initialDraft(): Draft {
     mainQuests: STARTER_MAIN_QUESTS.map((m) => ({ ...m })),
     theme: 'system',
     start: 'today',
+    template: DEFAULT_TEMPLATE,
+  };
+}
+
+/** Swap in a starter template's quests, dream and main quests (SPEC 6.7: any user, any goals). */
+export function applyTemplate(d: Draft, id: string): Draft {
+  const t = STARTER_TEMPLATES.find((x) => x.id === id);
+  if (!t) return d;
+  return {
+    ...d,
+    template: id,
+    habits: t.habits.map((h) => withWakeWording({ ...h }, d.wakeTime, DEFAULT_SETTINGS)),
+    dream: { ...t.dream },
+    mainQuests: t.mainQuests.map((m) => ({ ...m })),
   };
 }
 
