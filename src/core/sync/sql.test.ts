@@ -172,6 +172,17 @@ describe('Supabase migration (run in Postgres)', () => {
     expect((await rows()).map((r) => r.id)).toEqual(['mine']);
   });
 
+  it('accepts the Phase 8 tables (learning events, summaries, compactions)', async () => {
+    await as(A);
+    for (const tbl of ['learning_events', 'summaries', 'compactions']) {
+      expect(
+        await push([{ tbl, id: `${tbl}-1`, hlc: hlc(5), data: { id: `${tbl}-1` } }]),
+      ).toMatchObject({
+        accepted: 1,
+      });
+    }
+  });
+
   it('rejects unknown tables, bad clocks and oversized batches', async () => {
     await as(A);
     await expect(push([{ tbl: 'photos', id: 'p', hlc: hlc(1), data: {} }])).rejects.toThrow();

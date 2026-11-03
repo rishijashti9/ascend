@@ -43,6 +43,41 @@ afterEach(async () => {
   }
 });
 
+describe('Phase 8 tables wait for the server migration', () => {
+  const event = async (db: AscendDB, id: string) =>
+    db.learning_events.add({
+      ...newBase(id),
+      kind: 'app_open',
+      type: 'open',
+      outcome: null,
+      at: new Date().toISOString(),
+      day: '2026-11-02',
+      ref_id: null,
+      values: null,
+    });
+
+  it('keeps them on the device on an old server, then uploads all of them once it is ready', async () => {
+    cloud.version = 1;
+    await run(phone)(habit('Study'));
+    await event(phone, 'e1');
+    await sync(phone); // no error: the old server never sees them
+    expect(cloud.get('learning_events', 'e1')).toBeUndefined();
+    expect(cloud.size).toBeGreaterThan(0);
+    await event(phone, 'e2');
+    await sync(phone);
+    expect(cloud.get('learning_events', 'e2')).toBeUndefined();
+
+    cloud.version = 2; // Rishi applied the migration
+    await sync(phone);
+    expect(cloud.get('learning_events', 'e1')).toBeDefined();
+    expect(cloud.get('learning_events', 'e2')).toBeDefined();
+    expect((await phone.meta.get(SYNC_META.serverV2))?.value).toBe(true);
+    await sync(laptop);
+    expect(await laptop.learning_events.count()).toBe(2);
+    expect((await localChanges(phone)).filter((r) => r.tbl === 'learning_events')).toEqual([]);
+  });
+});
+
 describe('sync engine', () => {
   it('a record made on one device appears on the other; nothing is pushed twice', async () => {
     const h = (await run(phone)(habit('Study'))).value as Habit;

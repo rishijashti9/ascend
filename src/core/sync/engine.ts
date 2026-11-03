@@ -2,7 +2,7 @@ import type { AscendDB, TableName } from '@/core/db/db';
 import { recordAction } from '@/core/pipeline';
 import { SYNC_META } from '@/core/pipeline/actions/sync';
 import type { OutRecord, SyncBackend } from './backend';
-import { SYNCED_TABLES } from './merge';
+import { SYNCED_TABLES, V2_TABLES } from './merge';
 
 /**
  * One sync round (SPEC 9): push every local change since the last push, then pull every
@@ -24,23 +24,38 @@ export function toOutRecord(tbl: string, row: Row): OutRecord {
   };
 }
 
+/**
+ * How the Phase 8 tables travel: `skip` while the server doesn't accept them yet (they stay on
+ * the device), `all` once when it first does (everything written meanwhile goes up), then `new`.
+ */
+export type V2Mode = 'skip' | 'all' | 'new';
+
 /** Every local change not pushed yet, oldest first. */
-export async function localChanges(db: AscendDB): Promise<OutRecord[]> {
+export async function localChanges(db: AscendDB, v2: V2Mode = 'new'): Promise<OutRecord[]> {
   const mark = (await db.meta.get(SYNC_META.pushHlc))?.value;
   const since = typeof mark === 'string' ? mark : '';
   const out: OutRecord[] = [];
   for (const tbl of SYNCED_TABLES) {
+    const isV2 = (V2_TABLES as readonly string[]).includes(tbl);
+    if (isV2 && v2 === 'skip') continue;
+    const from = isV2 && v2 === 'all' ? '' : since;
     const rows = (await db
       .table(tbl as TableName)
-      .filter((r: Row) => r.hlc > since)
+      .filter((r: Row) => r.hlc > from)
       .toArray()) as Row[];
     for (const r of rows) out.push(toOutRecord(tbl, r));
   }
   return out.sort((a, b) => (a.hlc < b.hlc ? -1 : a.hlc > b.hlc ? 1 : 0));
 }
 
+async function v2Mode(db: AscendDB, backend: SyncBackend): Promise<V2Mode> {
+  if ((await db.meta.get(SYNC_META.serverV2))?.value === true) return 'new';
+  return (await backend.serverVersion()) >= 2 ? 'all' : 'skip';
+}
+
 export async function pushChanges(db: AscendDB, backend: SyncBackend): Promise<number> {
-  const changes = await localChanges(db);
+  const mode = await v2Mode(db, backend);
+  const changes = await localChanges(db, mode);
   for (let i = 0; i < changes.length; i += BATCH) {
     const batch = changes.slice(i, i + BATCH);
     await backend.push(batch);
@@ -50,6 +65,9 @@ export async function pushChanges(db: AscendDB, backend: SyncBackend): Promise<n
         { type: 'sync.markPushed', source: 'sync', payload: { hlc: last.hlc } },
         { db },
       );
+  }
+  if (mode === 'all') {
+    await recordAction({ type: 'sync.markServerV2', source: 'sync', payload: {} }, { db });
   }
   return changes.length;
 }

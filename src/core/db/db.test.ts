@@ -1,6 +1,6 @@
 import Dexie from 'dexie';
 import { DEFAULT_SETTINGS } from '@/config/defaults';
-import { ALL_TABLES, AscendDB, SCHEMA_VERSION } from './db';
+import { ALL_TABLES, AscendDB, DB_VERSION, SCHEMA_VERSION, STORES_V1 } from './db';
 import { deleteAllData, openDatabase, requestPersistentStorage } from './open';
 import type { XpEvent } from './types';
 
@@ -40,7 +40,7 @@ describe('database schema', () => {
   it('creates every table from the plan', () => {
     const names = database.tables.map((t) => t.name).sort();
     expect(names).toEqual([...ALL_TABLES].sort());
-    expect(names).toHaveLength(23);
+    expect(names).toHaveLength(26);
   });
 
   it('creates default settings on first open, pre-filled from DECISIONS', async () => {
@@ -114,6 +114,50 @@ describe('database schema', () => {
       .between('2026-11-02', '2026-11-04', true, true)
       .toArray();
     expect(inRange.map((e) => e.id)).toEqual(['2']);
+  });
+});
+
+describe('upgrade from v1 (Phase 8 adds tables, keeps every record)', () => {
+  it('opens a v1 database with data as v2 without changing a record', async () => {
+    const name = `test-v1-${crypto.randomUUID()}`;
+    const old = new Dexie(name);
+    old.version(1).stores(STORES_V1);
+    await old.open();
+    const at = new Date().toISOString();
+    const base = { created_at: at, updated_at: at, deleted_at: null, schema_version: 1, hlc: 'h' };
+    await old.table('settings').add({ id: 'settings', ...base, ...DEFAULT_SETTINGS });
+    await old.table('xp_events').add(xpEvent('x1', 'k1'));
+    await old.table('days').add({ id: '2026-11-02', ...base, day: '2026-11-02', active: true });
+    const before = {
+      settings: await old.table('settings').toArray(),
+      xp: await old.table('xp_events').toArray(),
+      days: await old.table('days').toArray(),
+    };
+    old.close();
+
+    const upgraded = new AscendDB(name);
+    await upgraded.open();
+    expect(upgraded.verno).toBe(DB_VERSION);
+    expect(await upgraded.settings.toArray()).toEqual(before.settings);
+    expect(await upgraded.xp_events.toArray()).toEqual(before.xp);
+    expect(await upgraded.days.toArray()).toEqual(before.days);
+    expect(await upgraded.learning_events.count()).toBe(0);
+    await upgraded.learning_events.add({
+      id: 'e1',
+      ...base,
+      kind: 'app_open',
+      type: 'open',
+      outcome: null,
+      at,
+      day: '2026-11-02',
+      ref_id: null,
+      values: null,
+    });
+    expect(
+      await upgraded.learning_events.where('[kind+type]').equals(['app_open', 'open']).count(),
+    ).toBe(1);
+    upgraded.close();
+    await Dexie.delete(name);
   });
 });
 

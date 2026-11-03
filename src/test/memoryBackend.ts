@@ -1,6 +1,6 @@
 import type { InRecord, OutRecord, SyncBackend } from '@/core/sync/backend';
 import { SyncUnavailable } from '@/core/sync/backend';
-import { incomingWins, sortKey } from '@/core/sync/merge';
+import { incomingWins, sortKey, V2_TABLES, type V2Table } from '@/core/sync/merge';
 import { nowMs } from '@/core/time';
 
 /**
@@ -12,6 +12,8 @@ export class MemoryCloud {
   private seq = 0;
   /** Simulate a paused project / no connection. */
   down: false | 'paused' | 'offline' = false;
+  /** Server schema version (1 = before the Phase 8 migration: Phase 8 tables are refused). */
+  version = 2;
 
   backend(): SyncBackend {
     const guard = () => {
@@ -22,6 +24,8 @@ export class MemoryCloud {
         guard();
         let accepted = 0;
         let kept = 0;
+        if (this.version < 2 && records.some((r) => V2_TABLES.includes(r.tbl as V2Table)))
+          throw new SyncUnavailable('violates check constraint "sync_records_tbl"', 'server');
         for (const r of records) {
           const key = `${r.tbl}|${r.id}`;
           const sort = sortKey(r.hlc, nowMs());
@@ -48,6 +52,10 @@ export class MemoryCloud {
       reset: async () => {
         guard();
         this.rows.clear();
+      },
+      serverVersion: async () => {
+        guard();
+        return this.version;
       },
     };
   }

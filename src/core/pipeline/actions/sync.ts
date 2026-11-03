@@ -17,6 +17,8 @@ export const SYNC_META = {
   pullSeq: 'sync:pull_seq',
   /** Highest local HLC already pushed. */
   pushHlc: 'sync:push_hlc',
+  /** The server accepts the Phase 8 tables and they were uploaded in full once. */
+  serverV2: 'sync:server_v2',
 } as const;
 
 const SYNCED = new Set<string>(SYNCED_TABLES);
@@ -115,6 +117,17 @@ export const markPushed = defineAction({
     if (typeof current !== 'string' || hlc > current) {
       await ctx.db.meta.put({ id: SYNC_META.pushHlc, value: hlc });
     }
+    return true;
+  },
+});
+
+/** The server accepts the Phase 8 tables, and their full first upload is done. */
+export const markServerV2 = defineAction({
+  type: 'sync.markServerV2',
+  schema: z.object({}).strict(),
+  tables: ['meta'],
+  async run(ctx) {
+    await ctx.db.meta.put({ id: SYNC_META.serverV2, value: true });
     return true;
   },
 });

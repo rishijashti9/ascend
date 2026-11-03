@@ -25,8 +25,15 @@ export const SYNCED_TABLES = [
   'job_applications',
   'plan_history',
   'plan_proposals',
+  'learning_events',
+  'summaries',
+  'compactions',
 ] as const;
 export type SyncedTable = (typeof SYNCED_TABLES)[number];
+
+/** Tables the server accepts only from schema version 2 (migration …_phase8_tables.sql). */
+export const V2_TABLES = ['learning_events', 'summaries', 'compactions'] as const;
+export type V2Table = (typeof V2_TABLES)[number];
 
 const RANK: Record<string, number> = { done_full: 3, done_min: 2, done_late: 1 };
 

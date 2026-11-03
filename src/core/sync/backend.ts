@@ -25,6 +25,8 @@ export interface SyncBackend {
   isEmpty(): Promise<boolean>;
   /** Deletes this user's cloud copy ("keep this device's data"). */
   reset(): Promise<void>;
+  /** Server schema version: 1 = Phase 7 tables only, 2 = Phase 8 tables accepted too. */
+  serverVersion(): Promise<number>;
 }
 
 /** A failure that means "try later" (offline, paused project, server busy) vs a real bug. */
@@ -88,6 +90,22 @@ export function supabaseBackend(client: SupabaseClient): SyncBackend {
     },
     async reset() {
       await call(client.rpc('reset_my_cloud_data'));
+    },
+    async serverVersion() {
+      let res: {
+        data: unknown;
+        error: { code?: string; message?: string } | null;
+        status?: number;
+      };
+      try {
+        res = await client.rpc('sync_server_version');
+      } catch (error) {
+        classify({ message: error instanceof Error ? error.message : String(error) });
+      }
+      // Function not there yet (migration not applied): a Phase 7 server.
+      if (res.error?.code === 'PGRST202' || res.status === 404) return 1;
+      if (res.error) classify({ ...res.error, status: res.status });
+      return Number(res.data) || 1;
     },
   };
 }

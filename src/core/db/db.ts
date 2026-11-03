@@ -4,6 +4,9 @@ import { nowMs } from '@/core/time';
 import { nextHlc } from './hlc';
 import type {
   AchievementUnlocked,
+  Compaction,
+  LearningEvent,
+  Summary,
   BodyLog,
   DayRecord,
   Dream,
@@ -36,7 +39,7 @@ export const SCHEMA_VERSION = 1;
  * fields are stored too. `&` = unique, `[a+b]` = compound index.
  * NEVER edit an old version's block — add a new version instead.
  */
-const STORES_V1 = {
+export const STORES_V1 = {
   profile: 'id',
   settings: 'id',
   dreams: 'id, status',
@@ -62,8 +65,22 @@ const STORES_V1 = {
   meta: 'id',
 } as const;
 
-export type TableName = keyof typeof STORES_V1;
-export const ALL_TABLES = Object.keys(STORES_V1) as TableName[];
+/**
+ * v2 (Phase 8, SPEC 6.7): learning data, compaction summaries and compaction history.
+ * Existing tables and records are unchanged, so no upgrade function is needed.
+ */
+const STORES_V2 = {
+  ...STORES_V1,
+  learning_events: 'id, kind, day, [kind+type]',
+  summaries: 'id, period_type, period',
+  compactions: 'id, cutoff_day',
+} as const;
+
+/** Dexie (IndexedDB) version — separate from SCHEMA_VERSION, the stored record shape. */
+export const DB_VERSION = 2;
+
+export type TableName = keyof typeof STORES_V2;
+export const ALL_TABLES = Object.keys(STORES_V2) as TableName[];
 
 export class AscendDB extends Dexie {
   profile!: EntityTable<Profile, 'id'>;
@@ -89,11 +106,15 @@ export class AscendDB extends Dexie {
   plan_proposals!: EntityTable<PlanProposal, 'id'>;
   pending_actions!: EntityTable<PendingAction, 'id'>;
   meta!: EntityTable<MetaEntry, 'id'>;
+  learning_events!: EntityTable<LearningEvent, 'id'>;
+  summaries!: EntityTable<Summary, 'id'>;
+  compactions!: EntityTable<Compaction, 'id'>;
 
   constructor(name = 'ascend') {
     super(name);
     this.version(1).stores(STORES_V1);
-    // Future: this.version(2).stores({...}).upgrade(async (tx) => { ... });
+    this.version(2).stores(STORES_V2);
+    // Future: this.version(3).stores({...}).upgrade(async (tx) => { ... });
 
     // First open on a new device: create default settings.
     this.on('populate', (tx) => {
