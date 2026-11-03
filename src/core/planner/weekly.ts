@@ -61,14 +61,22 @@ export function planWeek(state: PlannerState): ProposalItem[] {
   }
 
   const titles = new Set(items.map((i) => (i.kind === 'quest.create' ? i.data.title : '')));
-  for (const goal of state.mainQuests.filter((q) => q.status === 'active')) {
+  // The week's focus goal goes first, so its steps survive the weekly limit (SPEC 6.7 A).
+  const goals = state.mainQuests
+    .filter((q) => q.status === 'active')
+    .sort((a, b) => Number(b.id === state.focusGoalId) - Number(a.id === state.focusGoalId));
+  for (const goal of goals) {
     const milestone = state.milestones
       .filter((m) => m.main_quest_id === goal.id && m.status === 'active')
       .sort((a, b) => a.order - b.order)[0];
     if (!milestone) continue;
     for (const item of planMilestoneWeek(state, milestone, goal, `${goal.id.slice(0, 4)}-`)) {
       if (item.kind === 'quest.create' && titles.has(item.data.title)) continue;
-      items.push(item);
+      items.push(
+        goal.id === state.focusGoalId
+          ? { ...item, reason: `${item.reason} This week’s focus goal.` }
+          : item,
+      );
     }
   }
   // The job stats add one step to an active job-search goal (task 9.5), e.g. a mock interview.

@@ -30,6 +30,8 @@ export interface PlannerState {
   jobStats?: JobStats | null;
   /** Real weekly capacity learned by the Adaptive System (SPEC 6.7 A), else null/absent. */
   capacity?: Capacity | null;
+  /** This week's focus goal (main quest id) — its steps come first in the weekly plan. */
+  focusGoalId?: string | null;
 }
 
 /** Learned capacity, only when it's at least "likely". */

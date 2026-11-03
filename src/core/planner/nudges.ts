@@ -1,4 +1,10 @@
 import type { DayString, MainQuest, Milestone } from '@/core/db/types';
+import {
+  behindMessage,
+  mainQuestForecast,
+  milestoneForecast,
+  milestoneStart,
+} from '@/core/adaptive/goals';
 import { diffDays } from '@/core/time';
 
 /**
@@ -19,18 +25,6 @@ export type Nudge =
 export const CHECKIN_DAYS = 30;
 /** How far behind schedule counts as "at risk" (share of the milestone's time). */
 const BEHIND_BY = 0.25;
-
-/** Day a milestone started: when the previous one was done, else when it was created. */
-function startOf(
-  m: Milestone,
-  all: readonly Milestone[],
-  dayOfIso: (iso: string) => DayString,
-): DayString {
-  const previous = all
-    .filter((x) => x.main_quest_id === m.main_quest_id && x.order < m.order && x.done_at)
-    .sort((a, b) => b.order - a.order)[0];
-  return dayOfIso(previous?.done_at ?? m.created_at);
-}
 
 export function goalNudges(input: {
   today: DayString;
@@ -64,10 +58,16 @@ export function goalNudges(input: {
         )
         .sort((a, b) => a.order - b.order)[0];
       if (active?.target_date) {
-        const start = startOf(active, milestones, dayOfIso);
+        const start = milestoneStart(active, milestones, dayOfIso);
         const span = Math.max(1, diffDays(start, active.target_date));
         const elapsed = diffDays(start, today);
         const progress = milestoneProgress[active.id]?.progress ?? 0;
+        // Early warning from real pace (SPEC 6.7 A) — often weeks before the share-of-time rule.
+        const early = behindMessage(
+          active.title,
+          milestoneForecast(active, progress, start, today),
+          active.target_date,
+        );
         if (elapsed >= 7 && progress < Math.min(1, elapsed / span) - BEHIND_BY) {
           nudges.push({
             kind: 'risk',
@@ -75,7 +75,27 @@ export function goalNudges(input: {
             milestoneId: active.id,
             message: `“${active.title}” is behind schedule (${Math.round(progress * 100)}% done, ${Math.round(Math.min(1, elapsed / span) * 100)}% of its time used).`,
           });
+        } else if (early) {
+          nudges.push({ kind: 'risk', mainQuestId: q.id, milestoneId: active.id, message: early });
         }
+      }
+      // The whole goal at its pace, even when the current milestone is on time.
+      if (!nudges.some((n) => n.kind === 'risk' && n.mainQuestId === q.id)) {
+        const f = mainQuestForecast(
+          q,
+          milestones,
+          (id) => milestoneProgress[id]?.progress ?? 0,
+          today,
+          dayOfIso,
+        );
+        const msg = f ? behindMessage(q.title, f, q.target_date) : null;
+        if (msg)
+          nudges.push({
+            kind: 'risk',
+            mainQuestId: q.id,
+            milestoneId: active?.id ?? null,
+            message: msg,
+          });
       }
     }
 

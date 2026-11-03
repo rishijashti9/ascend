@@ -1,3 +1,4 @@
+import { FocusGoalLine } from '@/features/goals/ForecastLine';
 import { Check } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { db } from '@/core/db/db';
@@ -142,6 +143,7 @@ export function WeeklyReview({ weekStart, today }: { weekStart: string; today: s
 
         <section aria-label="Next week's quests" className="flex flex-col gap-2">
           <h3 className="font-medium">Next week’s quests</h3>
+          <FocusGoalLine prefix="Focus goal" />
           {planned ? (
             <p className="text-muted text-sm">
               Next week is planned — see Plan history to undo it.

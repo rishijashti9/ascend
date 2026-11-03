@@ -1,3 +1,12 @@
+import {
+  focusGoalOfWeek,
+  mainQuestForecast,
+  milestoneForecast,
+  milestoneStart,
+  type FocusGoal,
+  type Forecast,
+} from '@/core/adaptive/goals';
+import { currentTimeZone, dayOf, nowMs } from '@/core/time';
 import { createStore, useStore } from 'zustand';
 import { db as defaultDb, type AscendDB } from '@/core/db/db';
 import type { Dream, MainQuest, Milestone, PlanHistory, PlanProposal } from '@/core/db/types';
@@ -17,6 +26,10 @@ export interface GoalsState {
   mainQuests: MainQuest[];
   milestones: Milestone[];
   milestoneProgress: Record<string, MilestoneProgress>;
+  /** Pace forecasts (SPEC 6.7 A): active milestones and main quests. */
+  forecasts: Record<string, Forecast | null>;
+  /** This week's focus goal (feeds the weekly plan and weekly review). */
+  focusGoal: FocusGoal | null;
   mainQuestProgress: Record<string, number>;
   dreamProgress: Record<string, number>;
   /** Planner proposals waiting for review, newest first. */
@@ -31,6 +44,8 @@ export const goalsStore = createStore<GoalsState>(() => ({
   mainQuests: [],
   milestones: [],
   milestoneProgress: {},
+  forecasts: {},
+  focusGoal: null,
   mainQuestProgress: {},
   dreamProgress: {},
   proposals: [],
@@ -85,8 +100,39 @@ export async function loadGoals(database: AscendDB = defaultDb): Promise<void> {
     const dp = Object.fromEntries(
       data.dreams.map((d) => [d.id, dreamProgress(d, data.mainQuests, (id) => qp[id] ?? 0)]),
     );
+    const settings = await database.settings.get('settings');
+    const today = dayOf(nowMs(), currentTimeZone(), settings?.day_start_hour ?? 3);
+    const dayOfIso = (iso: string) =>
+      dayOf(Date.parse(iso), currentTimeZone(), settings?.day_start_hour ?? 3);
+    const forecasts: Record<string, Forecast | null> = {};
+    for (const q of data.mainQuests) {
+      if (q.status !== 'active') continue;
+      forecasts[q.id] = mainQuestForecast(
+        q,
+        data.milestones,
+        (id) => mp[id]?.progress ?? 0,
+        today,
+        dayOfIso,
+      );
+      const active = data.milestones.find((m) => m.main_quest_id === q.id && m.status === 'active');
+      if (active)
+        forecasts[active.id] = milestoneForecast(
+          active,
+          mp[active.id]?.progress ?? 0,
+          milestoneStart(active, data.milestones, dayOfIso),
+          today,
+        );
+    }
+    const focusGoal = focusGoalOfWeek(
+      data.mainQuests,
+      new Map(Object.entries(forecasts)),
+      (id) => qp[id] ?? 0,
+      today,
+    );
     goalsStore.setState({
       status: 'ready',
+      forecasts,
+      focusGoal,
       dreams: data.dreams,
       mainQuests: data.mainQuests,
       milestones: data.milestones,

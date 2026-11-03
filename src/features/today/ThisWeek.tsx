@@ -1,3 +1,4 @@
+import { FocusGoalLine } from '@/features/goals/ForecastLine';
 import { useAppState } from '@/core/state/app';
 import { useGoals } from '@/core/state/goals';
 import { currentTimeZone, dayOf, weekStartOf } from '@/core/time';
@@ -85,6 +86,7 @@ export function ThisWeek() {
               {done} / {week.length} done
             </span>
           </h2>
+          <FocusGoalLine />
           {weekStart && <WeeklyPlanNote weekStart={weekStart} />}
           <ul className="flex flex-col gap-3">
             {week.map((q) => (

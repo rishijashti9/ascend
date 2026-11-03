@@ -1,3 +1,4 @@
+import { ForecastLine } from './ForecastLine';
 import { ArrowLeft, Plus, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router';
@@ -51,6 +52,7 @@ function MilestoneCard({ milestone }: { milestone: Milestone }) {
         {describe(milestone, p)}
         {milestone.target_date && ` · by ${formatDay(milestone.target_date)}`}
       </p>
+      {milestone.status === 'active' && <ForecastLine id={milestone.id} />}
       {p.reached && milestone.status !== 'done' && (
         <p className="text-success-text text-sm font-medium">
           Target reached — mark it done when you’re sure.
@@ -138,6 +140,7 @@ export function MainQuestPage() {
         {quest.target_date && (
           <p className="text-muted text-sm">Deadline: {formatDay(quest.target_date)}</p>
         )}
+        {quest.status === 'active' && <ForecastLine id={quest.id} />}
       </header>
 
       {quest.why && (
