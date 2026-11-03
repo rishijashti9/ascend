@@ -1,3 +1,4 @@
+import { loadExpanded } from '@/core/compaction/expanded';
 import {
   focusGoalOfWeek,
   mainQuestForecast,
@@ -74,6 +75,7 @@ export async function loadGoals(database: AscendDB = defaultDb): Promise<void> {
       'focus_sessions',
       'plan_proposals',
       'plan_history',
+      'summaries',
     ] as const;
     const data = await database.transaction('r', [...tables], async () => ({
       dreams: live(await database.dreams.toArray()).sort(byOrder),
@@ -81,10 +83,16 @@ export async function loadGoals(database: AscendDB = defaultDb): Promise<void> {
       milestones: live(await database.milestones.toArray()).sort(byOrder),
       habits: await database.habits.toArray(),
       quests: await database.quests.toArray(),
-      instances: await database.quest_instances.toArray(),
+      instances: [
+        ...(await database.quest_instances.toArray()),
+        ...(await loadExpanded(database)).instances,
+      ],
       bodyLogs: await database.body_logs.toArray(),
       jobs: await database.job_applications.toArray(),
-      sessions: await database.focus_sessions.toArray(),
+      sessions: [
+        ...(await database.focus_sessions.toArray()),
+        ...(await loadExpanded(database)).sessions,
+      ],
       proposals: (await database.plan_proposals.where('status').equals('pending').toArray())
         .filter((p) => p.deleted_at === null)
         .sort((a, b) => b.created_at.localeCompare(a.created_at)),

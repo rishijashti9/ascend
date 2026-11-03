@@ -1,3 +1,4 @@
+import { loadExpanded } from '@/core/compaction/expanded';
 import { createStore, useStore } from 'zustand';
 import { db as defaultDb, type AscendDB } from '@/core/db/db';
 import type { FocusSession, Stat } from '@/core/db/types';
@@ -26,7 +27,10 @@ export function useFocus<T>(selector: (state: FocusState) => T): T {
 
 export async function loadFocus(database: AscendDB = defaultDb): Promise<void> {
   try {
-    const all = (await database.focus_sessions.toArray())
+    const all = [
+      ...(await database.focus_sessions.toArray()),
+      ...(await loadExpanded(database)).sessions,
+    ]
       .filter((s) => s.deleted_at === null)
       .sort((a, b) => b.started_at.localeCompare(a.started_at));
     const ids = [

@@ -1,3 +1,4 @@
+import { compactedBefore } from '@/core/compaction/expanded';
 import type { AscendDB } from '@/core/db/db';
 import type { DayRecord, DayString, IsoTime } from '@/core/db/types';
 import { evaluateDay } from '@/core/engine/dayEval';
@@ -24,6 +25,8 @@ export async function refreshDayRecord(
   options: { deferStreaks?: boolean } = {},
 ): Promise<DayRecord> {
   const existing = await db.days.get(day);
+  // A compacted day keeps its stored result: its quests now live in a summary (SPEC 6.7 D).
+  if (existing && day < (await compactedBefore(db))) return existing;
   const instances = await db.quest_instances.where('day').equals(day).toArray();
   const lowEnergy = changes.low_energy ?? existing?.low_energy ?? false;
   const evaluation = evaluateDay(instances, lowEnergy);

@@ -1,3 +1,4 @@
+import { compactedBefore } from '@/core/compaction/expanded';
 import { z } from 'zod';
 import type { AscendDB } from '@/core/db/db';
 import type { DayString, IsoTime, QuestInstance } from '@/core/db/types';
@@ -40,9 +41,12 @@ export async function rebuildDays(db: AscendDB, processedAt: IsoTime): Promise<R
   }
 
   const fixed = new Set<DayString>();
+  // Compacted days keep their stored result: their quests live in summaries now (SPEC 6.7 D).
+  const frozen = await compactedBefore(db);
   const allDays = [...new Set([...records.keys(), ...byDay.keys()])].sort();
   for (const day of allDays) {
     const record = records.get(day);
+    if (record && day < frozen) continue;
     if (!record) {
       // Quests without a day record (e.g. after an import): create it.
       await refreshDayRecord(db, day, processedAt, {}, { deferStreaks: true });

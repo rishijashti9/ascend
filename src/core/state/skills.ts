@@ -1,3 +1,4 @@
+import { loadExpanded } from '@/core/compaction/expanded';
 import { createStore, useStore } from 'zustand';
 import { db as defaultDb, type AscendDB } from '@/core/db/db';
 import type { Skill, SkillEvidence, SkillTrack } from '@/core/db/types';
@@ -73,12 +74,18 @@ export async function readSkillInput(database: AscendDB): Promise<SkillInput> {
   const entries = await database.progress_entries
     .filter((e) => instanceIds.has(e.quest_instance_id))
     .toArray();
+  // Compacted history keeps counting for skills (SPEC 6.7 D).
+  const old = await loadExpanded(database);
+  const oldInstances = old.instances.filter((i) =>
+    i.source_type === 'habit' ? (i.skill_ids_snapshot?.length ?? 0) > 0 : questIds.has(i.source_id),
+  );
+  const oldIds = new Set(oldInstances.map((i) => i.id));
   return {
     skills: await database.skills.toArray(),
     evidence: await database.skill_evidence.toArray(),
-    sessions,
-    instances,
-    entries,
+    sessions: [...sessions, ...old.sessions.filter((s) => s.skill_ids.length > 0)],
+    instances: [...instances, ...oldInstances],
+    entries: [...entries, ...old.entries.filter((e) => oldIds.has(e.quest_instance_id))],
     quests,
   };
 }

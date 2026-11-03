@@ -1,3 +1,4 @@
+import { loadExpanded } from '@/core/compaction/expanded';
 import { createStore, useStore } from 'zustand';
 import { db as defaultDb, type AscendDB } from '@/core/db/db';
 import { computeProgress, type ProgressState } from '@/core/engine/progressState';
@@ -29,18 +30,25 @@ export function useProgress<T>(selector: (state: ProgressStoreState) => T): T {
 /** Recomputes progress from the database (days, xp_events, quest_instances). */
 export async function loadProgress(database: AscendDB = defaultDb): Promise<ProgressState> {
   try {
-    const [days, xpEvents, instances, today] = await database.transaction(
+    const [days, xpEvents, instances, today, old] = await database.transaction(
       'r',
-      ['days', 'xp_events', 'quest_instances', 'settings'],
+      ['days', 'xp_events', 'quest_instances', 'settings', 'summaries'],
       () =>
         Promise.all([
           database.days.toArray(),
           database.xp_events.toArray(),
           database.quest_instances.toArray(),
           appDayOf(database, isoNow()),
+          loadExpanded(database),
         ]),
     );
-    const progress = computeProgress({ days, xpEvents, instances, today });
+    const progress = computeProgress({
+      days,
+      xpEvents,
+      instances: [...instances, ...old.instances],
+      today,
+      compactedXp: old.dayXp,
+    });
     progressStore.setState({ status: 'ready', progress, error: null });
     return progress;
   } catch (error) {

@@ -50,6 +50,8 @@ export interface AchievementFacts {
 }
 
 export interface FactsInput {
+  /** Body-log days in compacted months (SPEC 6.7 D). */
+  extraBodyDays?: number;
   progress: Pick<ProgressState, 'level' | 'rank' | 'stats' | 'streak' | 'habitStreaks' | 'perDay'>;
   days: readonly Pick<DayRecord, 'day' | 'active' | 'low_energy' | 'deleted_at'>[];
   instances: readonly Pick<
@@ -116,14 +118,16 @@ export function computeFacts(input: FactsInput): AchievementFacts {
     mainQuestsDone: live(input.mainQuests).filter((m) => m.status === 'done').length,
     checkIns: reviews.filter((r) => r.type === 'daily').length,
     weeklyReviews: reviews.filter((r) => r.type === 'weekly').length,
-    bodyLogDays: live(input.bodyLogs).filter(
-      (b) =>
-        b.weight !== null ||
-        b.waist !== null ||
-        b.sleep_hours !== null ||
-        b.steps !== null ||
-        !!b.workout_notes,
-    ).length,
+    bodyLogDays:
+      (input.extraBodyDays ?? 0) +
+      live(input.bodyLogs).filter(
+        (b) =>
+          b.weight !== null ||
+          b.waist !== null ||
+          b.sleep_hours !== null ||
+          b.steps !== null ||
+          !!b.workout_notes,
+      ).length,
     jobApplications: live(input.jobs).filter((j) => j.applied_at !== null).length,
   };
 }

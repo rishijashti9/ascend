@@ -210,7 +210,14 @@ export function buildSummaries(input: CompactInput): Map<string, MonthSummary> {
     const sorted = [...logs].sort((a, b) => a.day.localeCompare(b.day));
     const weights = sorted.flatMap((l) => (l.weight === null ? [] : [l.weight]));
     month(`${key}-01`).body = {
-      days: logs.length,
+      days: logs.filter(
+        (l) =>
+          l.weight !== null ||
+          l.waist !== null ||
+          l.sleep_hours !== null ||
+          l.steps !== null ||
+          !!l.workout_notes,
+      ).length,
       sleep: avg(logs.flatMap((l) => (l.sleep_hours === null ? [] : [l.sleep_hours]))),
       steps: avg(logs.flatMap((l) => (l.steps === null ? [] : [l.steps]))),
       weight: avg(weights),

@@ -1,3 +1,4 @@
+import { loadExpanded } from '@/core/compaction/expanded';
 import type { AscendDB, TableName } from '@/core/db/db';
 import { computeFacts, type AchievementFacts } from '@/core/engine/achievements';
 import { computeProgress } from '@/core/engine/progressState';
@@ -18,28 +19,33 @@ export const FACT_TABLES: TableName[] = [
   'reviews',
   'body_logs',
   'job_applications',
+  'summaries',
 ];
 
 /** Reads the facts achievements are judged on. Call inside a transaction over FACT_TABLES. */
 export async function readFacts(db: AscendDB, at: string = isoNow()): Promise<AchievementFacts> {
-  const [days, xpEvents, instances, today] = await Promise.all([
+  const [days, xpEvents, live, today, old] = await Promise.all([
     db.days.toArray(),
     db.xp_events.toArray(),
     db.quest_instances.toArray(),
     appDayOf(db, at),
+    loadExpanded(db),
   ]);
-  const progress = computeProgress({ days, xpEvents, instances, today });
+  // Compacted history counts too (SPEC 6.7 D).
+  const instances = [...live, ...old.instances];
+  const progress = computeProgress({ days, xpEvents, instances, today, compactedXp: old.dayXp });
   return computeFacts({
     progress,
     days,
     instances,
     habits: await db.habits.toArray(),
     quests: await db.quests.toArray(),
-    sessions: await db.focus_sessions.toArray(),
+    sessions: [...(await db.focus_sessions.toArray()), ...old.sessions],
     milestones: await db.milestones.toArray(),
     mainQuests: await db.main_quests.toArray(),
     reviews: await db.reviews.toArray(),
     bodyLogs: await db.body_logs.toArray(),
     jobs: await db.job_applications.toArray(),
+    extraBodyDays: old.bodyDays,
   });
 }

@@ -65,7 +65,8 @@ export async function recordAction<R = unknown>(
   const processedAt = isoNow();
   const occurredAt = action.occurred_at ?? processedAt;
   const events: DomainEvent[] = [];
-  const tables = [...new Set<TableName>([...def.tables, 'xp_events', 'meta'])];
+  // Compactions are read by every day refresh (compacted days stay frozen — SPEC 6.7 D).
+  const tables = [...new Set<TableName>([...def.tables, 'xp_events', 'meta', 'compactions'])];
 
   const outcome = await database.transaction('rw', tables, async () => {
     if (action.action_id) {
