@@ -1,4 +1,4 @@
-import { Check, Undo2 } from 'lucide-react';
+import { Check, Undo2, TrendingDown } from 'lucide-react';
 import { useState } from 'react';
 import type { InstanceStatus, Measure } from '@/core/db/types';
 import { isDone } from '@/core/engine/progress';
@@ -113,9 +113,12 @@ export function QuestCard({
   quest,
   lowEnergy = false,
   note,
+  risk,
 }: {
   quest: TodayQuest;
   lowEnergy?: boolean;
+  /** "At risk today" (SPEC 6.7 A): why this one tends to slip. */
+  risk?: string;
   /** Extra line for weekly/side quests, e.g. the goal it serves or its due day. */
   note?: string;
 }) {
@@ -151,6 +154,15 @@ export function QuestCard({
             </p>
           )}
           {note && <p className="text-muted text-xs">{note}</p>}
+          {risk && !done && (
+            <p className="text-warning-text flex items-start gap-1 text-xs">
+              <TrendingDown aria-hidden size={14} className="mt-px shrink-0" />
+              <span>
+                <span className="sr-only">At risk today: </span>
+                {risk}
+              </span>
+            </p>
+          )}
         </div>
         <div className="flex shrink-0 items-center gap-1">
           <StatusLine status={instance.status} pop={float !== null} single={single} />

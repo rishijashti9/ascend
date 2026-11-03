@@ -13,11 +13,12 @@ import { useAction } from '@/ui/hooks/useAction';
 import { BackupReminder } from './BackupReminder';
 import { CheckInPrompt } from './CheckInPrompt';
 import { MonthlyReviewPrompt, WeeklyReviewPrompt } from './WeeklyReviewPrompt';
-import { GoalNudges } from './GoalNudges';
 import { QuestCard } from './QuestCard';
 import { RecoveryCard } from './RecoveryCard';
 import { StatusHeader } from './StatusHeader';
-import { DifficultyCard } from './DifficultyCard';
+import { SuggestionSlot } from './SuggestionSlot';
+import { useAdaptiveToday } from './useAdaptiveToday';
+import { WhatNow } from './WhatNow';
 import { ReminderSetupCard } from './ReminderSetupCard';
 import { SyncPausedNote } from './SyncPausedNote';
 import { SystemMessage } from './SystemMessage';
@@ -46,6 +47,7 @@ export function TodayPage() {
   const { status, day, daily, other, lowEnergy } = useToday((s) => s);
   const startDay = useAppState((s) => s.profile?.start_day ?? null);
   const [showAll, setShowAll] = useState(false);
+  const { risks, next } = useAdaptiveToday();
   const notStarted = startDay !== null && day !== null && day < startDay;
 
   const recovery = other.filter((q) => isRecoveryId(q.instance.id));
@@ -73,10 +75,10 @@ export function TodayPage() {
         </div>
         <StatusHeader day={day} />
         <SystemMessage />
-        <DifficultyCard />
+        <WhatNow next={next} />
+        <SuggestionSlot />
         <ReminderSetupCard />
         <SyncPausedNote />
-        <GoalNudges />
         <FollowUpsCard />
         <WeeklyReviewPrompt />
         <MonthlyReviewPrompt />
@@ -117,7 +119,12 @@ export function TodayPage() {
             <RecoveryCard key={q.instance.id} quest={q} />
           ))}
           {rest.filter(visible).map((q) => (
-            <QuestCard key={q.instance.id} quest={q} lowEnergy={lowEnergy} />
+            <QuestCard
+              key={q.instance.id}
+              quest={q}
+              lowEnergy={lowEnergy}
+              risk={risks.get(q.instance.id)?.why}
+            />
           ))}
         </ul>
 

@@ -14,6 +14,7 @@ const fmt = (c: HabitChange, v: number) => `${v.toLocaleString()}${UNIT[c.measur
  * One calm suggestion from the System about difficulty (SPEC 6.1) or a run of low-energy days
  * (SPEC 7). Applying changes targets with one tap and leaves an Undo note; "Not now" hides it.
  */
+
 export function DifficultyCard() {
   const suggestion = useSuggestion((s) => s.suggestion);
   const day = useToday((s) => s.day);

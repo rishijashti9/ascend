@@ -1,3 +1,4 @@
+import { startAdaptive } from '@/core/state/adaptive';
 import { startLearningRecorder } from '@/app/learning';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -118,6 +119,7 @@ async function start(): Promise<void> {
     );
   }
   await startSuggestion();
+  await startAdaptive();
   startLearningRecorder();
   startAutoPlanner();
   startAchievements();
