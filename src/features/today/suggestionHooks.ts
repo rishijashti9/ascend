@@ -1,4 +1,7 @@
 import { mayShow } from '@/core/adaptive/patterns';
+import { reminderSuggestion } from '@/core/adaptive/timing';
+import { useAppState } from '@/core/state/app';
+import { addDays } from '@/core/time';
 import { isEnabled } from '@/config/features';
 import { useAdaptive } from '@/core/state/adaptive';
 import { useGoals } from '@/core/state/goals';
@@ -57,3 +60,31 @@ export function useGoalNudgeRows(): { id: string; title: string; note: string; t
     .slice(0, 3);
   return rows;
 }
+
+/** Days a "Not now" on the reminder-time card keeps it away. */
+export const REMINDER_CARD_REST_DAYS = 30;
+
+/** The learned core-reminder time to suggest — or today's applied change (for its Undo). */
+export function useReminderCard():
+  | { kind: 'suggest'; from: string; to: string; why: string }
+  | { kind: 'applied'; from: string; to: string }
+  | null {
+  const input = useAdaptive((s) => s.input);
+  const settings = useAppState((s) => s.settings);
+  if (!input || !settings) return null;
+  const answers = input.events.filter(
+    (e) => e.kind === 'suggestion' && e.type === 'reminder_time' && e.outcome !== 'shown',
+  );
+  const today = answers.filter((e) => e.day === input.today).at(-1);
+  if (today?.outcome === 'accepted' && today.values) {
+    const v = today.values;
+    return { kind: 'applied', from: clock(v.from_min ?? 0), to: clock(v.to_min ?? 0) };
+  }
+  const restUntil = addDays(input.today, -REMINDER_CARD_REST_DAYS);
+  if (answers.some((e) => e.outcome === 'rejected' && e.day > restUntil)) return null;
+  const s = reminderSuggestion(input, settings);
+  return s ? { kind: 'suggest', from: s.from, to: s.to, why: s.why } : null;
+}
+
+const clock = (min: number) =>
+  `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;

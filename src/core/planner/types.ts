@@ -179,6 +179,8 @@ export interface Analysis {
   neglectedStat: Stat | null;
   /** Plain-words warnings shown before the interview. */
   conflicts: string[];
+  /** Real minutes done ÷ minutes asked per week (learned; null = not known yet). */
+  capacityRatio?: number | null;
 }
 
 export interface Plan {

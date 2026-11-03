@@ -55,6 +55,7 @@ export function testInstance(
     core: false,
     lowEnergy: false,
     stat: 'INT',
+    wake: false,
     ...over,
   };
 }

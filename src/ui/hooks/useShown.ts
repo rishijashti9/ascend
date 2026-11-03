@@ -21,8 +21,10 @@ export function recordAnswer(
   type: string,
   ref: string | null,
   outcome: 'accepted' | 'edited' | 'rejected',
+  values?: Record<string, number>,
 ): void {
-  void recordAction({ type: 'learning.answer', payload: { type, ref_id: ref, outcome } }).catch(
-    (error: unknown) => logError(error, 'learning.answer'),
-  );
+  void recordAction({
+    type: 'learning.answer',
+    payload: { type, ref_id: ref, outcome, ...(values ? { values } : {}) },
+  }).catch((error: unknown) => logError(error, 'learning.answer'));
 }

@@ -32,7 +32,8 @@ export function planMilestoneWeek(
     deadline: goal.target_date,
   });
   const ideas = weeklyIdeas(milestone.title, built.milestones);
-  const n = Math.min(weeklyCount(built, analyze(state).completionRate), ideas.length);
+  const a = analyze(state);
+  const n = Math.min(weeklyCount(built, a.completionRate, a.capacityRatio ?? null), ideas.length);
   return ideas.slice(0, n).map((title, i) => ({
     id: `${idsPrefix}w${i + 1}`,
     kind: 'quest.create',

@@ -1,6 +1,7 @@
 import type { GoalType, Habit, MainQuest, Milestone } from '@/core/db/types';
 import { addDays, diffDays } from '@/core/time';
 import {
+  knownCapacity,
   activeHabits,
   analyze,
   DAILY_LOAD_LIMIT_MIN,
@@ -92,11 +93,14 @@ export function linkedTo(state: PlannerState, mainQuestId: string) {
 export function weeklyCount(
   template: { weeklyPerWeek: number },
   completionRate: number | null,
+  capacityRatio: number | null = null,
 ): number {
-  // A shaky recent record means a lighter week (SPEC 6.3: plans fit real life).
-  return completionRate !== null && completionRate < 0.6
-    ? Math.min(2, template.weeklyPerWeek)
-    : template.weeklyPerWeek;
+  // A shaky recent record means a lighter week (SPEC 6.3: plans fit real life), and so does
+  // doing clearly less than the quests ask for (the learned real capacity, SPEC 6.7 A).
+  if ((completionRate !== null && completionRate < 0.6) || (capacityRatio ?? 1) < 0.6)
+    return Math.min(2, template.weeklyPerWeek);
+  if ((capacityRatio ?? 1) < 0.8) return Math.max(1, template.weeklyPerWeek - 1);
+  return template.weeklyPerWeek;
 }
 
 /** Weekly quest ideas for a milestone: from its template if it came from one. */
@@ -175,7 +179,10 @@ export function planMainQuest(
   const linked = linkedTo(state, goal.id);
   if (activeMilestone && activeRef && linked.weekly.length === 0) {
     const ideas = weeklyIdeas(activeMilestone.title, built.milestones);
-    const count = Math.min(weeklyCount(built, analysis.completionRate), ideas.length);
+    const count = Math.min(
+      weeklyCount(built, analysis.completionRate, analysis.capacityRatio ?? null),
+      ideas.length,
+    );
     for (const title of ideas.slice(0, count)) {
       add({
         kind: 'quest.create',
@@ -234,7 +241,15 @@ export function planMainQuest(
   }
 
   // ---- Load check: suggest trimming the biggest non-core minutes quest ----
-  if (addedMinutes > 0 && analysis.dailyLoadMin + addedMinutes > DAILY_LOAD_LIMIT_MIN) {
+  // Over the general limit, or over what's really done (learned capacity, with 25% headroom).
+  const capacity = knownCapacity(state);
+  const overCapacity =
+    capacity !== null &&
+    capacity.plannedMinutes / 7 + addedMinutes > (capacity.doneMinutes / 7) * 1.25 + 15;
+  if (
+    addedMinutes > 0 &&
+    (analysis.dailyLoadMin + addedMinutes > DAILY_LOAD_LIMIT_MIN || overCapacity)
+  ) {
     const biggest = habits
       .filter((h) => !h.core && h.measure === 'minutes' && (h.target_value ?? 0) >= 30)
       .sort((a, b) => (b.target_value ?? 0) - (a.target_value ?? 0))[0];
@@ -245,7 +260,11 @@ export function planMainQuest(
         habitId: biggest.id,
         title: biggest.title,
         selected: false,
-        reason: `This adds about ${Math.round(addedMinutes)} min a day. I suggest reducing “${biggest.title}” from ${biggest.target_value} to ${target} min.`,
+        reason: `This adds about ${Math.round(addedMinutes)} min a day${
+          overCapacity && capacity
+            ? `, and lately you really do about ${Math.round(capacity.doneMinutes / 7)} min a day`
+            : ''
+        }. I suggest reducing “${biggest.title}” from ${biggest.target_value} to ${target} min.`,
         changes: { target_value: target, min_value: Math.min(biggest.min_value ?? target, target) },
       });
     }

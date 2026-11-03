@@ -1,10 +1,21 @@
 import type { AscendDB } from '@/core/db/db';
+import { loadAdaptiveInput } from '@/core/adaptive/input';
+import { weeklyCapacity } from '@/core/adaptive/patterns';
 import { jobStats } from '@/core/engine/jobs';
 import { addDays, currentTimeZone, dayOf, nowMs, weekStartOf } from '@/core/time';
 import type { PlannerState } from './analyze';
 
 /** Reads everything the planner looks at (one read transaction, a consistent snapshot). */
 export async function loadPlannerState(db: AscendDB): Promise<PlannerState> {
+  const state = await readPlannerState(db);
+  // Real weekly capacity from the last 8 weeks (Adaptive System).
+  const capacity = weeklyCapacity(await loadAdaptiveInput(db, currentTimeZone(), CAPACITY_DAYS));
+  return { ...state, capacity };
+}
+
+const CAPACITY_DAYS = 56;
+
+async function readPlannerState(db: AscendDB): Promise<PlannerState> {
   return db.transaction(
     'r',
     [

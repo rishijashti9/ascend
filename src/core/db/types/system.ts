@@ -17,6 +17,8 @@ export interface NotificationSettings {
   quest_reminders: boolean;
   evening_winddown: boolean;
   evening_time: string; // HH:MM
+  /** Core-quest reminder time (HH:MM); absent = 18:00 (Phase 8 made it adjustable). */
+  reminder_time?: string;
   job_followups: boolean;
   browser_notifications: boolean;
 }

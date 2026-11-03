@@ -15,6 +15,8 @@ const type = z
   .regex(/^[a-z0-9_]{1,40}$/)
   .describe('suggestion type');
 const ref = z.string().min(1).max(200).nullable();
+/** Numbers only — never text. */
+const values = z.record(z.string().regex(/^[a-z_]{1,30}$/), z.number().finite()).optional();
 
 /** A suggestion card was shown. Once per type + ref + day (re-renders don't count again). */
 export const recordShown = defineAction({
@@ -34,7 +36,7 @@ export const recordShown = defineAction({
 export const recordAnswer = defineAction({
   type: 'learning.answer',
   schema: z
-    .object({ type, ref_id: ref, outcome: z.enum(['accepted', 'edited', 'rejected']) })
+    .object({ type, ref_id: ref, outcome: z.enum(['accepted', 'edited', 'rejected']), values })
     .strict(),
   tables: ['learning_events', 'settings'],
   async run(ctx, p) {

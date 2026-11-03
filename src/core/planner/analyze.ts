@@ -1,3 +1,4 @@
+import type { Capacity } from '@/core/adaptive/patterns';
 import type { JobStats } from '@/core/engine/jobs';
 import type {
   DayString,
@@ -27,6 +28,14 @@ export interface PlannerState {
   instances: readonly Pick<QuestInstance, 'source_type' | 'status' | 'day' | 'deleted_at'>[];
   /** Job search stats while the job tracker is switched on (task 9.5), else null/absent. */
   jobStats?: JobStats | null;
+  /** Real weekly capacity learned by the Adaptive System (SPEC 6.7 A), else null/absent. */
+  capacity?: Capacity | null;
+}
+
+/** Learned capacity, only when it's at least "likely". */
+export function knownCapacity(state: Pick<PlannerState, 'capacity'>): Capacity | null {
+  const c = state.capacity;
+  return c && c.confidence !== 'early' && c.plannedMinutes > 0 ? c : null;
 }
 
 /** Above this many minutes of daily quests a day, the planner suggests trimming (≈6 h). */
@@ -48,6 +57,9 @@ export function estimateMinutes(h: Pick<Habit, 'measure' | 'target_value'>): num
       return 0; // sleep isn't extra time
   }
 }
+
+const hours = (min: number) =>
+  min >= 60 ? `${Math.round(min / 6) / 10} h` : `${Math.round(min)} min`;
 
 export function activeHabits(state: Pick<PlannerState, 'habits'>): Habit[] {
   return state.habits.filter((h) => h.status === 'active' && h.deleted_at === null);
@@ -88,6 +100,12 @@ export function analyze(
       `Your daily quests already ask for about ${Math.round(dailyLoadMin / 6) / 10} hours a day.`,
     );
   }
+  const capacity = knownCapacity(state);
+  if (capacity && capacity.ratio < 0.8) {
+    conflicts.push(
+      `Lately you really do about ${hours(capacity.doneMinutes / 7)} a day of the ${hours(capacity.plannedMinutes / 7)} your quests ask for — the plan is sized to that.`,
+    );
+  }
   if (completionRate !== null && completionRate < 0.6) {
     conflicts.push(
       `Recent completion is ${Math.round(completionRate * 100)}% — the plan will start light.`,
@@ -99,7 +117,14 @@ export function analyze(
   if (neglectedStat) {
     conflicts.push(`No daily quest trains ${neglectedStat} at the moment.`);
   }
-  return { dailyLoadMin, completionRate, activeMainQuests, neglectedStat, conflicts };
+  return {
+    dailyLoadMin,
+    completionRate,
+    activeMainQuests,
+    neglectedStat,
+    conflicts,
+    capacityRatio: capacity ? capacity.ratio : null,
+  };
 }
 
 /** Lowercase word tokens ("MS in AI/Robotics" → ms, in, ai, robotics; keeps "c++"). */

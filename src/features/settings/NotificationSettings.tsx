@@ -6,7 +6,7 @@ import {
   addMinutes,
   FOLLOW_UP_TIME,
   minuteInQuietHours,
-  REMINDER_TIME,
+  reminderTimeOf,
 } from '@/core/notifications/plan';
 import type { NotifyPermission } from '@/core/notifications/types';
 import { useToday } from '@/core/state/today';
@@ -33,8 +33,8 @@ const KINDS: { key: Toggle; label: string; hint: (s: Settings) => string }[] = [
   {
     key: 'quest_reminders',
     label: 'Core quest reminder',
-    hint: () =>
-      `At ${REMINDER_TIME}, only if core quests are still open — the minimum versions count.`,
+    hint: (s) =>
+      `At ${reminderTimeOf(s)}, only if core quests are still open — the minimum versions count.`,
   },
   {
     key: 'evening_winddown',
@@ -94,7 +94,7 @@ export function NotificationSettings({ settings }: { settings: Settings }) {
       ) &&
       'The morning briefing',
     n.quest_reminders &&
-      minuteInQuietHours(REMINDER_TIME, settings.quiet_hours) &&
+      minuteInQuietHours(reminderTimeOf(settings), settings.quiet_hours) &&
       'The core quest reminder',
     n.evening_winddown &&
       minuteInQuietHours(n.evening_time, settings.quiet_hours) &&

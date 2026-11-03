@@ -59,7 +59,12 @@ function bestWindow(
   for (let h = 0; h < 24; h++) {
     let sum = 0;
     for (let k = 0; k < hours; k++) sum += bins[(h + k) % 24] ?? 0;
-    if (sum > bestSum) {
+    // Ties: the window that starts where the activity starts (not an empty hour before it).
+    const eps = 1e-9;
+    if (
+      sum > bestSum + eps ||
+      (Math.abs(sum - bestSum) <= eps && (bins[h] ?? 0) > (bins[best] ?? 0))
+    ) {
       bestSum = sum;
       best = h;
     }
@@ -86,12 +91,18 @@ export function focusWindow(input: AdaptiveInput): HourWindow | null {
   return bestWindow(points, input.today, 2);
 }
 
-/** When quests usually get done (any quest) — a good time for a reminder is just before. */
-export function completionWindow(input: AdaptiveInput): HourWindow | null {
+/** When quests usually get done (any quest, or core only) — a reminder fits just before. */
+export function completionWindow(input: AdaptiveInput, coreOnly = false): HourWindow | null {
   const from = learnFrom(input.events, null);
   const points = input.instances
     .filter(
-      (i) => i.completedAt && i.day >= from && i.day < input.today && i.measure !== 'sleep_hours',
+      (i) =>
+        (!coreOnly || i.core) &&
+        !i.wake &&
+        i.completedAt &&
+        i.day >= from &&
+        i.day < input.today &&
+        i.measure !== 'sleep_hours',
     )
     .map((i) => ({ day: i.day, hour: hourOf(i.completedAt ?? '', input.tz), weight: 1 }));
   return bestWindow(points, input.today, 2);

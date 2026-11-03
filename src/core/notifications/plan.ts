@@ -38,6 +38,10 @@ export const FOLLOW_UP_TIME = '10:00';
 /** The core-quest reminder's time: early evening, while there's still time to do a minimum. */
 export const REMINDER_TIME = '18:00';
 
+/** The core-quest reminder's time (adjustable since Phase 8; old settings have none → 18:00). */
+export const reminderTimeOf = (s: Pick<Settings, 'notifications'>): string =>
+  s.notifications.reminder_time ?? REMINDER_TIME;
+
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
 export function addMinutes(hhmm: string, minutes: number): string {
@@ -142,7 +146,7 @@ export function planNotifications(input: PlanInput): PlannedNotification[] {
         list.push({
           key: `reminder:${day}`,
           kind: 'reminder',
-          at: at(day, REMINDER_TIME),
+          at: at(day, reminderTimeOf(settings)),
           day,
           title: k === 0 ? `${plural(open, 'core quest')} still open.` : 'Core quests still open?',
           body: 'The minimum versions count — they keep the day active.',

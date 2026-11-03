@@ -25,6 +25,7 @@ export const settingsPatchSchema = z
         quest_reminders: z.boolean(),
         evening_winddown: z.boolean(),
         evening_time: hhmm,
+        reminder_time: hhmm,
         job_followups: z.boolean(),
         browser_notifications: z.boolean(),
       })

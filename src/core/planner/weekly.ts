@@ -5,7 +5,7 @@ import { addDays } from '@/core/time';
 import type { PlannerState } from './analyze';
 import { planMilestoneWeek } from './followups';
 import { jobSuggestion } from './jobs';
-import { matchTemplate } from './analyze';
+import { knownCapacity, matchTemplate } from './analyze';
 import { loadPlannerState } from './state';
 import type { ProposalItem } from './types';
 
@@ -107,7 +107,14 @@ export function planWeek(state: PlannerState): ProposalItem[] {
       break;
     }
   }
-  return items.slice(0, MAX_WEEKLY);
+  return items.slice(0, weeklyLimit(state));
+}
+
+/** 5 a week — fewer when the learned real capacity is clearly below what's asked (SPEC 6.7 A). */
+export function weeklyLimit(state: PlannerState): number {
+  const c = knownCapacity(state);
+  if (!c) return MAX_WEEKLY;
+  return c.ratio < 0.6 ? 3 : c.ratio < 0.8 ? 4 : MAX_WEEKLY;
 }
 
 /**

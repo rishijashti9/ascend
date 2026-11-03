@@ -60,7 +60,7 @@ beforeAll(async () => {
   for (const file of readdirSync(MIGRATIONS).sort()) {
     await pg.exec(readFileSync(join(MIGRATIONS, file), 'utf8'));
   }
-}, 60_000);
+}, 180_000); // Postgres starting in WebAssembly is slow when the whole suite runs at once
 afterAll(async () => {
   await pg.close();
 });

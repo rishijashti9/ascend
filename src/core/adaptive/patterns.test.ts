@@ -23,7 +23,7 @@ describe('best hours', () => {
       ...(i % 4 === 0 ? [{ day: d, startedAt: at(d, 20), minutes: 25, linked: false }] : []),
     ]);
     const w = focusWindow(testInput({ focus }));
-    expect(w?.start).toBe(5); // 5–7 (the 6:00 sessions sit inside it)
+    expect(w?.start).toBe(6); // 6–8, starting where the sessions start
     expect(w?.share).toBeGreaterThan(0.8);
     expect(w?.confidence).toBe('confident');
   });

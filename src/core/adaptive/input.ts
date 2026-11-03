@@ -30,6 +30,8 @@ export interface InstanceObs {
   core: boolean;
   lowEnergy: boolean;
   stat: Stat;
+  /** The wake-up check-in's times say when you woke, not when you get things done. */
+  wake: boolean;
 }
 
 export interface FocusObs {
@@ -79,7 +81,11 @@ export function forgotten(events: readonly LearningEvent[]): Map<string, DayStri
   return map;
 }
 
-export async function loadAdaptiveInput(db: AscendDB, tz: string): Promise<AdaptiveInput> {
+export async function loadAdaptiveInput(
+  db: AscendDB,
+  tz: string,
+  windowDays: number = ADAPTIVE.windowDays,
+): Promise<AdaptiveInput> {
   return db.transaction(
     'r',
     [
@@ -97,7 +103,7 @@ export async function loadAdaptiveInput(db: AscendDB, tz: string): Promise<Adapt
     async () => {
       const settings = await getSettings(db);
       const today = await appDayOf(db, isoNow());
-      const from = addDays(today, -ADAPTIVE.windowDays);
+      const from = addDays(today, -windowDays);
       const days = await db.days.where('id').between(from, today, true, true).toArray();
       const low = new Set(days.filter((d) => d.low_energy).map((d) => d.id));
       const raw = (
@@ -130,6 +136,7 @@ export async function loadAdaptiveInput(db: AscendDB, tz: string): Promise<Adapt
           core: i.core_snapshot,
           lowEnergy: low.has(i.day),
           stat: i.stat_snapshot,
+          wake: i.auto_source_snapshot === 'wake_checkin',
         }))
         .sort((a, b) => a.day.localeCompare(b.day));
       const body = (
