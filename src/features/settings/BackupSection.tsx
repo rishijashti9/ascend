@@ -1,5 +1,6 @@
 import { Download } from 'lucide-react';
 import { useState } from 'react';
+import { isEnabled } from '@/config/features';
 import { exportBackup, exportWithPhotos } from '@/app/files';
 import { useBody } from '@/core/state/body';
 import { isNativeApp } from '@/app/platform';
@@ -16,6 +17,8 @@ const when = (iso: string) =>
 /** Export / import (SPEC 11): the safety net until sync exists, and the way to move devices. */
 export function BackupSection() {
   const lastExportAt = useAppState((s) => s.lastExportAt);
+  const localBackupAt = useAppState((s) => s.localBackupAt);
+  const localBackupPath = useAppState((s) => s.localBackupPath);
   const hasData = useHabits((s) => s.habits.length > 0);
   const hasPhotos = useBody((s) => s.photos.length > 0);
   const [busy, setBusy] = useState(false);
@@ -55,9 +58,18 @@ export function BackupSection() {
           {lastExportAt ? `Last export: ${when(lastExportAt)}.` : 'No export yet.'}{' '}
           {isNativeApp()
             ? 'Choose where to keep the file (Files, Drive, email…).'
-            : 'Your data lives only in this browser until sync arrives — export weekly and keep the file somewhere safe.'}{' '}
+            : isEnabled('sync')
+              ? 'Without sync (Account), your data lives only in this browser — export weekly and keep the file somewhere safe.'
+              : 'Your data lives only in this browser — export weekly and keep the file somewhere safe.'}{' '}
           Body photos are only included in “Export with photos”.
         </p>
+        {isNativeApp() && (
+          <p className="text-muted text-xs">
+            {localBackupAt && localBackupPath
+              ? `Weekly backup on this phone: ${when(localBackupAt)}, in ${localBackupPath}. The last 4 are kept.`
+              : 'ASCEND saves a backup file on this phone once a week (Documents/ASCEND).'}
+          </p>
+        )}
         {error && (
           <p role="alert" className="text-warning-text text-sm">
             {error}

@@ -12,6 +12,9 @@ export interface AppState {
   /** Device-local backup bookkeeping (meta), for the backup reminder. */
   lastExportAt: string | null;
   backupSnoozeUntil: string | null;
+  /** Android's weekly backup file: when and where it was last written. */
+  localBackupAt: string | null;
+  localBackupPath: string | null;
 }
 
 export const appStore = createStore<AppState>(() => ({
@@ -20,6 +23,8 @@ export const appStore = createStore<AppState>(() => ({
   settings: null,
   lastExportAt: null,
   backupSnoozeUntil: null,
+  localBackupAt: null,
+  localBackupPath: null,
 }));
 
 export function useAppState<T>(selector: (state: AppState) => T): T {
@@ -28,11 +33,13 @@ export function useAppState<T>(selector: (state: AppState) => T): T {
 
 export async function loadAppState(database: AscendDB = defaultDb): Promise<void> {
   try {
-    const [profile, settings, lastExport, snooze] = await Promise.all([
+    const [profile, settings, lastExport, snooze, localAt, localPath] = await Promise.all([
       database.profile.get('profile'),
       database.settings.get('settings'),
       database.meta.get('last_export_at'),
       database.meta.get('backup_snooze_until'),
+      database.meta.get('local_backup_at'),
+      database.meta.get('local_backup_path'),
     ]);
     const text = (v: unknown) => (typeof v === 'string' ? v : null);
     appStore.setState({
@@ -41,6 +48,8 @@ export async function loadAppState(database: AscendDB = defaultDb): Promise<void
       settings: settings ?? null,
       lastExportAt: text(lastExport?.value),
       backupSnoozeUntil: text(snooze?.value),
+      localBackupAt: text(localAt?.value),
+      localBackupPath: text(localPath?.value),
     });
   } catch (error) {
     logError(error, 'app-state.load');

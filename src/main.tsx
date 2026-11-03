@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './app/App';
 import { startRollover } from './app/rollover';
+import { runWeeklyLocalBackup } from './app/localBackup';
 import { ErrorScreen } from './app/ErrorScreen';
 import { applyTheme } from './app/theme';
 import { openDatabase } from './core/db/open';
@@ -57,6 +58,7 @@ async function start(): Promise<void> {
   await rebuildProgress().catch((error: unknown) => logError(error, 'consistency check'));
   // Close past days and start today before the first screen (never blocks startup on error).
   await startRollover();
+  void runWeeklyLocalBackup();
   await startProgressStore();
   await startAppState();
   await startToday();

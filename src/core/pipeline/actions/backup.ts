@@ -98,3 +98,15 @@ export const snoozeBackupReminder = defineAction({
     ctx.emit({ type: 'SettingsChanged', payload: { changed: ['backup_snooze_until'] } });
   },
 });
+
+/** Android's weekly backup file was written (SPEC 9): remember when and where. */
+export const recordLocalBackup = defineAction({
+  type: 'backup.localSaved',
+  schema: z.object({ path: z.string().min(1).max(300) }).strict(),
+  tables: [],
+  async run(ctx, { path }) {
+    await ctx.db.meta.put({ id: 'local_backup_at', value: ctx.processedAt });
+    await ctx.db.meta.put({ id: 'local_backup_path', value: path });
+    ctx.emit({ type: 'SettingsChanged', payload: { changed: ['local_backup_at'] } });
+  },
+});
