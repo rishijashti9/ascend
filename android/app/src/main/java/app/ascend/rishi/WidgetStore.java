@@ -90,6 +90,22 @@ final class WidgetStore {
         }
     }
 
+    /** Queues another action for the app with its real time (e.g. a screen-time break, task 11.7). */
+    static synchronized void addAction(Context context, String type, JSONObject payload) {
+        try {
+            JSONObject tap = new JSONObject();
+            tap.put("id", "w-" + UUID.randomUUID());
+            tap.put("type", type);
+            tap.put("payload", payload);
+            tap.put("occurred_at", isoNow());
+            JSONArray queue = pending(context);
+            queue.put(tap);
+            prefs(context).edit().putString(PENDING, queue.toString()).apply();
+        } catch (JSONException ignored) {
+            // Not queued; the break still works on the phone.
+        }
+    }
+
     /** Removes taps the app has safely copied into its own database. */
     static synchronized void removePending(Context context, Set<String> ids) {
         JSONArray queue = pending(context);

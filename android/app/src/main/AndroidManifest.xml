@@ -60,6 +60,22 @@
                 android:resource="@xml/widget_medium_info" />
         </receiver>
 
+        <!-- Screen time (Phase 11): the foreground service runs ONLY while a reminder is active. -->
+        <service
+            android:name=".ScreenTimeService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Screen-time reminders the user switched on: checks which app is in front once a minute while past their entertainment limit or after their wind-down time." />
+        </service>
+        <receiver android:name=".ScreenReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -72,6 +88,16 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Screen time (Phase 11): daily totals per app (the user grants "Usage access" in Settings),
+         app names for those totals, and the reminder service + its alarms. -->
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" tools:ignore="QueryAllPackagesPermission" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <!-- Health Connect (task 10.1): ASCEND only READS steps, sleep and workouts. The plugin
          declares many more health permissions; they are removed here so they are never asked. -->
