@@ -252,3 +252,27 @@ Build order A → B → D → C. Version 0.10.0 at the end. New tables in schema
 
 - 10.1 Health Connect plugin + auto-complete · 10.2 Widget snapshot + Kotlin widgets · 10.3 Pending-actions queue
 - 10.4 App icon/splash · 10.5 Accessibility pass · 10.6 10-year performance test · 10.7 Final README
+
+### Phase 11 — Digital Discipline (SPEC 6.8)
+
+Everything off by default, nothing ever blocked. Version 0.11.0 at the end. New tables in schema v3 (Dexie `version(3)`, existing tables and records untouched; synced through the generic `sync_records`, so no server table migration): `screen_days` (one record per device per day: seconds per app/domain, plus seconds inside focus sessions), `screen_rules` (singleton: parts switched on, categories overrides, limit, study hours, wind-down, interval, DND pass-through, pending looser changes with their date), `screen_locks` (start, end, extensions), `screen_events` (breaks, "5 more", incidents, reminder button taps), `free_time` (planned free time blocks). Shared pure logic in `src/core/screentime/` is used by the app and the extension. Laptop extension in `extension/` (TypeScript, built with Vite into `extension/dist`, loaded unpacked).
+
+- 11.1 Schema v3: the five tables' types + Dexie v3 upgrade (nothing existing changes), backup format (v1/v2 files still import), SYNCED_TABLES, `screenTime` feature flag (off until 11.19); upgrade test on a v2 database
+- 11.2 Categories (pure): default Entertainment domains + phone packages (data file), domain normalisation (subdomains → domain), category resolution with overrides, phone browsers Neutral, YouTube = Work/Study inside focus; tests
+- 11.3 Locks + trusted time (pure): lock periods and 7-day extensions, stricter/looser classification of every rule change, pending looser changes with their date, trusted time (server `Date` header, never the device clock alone), strictest-first merge for sync/import; tests (clock forward/back, import, re-categorise attempts)
+- 11.4 Rule actions: switch parts on/off, set limit / study hours / wind-down / interval / DND pass-through / categories, choose a lock, apply pending changes when the lock ends (rollover); sync merge holds looser incoming rules as pending; import and Delete everything keep active locks; tests
+- 11.5 Trigger engine (pure): which trigger is active at a moment (over limit, study hours or focus, wind-down), planned free time, quiet hours, break (20 min, max 2/day in a lock), "5 more minutes" (once a day), re-alert interval, calm notification text; tests
+- 11.6 Planned free time + reminder button actions (12 h ahead, max 2 a week, no short-notice create/extend in a lock; break, 5 more, start focus as `screen_events`); tests
+- 11.7 Observe week + suggestions (pure + action): 7 days measuring only, then a suggested limit, study hours and wind-down from real data, accept/edit with a lock choice; tests
+- 11.8 Android native I: Usage-stats plugin (Usage access check / open settings, daily totals per app for a day range, foreground app now, app labels) + JS bridge writing the phone's `screen_days` on open/resume; tests with a mocked plugin
+- 11.9 Android native II: screen-time notification channel (separate; DND bypass when access is granted), DND access check/request, notifications/channel-enabled checks exposed to JS
+- 11.10 Android native III: foreground service (`specialUse`) started by exact alarms (study hours, wind-down, focus, remaining-budget alarm for the limit), checks the foreground app at the interval, pauses while the screen is off, updates one ongoing notification with Start focus / 5 more / break; rules snapshot handed to native like the widget snapshot; button taps via the pending-actions queue
+- 11.11 Integrity monitor: incidents (notifications or the channel off, Usage access removed, DND access revoked, extension missing or without incognito) detected on open/resume and by the service, +7 days per new incident, persistent Today banner until fixed; tests
+- 11.12 Extension I: MV3 scaffold + Vite build (`npm run extension:build`), domain-time tracker (active tab, focused window, idle, incognito), daily totals in `chrome.storage`; tests for the tracker
+- 11.13 Extension II: on-page reminder bar (shadow DOM, never blocks) + browser notification at the interval with the same buttons, using the shared trigger engine; tests
+- 11.14 Extension III: bridge with the ASCEND web app (totals in; rules, lock, focus state, free time out; heartbeat + incognito status for integrity), `extension/README.md` (install unpacked in Chrome/Edge, Allow in Incognito)
+- 11.15 Settings → Digital discipline: parts on/off, setup guides (Usage access incl. Nothing OS, DND explanation, extension), rules + lock editor showing pending changes with their dates
+- 11.16 Screen time screen (today / this week, top apps/sites, Entertainment vs Work/Study), observe-week card and suggestion review, planned free time list/editor
+- 11.17 "Digital discipline" daily quest (auto, judged at day close) + weekly review section (Entertainment vs last week, breaks, free time, lock extensions); tests
+- 11.18 Privacy + data: export/import, compaction (old `screen_days` → monthly totals), Delete everything keeps locks, Ask context never includes screen time, My data counts; tests
+- 11.19 Phase 11 wrap-up: flag on, E2E, README, CHANGELOG, v0.11.0 (versionCode 11), real-device checklist (Nothing Phone (3a), Chrome on Windows)
