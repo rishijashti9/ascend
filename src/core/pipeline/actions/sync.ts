@@ -19,6 +19,8 @@ export const SYNC_META = {
   pushHlc: 'sync:push_hlc',
   /** The server accepts the Phase 8 tables and they were uploaded in full once. */
   serverV2: 'sync:server_v2',
+  /** The highest server version whose tables were uploaded in full (replaces serverV2). */
+  serverVersion: 'sync:server_version',
   /** Latest compaction cutoff already purged from the cloud. */
   purged: 'sync:purged_cutoff',
 } as const;
@@ -134,13 +136,14 @@ export const markPurged = defineAction({
   },
 });
 
-/** The server accepts the Phase 8 tables, and their full first upload is done. */
-export const markServerV2 = defineAction({
-  type: 'sync.markServerV2',
-  schema: z.object({}).strict(),
+/** The server accepts the tables of this version, and their full first upload is done. */
+export const markServerVersion = defineAction({
+  type: 'sync.markServerVersion',
+  schema: z.object({ version: z.number().int().min(1) }).strict(),
   tables: ['meta'],
-  async run(ctx) {
-    await ctx.db.meta.put({ id: SYNC_META.serverV2, value: true });
+  async run(ctx, { version }) {
+    await ctx.db.meta.put({ id: SYNC_META.serverVersion, value: version });
+    if (version >= 2) await ctx.db.meta.put({ id: SYNC_META.serverV2, value: true });
     return true;
   },
 });

@@ -1,6 +1,6 @@
 import Dexie from 'dexie';
 import { DEFAULT_SETTINGS } from '@/config/defaults';
-import { ALL_TABLES, AscendDB, DB_VERSION, SCHEMA_VERSION, STORES_V1 } from './db';
+import { ALL_TABLES, AscendDB, DB_VERSION, SCHEMA_VERSION, STORES_V1, STORES_V2 } from './db';
 import { deleteAllData, openDatabase, requestPersistentStorage } from './open';
 import type { XpEvent } from './types';
 
@@ -40,7 +40,7 @@ describe('database schema', () => {
   it('creates every table from the plan', () => {
     const names = database.tables.map((t) => t.name).sort();
     expect(names).toEqual([...ALL_TABLES].sort());
-    expect(names).toHaveLength(26);
+    expect(names).toHaveLength(30);
   });
 
   it('creates default settings on first open, pre-filled from DECISIONS', async () => {
@@ -156,6 +156,61 @@ describe('upgrade from v1 (Phase 8 adds tables, keeps every record)', () => {
     expect(
       await upgraded.learning_events.where('[kind+type]').equals(['app_open', 'open']).count(),
     ).toBe(1);
+    upgraded.close();
+    await Dexie.delete(name);
+  });
+});
+
+describe('upgrade from v2 (Phase 11 adds screen-time tables, keeps every record)', () => {
+  it('opens a v2 database with data as v3 without changing a record', async () => {
+    const name = `test-v2-${crypto.randomUUID()}`;
+    const old = new Dexie(name);
+    old.version(1).stores(STORES_V1);
+    old.version(2).stores(STORES_V2);
+    await old.open();
+    const at = new Date().toISOString();
+    const base = { created_at: at, updated_at: at, deleted_at: null, schema_version: 1, hlc: 'h' };
+    await old.table('settings').add({ id: 'settings', ...base, ...DEFAULT_SETTINGS });
+    await old.table('xp_events').add(xpEvent('x1', 'k1'));
+    await old.table('learning_events').add({
+      id: 'e1',
+      ...base,
+      kind: 'app_open',
+      type: 'open',
+      outcome: null,
+      at,
+      day: '2026-11-02',
+      ref_id: null,
+      values: null,
+    });
+    const before = {
+      settings: await old.table('settings').toArray(),
+      xp: await old.table('xp_events').toArray(),
+      learning: await old.table('learning_events').toArray(),
+    };
+    old.close();
+
+    const upgraded = new AscendDB(name);
+    await upgraded.open();
+    expect(upgraded.verno).toBe(DB_VERSION);
+    expect(DB_VERSION).toBe(3);
+    expect(await upgraded.settings.toArray()).toEqual(before.settings);
+    expect(await upgraded.xp_events.toArray()).toEqual(before.xp);
+    expect(await upgraded.learning_events.toArray()).toEqual(before.learning);
+    for (const t of ['screen_days', 'screen_rules', 'screen_locks', 'screen_events'] as const) {
+      expect(await upgraded.table(t).count()).toBe(0);
+    }
+    await upgraded.screen_days.add({
+      id: 'phone:2026-11-02',
+      ...base,
+      device_id: 'phone',
+      day: '2026-11-02',
+      apps: { 'com.instagram.android': 600 },
+      focus: {},
+      labels: {},
+      games: [],
+    });
+    expect(await upgraded.screen_days.where('day').equals('2026-11-02').count()).toBe(1);
     upgraded.close();
     await Dexie.delete(name);
   });

@@ -22,6 +22,10 @@ export const DATA_GROUPS: { label: string; tables: TableName[] }[] = [
   { label: 'Skills and jobs', tables: ['skills', 'skill_evidence', 'job_applications'] },
   { label: 'Learning (Adaptive System)', tables: ['learning_events'] },
   { label: 'Summaries (compacted history)', tables: ['summaries', 'compactions'] },
+  {
+    label: 'Screen time (daily totals)',
+    tables: ['screen_days', 'screen_rules', 'screen_locks', 'screen_events'],
+  },
   { label: 'Profile and settings', tables: ['profile', 'settings', 'meta', 'pending_actions'] },
 ];
 

@@ -76,6 +76,46 @@ describe('Phase 8 tables wait for the server migration', () => {
     expect(await laptop.learning_events.count()).toBe(2);
     expect((await localChanges(phone)).filter((r) => r.tbl === 'learning_events')).toEqual([]);
   });
+
+  it('Phase 11 tables wait for server version 3 the same way', async () => {
+    cloud.version = 2;
+    const lock = async (id: string, end: string) =>
+      phone.screen_locks.put({
+        ...newBase(id),
+        started_at: '2026-11-02T04:30:00.000Z',
+        end_at: end,
+      });
+    await lock('screen_lock', '2026-11-09T04:30:00.000Z');
+    await event(phone, 'e1');
+    await sync(phone);
+    expect(cloud.get('learning_events', 'e1')).toBeDefined();
+    expect(cloud.get('screen_locks', 'screen_lock')).toBeUndefined();
+
+    cloud.version = 3;
+    await sync(phone);
+    expect(cloud.get('screen_locks', 'screen_lock')?.data.end_at).toBe('2026-11-09T04:30:00.000Z');
+    expect((await phone.meta.get(SYNC_META.serverVersion))?.value).toBe(3);
+    await sync(laptop);
+    expect((await laptop.screen_locks.get('screen_lock'))?.end_at).toBe('2026-11-09T04:30:00.000Z');
+  });
+
+  it('a lock only gets longer: an older copy with an earlier end never wins', async () => {
+    await phone.screen_locks.put({
+      ...newBase('screen_lock'),
+      started_at: '2026-11-02T04:30:00.000Z',
+      end_at: '2026-11-16T04:30:00.000Z',
+    });
+    await sync(phone);
+    // Another device writes later, but with an earlier end (e.g. restored from an old backup).
+    await laptop.screen_locks.put({
+      ...newBase('screen_lock'),
+      started_at: '2026-11-01T04:30:00.000Z',
+      end_at: '2026-11-08T04:30:00.000Z',
+    });
+    await sync(laptop);
+    expect(cloud.get('screen_locks', 'screen_lock')?.data.end_at).toBe('2026-11-16T04:30:00.000Z');
+    expect((await laptop.screen_locks.get('screen_lock'))?.end_at).toBe('2026-11-16T04:30:00.000Z');
+  });
 });
 
 describe('sync engine', () => {

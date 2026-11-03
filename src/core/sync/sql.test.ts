@@ -183,6 +183,19 @@ describe('Supabase migration (run in Postgres)', () => {
     }
   });
 
+  it('accepts the Phase 11 tables; server version 3; server_time works without an account', async () => {
+    await as(A);
+    for (const tbl of ['screen_days', 'screen_rules', 'screen_locks', 'screen_events']) {
+      expect(
+        await push([{ tbl, id: `${tbl}-1`, hlc: hlc(5), data: { id: `${tbl}-1` } }]),
+      ).toMatchObject({ accepted: 1 });
+    }
+    expect((await pg.query<{ v: number }>('select sync_server_version() as v')).rows[0]?.v).toBe(3);
+    await as(null);
+    const t = (await pg.query<{ t: Date }>('select server_time() as t')).rows[0]?.t;
+    expect(t).toBeInstanceOf(Date);
+  });
+
   it('my_cloud_usage counts only my live records', async () => {
     await as(A);
     await push([
@@ -289,6 +302,10 @@ describe('the TypeScript rules match the SQL rules', () => {
     ['days', { low_energy_set_at: 'b' }, hlc(1), { low_energy_set_at: 'a' }, hlc(9)],
     ['days', { low_energy_set_at: null }, hlc(1), { low_energy_set_at: 'a' }, hlc(0)],
     ['days', { low_energy_set_at: 'a' }, hlc(1), { low_energy_set_at: 'a' }, hlc(2)],
+    ['screen_locks', { end_at: '2026-11-16' }, hlc(1), { end_at: '2026-11-09' }, hlc(9)],
+    ['screen_locks', { end_at: '2026-11-09' }, hlc(9), { end_at: '2026-11-16' }, hlc(1)],
+    ['screen_locks', { end_at: '2026-11-09' }, hlc(1), { end_at: '2026-11-09' }, hlc(2)],
+    ['screen_rules', { limit_min: 30 }, hlc(1), { limit_min: 90 }, hlc(2)],
   ];
   it.each(cases)('%s', async (tbl, oldData, oldSort, newData, newSort) => {
     const sql = (

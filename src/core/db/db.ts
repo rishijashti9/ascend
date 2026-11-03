@@ -5,6 +5,10 @@ import { nextHlc } from './hlc';
 import type {
   AchievementUnlocked,
   Compaction,
+  ScreenDay,
+  ScreenEvent,
+  ScreenLock,
+  ScreenRules,
   LearningEvent,
   Summary,
   BodyLog,
@@ -69,18 +73,30 @@ export const STORES_V1 = {
  * v2 (Phase 8, SPEC 6.7): learning data, compaction summaries and compaction history.
  * Existing tables and records are unchanged, so no upgrade function is needed.
  */
-const STORES_V2 = {
+export const STORES_V2 = {
   ...STORES_V1,
   learning_events: 'id, kind, day, [kind+type]',
   summaries: 'id, period_type, period',
   compactions: 'id, cutoff_day',
 } as const;
 
-/** Dexie (IndexedDB) version — separate from SCHEMA_VERSION, the stored record shape. */
-export const DB_VERSION = 2;
+/**
+ * v3 (Phase 11, SPEC 6.8): screen time — daily totals per app, the rules, the lock, and
+ * breaks/incidents. Existing tables and records are unchanged, so no upgrade function is needed.
+ */
+const STORES_V3 = {
+  ...STORES_V2,
+  screen_days: 'id, day, device_id',
+  screen_rules: 'id',
+  screen_locks: 'id',
+  screen_events: 'id, kind, day',
+} as const;
 
-export type TableName = keyof typeof STORES_V2;
-export const ALL_TABLES = Object.keys(STORES_V2) as TableName[];
+/** Dexie (IndexedDB) version — separate from SCHEMA_VERSION, the stored record shape. */
+export const DB_VERSION = 3;
+
+export type TableName = keyof typeof STORES_V3;
+export const ALL_TABLES = Object.keys(STORES_V3) as TableName[];
 
 export class AscendDB extends Dexie {
   profile!: EntityTable<Profile, 'id'>;
@@ -109,12 +125,17 @@ export class AscendDB extends Dexie {
   learning_events!: EntityTable<LearningEvent, 'id'>;
   summaries!: EntityTable<Summary, 'id'>;
   compactions!: EntityTable<Compaction, 'id'>;
+  screen_days!: EntityTable<ScreenDay, 'id'>;
+  screen_rules!: EntityTable<ScreenRules, 'id'>;
+  screen_locks!: EntityTable<ScreenLock, 'id'>;
+  screen_events!: EntityTable<ScreenEvent, 'id'>;
 
   constructor(name = 'ascend') {
     super(name);
     this.version(1).stores(STORES_V1);
     this.version(2).stores(STORES_V2);
-    // Future: this.version(3).stores({...}).upgrade(async (tx) => { ... });
+    this.version(3).stores(STORES_V3);
+    // Future: this.version(4).stores({...}).upgrade(async (tx) => { ... });
 
     // First open on a new device: create default settings.
     this.on('populate', (tx) => {

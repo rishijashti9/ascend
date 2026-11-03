@@ -28,12 +28,29 @@ export const SYNCED_TABLES = [
   'learning_events',
   'summaries',
   'compactions',
+  'screen_days',
+  'screen_rules',
+  'screen_locks',
+  'screen_events',
 ] as const;
 export type SyncedTable = (typeof SYNCED_TABLES)[number];
 
 /** Tables the server accepts only from schema version 2 (migration …_phase8_tables.sql). */
 export const V2_TABLES = ['learning_events', 'summaries', 'compactions'] as const;
 export type V2Table = (typeof V2_TABLES)[number];
+
+/** Tables the server accepts only from schema version 3 (migration …_phase11_screen_time.sql). */
+export const V3_TABLES = ['screen_days', 'screen_rules', 'screen_locks', 'screen_events'] as const;
+
+/** The newest server schema version this app knows. */
+export const SERVER_VERSION = 3;
+
+/** The server version from which a table is accepted (older tables: 1). */
+export function tableServerVersion(tbl: string): number {
+  if ((V3_TABLES as readonly string[]).includes(tbl)) return 3;
+  if ((V2_TABLES as readonly string[]).includes(tbl)) return 2;
+  return 1;
+}
 
 const RANK: Record<string, number> = { done_full: 3, done_min: 2, done_late: 1 };
 
@@ -59,6 +76,12 @@ export function incomingWins(
     const o = String(oldData.low_energy_set_at ?? '');
     const n = String(newData.low_energy_set_at ?? '');
     return n > o || (n === o && newSort > oldSort);
+  }
+  if (tbl === 'screen_locks') {
+    // A lock only ever gets longer (SPEC 6.8): the copy that ends later wins.
+    const o = String(oldData.end_at ?? '');
+    const n = String(newData.end_at ?? '');
+    if (n !== o) return n > o;
   }
   if (tbl === 'quest_instances') {
     // By what happened, not by clocks: a deliberate un-tick (higher revision) wins; within a
