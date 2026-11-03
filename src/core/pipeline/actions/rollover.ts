@@ -124,7 +124,8 @@ async function closeDay(ctx: ActionContext, day: DayString, first: DayString | n
     await db.quests.put({ ...quest, status, ...touch(processedAt) });
   }
 
-  await refreshDayRecord(db, day, processedAt, { closed_at: processedAt });
+  // Streaks are recomputed once after all days are closed (run() below).
+  await refreshDayRecord(db, day, processedAt, { closed_at: processedAt }, { deferStreaks: true });
   ctx.emit({ type: 'DayClosed', payload: { day } });
 }
 

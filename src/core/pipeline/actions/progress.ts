@@ -45,7 +45,7 @@ export async function rebuildDays(db: AscendDB, processedAt: IsoTime): Promise<R
     const record = records.get(day);
     if (!record) {
       // Quests without a day record (e.g. after an import): create it.
-      await refreshDayRecord(db, day, processedAt);
+      await refreshDayRecord(db, day, processedAt, {}, { deferStreaks: true });
       fixed.add(day);
       continue;
     }

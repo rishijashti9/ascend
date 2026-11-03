@@ -16,6 +16,12 @@ export async function refreshDayRecord(
   day: DayString,
   at: IsoTime,
   changes: Partial<Pick<DayRecord, 'low_energy' | 'low_energy_set_at' | 'closed_at'>> = {},
+  /**
+   * Many days at once (rollover after an absence, the consistency check): the caller
+   * recomputes streaks once at the end, instead of once per day (task 10.6 — that was
+   * quadratic in the length of the history).
+   */
+  options: { deferStreaks?: boolean } = {},
 ): Promise<DayRecord> {
   const existing = await db.days.get(day);
   const instances = await db.quest_instances.where('day').equals(day).toArray();
@@ -61,7 +67,7 @@ export async function refreshDayRecord(
     existing.active !== record.active ||
     existing.neutral !== record.neutral ||
     existing.closed_at !== record.closed_at;
-  if (streaksAffected) {
+  if (streaksAffected && !options.deferStreaks) {
     await refreshStreaks(db, at);
     return (await db.days.get(day)) ?? record;
   }
