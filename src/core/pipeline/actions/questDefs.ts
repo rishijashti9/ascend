@@ -107,6 +107,8 @@ export function questInstanceId(q: Pick<Quest, 'id' | 'type' | 'week_start'>): s
 export async function insertQuest(
   ctx: ActionContext,
   input: z.infer<typeof questDefSchema>,
+  /** A fixed id (e.g. the job tracker's `job:<id>:applied`), so two devices make one quest. */
+  id?: string,
 ): Promise<Quest> {
   const { planned_by, carried_over_from, week_start, type, ...rest } = input;
   await checkFields(ctx, rest);
@@ -114,7 +116,7 @@ export async function insertQuest(
   const settings = await getSettings(ctx.db);
   const week = type === 'weekly' ? (week_start ?? weekStartOf(today, settings.week_start)) : null;
   const quest: Quest = {
-    ...newBase(undefined, ctx.processedAt),
+    ...newBase(id, ctx.processedAt),
     ...rest,
     type,
     min_value: rest.target_value,
@@ -127,9 +129,9 @@ export async function insertQuest(
     order: await ctx.db.quests.where('type').equals(type).count(),
   };
   await ctx.db.quests.add(quest);
-  const id = questInstanceId(quest);
+  const instanceId = questInstanceId(quest);
   await ctx.db.quest_instances.put({
-    ...newBase(id, ctx.processedAt),
+    ...newBase(instanceId, ctx.processedAt),
     source_type: 'quest',
     source_id: quest.id,
     day: week ?? today,
@@ -147,7 +149,7 @@ export const createQuest = defineAction({
   type: 'quest.create',
   schema: questDefSchema,
   tables: [...TABLES],
-  run: insertQuest,
+  run: (ctx, input) => insertQuest(ctx, input),
 });
 
 async function getQuest(ctx: ActionContext, id: string): Promise<Quest> {

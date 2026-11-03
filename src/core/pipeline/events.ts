@@ -41,6 +41,7 @@ export interface DomainEvents {
   ProfileChanged: { changed: string[] };
   /** A skill, branch or project changed (null = several skills at once). */
   SkillChanged: { skillId: string | null };
+  JobChanged: { jobId: string; change: 'created' | 'updated' | 'stage' | 'deleted' };
   SuggestionAnswered: { kind: string; applied: boolean };
   DataSynced: { applied: number; days: string[] };
   SyncLinked: { clearLocal: boolean };

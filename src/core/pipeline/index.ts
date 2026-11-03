@@ -23,6 +23,7 @@ import './actions/moments';
 import './actions/difficulty';
 import './actions/sync';
 import './actions/skills';
+import './actions/jobs';
 
 export * from './events';
 export * from './recordAction';
