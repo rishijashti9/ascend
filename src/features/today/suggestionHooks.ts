@@ -1,4 +1,6 @@
+import { burnoutWarning } from '@/core/adaptive/burnout';
 import { mayShow } from '@/core/adaptive/patterns';
+import { useHabits } from '@/core/state/habits';
 import { reminderSuggestion } from '@/core/adaptive/timing';
 import { useAppState } from '@/core/state/app';
 import { addDays } from '@/core/time';
@@ -88,3 +90,30 @@ export function useReminderCard():
 
 const clock = (min: number) =>
   `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
+
+/** Days the burnout card rests after any answer. */
+export const BURNOUT_REST_DAYS = 14;
+
+/** The burnout warning to show, or today's lighter week (for its Undo). */
+export function useBurnoutCard():
+  { kind: 'warn'; why: string } | { kind: 'applied'; historyId: string; summary: string } | null {
+  const input = useAdaptive((s) => s.input);
+  const history = useGoals((s) => s.history);
+  const habits = useHabits((s) => s.habits);
+  if (!input) return null;
+  const applied = history.find((h) => !h.undone_at && h.trigger === `burnout:${input.today}`);
+  if (applied) return { kind: 'applied', historyId: applied.id, summary: applied.summary };
+  const rest = addDays(input.today, -BURNOUT_REST_DAYS);
+  const answered = input.events.some(
+    (e) =>
+      e.kind === 'suggestion' &&
+      e.type === 'burnout' &&
+      e.outcome !== 'shown' &&
+      e.outcome !== 'ignored' &&
+      e.day > rest,
+  );
+  if (answered) return null;
+  const sleep = habits.find((h) => h.status === 'active' && h.measure === 'sleep_hours');
+  const w = burnoutWarning(input, sleep?.target_value ?? null);
+  return w ? { kind: 'warn', why: w.why } : null;
+}
