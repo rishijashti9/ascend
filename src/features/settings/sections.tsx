@@ -230,6 +230,12 @@ export function DataSection() {
 
   return (
     <Card title="Data">
+      <Link
+        to="/my-data"
+        className="text-accent-text inline-flex min-h-11 items-center font-medium"
+      >
+        My data — what’s stored, where, and what leaves the device →
+      </Link>
       <div className="flex flex-col gap-2">
         <Button
           variant="secondary"

@@ -53,6 +53,14 @@ export class MemoryCloud {
         guard();
         this.rows.clear();
       },
+      cloudUsage: async () => {
+        guard();
+        const live = [...this.rows.values()].filter((r) => !r.deleted);
+        return {
+          records: live.length,
+          bytes: live.reduce((s, r) => s + JSON.stringify(r.data).length, 0),
+        };
+      },
       serverVersion: async () => {
         guard();
         return this.version;

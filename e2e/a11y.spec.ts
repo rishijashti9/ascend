@@ -23,6 +23,7 @@ const SCREENS = [
   '/knows',
   '/compass',
   '/compass?tab=health',
+  '/my-data',
   '/settings',
   '/more',
 ];

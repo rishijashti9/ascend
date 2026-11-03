@@ -30,6 +30,7 @@ import './actions/learning';
 import './actions/learningWeeks';
 import './actions/burnout';
 import './actions/compass';
+import './actions/myData';
 
 export * from './events';
 export * from './recordAction';

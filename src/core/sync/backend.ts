@@ -27,6 +27,8 @@ export interface SyncBackend {
   reset(): Promise<void>;
   /** Server schema version: 1 = Phase 7 tables only, 2 = Phase 8 tables accepted too. */
   serverVersion(): Promise<number>;
+  /** This user's cloud copy: records and bytes (null when the server can't tell yet). */
+  cloudUsage(): Promise<{ records: number; bytes: number } | null>;
 }
 
 /** A failure that means "try later" (offline, paused project, server busy) vs a real bug. */
@@ -90,6 +92,13 @@ export function supabaseBackend(client: SupabaseClient): SyncBackend {
     },
     async reset() {
       await call(client.rpc('reset_my_cloud_data'));
+    },
+    async cloudUsage() {
+      const res = await client.rpc('my_cloud_usage');
+      if (res.error?.code === 'PGRST202' || res.status === 404) return null; // not applied yet
+      if (res.error) classify({ ...res.error, status: res.status });
+      const d = res.data as { records?: number; bytes?: number } | null;
+      return d ? { records: Number(d.records ?? 0), bytes: Number(d.bytes ?? 0) } : null;
     },
     async serverVersion() {
       let res: {

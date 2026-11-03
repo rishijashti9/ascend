@@ -183,6 +183,22 @@ describe('Supabase migration (run in Postgres)', () => {
     }
   });
 
+  it('my_cloud_usage counts only my live records', async () => {
+    await as(A);
+    await push([
+      { tbl: 'habits', id: 'u1', hlc: hlc(1), data: { id: 'u1', title: 'x' } },
+      { tbl: 'habits', id: 'u2', hlc: hlc(1), deleted: true, data: { id: 'u2' } },
+    ]);
+    await as(B);
+    await push([{ tbl: 'habits', id: 'v1', hlc: hlc(1), data: { id: 'v1' } }]);
+    await as(A);
+    const r = (
+      await pg.query<{ u: { records: number; bytes: number } }>('select my_cloud_usage() as u')
+    ).rows[0]?.u;
+    expect(r?.records).toBe(1);
+    expect(r?.bytes).toBeGreaterThan(0);
+  });
+
   it('rejects unknown tables, bad clocks and oversized batches', async () => {
     await as(A);
     await expect(push([{ tbl: 'photos', id: 'p', hlc: hlc(1), data: {} }])).rejects.toThrow();
