@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home-screen widget (task 10.2): the app's dark theme tokens (SPEC 8). -->
+    <color name="widget_bg">#161B22</color>
+    <color name="widget_border">#30363D</color>
+    <color name="widget_text">#E6EDF3</color>
+    <color name="widget_muted">#8B949E</color>
+    <color name="widget_accent">#4C8DFF</color>
+    <string name="widget_small_label">ASCEND — today</string>
+    <string name="widget_medium_label">ASCEND — today + focus</string>
+    <string name="widget_description">Level, XP and today’s quests. Tap a quest to mark it done.</string>
+</resources>

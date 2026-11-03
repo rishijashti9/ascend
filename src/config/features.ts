@@ -27,6 +27,7 @@ export const features = {
   jobs: true,
   // Phase 10
   health: true,
+  widgets: true,
 } as const satisfies Record<string, boolean>;
 
 export type FeatureKey = keyof typeof features;

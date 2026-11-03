@@ -20,6 +20,10 @@ import { getNotifier } from './app/notify';
 import { isEnabled } from './config/features';
 import { startNotificationScheduler } from './core/notifications/scheduler';
 import { startHealthReader } from './core/health/runner';
+import { processPending } from './core/pending/queue';
+import { startWidgetWriter } from './core/widget/writer';
+import { widgetBridge } from './app/widgetBridge';
+import { pushNotice } from './core/state/notices';
 import { healthConnect } from './app/health';
 import { isNativeApp } from './app/platform';
 import { startSuggestion } from './core/state/suggestion';
@@ -62,6 +66,23 @@ async function start(): Promise<void> {
   await openDatabase();
   // Consistency check: stored day fields must match their quests (fixes only what's wrong).
   await rebuildProgress().catch((error: unknown) => logError(error, 'consistency check'));
+  // Widget taps made while ASCEND was closed count first, at their real tap time (task 10.3).
+  const widgets = isEnabled('widgets') && isNativeApp();
+  const runQueue = async () => {
+    const { problems } = await processPending(widgetBridge);
+    for (const [i, body] of problems.entries()) {
+      pushNotice({
+        key: `widget:${Date.now()}:${i}`,
+        kind: 'widget',
+        at: Date.now(),
+        day: '',
+        title: 'A widget tap didn’t count',
+        body,
+        path: '/',
+      });
+    }
+  };
+  if (widgets) await runQueue().catch((error: unknown) => logError(error, 'pending.startup'));
   // Close past days and start today before the first screen (never blocks startup on error).
   await startRollover();
   void runWeeklyLocalBackup();
@@ -100,6 +121,14 @@ async function start(): Promise<void> {
   startAchievements();
   startMoments();
   if (isEnabled('notifications')) startNotificationScheduler(getNotifier());
+  if (widgets) {
+    startWidgetWriter(widgetBridge);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        void runQueue().catch((error: unknown) => logError(error, 'pending.resume'));
+      }
+    });
+  }
   if (isEnabled('health') && isNativeApp()) {
     startHealthReader(healthConnect, (listener) => {
       const onVisible = () => {

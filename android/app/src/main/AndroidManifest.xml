@@ -26,7 +26,39 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="app.ascend.rishi" android:host="auth" />
             </intent-filter>
+            <!-- Opens a screen: app.ascend.rishi://open/focus (the widget's "Start focus") -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="app.ascend.rishi" android:host="open" />
+            </intent-filter>
         </activity>
+
+        <!-- Home-screen widget (task 10.2) -->
+        <receiver
+            android:name=".AscendWidgetSmall"
+            android:label="@string/widget_small_label"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_small_info" />
+        </receiver>
+
+        <!-- Home-screen widget (task 10.2) -->
+        <receiver
+            android:name=".AscendWidgetMedium"
+            android:label="@string/widget_medium_label"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_medium_info" />
+        </receiver>
 
         <provider
             android:name="androidx.core.content.FileProvider"
