@@ -36,6 +36,8 @@ export interface FocusObs {
   day: DayString;
   startedAt: string;
   minutes: number;
+  /** Linked to a quest (its minutes are already in that quest's value). */
+  linked: boolean;
 }
 
 export interface AdaptiveInput {
@@ -145,7 +147,12 @@ export async function loadAdaptiveInput(db: AscendDB, tz: string): Promise<Adapt
         instances,
         focus: (await db.focus_sessions.where('day').between(from, today, true, true).toArray())
           .filter((f) => !f.deleted_at && f.actual_min > 0)
-          .map((f) => ({ day: f.day, startedAt: f.started_at, minutes: f.actual_min })),
+          .map((f) => ({
+            day: f.day,
+            startedAt: f.started_at,
+            minutes: f.actual_min,
+            linked: f.quest_instance_id !== null,
+          })),
         sleep: body.flatMap((b) => (b.sleep_hours ? [{ day: b.day, value: b.sleep_hours }] : [])),
         weight: body.flatMap((b) => (b.weight ? [{ day: b.day, value: b.weight }] : [])),
         energy: reviews.flatMap((r) => (r.energy ? [{ day: r.period, value: r.energy }] : [])),
