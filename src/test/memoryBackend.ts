@@ -53,6 +53,35 @@ export class MemoryCloud {
         guard();
         this.rows.clear();
       },
+      purgeCompacted: async (cutoff: string) => {
+        guard();
+        let n = 0;
+        for (const [key, r] of this.rows) {
+          const d = r.data as {
+            day?: string;
+            created_at?: string;
+            status?: string;
+            quest_instance_id?: string;
+          };
+          const old =
+            (['xp_events', 'focus_sessions', 'body_logs', 'learning_events'].includes(r.tbl) &&
+              (d.day ?? '9') < cutoff) ||
+            (r.tbl === 'quest_instances' &&
+              (d.day ?? '9') < cutoff &&
+              !r.id.startsWith('recovery:')) ||
+            (r.tbl === 'progress_entries' &&
+              (d.day ?? '9') < cutoff &&
+              !(d.quest_instance_id ?? '').startsWith('recovery:')) ||
+            (['plan_history', 'plan_proposals'].includes(r.tbl) &&
+              (d.created_at ?? '9') < cutoff &&
+              d.status !== 'pending');
+          if (old) {
+            this.rows.delete(key);
+            n++;
+          }
+        }
+        return n;
+      },
       cloudUsage: async () => {
         guard();
         const live = [...this.rows.values()].filter((r) => !r.deleted);

@@ -45,6 +45,8 @@ export interface DomainEvents {
   SuggestionAnswered: { kind: string; applied: boolean };
   /** An answer, reset or cleared item changed what the Adaptive System learns from. */
   LearningChanged: { kind: 'answer' | 'reset' | 'forget' };
+  /** Old detail was summarised and removed (SPEC 6.7 D). */
+  DataCompacted: { cutoff: string };
   DataSynced: { applied: number; days: string[] };
   SyncLinked: { clearLocal: boolean };
   DataImported: { mode: 'replace' | 'merge' };

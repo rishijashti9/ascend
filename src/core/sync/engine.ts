@@ -2,6 +2,7 @@ import type { AscendDB, TableName } from '@/core/db/db';
 import { recordAction } from '@/core/pipeline';
 import { SYNC_META } from '@/core/pipeline/actions/sync';
 import type { OutRecord, SyncBackend } from './backend';
+import { compactedBefore } from '@/core/compaction/expanded';
 import { SYNCED_TABLES, V2_TABLES } from './merge';
 
 /**
@@ -95,12 +96,28 @@ export async function pullChanges(
   return { pulled, days: [...days].sort() };
 }
 
+async function purgeCloud(db: AscendDB, backend: SyncBackend): Promise<void> {
+  const cutoff = await compactedBefore(db);
+  const done = (await db.meta.get(SYNC_META.purged))?.value;
+  if (!cutoff || (typeof done === 'string' && done >= cutoff)) return;
+  if ((await db.meta.get(SYNC_META.serverV2))?.value !== true) return; // summaries not up yet
+  const n = await backend.purgeCompacted(cutoff);
+  if (n === null) return; // server not ready — try again next round
+  await recordAction({ type: 'sync.markPurged', source: 'sync', payload: { cutoff } }, { db });
+}
+
 export async function syncOnce(
   db: AscendDB,
   backend: SyncBackend,
 ): Promise<{ pushed: number; pulled: number; days: string[] }> {
   const pushed = await pushChanges(db, backend);
   const { pulled, days } = await pullChanges(db, backend);
+  // Compaction (SPEC 6.7 D): drop local detail another device summarised, and once our own
+  // compaction has synced, have the server drop the same old detail.
+  if (pulled > 0) {
+    await recordAction({ type: 'data.compactLocal', source: 'sync', payload: {} }, { db });
+  }
+  await purgeCloud(db, backend);
   if (days.length > 0) {
     await recordAction({ type: 'sync.recompute', source: 'sync', payload: { days } }, { db });
   }

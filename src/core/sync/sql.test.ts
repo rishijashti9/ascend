@@ -199,6 +199,39 @@ describe('Supabase migration (run in Postgres)', () => {
     expect(r?.bytes).toBeGreaterThan(0);
   });
 
+  it('compact_my_records removes my old detail after my compaction synced, nothing else', async () => {
+    await as(A);
+    const rec = (tbl: string, id: string, data: Record<string, unknown>) => ({
+      tbl,
+      id,
+      hlc: hlc(2),
+      data: { id, ...data },
+    });
+    await expect(pg.query(`select compact_my_records('2025-02-01')`)).rejects.toThrow(/not synced/);
+    await push([
+      rec('xp_events', 'k-old', { day: '2025-01-10' }),
+      rec('xp_events', 'k-new', { day: '2025-02-10' }),
+      rec('quest_instances', 'h:2025-01-10', { day: '2025-01-10' }),
+      rec('quest_instances', 'recovery:2025-01-11', { day: '2025-01-11' }),
+      rec('summaries', 'summary:month:2025-01', {}),
+      rec('compactions', 'compaction:2025-02-01', { cutoff_day: '2025-02-01' }),
+    ]);
+    await as(B);
+    await push([rec('xp_events', 'k-b', { day: '2025-01-10' })]);
+    await as(A);
+    const n = (await pg.query<{ n: number }>(`select compact_my_records('2025-02-01') as n`))
+      .rows[0]?.n;
+    expect(n).toBe(2);
+    const left = (await rows()).map((r) => r.id).sort();
+    expect(left).toEqual([
+      'compaction:2025-02-01',
+      'k-new',
+      'recovery:2025-01-11',
+      'summary:month:2025-01',
+    ]);
+    await expect(pg.query(`select compact_my_records('2025-02-15')`)).rejects.toThrow(/first day/);
+  });
+
   it('rejects unknown tables, bad clocks and oversized batches', async () => {
     await as(A);
     await expect(push([{ tbl: 'photos', id: 'p', hlc: hlc(1), data: {} }])).rejects.toThrow();

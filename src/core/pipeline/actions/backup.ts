@@ -1,3 +1,4 @@
+import { removeCompactedDetail } from './compact';
 import { z } from 'zod';
 import {
   backupSchema,
@@ -70,6 +71,8 @@ export const importData = defineAction({
         written += await mergeTable(db, table, records);
       }
     }
+    // An older backup must not bring back detail that is already summarised (SPEC 6.7 D).
+    await removeCompactedDetail(db);
     const rebuild = await rebuildDays(db, ctx.processedAt);
     ctx.emit({ type: 'DataImported', payload: { mode } });
     return { mode, written, skipped: total - written, rebuild };

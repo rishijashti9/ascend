@@ -19,6 +19,8 @@ export const SYNC_META = {
   pushHlc: 'sync:push_hlc',
   /** The server accepts the Phase 8 tables and they were uploaded in full once. */
   serverV2: 'sync:server_v2',
+  /** Latest compaction cutoff already purged from the cloud. */
+  purged: 'sync:purged_cutoff',
 } as const;
 
 const SYNCED = new Set<string>(SYNCED_TABLES);
@@ -117,6 +119,17 @@ export const markPushed = defineAction({
     if (typeof current !== 'string' || hlc > current) {
       await ctx.db.meta.put({ id: SYNC_META.pushHlc, value: hlc });
     }
+    return true;
+  },
+});
+
+/** The cloud no longer holds detail before this compaction cutoff. */
+export const markPurged = defineAction({
+  type: 'sync.markPurged',
+  schema: z.object({ cutoff: z.string().regex(/^\d{4}-\d{2}-01$/) }).strict(),
+  tables: ['meta'],
+  async run(ctx, { cutoff }) {
+    await ctx.db.meta.put({ id: SYNC_META.purged, value: cutoff });
     return true;
   },
 });

@@ -29,6 +29,11 @@ export interface SyncBackend {
   serverVersion(): Promise<number>;
   /** This user's cloud copy: records and bytes (null when the server can't tell yet). */
   cloudUsage(): Promise<{ records: number; bytes: number } | null>;
+  /**
+   * Removes cloud detail summarised by a synced compaction. Returns rows removed, or null when
+   * the server doesn't support it yet (migration not applied) — then it's simply tried later.
+   */
+  purgeCompacted(cutoff: string): Promise<number | null>;
 }
 
 /** A failure that means "try later" (offline, paused project, server busy) vs a real bug. */
@@ -92,6 +97,12 @@ export function supabaseBackend(client: SupabaseClient): SyncBackend {
     },
     async reset() {
       await call(client.rpc('reset_my_cloud_data'));
+    },
+    async purgeCompacted(cutoff) {
+      const res = await client.rpc('compact_my_records', { p_cutoff: cutoff });
+      if (res.error?.code === 'PGRST202' || res.status === 404) return null;
+      if (res.error) classify({ ...res.error, status: res.status });
+      return Number(res.data ?? 0);
     },
     async cloudUsage() {
       const res = await client.rpc('my_cloud_usage');
