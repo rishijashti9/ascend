@@ -15,3 +15,6 @@ android/.gradle/
 android/local.properties
 *.apk
 *.keystore
+
+# Android Studio / IntelliJ per-machine settings
+/.idea/
