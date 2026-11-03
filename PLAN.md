@@ -26,7 +26,7 @@ event bus (QuestCompleted, DayClosed, LevelUp, GoalChanged, ...)
 - **Feature flags**: `src/config/features.ts`. Unbuilt features are hidden, not disabled.
 - **Android**: Capacitor wraps the same web build. Native Kotlin only for widgets + Health Connect (Phase 10).
 - **Sync (Phase 7)**: Supabase. UUIDs + deterministic instance ids, per-record last-write-wins by HLC, `xp_events` append-only deduped by idempotency key, `days` recomputed after sync.
-- **AI (Phase 8)**: Supabase Edge Function proxy holds the key; client talks to an `AIProvider` interface; output validated with Zod.
+- **Phase 8 (SPEC 6.7)**: on-device Adaptive System (`core/adaptive`, pure models over stored records) and Growth Compass (`core/compass` + versioned knowledge pack in `data/compass`); compaction summaries (`core/compaction`); optional Ask the System via an `AIProvider` interface and a Supabase Edge Function holding `GEMINI_API_KEY`; AI output validated with Zod.
 
 Stack: React 19 + TypeScript strict + Vite, Tailwind v4 on CSS-variable tokens, React Router, Zustand, Dexie, Zod, Recharts, Lucide, vite-plugin-pwa, Capacitor. Tests: Vitest (+ fake-indexeddb), Playwright. No stack change from the spec.
 
@@ -184,10 +184,53 @@ Each task: ~1–5 files, app builds and runs afterwards, type-check + tests pass
 - 7.4 Recompute `days` after sync · 7.5 First sign-in merge/keep/cloud flow with auto-export · 7.6 "Sync paused" handling
 - 7.7 Android weekly local backup file · 7.8 Sync tests (all four in SPEC 11)
 
-### Phase 8 — AI coach
+### Phase 8 — Adaptive System + Growth Compass + Ask the System (SPEC 6.7; replaces the AI coach)
 
-- 8.1 `AIProvider` + Claude implementation in Edge Function · 8.2 Budget, rate limit, cache · 8.3 AI Goal Planner with Zod-validated JSON
-- 8.4 Auto-plan mode with Undo · 8.5 Weekly review summary, brain-dump → quests, "what now?" · 8.6 Guardrails + tests
+Build order A → B → D → C. Version 0.10.0 at the end. New tables in schema v2 (Dexie `version(2)` with upgrade; all synced through the generic `sync_records`, so no server table migration): `learning_events`, `summaries`, `compactions`. New settings fields get defaults in the upgrade.
+
+**Part A — Adaptive System**
+
+- 8.1 Schema v2: `learning_events`, `summaries`, `compactions` types + Dexie v2 upgrade (existing rows untouched, new settings defaults), backup format upgrade (v1 files still import), SYNCED_TABLES; upgrade test on a v1 database with real-shaped data
+- 8.2 Recording I: `learning.record` action; suggestion events from every existing card (difficulty, planner proposals, goal nudges, job suggestion, follow-ups — shown/accepted/edited/rejected/ignored); app-open events; tests
+- 8.3 Recording II: notification events (scheduled from the scheduler, delivered when the plugin reports it, opened on tap, minutes to the related action); week planned-vs-actual written when a week closes; tests
+- 8.4 Adaptive core (pure): recency-weighted Beta-Bernoulli per quest × weekday, priors/cold start, recency-weighted averages, confidence levels, reset markers; calibration test
+- 8.5 Learned best hours, real weekly capacity, suggestion-type acceptance weights; tests
+- 8.6 Today suggestion slot (one card, priority list) + "At risk today" highlight + "What should I do now?" engine and card; tests
+- 8.7 Adaptive difficulty toward ~80% (dead band, cooldown, never below minimum, never less sleep, not in low-energy streaks) replacing 5.8's 3/7-day rules; tests
+- 8.8 Best times → reminder/focus time suggestions (approval) + planner and weekly plan sized to learned capacity; tests
+- 8.9 Goal guidance: pace forecasts for milestones / main quests, early behind warning + catch-up options, focus goal of the week (weekly plan + weekly review); tests
+- 8.10 Burnout early warning (completion slope + low-energy days + short sleep) → lighter week proposal; tests
+- 8.11 "What the System knows about you" page (plain words, confidence, clear item), reset learning per habit / overall, learning CSV export
+- 8.12 `scripts/simulate.ts` adaptive users (adherence improves, no oscillation) + Part A wrap-up
+
+**Part B — Growth Compass**
+
+- 8.13 Knowledge pack format (Zod), loader, sources + O*NET attribution, "check the official site" flags; scope classifier (career / health / off-topic); tests
+- 8.14 Career data: careers with RIASEC codes + ESCO/O*NET links, career → skill graph with prerequisites, mapping to the skill tree
+- 8.15 Learning roadmaps and guides data (AI/ML, ROS 2, C++, robotics math, simulation, Unreal; IELTS, GRE, APS/Germany with step durations; study science)
+- 8.16 Career discovery assessment (RIASEC + strengths + values) engine + UI with explained matches
+- 8.17 Career gap analysis → roadmap → Goal Planner proposal (approval, undo), readiness forecast from real pace
+- 8.18 Health knowledge (WHO activity/sleep/diet, ICMR-NIN) + health safety engine (no diagnosis, doctor referral, safe weight rate, sustained low mood → verified helpline); tests
+- 8.19 Health check-in + gap analysis vs WHO from real local data
+- 8.20 Health roadmap → Goal Planner proposal; career–health balance in weekly plans; tests
+- 8.21 Compass screen (More → Compass: Career / Health, sources), `compass` flag on
+- 8.22 Onboarding starter templates by goal type (fitness, study/exams, career/skills, discipline; current set = one template)
+
+**Part D — Data ownership and storage**
+
+- 8.23 Settings → My data: what's stored, device + cloud space (new SQL function `my_cloud_usage()`), outbound log, export buttons
+- 8.24 Delete everything: final export → local wipe → cloud reset → optional account deletion (Edge Function `delete-account`); tests
+- 8.25 Compaction summaries builder (pure): week/month summaries from detail; tests
+- 8.26 Engines read summaries + detail (progress, streak history, heatmap, period stats, profile, skills, achievements facts, adaptive); invariant tests (identical progress)
+- 8.27 `data.compact` action: preview (what + space saved), auto export first, apply, compaction history; sync of compactions (push skips compacted rows, peers apply, server `compact_my_records()`); export/import + sync tests
+- 8.28 Size notice + compaction UI in My data
+
+**Part C — Ask the System**
+
+- 8.29 `AIProvider` interface + Edge Function `ask` (Gemini provider, Search grounding, daily limit + cache in SQL) — stop to give Rishi the PowerShell secret command
+- 8.30 Context builder (allow-list, never health/journal/mood/photos), local scope gate, calm fallback to Compass (quota, offline, signed out, no key); tests
+- 8.31 Ask the System screen (sources, Google note, Settings switch), answer → suggested quests via a plan proposal (approval, undo), outbound log
+- 8.32 Phase 8 wrap-up: E2E, README, CHANGELOG, v0.10.0 (versionCode 10)
 
 ### Phase 9 — Career tools
 

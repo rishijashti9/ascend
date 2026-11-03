@@ -212,6 +212,8 @@ Dream / Life Vision (5–10+ years)   e.g. "Build my own AI/robotics company"
 - Tone: calm, direct, respectful. Example: *"Day 214. Three quests today. Start with the smallest."* Never shaming, never cringe.
 
 ### 6.2 AI coach (optional, switch on in Settings)
+
+> **Replaced (Rishi, 2026-11-03):** the LLM AI coach below is not built. Phase 8 is now "Adaptive System + Growth Compass + Ask the System" — see **section 6.7**. Kept here for history; the `AIProvider` interface idea survives in 6.7 Part C.
 - Provider-agnostic interface (`AIProvider`) so I can use Claude or another model with my own API key.
 - The key is stored only on the server, never in client code or git.
 - Features: break a goal into milestones and weekly quests; weekly review summary + 3 suggestions; turn a messy brain-dump into quests; answer "what should I do now?".
@@ -286,6 +288,47 @@ Input (tap, widget queue, Health Connect, focus timer, job log, planner, sync)
   - A milestone is completed only when the target is reached or I confirm it — never automatically from a percentage guess.
   - Main quest % = completed milestones weighted by `size_weight` ÷ total weight. Dream progress = average of its active main quests.
   - Every habit and weekly quest can link to a milestone or main quest (principle 4); unlinked ones count toward their stat only.
+
+### 6.7 Phase 8 — Adaptive System, Growth Compass, Ask the System (replaces 6.2)
+
+Rishi's full instruction is kept verbatim in `docs/phase8-prompt.md`; this section is the buildable version. Free by default. The only external service is Google Gemini's free tier, used only by the optional Part C. Build order: **A → B → D → C**.
+
+**Rules for the whole phase**
+- Every suggestion explains itself ("based on your last 6 Mondays…") and shows a confidence: *early guess* / *likely* / *confident*. Nothing changes without approval; every applied change goes through the plan path (Plan history + Undo). At most **one suggestion card on Today** at a time (one priority list decides which).
+- Never push harder during a low-energy streak (2+ low-energy days in the last 3); never suggest less sleep (a sleep target is never lowered).
+- Nothing is hard-coded to Rishi's quests: every model works per habit/goal of any user.
+- On-device parts are pure, deterministic and recomputable from stored records (same data → same result on every device), work with sync, and stay within the 10-year performance budgets (`npm run perf`).
+- Rishi uses the app daily: every schema change is a Dexie version with an upgrade that keeps old records valid; old backups keep importing.
+
+#### Part A — Adaptive System (on-device learning)
+- **Data recorded** (new synced table `learning_events`, schema v2): suggestion events (`shown` / `accepted` / `edited` / `rejected` / `ignored`, time, suggestion type, ref); notification events (`scheduled` / `delivered` when observable / `opened`, and minutes from open to the related action); app opens (time); planned vs actual per week (written when a week closes: planned minutes/quests vs done). Numbers and patterns only — never journal or free text.
+- **Models** (pure, in `src/core/adaptive/`): per daily quest × weekday a Beta-Bernoulli completion probability with recency weighting (half-life ~4 weeks) and a prior from the user's own overall rate (cold start: the existing rule engine + prior 0.7); recency-weighted averages of minutes, sleep and completion; best hours (when completions, progress entries and focus sessions actually happen); real weekly capacity (minutes actually done per week); acceptance rate per suggestion type (types rejected often are shown less, never below a floor so they can recover). Confidence grows with evidence; only *likely*/*confident* insights are shown at first.
+- **Reset learning** per habit and overall (a synced reset marker; models ignore data before it). Learning data stays on the device and in the user's own synced account.
+- **Features:** "At risk today" (quests most likely to be skipped, highlighted on Today) · "What should I do now?" (one best next action from time of day, risk, core flag and goal deadlines, with why) · adaptive difficulty toward ~80% full success per quest (dead band + 14-day cooldown so it never oscillates; never below the minimum; replaces the 3-day / 7-day rules of 5.8, keeping the low-energy note) · learned best times for focus and reminders (suggested as a setting change, approval first) · weekly plans and planner proposals sized to real capacity · goal guidance: forecast milestone and main-quest finish dates from real pace, early "behind" warning, catch-up options, and a suggested **focus goal of the week** (feeds the weekly plan and weekly review) · early burnout warning (completion slipping + low-energy days + short sleep → offer a lighter week, never more load) · **"What the System knows about you"** page: every learned item in plain words with its confidence, each clearable.
+- **CSV export** of the learning data (Settings → My data) for a future bigger model.
+
+#### Part B — Growth Compass (Career + Health only)
+- Deterministic, offline, free guidance from a **versioned knowledge pack** (`src/data/compass/`, Zod-validated at test time), every entry with its source and link: ESCO and O*NET (careers, skills, RIASEC interest profiles; O*NET under CC BY 4.0 with attribution shown), official university / DAAD pages, official learning documentation (e.g. ROS 2, Unreal Engine), WHO guidelines (physical activity, sleep, healthy diet), ICMR-NIN Dietary Guidelines for Indians, recognised sleep/exercise science bodies. No unverified web content. Changeable facts (deadlines, fees, requirements) are marked **"Check the official site"** with the link.
+- **Scope:** career discovery, skill development, career roadmaps, physical health, sleep, recovery, nutrition basics, mental wellbeing. Anything else is politely declined.
+- **Career pillar:** career → skill graph with prerequisite order, mapped onto the skill tree; guided **career discovery** (short RIASEC-style interests + strengths + values) suggesting matching careers with explanations (works for any user); **gap analysis** against a chosen career → roadmap of missing skills in prerequisite order → milestones and weekly quests via the Goal Planner (approval, undo). Learning roadmaps in the pack: AI/ML, ROS 2, C++, robotics math, simulation, Unreal Engine; IELTS, GRE, APS / German university process with typical step durations; study science (spaced repetition, deep work, restarting after a break).
+- **Health pillar:** guided health check-in (activity level, sleep, energy, goals: strength, fat loss, stamina, better sleep, less stress); gap analysis against WHO guidelines from real data (workouts, steps, sleep, weight, energy/mood check-ins, low-energy days, Health Connect when available); health roadmap (gradual training progression, sleep routine, simple nutrition habits suited to Indian food) → quests via the Goal Planner (approval, undo); **career–health balance** (Adaptive System insights such as sleep vs next-day completion and heavy study weeks balance load and recovery in weekly plans).
+- **Health safety (non-negotiable):** no diagnosis, medication or treatment advice; pain, injury or illness → "please see a doctor". No extreme diets or training; safe weight-change rate only (≤ ~0.5–1 % of body weight per week), warn if weight drops faster. Mental wellbeing is supportive, not therapy: if mood check-ins stay very low for a sustained period (e.g. average ≤ 2 over 7+ check-ins in 14 days), gently suggest talking to someone trusted or a professional and show a verified helpline for the user's country (India: Tele-MANAS; number verified at build time; Germany configurable later). **Health data (sleep, weight, mood/energy, body logs, photos) never leaves the device and the user's own synced account — never sent to any online AI.**
+- Every recommendation explains why and shows its source; readiness forecasts use the Adaptive System's real pace.
+
+#### Part D — Data ownership and storage (whole app)
+- All data stays on the device and in the user's own private synced account. No analytics, tracking, selling or third parties — except the minimal non-sensitive text sent to Gemini in Part C, only when the user asks a question. Nothing about the user trains any outside model.
+- **Settings → My data:** what is stored (per kind, counts), space used (device via the storage estimate; cloud via a server function), what is ever sent outside and when (a local log of every Ask request), buttons for full export, compaction and **Delete everything** (clear confirmation + automatic final export; removes device data and cloud data, and the account itself if chosen, via an Edge Function).
+- **Compaction** (keep a short summary, remove old detail): offered by a calm notice above a size threshold, or any time. The user picks a cutoff (e.g. older than 1 year). First an automatic full export (photos optional), then a preview of exactly what will be summarised and the space saved; nothing happens until confirmed. Old detail (quest instances, progress entries, XP events, focus sessions, body logs, old plan history/proposals, learning events) is replaced by **week/month summaries** keeping: XP per stat and total, levels, ranks, achievements, titles (progress identical before and after); streak history, active days, Daily Clears, low-energy days, shields used (the `days` records themselves are kept); per-quest completion rates (full/min/missed), total minutes/counts; focus hours per stat and per skill; skill levels and evidence; sleep, steps, weight and waist averages and trends (photos optionally kept); goals, milestones and completion dates; review stats and every written reflection (reviews are kept); the Adaptive System's learned parameters. Heatmap, yearly summaries, Profile charts and the Adaptive System keep working from summaries. Compaction is synced (a compaction record; other devices remove the same detail and never re-upload it; the server drops it too) and listed in an in-app compaction history (date, cutoff, space saved).
+- Tests: progress (XP, levels, ranks, streaks, skill levels, days active) identical before and after; summaries survive export/import and sync; nothing newer than the cutoff is touched.
+
+#### Part C — "Ask the System" (optional, built last)
+- An **Ask the System** screen for questions in the user's own words, answering only career and health/growth questions; off-topic questions are declined politely (a local scope check first, so they cost no quota; the model is also instructed to refuse).
+- Uses the `AIProvider` interface (Claude can be added later) with **Gemini's free tier** (Google Search grounding where available) through a Supabase Edge Function that holds `GEMINI_API_KEY` as a Supabase secret (Rishi sets it himself with a PowerShell command; never pasted into chat). Requires a sync account and internet.
+- Grounded in the Growth Compass knowledge and the user's progress; always shows sources/links. **Allowed context:** goal/skill/quest progress and completion numbers. **Never sent:** health data, journal text, mood/energy, photos. A short note says free-tier questions may be used by Google.
+- An answer can become suggested quests or plan items — applied only after approval, undoable.
+- Daily question limit and caching keep it inside the free quota; over quota, offline, signed out or key missing → a calm fallback to the Growth Compass ("Try again later"), never an error screen. On/off switch in Settings (`ai_enabled`).
+
+**Phase tests:** prediction calibration; simulated users (`scripts/simulate.ts`) showing adaptive difficulty improves adherence without oscillating; health safety rules; scope refusal; Ask fallback paths; no sensitive data ever sent; compaction invariants.
 
 ---
 
@@ -408,7 +451,7 @@ Design the **complete schema in Phase 1**, even for features built later, so lat
 5. **Reviews & progress** — daily check-in, weekly/monthly reviews (confirming planner proposals), heatmap, ranks, achievements, titles, level-up/rank-up moments.
 6. **Notifications** — wake-up check-in, morning briefing, quest reminders, evening check-in, job follow-ups (Android local notifications + in-app on web), quiet hours.
 7. **Sync & accounts** — Supabase auth, sync with the rules in section 9, automatic backups.
-8. **AI coach** — provider interface, edge-function proxy, budget limit, AI-powered Goal Planner, Auto-plan mode, weekly review, guardrails.
+8. **Adaptive System + Growth Compass + Ask the System** (replaces the AI coach — section 6.7) — on-device learning, career & health guidance from trusted data, data ownership + compaction, optional scope-locked Gemini layer. Built after Phases 9 and 10.
 9. **Career tools** — skill tree and job application tracker, connected to XP, quests, notifications and the Goal Planner.
 10. **Android native & polish** — Health Connect auto-tracking, home-screen widgets with the pending-actions queue, app icon/splash, accessibility pass, performance test with 10 years of generated data, final README.
 
