@@ -11,6 +11,7 @@ import { useAccount } from '@/core/state/account';
 import { getSupabase } from '@/core/sync/client';
 import { supabaseBackend } from '@/core/sync/backend';
 import { Button } from '@/ui/Button';
+import { Compaction } from './Compaction';
 import { DeleteEverything } from './DeleteEverything';
 import { Card } from './sections';
 
@@ -150,6 +151,7 @@ export function MyDataPage() {
           </div>
         </Card>
       )}
+      <Compaction totalBytes={groups ? total : null} />
       <DeleteEverything />
     </div>
   );
