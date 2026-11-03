@@ -47,6 +47,9 @@ const change = z
     measure: z.enum(['minutes', 'count', 'steps']),
     from: z.number().positive(),
     to: z.number().positive().max(100_000),
+    /** The numbers behind the suggestion (shown on the card; kept for the explanation). */
+    fullDays: z.number().int().min(0).optional(),
+    days: z.number().int().min(0).optional(),
   })
   .strict();
 
@@ -79,8 +82,8 @@ export const applySuggestion = defineAction({
     const first = changes[0];
     const summary =
       kind === 'raise' && first
-        ? `Raised “${first.title}” to ${first.to}${UNIT[first.measure] ?? ''} after 7 days at 100%.`
-        : `Made ${changes.length} daily quest${changes.length === 1 ? '' : 's'} smaller after 3 hard days.`;
+        ? `Raised “${first.title}” to ${first.to}${UNIT[first.measure] ?? ''} — done in full on nearly every day.`
+        : `Made ${changes.length} daily quest${changes.length === 1 ? '' : 's'} smaller, to hit about 4 days in 5.`;
     const proposal: PlanProposal = {
       ...newBase(undefined, ctx.processedAt),
       goal_type: null,

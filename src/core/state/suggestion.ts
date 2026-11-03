@@ -6,12 +6,12 @@ import {
   type SuggestionKind,
 } from '@/core/engine/difficulty';
 import { logError } from '@/core/errorLog';
-import { appDayOf, isoNow, subscribeAll } from '@/core/pipeline';
+import { subscribeAll } from '@/core/pipeline';
 import { snoozeKey } from '@/core/pipeline/actions/difficulty';
-import { addDays } from '@/core/time';
+import { adaptiveStore } from './adaptive';
 
-/** Today's difficulty suggestion (SPEC 6.1), if any. */
-export interface SuggestionState {
+/** Today's difficulty suggestion (SPEC 6.7 A adaptive difficulty), if any. */
+interface SuggestionState {
   suggestion: Suggestion | null;
 }
 
@@ -23,37 +23,34 @@ export function useSuggestion<T>(selector: (state: SuggestionState) => T): T {
 
 const KINDS: SuggestionKind[] = ['low_energy', 'ease', 'raise'];
 
+/** Derived from the Adaptive System's picture plus this device's "Not now" snoozes. */
 export async function loadSuggestion(database: AscendDB = defaultDb): Promise<void> {
   try {
-    const suggestion = await database.transaction(
-      'r',
-      ['settings', 'days', 'quest_instances', 'habits', 'meta'],
-      async () => {
-        const today = await appDayOf(database, isoNow());
-        const from = addDays(today, -7);
-        const [days, instances, habits, snoozes] = await Promise.all([
-          database.days.where('id').between(from, today, true, true).toArray(),
-          database.quest_instances.where('day').between(from, today, true, true).toArray(),
-          database.habits.toArray(),
-          Promise.all(KINDS.map((k) => database.meta.get(snoozeKey(k)))),
-        ]);
-        const snoozedUntil = Object.fromEntries(
-          KINDS.flatMap((k, i) => {
-            const v = snoozes[i]?.value;
-            return typeof v === 'string' ? [[k, v]] : [];
-          }),
-        );
-        return difficultySuggestion({ today, days, instances, habits, snoozedUntil });
-      },
+    const input = adaptiveStore.getState().input;
+    if (!input) {
+      suggestionStore.setState({ suggestion: null });
+      return;
+    }
+    const snoozes = await Promise.all(KINDS.map((k) => database.meta.get(snoozeKey(k))));
+    const snoozedUntil = Object.fromEntries(
+      KINDS.flatMap((k, i) => {
+        const v = snoozes[i]?.value;
+        return typeof v === 'string' ? [[k, v]] : [];
+      }),
     );
-    suggestionStore.setState({ suggestion });
+    suggestionStore.setState({ suggestion: difficultySuggestion({ input, snoozedUntil }) });
   } catch (error) {
     logError(error, 'suggestion.load');
   }
 }
 
+/** Start after `startAdaptive` (it supplies the data). */
 export async function startSuggestion(database: AscendDB = defaultDb): Promise<() => void> {
-  const unsubscribe = subscribeAll(() => loadSuggestion(database));
+  const offEvents = subscribeAll(() => loadSuggestion(database));
+  const offAdaptive = adaptiveStore.subscribe(() => void loadSuggestion(database));
   await loadSuggestion(database);
-  return unsubscribe;
+  return () => {
+    offEvents();
+    offAdaptive();
+  };
 }

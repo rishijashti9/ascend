@@ -74,9 +74,8 @@ function SuggestionBody({
           {kind === 'low_energy' &&
             'Low energy four days in a row. That’s okay — but is something weighing on you: sleep, too much on your plate, your health? If it keeps going, it may help to see a doctor or talk to someone you trust.'}
           {kind === 'ease' &&
-            'The last 3 days were under half done. That usually means the bar is too high right now, not that you failed. For the next few days, aim for the minimum versions — they keep your streak alive.'}
-          {kind === 'raise' &&
-            'Seven days in a row, every daily quest done in full. Ready for a little more?'}
+            'This target is hard to reach right now. A target you hit about 4 days in 5 builds the habit faster than one you keep missing — that’s the bar being too high, not you failing. The minimum versions still keep your streak alive.'}
+          {kind === 'raise' && 'Done in full on nearly every day lately. Ready for a little more?'}
         </span>
       </p>
       {changes.length > 0 && (
@@ -84,6 +83,9 @@ function SuggestionBody({
           {changes.map((c) => (
             <li key={c.habitId}>
               {c.title}: {fmt(c, c.from)} → <span className="text-text">{fmt(c, c.to)}</span>
+              <span className="block text-xs">
+                Full target on {c.fullDays} of the last {c.days} days.
+              </span>
             </li>
           ))}
         </ul>

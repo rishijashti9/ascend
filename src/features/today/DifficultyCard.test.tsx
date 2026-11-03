@@ -6,6 +6,7 @@ import { db } from '@/core/db/db';
 import { clearSubscribers, newBase, recordAction } from '@/core/pipeline';
 import { snoozeKey } from '@/core/pipeline/actions/difficulty';
 import { startGoals } from '@/core/state/goals';
+import { startAdaptive } from '@/core/state/adaptive';
 import { startSuggestion } from '@/core/state/suggestion';
 import { startToday } from '@/core/state/today';
 import { resetClock, setNow, setTimeZoneOverride } from '@/core/time';
@@ -39,39 +40,41 @@ beforeEach(async () => {
       },
     })
   ).value as Habit;
-  // Three days pass with nothing done.
-  for (const d of [3, 4, 5]) {
+  // A week at this target passes with nothing done.
+  for (const d of [3, 4, 5, 6, 7, 8, 9, 10]) {
     setNow(ist(2026, 11, d, 10));
     await recordAction({ type: 'day.rollover', payload: {} });
   }
   await startToday();
   await startGoals();
+  await startAdaptive(db, 0);
   await startSuggestion();
   render(
     <MemoryRouter>
       <DifficultyCard />
     </MemoryRouter>,
   );
-});
+}, 40_000); // simulates a week of days
 afterEach(() => {
   clearSubscribers();
   resetClock();
 });
 
 describe('Difficulty suggestion on Today', () => {
-  it('after 3 hard days suggests minimums + a smaller target; applying has Undo', async () => {
+  it('a target rarely reached gets a smaller one, with the numbers; applying has Undo', async () => {
     const card = await screen.findByRole('region', { name: 'Suggestion' });
-    expect(card).toHaveTextContent('The last 3 days were under half done');
+    expect(card).toHaveTextContent('This target is hard to reach right now');
     expect(card).toHaveTextContent('Study: 150 min → 115 min');
+    expect(card).toHaveTextContent('Full target on 0 of the last 7 days.');
     await userEvent.click(within(card).getByRole('button', { name: 'Make it smaller' }));
 
     await waitFor(() =>
       expect(screen.getByRole('region', { name: 'Suggestion' })).toHaveTextContent(
-        'Made 1 daily quest smaller after 3 hard days.',
+        'Made 1 daily quest smaller, to hit about 4 days in 5.',
       ),
     );
     expect((await db.habits.get(study.id))?.target_value).toBe(115);
-    expect((await db.meta.get(snoozeKey('ease')))?.value).toBe('2026-11-12');
+    expect((await db.meta.get(snoozeKey('ease')))?.value).toBe('2026-11-17');
 
     const undo = screen.getByRole('button', { name: 'Undo' });
     await waitFor(() => expect(undo).toBeEnabled());

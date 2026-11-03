@@ -118,8 +118,8 @@ async function start(): Promise<void> {
       { onLocalDataReplaced: () => window.location.reload() },
     );
   }
-  await startSuggestion();
   await startAdaptive();
+  await startSuggestion();
   startLearningRecorder();
   startAutoPlanner();
   startAchievements();

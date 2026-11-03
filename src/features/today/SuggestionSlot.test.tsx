@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router';
 import { db } from '@/core/db/db';
 import { clearSubscribers, newBase, recordAction } from '@/core/pipeline';
 import { startGoals } from '@/core/state/goals';
+import { startAdaptive } from '@/core/state/adaptive';
 import { startSuggestion } from '@/core/state/suggestion';
 import { startToday } from '@/core/state/today';
 import { resetClock, setNow, setTimeZoneOverride } from '@/core/time';
@@ -41,14 +42,15 @@ beforeEach(async () => {
     type: 'mainQuest.create',
     payload: { dream_id: (dream.value as { id: string }).id, title: 'Robotics', stat: 'INT' },
   });
-  for (const d of [3, 4, 5]) {
+  for (const d of [3, 4, 5, 6, 7, 8, 9, 10]) {
     setNow(ist(2026, 11, d, 10));
     await recordAction({ type: 'day.rollover', payload: {} });
   }
   await startToday();
   await startGoals();
+  await startAdaptive(db, 0);
   await startSuggestion();
-});
+}, 40_000); // simulates a week of days
 afterEach(() => {
   clearSubscribers();
   resetClock();
