@@ -38,7 +38,7 @@ function Choice<T extends string | number>({
             type="button"
             aria-pressed={value === o.v}
             onClick={() => onChange(o.v)}
-            className={`min-h-11 rounded-full border px-3 text-sm ${
+            className={`min-h-11 min-w-11 rounded-full border px-3 text-sm ${
               value === o.v
                 ? 'border-accent bg-accent-fill text-on-accent'
                 : 'border-border bg-surface'
@@ -136,7 +136,7 @@ export function HealthCheck() {
                         : [...(draft.goals ?? []), g.id],
                     })
                   }
-                  className={`min-h-11 rounded-full border px-3 text-sm ${on ? 'border-accent bg-accent-fill text-on-accent' : 'border-border bg-surface'}`}
+                  className={`min-h-11 min-w-11 rounded-full border px-3 text-sm ${on ? 'border-accent bg-accent-fill text-on-accent' : 'border-border bg-surface'}`}
                 >
                   {g.label}
                 </button>

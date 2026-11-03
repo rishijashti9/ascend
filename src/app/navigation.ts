@@ -1,6 +1,7 @@
 import {
   Activity,
   Briefcase,
+  Compass,
   ListChecks,
   Menu,
   Network,
@@ -34,6 +35,7 @@ const SECONDARY: NavItem[] = [
   { path: '/body', label: 'Body', icon: Activity, feature: 'body' },
   { path: '/review', label: 'Review', icon: NotebookPen, feature: 'review' },
   { path: '/skills', label: 'Skills', icon: Network, feature: 'skills' },
+  { path: '/compass', label: 'Compass', icon: Compass, feature: 'compass' },
   { path: '/jobs', label: 'Jobs', icon: Briefcase, feature: 'jobs' },
   { path: '/profile', label: 'Profile', icon: User, feature: 'profile' },
   { path: '/settings', label: 'Settings', icon: Settings, feature: 'settings' },

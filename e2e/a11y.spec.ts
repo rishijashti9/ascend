@@ -20,6 +20,9 @@ const SCREENS = [
   '/skills',
   '/jobs',
   '/profile',
+  '/knows',
+  '/compass',
+  '/compass?tab=health',
   '/settings',
   '/more',
 ];

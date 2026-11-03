@@ -20,7 +20,7 @@ function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; chi
       type="button"
       aria-pressed={on}
       onClick={onClick}
-      className={`min-h-11 rounded-full border px-3 text-sm ${
+      className={`min-h-11 min-w-11 rounded-full border px-3 text-sm ${
         on ? 'border-accent bg-accent-fill text-on-accent' : 'border-border bg-surface'
       }`}
     >

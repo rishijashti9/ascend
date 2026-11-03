@@ -12,6 +12,7 @@ import { SettingsPage } from '@/features/settings/SettingsPage';
 import { SkillsPage } from '@/features/skills/SkillsPage';
 import { JobsPage } from '@/features/jobs/JobsPage';
 import { KnowsPage } from '@/features/knows/KnowsPage';
+import { CompassPage } from '@/features/compass/CompassPage';
 import { TodayPage } from '@/features/today/TodayPage';
 import { RouteErrorScreen } from './ErrorBoundary';
 import { Layout } from './Layout';
@@ -29,6 +30,7 @@ const SCREENS: { path: string; feature: FeatureKey; element: React.ReactNode }[]
   { path: 'profile', feature: 'profile', element: <ProfilePage /> },
   { path: 'settings', feature: 'settings', element: <SettingsPage /> },
   { path: 'knows', feature: 'adaptive', element: <KnowsPage /> },
+  { path: 'compass', feature: 'compass', element: <CompassPage /> },
 ];
 
 export function buildRoutes(): RouteObject[] {
