@@ -154,3 +154,24 @@ export const recomputeAfterSync = defineAction({
     return [...touched].sort();
   },
 });
+
+/**
+ * Connects this device's data to an account (first sign-in, SPEC 9). `fresh` starts the
+ * exchange from the beginning (push everything, pull everything); `clearLocal` first removes
+ * every synced record on this device ("use the cloud data") — photos and device settings stay.
+ */
+export const linkAccount = defineAction({
+  type: 'sync.link',
+  schema: z.object({ userId: z.string().min(1), clearLocal: z.boolean() }).strict(),
+  tables: [...SYNCED_TABLES, 'meta'] as TableName[],
+  async run(ctx, { userId, clearLocal }) {
+    if (clearLocal) {
+      for (const tbl of SYNCED_TABLES) await ctx.db.table(tbl as TableName).clear();
+    }
+    await ctx.db.meta.put({ id: SYNC_META.user, value: userId });
+    await ctx.db.meta.put({ id: SYNC_META.pullSeq, value: 0 });
+    await ctx.db.meta.delete(SYNC_META.pushHlc);
+    ctx.emit({ type: 'SyncLinked', payload: { clearLocal } });
+    return true;
+  },
+});

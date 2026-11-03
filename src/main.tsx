@@ -12,6 +12,9 @@ import { startAchievementsStore } from './core/state/achievements';
 import { startMoments } from './core/state/moments';
 import { startAuthRedirects } from './app/auth';
 import { accountStore, startAccount } from './core/state/account';
+import { startSync } from './core/state/sync';
+import { supabaseBackend } from './core/sync/backend';
+import { getSupabase } from './core/sync/client';
 import { getNotifier } from './app/notify';
 import { isEnabled } from './config/features';
 import { startNotificationScheduler } from './core/notifications/scheduler';
@@ -67,6 +70,14 @@ async function start(): Promise<void> {
   if (isEnabled('sync')) {
     await startAccount();
     startAuthRedirects((notice) => accountStore.setState({ notice }));
+    startSync(
+      () => {
+        const client = getSupabase();
+        return client ? supabaseBackend(client) : null;
+      },
+      // "Use my account's data" / a fresh install's download: restart on the new data.
+      { onLocalDataReplaced: () => window.location.reload() },
+    );
   }
   await startSuggestion();
   startAutoPlanner();

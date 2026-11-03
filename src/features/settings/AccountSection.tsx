@@ -3,9 +3,11 @@ import { AuthError, sendMagicLink, signInWithGoogle, signOut } from '@/app/auth'
 import { isNativeApp } from '@/app/platform';
 import { logError } from '@/core/errorLog';
 import { useAccount } from '@/core/state/account';
+import { useSync } from '@/core/state/sync';
 import { Button } from '@/ui/Button';
 import { Field } from '@/ui/Field';
 import { Card } from './sections';
+import { SyncChoice } from './SyncChoice';
 
 /**
  * Account (SPEC 7.11, DECISIONS: magic link + Google, no passwords). Optional: ASCEND works
@@ -15,6 +17,7 @@ export function AccountSection() {
   const status = useAccount((s) => s.status);
   const email = useAccount((s) => s.email);
   const notice = useAccount((s) => s.notice);
+  const syncStatus = useSync((s) => s.status);
   const [address, setAddress] = useState('');
   const [sent, setSent] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -47,6 +50,7 @@ export function AccountSection() {
           <p>
             Signed in as <span className="font-medium">{email ?? 'your account'}</span>
           </p>
+          {syncStatus === 'needs_choice' && <SyncChoice />}
           <p className="text-muted text-sm">
             Signing out keeps everything on this device; it only stops syncing.
           </p>

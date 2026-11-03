@@ -41,6 +41,7 @@ export interface DomainEvents {
   ProfileChanged: { changed: string[] };
   SuggestionAnswered: { kind: string; applied: boolean };
   DataSynced: { applied: number; days: string[] };
+  SyncLinked: { clearLocal: boolean };
   DataImported: { mode: 'replace' | 'merge' };
   DataReset: Record<string, never>;
 }

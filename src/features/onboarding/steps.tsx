@@ -2,6 +2,7 @@ import { Monitor, Moon, Plus, Sun, X } from 'lucide-react';
 import type { ThemePreference } from '@/app/theme';
 import { isEnabled } from '@/config/features';
 import { ImportPanel } from '@/features/backup/ImportPanel';
+import { AccountSection } from '@/features/settings/AccountSection';
 import type { Settings, Stat } from '@/core/db/types';
 import { addMinutes, formatTime } from '@/data/starter';
 import { Button } from '@/ui/Button';
@@ -35,6 +36,16 @@ export function NameStep({ draft, update }: { draft: Draft; update: Update }) {
           </summary>
           <div className="pt-2">
             <ImportPanel allowMerge={false} backupFirst={false} />
+          </div>
+        </details>
+      )}
+      {isEnabled('sync') && (
+        <details className="border-border rounded-lg border p-4">
+          <summary className="min-h-11 cursor-pointer py-2 font-medium">
+            Use ASCEND on another device? Sign in to bring your data here
+          </summary>
+          <div className="pt-2">
+            <AccountSection />
           </div>
         </details>
       )}
