@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { writeLearning } from '@/core/adaptive/record';
 import type { Dream, GoalType, MainQuest, Milestone } from '@/core/db/types';
 import { newBase, touch } from '../records';
 import { defineAction, RuleError, type ActionContext } from '../registry';
@@ -203,8 +204,14 @@ export const setMainQuestStatus = defineAction({
 export const checkInMainQuest = defineAction({
   type: 'mainQuest.checkIn',
   schema: z.object({ id: z.string().min(1), day }).strict(),
-  tables: [...GOAL_TABLES],
+  tables: [...GOAL_TABLES, 'learning_events', 'settings'],
   async run(ctx, { id, day: today }) {
+    await writeLearning(ctx, {
+      kind: 'suggestion',
+      type: 'goal_checkin',
+      outcome: 'accepted',
+      ref_id: id,
+    });
     const current = await load(ctx.db.main_quests.get(id), 'Main quest');
     const next: MainQuest = { ...current, last_checkin_day: today, ...touch(ctx.processedAt) };
     await ctx.db.main_quests.put(next);

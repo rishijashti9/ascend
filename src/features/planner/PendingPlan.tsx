@@ -5,6 +5,8 @@ import type { ProposalItem } from '@/core/planner';
 import { useGoals } from '@/core/state/goals';
 import { Button } from '@/ui/Button';
 import { useAction } from '@/ui/hooks/useAction';
+import { useShown } from '@/ui/hooks/useShown';
+import { planSuggestionType } from '@/core/adaptive/record';
 import { GROUP_TITLE, groupOf, itemLabel, type Group } from './itemText';
 
 type Edit = { title?: string; target_value?: number };
@@ -126,6 +128,7 @@ export function ImpactPreview({
   );
   const [edits, setEdits] = useState<Record<string, Edit>>({});
   const { run, busy, error } = useAction();
+  useShown(planSuggestionType(proposal.trigger), proposal.id);
 
   const toggle = (id: string) => {
     const next = new Set(selected);

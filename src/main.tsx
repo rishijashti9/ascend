@@ -1,3 +1,4 @@
+import { startLearningRecorder } from '@/app/learning';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './app/App';
@@ -117,6 +118,7 @@ async function start(): Promise<void> {
     );
   }
   await startSuggestion();
+  startLearningRecorder();
   startAutoPlanner();
   startAchievements();
   startMoments();

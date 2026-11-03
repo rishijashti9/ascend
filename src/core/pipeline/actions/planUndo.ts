@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { planSuggestionType, writeLearning } from '@/core/adaptive/record';
 import type { TableName } from '@/core/db/db';
 import type { BaseRecord, PlanChange } from '@/core/db/types';
 import { refreshDayRecord } from '../days';
@@ -36,6 +37,15 @@ export const undoPlan = defineAction({
     const history = await ctx.db.plan_history.get(id);
     if (!history || history.deleted_at) throw new RuleError('That plan no longer exists');
     if (history.undone_at) throw new RuleError('This plan was already undone');
+    // Undoing a System change is a "no" to that suggestion, after the fact.
+    await writeLearning(ctx, {
+      kind: 'suggestion',
+      type: planSuggestionType(history.trigger),
+      outcome: 'rejected',
+      ref_id:
+        (await ctx.db.plan_proposals.filter((p) => p.plan_history_id === id).first())?.id ?? id,
+      values: { undone: 1 },
+    });
     const at = ctx.processedAt;
     const today = await appDayOf(ctx.db, at);
 

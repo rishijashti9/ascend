@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { planSuggestionType, writeLearning } from '@/core/adaptive/record';
 import type { TableName } from '@/core/db/db';
 import type { PlanChange, PlanHistory, PlanProposal } from '@/core/db/types';
 import type { ProposalItem } from '@/core/planner/types';
@@ -26,6 +27,7 @@ export const PLAN_TABLES: TableName[] = [
   'progress_entries',
   'settings',
   'days',
+  'learning_events',
 ];
 
 /** Run another action's code inside this transaction (validated by its own schema). */
@@ -66,6 +68,15 @@ export const applyPlan = defineAction({
     const proposal = await outer.db.plan_proposals.get(id);
     if (!proposal || proposal.status !== 'pending')
       throw new RuleError('That plan is no longer waiting');
+    const all = (proposal.items as ProposalItem[]).length;
+    const changed = selected.length < all || Object.keys(edits).length > 0;
+    await writeLearning(outer, {
+      kind: 'suggestion',
+      type: planSuggestionType(proposal.trigger),
+      outcome: changed ? 'edited' : 'accepted',
+      ref_id: proposal.id,
+      values: { items: all, kept: selected.length },
+    });
     return applyProposal(outer, proposal, selected, edits);
   },
 });

@@ -8,6 +8,7 @@ import { useToday } from '@/core/state/today';
 import { weekStartOf, type Weekday } from '@/core/time';
 import { Button } from '@/ui/Button';
 import { useAction } from '@/ui/hooks/useAction';
+import { recordAnswer, useShown } from '@/ui/hooks/useShown';
 
 /**
  * The Goal Planner reading the job stats (SPEC 6.5): when a pattern shows (e.g. many endings at
@@ -21,13 +22,16 @@ export function JobSuggestionCard({ stats }: { stats: JobStats }) {
   const today = useToday((s) => s.day);
   const weekStartsOn = useAppState((s) => (s.settings?.week_start ?? 1) as Weekday);
   const { run, busy, error } = useAction();
-  if (!suggestion || !today) return null;
-  if ((snoozed[suggestion.kind] ?? '') > today) return null;
-  const week = weekStartOf(today, weekStartsOn);
-  const thisWeek = weekly.find(
-    (q) => q.title === suggestion.title && q.week_start === week && q.deleted_at === null,
-  );
-  if (thisWeek) return null;
+  const week = today ? weekStartOf(today, weekStartsOn) : null;
+  const visible =
+    !!suggestion &&
+    !!today &&
+    (snoozed[suggestion.kind] ?? '') <= today &&
+    !weekly.some(
+      (q) => q.title === suggestion.title && q.week_start === week && q.deleted_at === null,
+    );
+  useShown(visible ? `job_${suggestion.kind}` : null);
+  if (!visible) return null;
 
   return (
     <section
@@ -42,7 +46,8 @@ export function JobSuggestionCard({ stats }: { stats: JobStats }) {
       <div className="flex flex-wrap gap-2">
         <Button
           disabled={busy}
-          onClick={() =>
+          onClick={() => {
+            recordAnswer(`job_${suggestion.kind}`, null, 'accepted');
             void run({
               type: 'quest.create',
               payload: {
@@ -52,8 +57,8 @@ export function JobSuggestionCard({ stats }: { stats: JobStats }) {
                 difficulty: 'normal',
                 planned_by: 'rules',
               },
-            })
-          }
+            });
+          }}
         >
           Add to this week
         </Button>

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { planSuggestionType, writeLearning } from '@/core/adaptive/record';
 import type { PlanProposal } from '@/core/db/types';
 import { newBase, touch } from '../records';
 import { defineAction, RuleError } from '../registry';
@@ -79,10 +80,16 @@ export const proposePlan = defineAction({
 export const rejectPlan = defineAction({
   type: 'plan.reject',
   schema: z.object({ id: z.string().min(1) }).strict(),
-  tables: ['plan_proposals'],
+  tables: ['plan_proposals', 'learning_events', 'settings'],
   async run(ctx, { id }) {
     const p = await ctx.db.plan_proposals.get(id);
     if (!p || p.status !== 'pending') throw new RuleError('That plan is no longer waiting');
+    await writeLearning(ctx, {
+      kind: 'suggestion',
+      type: planSuggestionType(p.trigger),
+      outcome: 'rejected',
+      ref_id: id,
+    });
     await ctx.db.plan_proposals.put({ ...p, status: 'rejected', ...touch(ctx.processedAt) });
     ctx.emit({ type: 'PlanProposed', payload: { proposalId: id, goalId: p.goal_id } });
   },

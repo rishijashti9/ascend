@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { writeLearning } from '@/core/adaptive/record';
 import type { JobApplication, JobStage, QuestInstance } from '@/core/db/types';
 import { isDone } from '@/core/engine/progress';
 import { addDays, weekStartOf } from '@/core/time';
@@ -306,8 +307,9 @@ export const JOB_SUGGESTION_SNOOZE_DAYS = 14;
 export const snoozeJobSuggestion = defineAction({
   type: 'job.snoozeSuggestion',
   schema: z.object({ kind: z.enum(['interview', 'assessment', 'response']) }).strict(),
-  tables: ['meta', 'settings'],
+  tables: ['meta', 'settings', 'learning_events'],
   async run(ctx, { kind }) {
+    await writeLearning(ctx, { kind: 'suggestion', type: `job_${kind}`, outcome: 'rejected' });
     const today = await appDayOf(ctx.db, ctx.occurredAt);
     const until = addDays(today, JOB_SUGGESTION_SNOOZE_DAYS);
     await ctx.db.meta.put({ id: jobSuggestionSnoozeKey(kind), value: until });

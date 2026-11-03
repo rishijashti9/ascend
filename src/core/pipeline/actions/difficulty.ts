@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { writeLearning } from '@/core/adaptive/record';
 import type { PlanHistory, PlanProposal } from '@/core/db/types';
 import { SNOOZE_DAYS, type SuggestionKind } from '@/core/engine/difficulty';
 import type { ProposalItem } from '@/core/planner/types';
@@ -18,6 +19,13 @@ const KINDS = ['low_energy', 'ease', 'raise'] as const;
 
 async function snooze(ctx: ActionContext, kind: SuggestionKind, applied: boolean) {
   const today = await appDayOf(ctx.db, ctx.processedAt);
+  // A low-energy note has nothing to apply: "Thanks" is taking it in.
+  if (!applied)
+    await writeLearning(ctx, {
+      kind: 'suggestion',
+      type: `difficulty_${kind}`,
+      outcome: kind === 'low_energy' ? 'accepted' : 'rejected',
+    });
   await ctx.db.meta.put({ id: snoozeKey(kind), value: addDays(today, SNOOZE_DAYS[kind]) });
   ctx.emit({ type: 'SuggestionAnswered', payload: { kind, applied } });
 }
@@ -25,7 +33,7 @@ async function snooze(ctx: ActionContext, kind: SuggestionKind, applied: boolean
 export const snoozeSuggestion = defineAction({
   type: 'difficulty.snooze',
   schema: z.object({ kind: z.enum(KINDS) }).strict(),
-  tables: ['meta', 'settings'],
+  tables: ['meta', 'settings', 'learning_events'],
   async run(ctx, { kind }) {
     await snooze(ctx, kind, false);
     return true;
@@ -86,6 +94,11 @@ export const applySuggestion = defineAction({
       plan_history_id: null,
     };
     await ctx.db.plan_proposals.add(proposal);
+    await writeLearning(ctx, {
+      kind: 'suggestion',
+      type: `difficulty_${kind}`,
+      outcome: 'accepted',
+    });
     const history = await applyProposal(
       ctx,
       proposal,

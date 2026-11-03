@@ -26,6 +26,7 @@ import './actions/skills';
 import './actions/jobs';
 import './actions/health';
 import './actions/pending';
+import './actions/learning';
 
 export * from './events';
 export * from './recordAction';

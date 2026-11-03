@@ -4,6 +4,7 @@ import { useGoals } from '@/core/state/goals';
 import { useToday } from '@/core/state/today';
 import { Button } from '@/ui/Button';
 import { useAction } from '@/ui/hooks/useAction';
+import { recordAnswer, useShown } from '@/ui/hooks/useShown';
 import { useNudges } from './useNudges';
 
 /** Deadline-risk options (SPEC 6.3): extend, add time, or reduce scope — each one tap. */
@@ -22,9 +23,12 @@ function RiskCard({
   const milestone = useGoals((s) => s.milestones.find((m) => m.id === milestoneId));
   const today = useToday((s) => s.day);
   const { run, busy, error } = useAction();
+  useShown(quest && today ? 'goal_risk' : null, milestoneId ?? mainQuestId);
   if (!quest || !today) return null;
+  const answer = () => recordAnswer('goal_risk', milestoneId ?? mainQuestId, 'accepted');
 
   const extend = async () => {
+    answer();
     if (milestone?.target_date) {
       const date = addDays(milestone.target_date > today ? milestone.target_date : today, 14);
       const ok = await run({
@@ -44,8 +48,9 @@ function RiskCard({
       });
     }
   };
-  const addTime = () =>
-    run({
+  const addTime = () => {
+    answer();
+    return run({
       type: 'quest.create',
       payload: {
         type: 'weekly',
@@ -56,6 +61,7 @@ function RiskCard({
         planned_by: 'rules',
       },
     });
+  };
   const smaller =
     milestone?.target_type === 'count' && milestone.target_value
       ? { target_value: Math.max(1, Math.ceil(milestone.target_value * 0.75)) }
@@ -88,12 +94,13 @@ function RiskCard({
           <Button
             variant="secondary"
             disabled={busy}
-            onClick={() =>
+            onClick={() => {
+              answer();
               void run({
                 type: 'milestone.update',
                 payload: { id: milestone.id, changes: smaller },
-              })
-            }
+              });
+            }}
           >
             Make it smaller
           </Button>
@@ -124,6 +131,7 @@ function CheckInCard({
 }) {
   const today = useToday((s) => s.day);
   const { run, busy, error } = useAction();
+  useShown(today ? 'goal_checkin' : null, mainQuestId);
   if (!today) return null;
   return (
     <section

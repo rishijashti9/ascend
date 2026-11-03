@@ -1,10 +1,11 @@
 import { HeartHandshake, SlidersHorizontal } from 'lucide-react';
-import type { HabitChange } from '@/core/engine/difficulty';
+import type { HabitChange, Suggestion } from '@/core/engine/difficulty';
 import { useGoals } from '@/core/state/goals';
 import { useSuggestion } from '@/core/state/suggestion';
 import { useToday } from '@/core/state/today';
 import { Button } from '@/ui/Button';
 import { useAction } from '@/ui/hooks/useAction';
+import { useShown } from '@/ui/hooks/useShown';
 
 const UNIT: Record<string, string> = { minutes: ' min', steps: ' steps', count: '' };
 const fmt = (c: HabitChange, v: number) => `${v.toLocaleString()}${UNIT[c.measure] ?? ''}`;
@@ -45,7 +46,19 @@ export function DifficultyCard() {
     );
   }
   if (!suggestion) return null;
+  return <SuggestionBody suggestion={suggestion} run={run} busy={busy} error={error} />;
+}
+
+function SuggestionBody({
+  suggestion,
+  run,
+  busy,
+  error,
+}: {
+  suggestion: Suggestion;
+} & Pick<ReturnType<typeof useAction>, 'run' | 'busy' | 'error'>) {
   const { kind, changes } = suggestion;
+  useShown(`difficulty_${kind}`);
   const notNow = () => void run({ type: 'difficulty.snooze', payload: { kind } });
   const Icon = kind === 'low_energy' ? HeartHandshake : SlidersHorizontal;
 
