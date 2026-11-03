@@ -9,3 +9,6 @@ dev-dist
 assets/
 supabase/.temp
 supabase/.branches
+
+# Rishi's instructions, kept verbatim
+docs/phase8-prompt.md
