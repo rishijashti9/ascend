@@ -32,6 +32,7 @@ import './actions/burnout';
 import './actions/compass';
 import './actions/myData';
 import './actions/compact';
+import './actions/screenTime';
 
 export * from './events';
 export * from './recordAction';

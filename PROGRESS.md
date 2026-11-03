@@ -167,9 +167,9 @@ Part C — Ask the System
 
 ## Phase 11 — Screen Time
 
-- [ ] 11.1 Schema v3
-- [ ] 11.2 Entertainment app list
-- [ ] 11.3 Lock rules
+- [x] 11.1 Schema v3
+- [x] 11.2 Entertainment app list
+- [x] 11.3 Lock rules
 - [ ] 11.4 Screen-time actions
 - [ ] 11.5 Reminder engine
 - [ ] 11.6 Android native I
