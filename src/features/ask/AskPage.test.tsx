@@ -27,7 +27,7 @@ it('switched off: the Growth Compass answers; off-topic is declined; crisis show
     </MemoryRouter>,
   );
   expect(screen.getByRole('region', { name: 'Switched off' })).toBeInTheDocument();
-  expect(screen.getByText(/may use them to improve its products/)).toBeInTheDocument();
+  expect(screen.getByText(/free AI model through OpenRouter/)).toBeInTheDocument();
 
   await ask('How do I prepare for IELTS?');
   const compass = await screen.findByRole('region', { name: 'Growth Compass' });

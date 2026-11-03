@@ -116,14 +116,16 @@ export function MyDataPage() {
       <Card title="Sent outside ASCEND">
         {outbound.length === 0 ? (
           <p className="text-sm">
-            Nothing, ever. Only “Ask the System” questions would go to Google Gemini, and only when
-            you ask one.
+            Nothing, ever. Only “Ask the System” questions would go to an AI service (OpenRouter),
+            and only when you ask one.
           </p>
         ) : (
           <>
             <p className="text-sm">
-              {outbound.length} question{outbound.length === 1 ? '' : 's'} to Google Gemini (Ask the
-              System). Never health data, journal text, mood or photos.
+              {outbound.length} question{outbound.length === 1 ? '' : 's'} sent (Ask the System) —
+              {outbound.some((o) => o.service === 'openrouter') ? ' OpenRouter' : ''}
+              {outbound.some((o) => o.service === 'gemini') ? ' Google Gemini' : ''}. Never health
+              data, journal text, mood or photos.
             </p>
             <ul className="text-muted text-sm">
               {outbound
@@ -131,7 +133,8 @@ export function MyDataPage() {
                 .reverse()
                 .map((o) => (
                   <li key={o.at}>
-                    {new Date(o.at).toLocaleString()} · {o.chars} characters
+                    {new Date(o.at).toLocaleString()} ·{' '}
+                    {o.service === 'gemini' ? 'Google Gemini' : 'OpenRouter'} · {o.chars} characters
                   </li>
                 ))}
             </ul>

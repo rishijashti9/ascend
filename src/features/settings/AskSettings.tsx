@@ -16,10 +16,11 @@ export function AskSettings({ settings }: { settings: Settings }) {
             Ask career and health questions
           </p>
           <p className="text-muted text-sm">
-            Uses Google Gemini’s free tier through your sync account. Only your question and
-            progress numbers are sent — never health data, journal text, mood or photos. Free-tier
-            questions may be used by Google. Up to {DEFAULT_DAILY_LIMIT} questions a day; when it’s
-            off or unavailable, the Growth Compass answers instead.
+            Uses a free AI model through OpenRouter, via your sync account. Only your question and
+            progress numbers are sent — never health data, journal text, mood or photos. Free
+            models’ providers may use questions to improve their services. Up to{' '}
+            {DEFAULT_DAILY_LIMIT} questions a day; when it’s off or unavailable, the Growth Compass
+            answers instead.
           </p>
         </div>
         <Switch

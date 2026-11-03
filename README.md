@@ -153,7 +153,7 @@ Settings → Notifications → **Reliable reminders** has "Exact timing" and a b
 - **Settings** has the theme, day-start hour, wake-up times, Auto-plan, Ask the System, backup (export / import), My data and “Rebuild progress”.
 - **The Adaptive System** learns quietly on this device from numbers only (never your journal): which quests tend to slip on which days (marked “at risk” on Today), when you really focus, how much you really get done in a week. Today shows one “Now:” line with the best next quest and why, and at most **one suggestion card** at a time — a smaller or bigger target aiming at about 4 good days in 5, a better reminder time, a lighter week when you’re running down, or a goal running behind. Nothing changes without your tap, and everything can be undone. **Profile → What the System knows about you** lists everything it has learned, with how sure it is; clear any item, reset one quest or everything, or export the learning data as CSV.
 - **Growth Compass** (in More): career and health guidance from trusted sources (O*NET, ESCO, DAAD, official docs, WHO, ICMR-NIN), worked out on the device. _Career_: find careers that fit you (interests, strengths, values), pick a target, see the skills still missing in learning order and when you’d be ready at your real pace, and turn it into a plan for approval; roadmaps for AI/ML, ROS 2, C++, robotics maths, simulation, Unreal, IELTS, GRE and the Master’s-in-Germany (APS) route, and study guides. _Health_: a one-minute check-in, your picture against WHO and sleep guidelines from your real data, and a safe, gradual health plan. Not medical advice — for pain or illness it always says to see a doctor.
-- **Ask** (in More, switch on in Settings → Ask the System): ask career and health questions in your own words. It uses Google Gemini’s free tier through your sync account; only the question and progress numbers are sent — never health data, journal text, mood or photos — and free-tier questions may be used by Google. Off-topic questions are declined; when it can’t answer (offline, daily limit, not set up), the Growth Compass answers instead. Suggested quests are only added after you approve them.
+- **Ask** (in More, switch on in Settings → Ask the System): ask career and health questions in your own words. It uses a free AI model through OpenRouter, via your sync account; only the question and progress numbers are sent — never health data, journal text, mood or photos — and free models’ providers may use questions to improve their services. The model can’t browse the web, so it says when something may be out of date and points to official sites for deadlines, fees and requirements; its sources are Growth Compass links. Off-topic questions are declined; when it can’t answer (offline, daily limit, not set up), the Growth Compass answers instead. Suggested quests are only added after you approve them.
 
 ## Developer tools (testing only)
 
@@ -238,10 +238,23 @@ npx supabase link --project-ref cyvrymsjizkpvtyqqflu
 npx supabase db push
 npx supabase functions deploy delete-account
 npx supabase functions deploy ask
-# Gemini key from https://aistudio.google.com/apikey — type it here, never paste it into a chat:
-$key = Read-Host "Gemini API key"
-npx supabase secrets set GEMINI_API_KEY=$key
-Remove-Variable key
 ```
 
-Then switch on Settings → **Ask the System**.
+Then set up Ask the System (below) and switch it on in Settings → **Ask the System**.
+
+### Ask the System: the OpenRouter key
+
+Ask the System uses free models on [OpenRouter](https://openrouter.ai) (an OpenAI-compatible service). Create a key at https://openrouter.ai/settings/keys, then in PowerShell from the project folder — the key is typed into the prompt, never pasted into a chat or a file:
+
+```powershell
+$key = Read-Host "OpenRouter API key" -MaskInput
+npx supabase secrets set OPENROUTER_API_KEY=$key
+Remove-Variable key
+npx supabase functions deploy ask
+```
+
+- **Model**: by default `google/gemma-4-31b-it:free`; if it's unavailable, `nvidia/nemotron-3-ultra-550b-a55b:free`; if both fail, the app answers from the Growth Compass. To use another model (see the `:free` ones at https://openrouter.ai/models?q=free), run `npx supabase secrets set OPENROUTER_MODEL=<model id>` — no redeploy needed.
+- **Free-model privacy setting**: OpenRouter only routes to free models if your account allows it — https://openrouter.ai/settings/privacy (allow the free endpoints / their data policy). Otherwise the logs show "No endpoints found matching your data policy".
+- **Limits**: free models have daily limits on OpenRouter's side; ASCEND stays well under them (10 questions a day per device, 20 per account on the server).
+- **When it fails**: Supabase Dashboard → Edge Functions → **ask** → Logs shows lines like `ask: OpenRouter 404 code=404 model=…: <OpenRouter's message>` (never the key).
+- The earlier Gemini version is kept in `supabase/functions/ask/gemini.ts` (unused; Gemini needed prepaid credits).

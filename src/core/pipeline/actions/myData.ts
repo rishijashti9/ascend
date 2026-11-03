@@ -7,7 +7,7 @@ export const recordOutbound = defineAction({
   type: 'outbound.record',
   schema: z
     .object({
-      service: z.literal('gemini'),
+      service: z.enum(['openrouter', 'gemini']),
       kind: z.string().regex(/^[a-z_]{1,30}$/),
       chars: z.number().int().min(0).max(100_000),
     })

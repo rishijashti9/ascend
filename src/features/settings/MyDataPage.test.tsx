@@ -13,7 +13,7 @@ afterEach(() => clearSubscribers());
 it('shows what is stored, the cloud state and everything sent outside', async () => {
   await recordAction({
     type: 'outbound.record',
-    payload: { service: 'gemini', kind: 'ask', chars: 240 },
+    payload: { service: 'openrouter', kind: 'ask', chars: 240 },
   });
   render(
     <MemoryRouter>
@@ -26,6 +26,7 @@ it('shows what is stored, the cloud state and everything sent outside', async ()
   expect(screen.getByRole('region', { name: 'In your cloud account' })).toHaveTextContent(
     'Not signed in — nothing is stored in the cloud.',
   );
-  expect(await screen.findByText(/1 question to Google Gemini/)).toBeInTheDocument();
+  expect(await screen.findByText(/1 question sent \(Ask the System\)/)).toBeInTheDocument();
+  expect(screen.getByText(/OpenRouter · 240 characters/)).toBeInTheDocument();
   expect(screen.getByText(/240 characters/)).toBeInTheDocument();
 });

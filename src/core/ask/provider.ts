@@ -2,7 +2,8 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * Ask the System (SPEC 6.7 C) through a provider-agnostic interface, so another model (e.g.
- * Claude) can be added later without touching the screen. Today: Google Gemini's free tier via
+ * Claude) can be added later without touching the screen. Today: free models through OpenRouter
+ * (since 2026-11-04; Google Gemini before) via
  * the Supabase Edge Function `ask`, which holds the key.
  */
 export interface AskContext {
@@ -37,10 +38,16 @@ export interface AIProvider {
 
 const REASONS = new Set<AskFailure>(['quota', 'signed_out', 'no_key', 'off_topic']);
 
-/** Gemini (free tier) through the `ask` Edge Function. Never throws — failures are reasons. */
-export function geminiProvider(client: SupabaseClient): AIProvider {
+/** The model behind the `ask` Edge Function, chosen there (see supabase/functions/ask). */
+export const ASK_SERVICE = { id: 'openrouter', label: 'OpenRouter (free AI models)' } as const;
+
+/** Ask through the `ask` Edge Function. Never throws — failures become calm reasons. */
+export function askFunctionProvider(
+  client: SupabaseClient,
+  name: string = ASK_SERVICE.label,
+): AIProvider {
   return {
-    name: 'Google Gemini (free tier)',
+    name,
     async ask(request) {
       if (typeof navigator !== 'undefined' && navigator.onLine === false)
         return { ok: false, reason: 'offline' };
@@ -78,7 +85,7 @@ export function geminiProvider(client: SupabaseClient): AIProvider {
                 )
               : [],
             cached: d.cached === true,
-            model: typeof d.model === 'string' ? d.model : 'gemini',
+            model: typeof d.model === 'string' ? d.model : 'unknown',
           },
         };
       } catch {
@@ -87,3 +94,7 @@ export function geminiProvider(client: SupabaseClient): AIProvider {
     },
   };
 }
+
+/** Kept for reference: the same Edge Function when it ran Google Gemini (unused since 2026-11-04). */
+export const geminiProvider = (client: SupabaseClient): AIProvider =>
+  askFunctionProvider(client, 'Google Gemini (free tier)');

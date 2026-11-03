@@ -1,6 +1,6 @@
 import { DEFAULT_DAILY_LIMIT, type AskDeps } from '@/core/ask/ask';
 import { buildAskContext } from '@/core/ask/context';
-import { geminiProvider } from '@/core/ask/provider';
+import { ASK_SERVICE, askFunctionProvider } from '@/core/ask/provider';
 import { careerById } from '@/core/compass/pack';
 import { countryFromTimeZone } from '@/core/compass/safety';
 import { readOutbound } from '@/core/data/outbound';
@@ -39,7 +39,7 @@ export function useAskDeps(): () => Promise<AskDeps> {
     const client = signedIn ? getSupabase() : null;
     return {
       enabled: settings?.ai_enabled ?? false,
-      provider: client ? geminiProvider(client) : null,
+      provider: client ? askFunctionProvider(client) : null,
       context: buildAskContext({
         level: progress?.level.level ?? 1,
         rank: progress?.rank ?? 'E',
@@ -58,7 +58,7 @@ export function useAskDeps(): () => Promise<AskDeps> {
       logOutbound: async (chars) => {
         await recordAction({
           type: 'outbound.record',
-          payload: { service: 'gemini', kind: 'ask', chars },
+          payload: { service: ASK_SERVICE.id, kind: 'ask', chars },
         });
       },
     };

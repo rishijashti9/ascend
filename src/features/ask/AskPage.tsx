@@ -126,9 +126,10 @@ export function AskPage() {
           {asking ? 'Thinking…' : 'Ask'}
         </Button>
         <p className="text-muted text-xs">
-          Questions go to Google Gemini’s free tier, which may use them to improve its products.
-          Only your question and progress numbers are sent — never health data, journal text, mood
-          or photos.
+          Questions go to a free AI model through OpenRouter; free models’ providers may use them to
+          improve their services. Only your question and progress numbers are sent — never health
+          data, journal text, mood or photos. The model can’t browse the web, so check deadlines,
+          fees and requirements on the official sites.
         </p>
       </form>
 

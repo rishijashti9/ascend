@@ -1,11 +1,15 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { geminiProvider } from './provider';
+import { askFunctionProvider as geminiProvider, ASK_SERVICE } from './provider';
 
 const client = (result: { data?: unknown; error?: unknown }) =>
   ({ functions: { invoke: vi.fn().mockResolvedValue(result) } }) as unknown as SupabaseClient;
 const req = { question: 'How do I learn ROS 2?', context: {}, hints: [] };
 
-describe('Gemini provider (Ask the System)', () => {
+describe('Ask the System provider (the ask Edge Function)', () => {
+  it('is OpenRouter now', () => {
+    expect(ASK_SERVICE.id).toBe('openrouter');
+  });
+
   it('returns the answer, keeping only https sources and at most 3 quests', async () => {
     const r = await geminiProvider(
       client({
@@ -17,7 +21,7 @@ describe('Gemini provider (Ask the System)', () => {
             { title: 'x', url: 'http://bad' },
           ],
           cached: false,
-          model: 'gemini-2.5-flash',
+          model: 'google/gemma-4-31b-it:free',
         },
       }),
     ).ask(req);
