@@ -8,7 +8,9 @@ import type { InstanceStatus, Measure, ProgressEntry } from '@/core/db/types';
  */
 export function progressValue(
   measure: Measure,
-  entries: Pick<ProgressEntry, 'source' | 'amount' | 'occurred_at' | 'deleted_at'>[],
+  entries: (Pick<ProgressEntry, 'source' | 'amount' | 'occurred_at' | 'deleted_at'> & {
+    hlc?: string;
+  })[],
 ): number {
   const live = entries.filter((e) => e.deleted_at === null);
   if (measure === 'minutes' || measure === 'count') {
@@ -21,7 +23,11 @@ export function progressValue(
     const latest = (source: (s: string) => boolean) =>
       live
         .filter((e) => source(e.source))
-        .sort((a, b) => a.occurred_at.localeCompare(b.occurred_at))
+        // Same moment (e.g. two readings for yesterday): the later write wins.
+        .sort(
+          (a, b) =>
+            a.occurred_at.localeCompare(b.occurred_at) || (a.hlc ?? '').localeCompare(b.hlc ?? ''),
+        )
         .at(-1)?.amount;
     return latest((s) => s !== 'health_connect') ?? latest((s) => s === 'health_connect') ?? 0;
   }

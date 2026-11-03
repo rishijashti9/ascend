@@ -19,6 +19,9 @@ import { getSupabase } from './core/sync/client';
 import { getNotifier } from './app/notify';
 import { isEnabled } from './config/features';
 import { startNotificationScheduler } from './core/notifications/scheduler';
+import { startHealthReader } from './core/health/runner';
+import { healthConnect } from './app/health';
+import { isNativeApp } from './app/platform';
 import { startSuggestion } from './core/state/suggestion';
 import { appStore, startAppState } from './core/state/app';
 import { startBody } from './core/state/body';
@@ -97,6 +100,15 @@ async function start(): Promise<void> {
   startAchievements();
   startMoments();
   if (isEnabled('notifications')) startNotificationScheduler(getNotifier());
+  if (isEnabled('health') && isNativeApp()) {
+    startHealthReader(healthConnect, (listener) => {
+      const onVisible = () => {
+        if (document.visibilityState === 'visible') listener();
+      };
+      document.addEventListener('visibilitychange', onVisible);
+      return () => document.removeEventListener('visibilitychange', onVisible);
+    });
+  }
   root.render(
     <StrictMode>
       <App />

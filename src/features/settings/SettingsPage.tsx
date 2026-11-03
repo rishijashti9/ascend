@@ -4,6 +4,7 @@ import { useAppState } from '@/core/state/app';
 import { AccountSection } from './AccountSection';
 import { BackupSection } from './BackupSection';
 import { JobsSettings } from './JobsSettings';
+import { HealthSettings } from './HealthSettings';
 import { NotificationSettings } from './NotificationSettings';
 import { PlannerSettings } from './PlannerSettings';
 import {
@@ -36,6 +37,7 @@ export function SettingsPage() {
           {isEnabled('notifications') && <NotificationSettings settings={settings} />}
           {isEnabled('goals') && <PlannerSettings settings={settings} />}
           {isEnabled('jobs') && <JobsSettings settings={settings} />}
+          {isEnabled('health') && <HealthSettings settings={settings} />}
           {isEnabled('exportImport') && <BackupSection />}
           <DataSection />
         </>

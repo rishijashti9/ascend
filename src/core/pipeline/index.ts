@@ -24,6 +24,7 @@ import './actions/difficulty';
 import './actions/sync';
 import './actions/skills';
 import './actions/jobs';
+import './actions/health';
 
 export * from './events';
 export * from './recordAction';

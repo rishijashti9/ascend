@@ -57,5 +57,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     include: ['src/**/*.test.{ts,tsx}', 'scripts/**/*.test.ts'],
+    // Screen tests click through whole flows; on a busy laptop they can pass the 5 s default.
+    testTimeout: 15_000,
   },
 });

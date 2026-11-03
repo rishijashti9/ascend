@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ASCEND privacy</title>
+    <style>
+      :root {
+        --bg: #f7f8fa;
+        --text: #1f2328;
+        --muted: #656d76;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0e1116;
+          --text: #e6edf3;
+          --muted: #8b949e;
+        }
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          16px/1.5 system-ui,
+          sans-serif;
+      }
+      main {
+        max-width: 40rem;
+        margin: 0 auto;
+        padding: 24px 16px;
+      }
+      p.muted {
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>ASCEND and your health data</h1>
+      <p>
+        ASCEND reads three things from Health Connect, and only after you allow it: your
+        <strong>steps</strong>, your <strong>sleep</strong> and your <strong>workouts</strong>. It
+        uses them to fill in your Walk, Sleep and Workout quests and your Body log.
+      </p>
+      <p>
+        ASCEND never writes to Health Connect, never sells or shares your data, and has no ads or
+        tracking. The numbers are stored on this phone. If you turn on the optional sync account,
+        your ASCEND data (including these daily totals) is copied to your own private sync space so
+        it also appears on your laptop; nobody else can read it.
+      </p>
+      <p>
+        You can stop at any time: switch Health Connect off in ASCEND's Settings, or remove ASCEND's
+        access in the Health Connect app.
+      </p>
+      <p class="muted">ASCEND is a personal app built for one person.</p>
+    </main>
+  </body>
+</html>
