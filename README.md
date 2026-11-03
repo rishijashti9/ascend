@@ -247,9 +247,10 @@ Then set up Ask the System (below) and switch it on in Settings → **Ask the Sy
 Ask the System uses free models on [OpenRouter](https://openrouter.ai) (an OpenAI-compatible service). Create a key at https://openrouter.ai/settings/keys, then in PowerShell from the project folder — the key is typed into the prompt, never pasted into a chat or a file:
 
 ```powershell
-$key = Read-Host "OpenRouter API key" -MaskInput
+$secure = Read-Host "OpenRouter API key" -AsSecureString
+$key = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure))
 npx supabase secrets set OPENROUTER_API_KEY=$key
-Remove-Variable key
+Remove-Variable key, secure
 npx supabase functions deploy ask
 ```
 
