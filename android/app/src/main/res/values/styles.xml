@@ -16,7 +16,12 @@
     </style>
 
 
+    <!-- Launch: Android 12+ shows the system splash — the symbol on the app's dark background
+         (task 10.4); older Android shows the splash image. -->
     <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
         <item name="android:background">@drawable/splash</item>
+        <item name="windowSplashScreenBackground">#0E1116</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_ascend_symbol</item>
+        <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
     </style>
 </resources>

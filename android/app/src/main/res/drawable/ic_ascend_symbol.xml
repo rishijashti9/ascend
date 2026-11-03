@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The ASCEND symbol (chevron over a horizon, public/icon.svg) as a vector: Android 12+ splash
+     icon and the monochrome layer for themed icons (task 10.4). Scaled into the safe zone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+    <group
+        android:pivotX="256"
+        android:pivotY="256"
+        android:scaleX="0.62"
+        android:scaleY="0.62">
+        <path
+            android:pathData="M148,292 L256,184 L364,292"
+            android:strokeColor="#4C8DFF"
+            android:strokeWidth="46"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+        <path
+            android:pathData="M184,364 L328,364"
+            android:strokeColor="#E6EDF3"
+            android:strokeAlpha="0.4"
+            android:strokeWidth="28"
+            android:strokeLineCap="round" />
+    </group>
+</vector>

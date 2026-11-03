@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Status-bar icon for ASCEND notifications (task 10.4): white chevron, Android tints it. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+    <path
+        android:pathData="M120,320 L256,184 L392,320"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="64"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M168,408 L344,408"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="44"
+        android:strokeLineCap="round" />
+</vector>

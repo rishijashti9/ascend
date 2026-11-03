@@ -6,4 +6,8 @@
     <foreground>
         <inset android:drawable="@mipmap/ic_launcher_foreground" android:inset="16.7%" />
     </foreground>
+    <!-- Themed icons (Android 13+, e.g. Nothing OS): the symbol in one colour (task 10.4). -->
+    <monochrome>
+        <inset android:drawable="@drawable/ic_ascend_symbol" android:inset="0%" />
+    </monochrome>
 </adaptive-icon>

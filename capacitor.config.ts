@@ -9,6 +9,13 @@ const config: CapacitorConfig = {
     // Matches the dark background so there's no white flash on start.
     backgroundColor: '#0E1116',
   },
+  plugins: {
+    // Status-bar icon for reminders (task 10.4): a white chevron, tinted with the accent.
+    LocalNotifications: {
+      smallIcon: 'ic_stat_ascend',
+      iconColor: '#4C8DFF',
+    },
+  },
 };
 
 export default config;

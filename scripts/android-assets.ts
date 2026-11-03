@@ -55,3 +55,16 @@ execSync(
 const colorFile = 'android/app/src/main/res/values/ic_launcher_background.xml';
 writeFileSync(colorFile, readFileSync(colorFile, 'utf8').replace(/#[0-9A-Fa-f]{6}/, BG));
 console.log(`  ${colorFile} → ${BG}`);
+
+// capacitor-assets rewrites the adaptive-icon XML; put back the monochrome layer that
+// themed icons (Android 13+, e.g. Nothing OS) use — drawable/ic_ascend_symbol.xml (task 10.4).
+const MONO = `    <monochrome>
+        <inset android:drawable="@drawable/ic_ascend_symbol" android:inset="0%" />
+    </monochrome>
+</adaptive-icon>`;
+for (const name of ['ic_launcher', 'ic_launcher_round']) {
+  const file = `android/app/src/main/res/mipmap-anydpi-v26/${name}.xml`;
+  const xml = readFileSync(file, 'utf8');
+  if (!xml.includes('<monochrome>')) writeFileSync(file, xml.replace('</adaptive-icon>', MONO));
+  console.log(`  ${file} → monochrome layer`);
+}
