@@ -90,6 +90,11 @@ export interface QuestInstance extends BaseRecord {
   completed_via: CompletedVia | null;
   /** Increases on every same-day un-tick, so idempotency keys stay unique (SPEC 4.8). */
   award_revision: number;
+  /**
+   * Daily quests: the habit's skills on that day (task 9.1), so relinking a habit never moves
+   * past minutes to other skills. Missing on instances made before skills existed (= none).
+   */
+  skill_ids_snapshot?: string[];
 }
 
 export type ProgressSource = 'manual' | 'focus' | 'health_connect' | 'job_log' | 'widget';

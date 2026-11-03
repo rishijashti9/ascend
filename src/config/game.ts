@@ -49,4 +49,16 @@ export const GAME = {
 
   /** Maximum number of core habits. */
   maxCoreHabits: 3,
+
+  /** Skill tree (SPEC 6.5, task 9.1). Levels 0–5 come from study hours plus finished projects. */
+  skills: {
+    /** Hours needed for level 1…5. */
+    levelHours: [3, 15, 50, 120, 250],
+    /** Finished projects needed for level 1…5 (proof for the top levels). */
+    levelProjects: [0, 0, 0, 1, 2],
+    /** A finished quest linked to a skill that isn't measured in minutes counts as this much. */
+    questCreditMinutes: 30,
+    /** Share of AI & Robotics in AI-Robotics + Games study time (the 70/30 split). */
+    balanceTarget: 0.7,
+  },
 } as const;

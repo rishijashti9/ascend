@@ -29,6 +29,7 @@ const fields = z
     target_value: z.number().positive().nullable(),
     ...linkSchema,
     due_day: day.nullable(),
+    skill_ids: z.array(z.string().min(1)).max(20),
   })
   .strict();
 
@@ -40,6 +41,7 @@ export const questDefSchema = fields.extend({
   linked_goal_type: linkSchema.linked_goal_type.default(null),
   linked_goal_id: linkSchema.linked_goal_id.default(null),
   due_day: day.nullable().default(null),
+  skill_ids: z.array(z.string().min(1)).max(20).default([]),
   /** Weekly quests: which week (defaults to the current one). */
   week_start: day.nullable().default(null),
   planned_by: z.enum(['me', 'rules', 'ai']).default('me'),
@@ -116,7 +118,6 @@ export async function insertQuest(
     ...rest,
     type,
     min_value: rest.target_value,
-    skill_ids: [],
     week_start: week,
     due_day: type === 'side' ? rest.due_day : null,
     status: 'active',

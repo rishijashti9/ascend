@@ -29,6 +29,7 @@ import { startQuests } from './core/state/quests';
 import { startReviews } from './core/state/reviews';
 import { rebuildProgress, startProgressStore } from './core/state/progress';
 import { startToday } from './core/state/today';
+import { recordAction } from './core/pipeline';
 import './styles/index.css';
 
 installGlobalErrorHandlers();
@@ -59,6 +60,12 @@ async function start(): Promise<void> {
   // Close past days and start today before the first screen (never blocks startup on error).
   await startRollover();
   void runWeeklyLocalBackup();
+  // Starter skill tree: adds only the roadmap skills this device doesn't have yet.
+  if (isEnabled('skills')) {
+    await recordAction({ type: 'skills.seed', source: 'system', payload: {} }).catch(
+      (error: unknown) => logError(error, 'skills.seed'),
+    );
+  }
   await startProgressStore();
   await startAppState();
   await startToday();

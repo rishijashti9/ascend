@@ -47,15 +47,29 @@ export interface AchievementUnlocked extends BaseRecord {
   unlocked_at: IsoTime;
 }
 
+/** Which side of the 70/30 study balance a branch counts for (SPEC 6.5). */
+export type SkillTrack = 'ai_robotics' | 'games' | 'other';
+
+/**
+ * A skill in the skill tree. Branches are plain names shared by their skills; every skill of a
+ * branch has the same `track` (changing a branch updates all of them). Seeded skills use
+ * deterministic ids (`skill:<branch>:<name>`), so two devices seed the same records.
+ */
 export interface Skill extends BaseRecord {
   branch: string;
+  track: SkillTrack;
   name: string;
   parent_id: string | null;
   order: number;
+  /** 0–5 set by Rishi; null = computed from evidence. */
   manual_level_override: number | null;
   status: 'active' | 'archived';
 }
 
+/**
+ * Stored proof for a skill: finished projects (note + link). Focus sessions and quests are not
+ * copied here — their minutes are computed from the sessions and quests themselves.
+ */
 export interface SkillEvidence extends BaseRecord {
   skill_id: string;
   type: 'session' | 'quest' | 'project';

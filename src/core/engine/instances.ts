@@ -40,6 +40,7 @@ type Snapshot = Pick<
   | 'min_version_snapshot'
   | 'core_snapshot'
   | 'auto_source_snapshot'
+  | 'skill_ids_snapshot'
 >;
 
 /** What the habit looks like right now, frozen onto an instance. */
@@ -55,6 +56,7 @@ export function habitSnapshot(habit: Habit): Snapshot {
     min_version_snapshot: habit.min_version,
     core_snapshot: habit.core,
     auto_source_snapshot: habit.auto_source,
+    skill_ids_snapshot: [...habit.skill_ids],
   };
 }
 
@@ -82,6 +84,10 @@ export function buildHabitInstance(habit: Habit, day: DayString, base: BaseRecor
 export function refreshedSnapshot(instance: QuestInstance, habit: Habit): Snapshot | null {
   if (instance.status !== 'pending') return null;
   const next = { ...habitSnapshot(habit), core_snapshot: instance.core_snapshot };
-  const changed = (Object.keys(next) as (keyof Snapshot)[]).some((k) => instance[k] !== next[k]);
+  const changed = (Object.keys(next) as (keyof Snapshot)[]).some((k) =>
+    k === 'skill_ids_snapshot'
+      ? (instance[k] ?? []).join() !== (next[k] ?? []).join()
+      : instance[k] !== next[k],
+  );
   return changed ? next : null;
 }
