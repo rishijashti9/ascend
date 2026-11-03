@@ -7,6 +7,7 @@ import {
   type BackupRecord,
 } from '@/core/backup/format';
 import type { AscendDB, TableName } from '@/core/db/db';
+import { captureScreenGuard, restoreScreenGuard } from '@/core/screentime/keep';
 import { defineAction } from '../registry';
 import { rebuildDays, type RebuildResult } from './progress';
 
@@ -53,9 +54,11 @@ export const importData = defineAction({
       backup: z.preprocess(upgradeBackup, backupSchema),
     })
     .strict(),
-  tables: [...EXPORT_TABLES],
+  tables: [...EXPORT_TABLES, 'meta'],
   async run(ctx, { mode, backup }): Promise<ImportResult> {
     const { db } = ctx;
+    // An older backup must never unlock screen time (SPEC 6.8).
+    const screen = await captureScreenGuard(db);
     let written = 0;
     let total = 0;
     for (const table of EXPORT_TABLES) {
@@ -71,6 +74,7 @@ export const importData = defineAction({
         written += await mergeTable(db, table, records);
       }
     }
+    await restoreScreenGuard(db, screen, ctx.processedAt);
     // An older backup must not bring back detail that is already summarised (SPEC 6.7 D).
     await removeCompactedDetail(db);
     const rebuild = await rebuildDays(db, ctx.processedAt);

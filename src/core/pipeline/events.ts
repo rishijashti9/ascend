@@ -51,6 +51,8 @@ export interface DomainEvents {
   SyncLinked: { clearLocal: boolean };
   DataImported: { mode: 'replace' | 'merge' };
   DataReset: Record<string, never>;
+  /** Screen-time rules, lock, breaks, incidents or daily totals changed (Phase 11). */
+  ScreenTimeChanged: { change: string };
 }
 
 export type EventType = keyof DomainEvents;
