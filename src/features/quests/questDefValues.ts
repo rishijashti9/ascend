@@ -9,6 +9,7 @@ export interface QuestDefValues {
   linked_goal_type: 'main_quest' | 'milestone' | null;
   linked_goal_id: string | null;
   due_day: string | null;
+  skill_ids: string[];
 }
 
 export const NEW_QUEST: QuestDefValues = {
@@ -20,6 +21,7 @@ export const NEW_QUEST: QuestDefValues = {
   linked_goal_type: null,
   linked_goal_id: null,
   due_day: null,
+  skill_ids: [],
 };
 
 /** Form values from a stored quest. */
@@ -36,5 +38,6 @@ export function valuesOf(q: Quest): QuestDefValues {
         : null,
     linked_goal_id: q.linked_goal_id,
     due_day: q.due_day,
+    skill_ids: [...q.skill_ids],
   };
 }

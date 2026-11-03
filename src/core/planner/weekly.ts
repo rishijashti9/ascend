@@ -53,6 +53,7 @@ export function planWeek(state: PlannerState): ProposalItem[] {
         linked_goal_type: q.linked_goal_type === 'milestone' ? 'milestone' : 'main_quest',
         linked_goal_id: q.linked_goal_id,
         carried_over_from: q.id,
+        ...(q.skill_ids.length > 0 ? { skill_ids: [...q.skill_ids] } : {}),
       },
     });
   }

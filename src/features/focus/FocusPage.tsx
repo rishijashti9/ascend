@@ -1,5 +1,6 @@
 import { Timer } from 'lucide-react';
 import { useState } from 'react';
+import { SkillPicker } from '@/ui/SkillPicker';
 import type { Stat } from '@/core/db/types';
 import { STATS } from '@/core/db/types';
 import { useAppState } from '@/core/state/app';
@@ -31,6 +32,7 @@ export function FocusPage() {
   const [target, setTarget] = useState<string>(() => quests[0]?.instance.id ?? 'stat');
   const [stat, setStat] = useState<Stat>('INT');
   const [preset, setPreset] = useState(0);
+  const [skillIds, setSkillIds] = useState<string[]>([]);
   const chosen = presets[preset] ?? presets[0] ?? { work_min: 25, break_min: 5 };
 
   if (running) return <FocusRunner session={running} />;
@@ -108,6 +110,12 @@ export function FocusPage() {
         </div>
       </section>
 
+      <SkillPicker
+        value={skillIds}
+        onChange={setSkillIds}
+        label={linked ? 'Skills (instead of the quest’s)' : 'Skills'}
+      />
+
       <Button
         disabled={busy}
         onClick={() =>
@@ -118,6 +126,7 @@ export function FocusPage() {
               stat: linked ? null : stat,
               planned_min: chosen.work_min,
               break_min: chosen.break_min,
+              skill_ids: skillIds,
             },
           })
         }

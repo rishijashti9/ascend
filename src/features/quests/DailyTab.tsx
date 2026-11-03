@@ -25,6 +25,7 @@ const NEW_HABIT: EditableHabit = {
   min_version: '',
   auto_source: 'none',
   schedule: [0, 1, 2, 3, 4, 5, 6],
+  skill_ids: [],
 };
 
 function NewHabit({ onDone }: { onDone: () => void }) {

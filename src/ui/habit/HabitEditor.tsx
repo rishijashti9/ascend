@@ -1,3 +1,4 @@
+import { SkillPicker } from '@/ui/SkillPicker';
 import { GAME } from '@/config/game';
 import type { Measure, Weekday } from '@/core/db/types';
 import { Select, TextInput } from '@/ui/Field';
@@ -132,6 +133,12 @@ export function HabitEditor<T extends EditableHabit>({
             ))}
           </div>
         </fieldset>
+      )}
+      {habit.skill_ids && (
+        <SkillPicker
+          value={habit.skill_ids}
+          onChange={(ids) => onChange({ ...habit, skill_ids: ids })}
+        />
       )}
       {problems.length > 0 && (
         <p role="alert" className="text-warning-text text-sm sm:col-span-2">

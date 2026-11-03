@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { SkillPicker } from '@/ui/SkillPicker';
 import { GAME } from '@/config/game';
 import type { Difficulty, Stat } from '@/core/db/types';
 import { NEW_QUEST, type QuestDefValues } from './questDefValues';
@@ -136,6 +137,7 @@ export function QuestDefForm({
           });
         }}
       />
+      <SkillPicker value={v.skill_ids} onChange={(ids) => setV({ ...v, skill_ids: ids })} />
       {error && (
         <p role="alert" className="text-warning-text text-sm">
           {error}

@@ -23,7 +23,7 @@ export const features = {
   // Phase 7
   sync: true,
   // Phase 9 (Jobs also needs to be switched on in Settings)
-  skills: false,
+  skills: true,
   jobs: false,
 } as const satisfies Record<string, boolean>;
 

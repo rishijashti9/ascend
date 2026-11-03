@@ -133,6 +133,8 @@ export type ProposalItem = { id: string; reason: string; selected: boolean } & (
         linked_goal_type: 'milestone' | 'main_quest';
         linked_goal_id: string | Ref;
         carried_over_from: string | null;
+        /** Carried-over quests keep their skills (task 9.2b). */
+        skill_ids?: string[];
       };
     }
   | { kind: 'habit.create'; data: HabitData }

@@ -25,6 +25,7 @@ export function editableOf(h: Habit): EditableHabit {
     min_version: h.min_version,
     auto_source: h.auto_source,
     schedule: [...h.schedule],
+    skill_ids: [...h.skill_ids],
   };
 }
 
@@ -37,6 +38,9 @@ export function changesOf(before: Habit, after: EditableHabit): Partial<Editable
   }
   if (after.schedule && after.schedule.join() !== [...before.schedule].sort().join()) {
     changes.schedule = after.schedule;
+  }
+  if (after.skill_ids && after.skill_ids.join() !== before.skill_ids.join()) {
+    changes.skill_ids = after.skill_ids;
   }
   return changes as Partial<EditableHabit>;
 }

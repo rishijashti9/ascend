@@ -13,6 +13,8 @@ export interface EditableHabit {
   min_version: string;
   auto_source: AutoSource;
   schedule?: Weekday[];
+  /** Skills it counts for (Quests screen only; onboarding has none yet). */
+  skill_ids?: string[];
 }
 
 export const MEASURES: { value: Measure; label: string }[] = [
