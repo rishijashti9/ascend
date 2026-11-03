@@ -174,7 +174,7 @@ Part C — Ask the System
 - [x] 11.5 Reminder engine
 - [x] 11.6 Android native I
 - [x] 11.7 Android native II
-- [ ] 11.8 Integrity
+- [x] 11.8 Integrity
 - [ ] 11.9 Setup + UI
 - [ ] 11.10 "Digital discipline" daily quest
 - [ ] 11.11 Privacy + data

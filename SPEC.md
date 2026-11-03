@@ -355,7 +355,7 @@ Rishi's full instruction is kept verbatim in `docs/phase11-prompt.md`; this sect
 **Lock (automatic, invisible until needed)** — a deliberate exception to principle 8
 - Accepting or changing the limit locks it for **1 week** (option: 1 month).
 - During the lock the limit can be **lowered** (and apps added) anytime; **raising** it, **removing apps** from the list or **turning reminders off** only takes effect when the lock ends, with the date shown.
-- If during a lock ASCEND's notifications or the screen-time channel are turned off, or Usage access is removed: a **banner on Today** until fixed, and the **lock extends by 7 days** (per incident). Checked whenever ASCEND opens/resumes and by the service. No XP loss.
+- If during a lock ASCEND's notifications or the screen-time channel are turned off, or Usage access is removed: a **banner on Today** until fixed, and the **lock extends by 7 days** (per incident). Checked whenever ASCEND opens, comes back to the front, and every 15 minutes while open (the service stops itself if Usage access is gone). No XP loss.
 - Locks are **synced**; the end is judged by trusted time (the server's clock from any ASCEND request, so moving the phone's clock never ends a lock early); reinstalling and signing in brings the lock back; importing a backup or "Delete everything" never removes or shortens an active lock.
 
 **Connected to the System**

@@ -3,6 +3,7 @@ import {
   applyPending,
   changeRules,
   extendedEnd,
+  incidentEnd,
   lockActive,
   lockEndMs,
   lockNow,
@@ -237,5 +238,65 @@ export const saveScreenDay = defineAction({
     await ctx.db.screen_days.put({ ...base, deleted_at: null, ...p });
     ctx.emit({ type: 'ScreenTimeChanged', payload: { change: 'day' } });
     return true;
+  },
+});
+
+// ---- Integrity (task 11.8) ----
+
+const incidentKind = z.enum(['notifications_off', 'channel_off', 'usage_access_off']);
+
+/**
+ * What's switched off right now. During a lock each NEW problem is an incident: +7 days on the
+ * lock, and a banner on Today until it's fixed. A problem that is fixed is closed (the banner
+ * goes); outside a lock (or with screen time off) nothing counts and open ones are closed.
+ */
+export const reportScreenIncidents = defineAction({
+  type: 'screen.reportIncidents',
+  schema: z.object({ broken: z.array(incidentKind).max(3) }).strict(),
+  tables: ['screen_events', 'screen_locks', 'screen_rules', 'meta', 'settings'],
+  async run(ctx, { broken }): Promise<{ added: number; resolved: number }> {
+    const open = (await ctx.db.screen_events.where('kind').equals('incident').toArray()).filter(
+      (e) => !e.deleted_at && !e.resolved_at,
+    );
+    const counting =
+      (await lockStatus(ctx.db)).active && (await getRules(ctx.db))?.enabled === true;
+    let resolved = 0;
+    for (const e of open) {
+      if (counting && e.incident && broken.includes(e.incident)) continue;
+      await ctx.db.screen_events.put({
+        ...e,
+        resolved_at: ctx.processedAt,
+        ...touch(ctx.processedAt),
+      });
+      resolved++;
+    }
+    let added = 0;
+    const lock = await getLock(ctx.db);
+    if (counting && lock) {
+      let end = lockEndMs(lock) ?? Date.parse(ctx.processedAt);
+      const day = await appDayOf(ctx.db, ctx.occurredAt);
+      for (const kind of broken) {
+        if (open.some((e) => e.incident === kind)) continue;
+        await ctx.db.screen_events.add({
+          ...newBase(undefined, ctx.processedAt),
+          kind: 'incident',
+          day,
+          at: ctx.occurredAt,
+          incident: kind,
+          resolved_at: null,
+        });
+        end = incidentEnd(end);
+        added++;
+      }
+      if (added) {
+        await ctx.db.screen_locks.put({
+          ...lock,
+          end_at: new Date(end).toISOString(),
+          ...touch(ctx.processedAt),
+        });
+      }
+    }
+    if (added || resolved) ctx.emit({ type: 'ScreenTimeChanged', payload: { change: 'incident' } });
+    return { added, resolved };
   },
 });
