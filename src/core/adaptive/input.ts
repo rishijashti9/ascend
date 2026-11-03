@@ -28,6 +28,8 @@ export interface InstanceObs {
   stat: Stat;
   /** The wake-up check-in's times say when you woke, not when you get things done. */
   wake: boolean;
+  /** A workout quest (auto source workout) — for the health gap analysis. */
+  workout?: boolean;
 }
 
 export interface FocusObs {
@@ -48,6 +50,8 @@ export interface AdaptiveInput {
   instances: InstanceObs[];
   focus: FocusObs[];
   sleep: { day: DayString; value: number }[];
+  /** Daily steps from the Body log (manual or Health Connect). */
+  steps?: { day: DayString; value: number }[];
   weight: { day: DayString; value: number }[];
   /** Daily check-in energy (1–5) — used on-device only, never sent anywhere. */
   energy: { day: DayString; value: number }[];

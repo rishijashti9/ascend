@@ -63,6 +63,7 @@ export async function loadAdaptiveInput(
           lowEnergy: low.has(i.day),
           stat: i.stat_snapshot,
           wake: i.auto_source_snapshot === 'wake_checkin',
+          workout: i.auto_source_snapshot === 'workout',
         }))
         .sort((a, b) => a.day.localeCompare(b.day));
       const body = (
@@ -87,6 +88,7 @@ export async function loadAdaptiveInput(
             linked: f.quest_instance_id !== null,
           })),
         sleep: body.flatMap((b) => (b.sleep_hours ? [{ day: b.day, value: b.sleep_hours }] : [])),
+        steps: body.flatMap((b) => (b.steps ? [{ day: b.day, value: b.steps }] : [])),
         weight: body.flatMap((b) => (b.weight ? [{ day: b.day, value: b.weight }] : [])),
         energy: reviews.flatMap((r) => (r.energy ? [{ day: r.period, value: r.energy }] : [])),
         mood: reviews.flatMap((r) => (r.mood ? [{ day: r.period, value: r.mood }] : [])),

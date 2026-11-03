@@ -57,3 +57,31 @@ export const setTargetCareer = defineAction({
     return career_id;
   },
 });
+
+/** Guided health check-in (SPEC 6.7 B). Stays on the device and the user's own account. */
+export const saveHealth = defineAction({
+  type: 'compass.saveHealth',
+  schema: z
+    .object({
+      activity: z.enum(['none', 'light', 'moderate', 'active']),
+      strengthDays: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)]),
+      sleep: z.enum(['under6', '6to7', '7to8', 'over8']),
+      energy: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]),
+      goals: z
+        .array(z.enum(['strength', 'fat_loss', 'stamina', 'better_sleep', 'less_stress']))
+        .max(5),
+    })
+    .strict(),
+  tables: ['profile'],
+  async run(ctx, answers) {
+    const profile = await ctx.db.profile.get('profile');
+    if (!profile) throw new RuleError('Finish setting up first');
+    await ctx.db.profile.put({
+      ...profile,
+      compass: { ...profile.compass, health: { ...answers, at: ctx.processedAt } },
+      ...touch(ctx.processedAt),
+    });
+    ctx.emit({ type: 'ProfileChanged', payload: { changed: ['compass'] } });
+    return true;
+  },
+});
