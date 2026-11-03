@@ -279,6 +279,43 @@ export const setJobStage = defineAction({
   },
 });
 
+/** "Followed up": remind again in a week, or stop reminding for this application. */
+export const followedUp = defineAction({
+  type: 'job.followedUp',
+  schema: z.object({ id: z.string().min(1), next: z.enum(['week', 'none']) }).strict(),
+  tables: [...TABLES],
+  async run(ctx, { id, next }) {
+    const current = await getJob(ctx, id);
+    const today = await appDayOf(ctx.db, ctx.occurredAt);
+    const updated: JobApplication = {
+      ...current,
+      follow_up_at: next === 'week' ? addDays(today, FOLLOW_UP_DAYS) : null,
+      ...touch(ctx.processedAt),
+    };
+    await ctx.db.job_applications.put(updated);
+    ctx.emit({ type: 'JobChanged', payload: { jobId: id, change: 'updated' } });
+    return updated;
+  },
+});
+
+/** Meta key hiding one kind of job suggestion until a day (this device only). */
+export const jobSuggestionSnoozeKey = (kind: string) => `job_suggestion_snooze:${kind}`;
+export const JOB_SUGGESTION_SNOOZE_DAYS = 14;
+
+/** "Not now" on a job-stats suggestion: hidden for two weeks. */
+export const snoozeJobSuggestion = defineAction({
+  type: 'job.snoozeSuggestion',
+  schema: z.object({ kind: z.enum(['interview', 'assessment', 'response']) }).strict(),
+  tables: ['meta', 'settings'],
+  async run(ctx, { kind }) {
+    const today = await appDayOf(ctx.db, ctx.occurredAt);
+    const until = addDays(today, JOB_SUGGESTION_SNOOZE_DAYS);
+    await ctx.db.meta.put({ id: jobSuggestionSnoozeKey(kind), value: until });
+    ctx.emit({ type: 'JobChanged', payload: { jobId: '', change: 'updated' } });
+    return until;
+  },
+});
+
 /** Delete an application (soft delete). Same day, its automatic quests are taken back. */
 export const deleteJob = defineAction({
   type: 'job.delete',

@@ -1,4 +1,4 @@
-import type { DayString, Habit, QuestInstance, Settings } from '@/core/db/types';
+import type { DayString, Habit, JobApplication, QuestInstance, Settings } from '@/core/db/types';
 import { isRecoveryId, isScheduled } from '@/core/engine/instances';
 import { isDone } from '@/core/engine/progress';
 import { addDays, dayNumber, instantAt, localParts, parseTime } from '@/core/time';
@@ -18,7 +18,7 @@ export interface PlanInput {
   settings: Pick<
     Settings,
     'wake_time' | 'wake_window_min' | 'day_start_hour' | 'notifications' | 'quiet_hours'
-  >;
+  > & { jobs_enabled?: boolean };
   startDay: DayString | null;
   habits: readonly Habit[];
   /** Today's quest instances (later days have none yet). */
@@ -28,7 +28,12 @@ export interface PlanInput {
   >[];
   /** Today's daily check-in is already saved. */
   checkInDone: boolean;
+  /** Open job applications with a follow-up day (task 9.5). */
+  followUps?: readonly Pick<JobApplication, 'id' | 'company' | 'follow_up_at'>[];
 }
+
+/** Job follow-up reminders come mid-morning (task 9.5). */
+export const FOLLOW_UP_TIME = '10:00';
 
 /** The core-quest reminder's time: early evening, while there's still time to do a minimum. */
 export const REMINDER_TIME = '18:00';
@@ -142,6 +147,29 @@ export function planNotifications(input: PlanInput): PlannedNotification[] {
           title: k === 0 ? `${plural(open, 'core quest')} still open.` : 'Core quests still open?',
           body: 'The minimum versions count — they keep the day active.',
           path: '/',
+        });
+      }
+    }
+
+    // Job follow-ups (SPEC 6.5): one reminder on the follow-up day; overdue ones today.
+    if (n.job_followups && settings.jobs_enabled) {
+      const due = (input.followUps ?? []).filter(
+        (j) =>
+          j.follow_up_at !== null && (k === 0 ? j.follow_up_at <= day : j.follow_up_at === day),
+      );
+      const first = due[0];
+      if (first) {
+        list.push({
+          key: `followup:${day}`,
+          kind: 'job_followup',
+          at: at(day, FOLLOW_UP_TIME),
+          day,
+          title:
+            due.length === 1
+              ? `Follow up with ${first.company}?`
+              : `${due.length} applications to follow up.`,
+          body: 'A short, polite check-in a week after applying often gets an answer.',
+          path: '/jobs',
         });
       }
     }

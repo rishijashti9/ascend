@@ -176,3 +176,25 @@ describe('isApplyQuest', () => {
     expect(isApplyQuest(q('Applied maths revision'))).toBe(false);
   });
 });
+
+describe('follow-ups and suggestions (task 9.5)', () => {
+  it('"followed up" moves the reminder a week on, or stops it', async () => {
+    const job = await create({ company: 'X', role: 'R' });
+    setNow(ist(2026, 11, 10, 10));
+    const next = await v<JobApplication>({
+      type: 'job.followedUp',
+      payload: { id: job.id, next: 'week' },
+    });
+    expect(next.follow_up_at).toBe('2026-11-17');
+    const off = await v<JobApplication>({
+      type: 'job.followedUp',
+      payload: { id: job.id, next: 'none' },
+    });
+    expect(off.follow_up_at).toBeNull();
+  });
+
+  it('"Not now" hides a suggestion for two weeks on this device', async () => {
+    await t.run({ type: 'job.snoozeSuggestion', payload: { kind: 'interview' } });
+    expect((await t.db.meta.get('job_suggestion_snooze:interview'))?.value).toBe('2026-11-16');
+  });
+});

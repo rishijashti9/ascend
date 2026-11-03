@@ -4,6 +4,8 @@ import { recordAction } from '@/core/pipeline';
 import { addDays } from '@/core/time';
 import type { PlannerState } from './analyze';
 import { planMilestoneWeek } from './followups';
+import { jobSuggestion } from './jobs';
+import { matchTemplate } from './analyze';
 import { loadPlannerState } from './state';
 import type { ProposalItem } from './types';
 
@@ -67,6 +69,42 @@ export function planWeek(state: PlannerState): ProposalItem[] {
     for (const item of planMilestoneWeek(state, milestone, goal, `${goal.id.slice(0, 4)}-`)) {
       if (item.kind === 'quest.create' && titles.has(item.data.title)) continue;
       items.push(item);
+    }
+  }
+  // The job stats add one step to an active job-search goal (task 9.5), e.g. a mock interview.
+  const suggestion = jobSuggestion(state.jobStats);
+  if (suggestion && !titles.has(suggestion.title)) {
+    for (const goal of state.mainQuests.filter((q) => q.status === 'active')) {
+      if (matchTemplate(goal.title, goal.planner_context).id !== 'jobs') continue;
+      const milestone = state.milestones
+        .filter((m) => m.main_quest_id === goal.id && m.status === 'active')
+        .sort((a, b) => a.order - b.order)[0];
+      if (!milestone) continue;
+      const taken = state.quests.some(
+        (q) =>
+          q.deleted_at === null &&
+          q.type === 'weekly' &&
+          q.week_start === state.weekStart &&
+          q.title === suggestion.title,
+      );
+      if (taken) break;
+      items.splice(Math.min(items.length, MAX_WEEKLY - 1), 0, {
+        id: 'job1',
+        kind: 'quest.create',
+        selected: true,
+        reason: suggestion.reason,
+        data: {
+          type: 'weekly',
+          title: suggestion.title,
+          stat: goal.stat,
+          difficulty: 'normal',
+          week_start: state.weekStart,
+          linked_goal_type: 'milestone',
+          linked_goal_id: milestone.id,
+          carried_over_from: null,
+        },
+      });
+      break;
     }
   }
   return items.slice(0, MAX_WEEKLY);

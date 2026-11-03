@@ -2,7 +2,12 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 import { getNotifier } from '@/app/notify';
 import type { Settings } from '@/core/db/types';
-import { addMinutes, minuteInQuietHours, REMINDER_TIME } from '@/core/notifications/plan';
+import {
+  addMinutes,
+  FOLLOW_UP_TIME,
+  minuteInQuietHours,
+  REMINDER_TIME,
+} from '@/core/notifications/plan';
 import type { NotifyPermission } from '@/core/notifications/types';
 import { useToday } from '@/core/state/today';
 import { Button } from '@/ui/Button';
@@ -11,7 +16,8 @@ import { Switch } from '@/ui/Switch';
 import { ReliableReminders } from './ReliableReminders';
 import { Card } from './sections';
 
-type Toggle = 'wake_checkin' | 'morning_briefing' | 'quest_reminders' | 'evening_winddown';
+type Toggle =
+  'wake_checkin' | 'morning_briefing' | 'quest_reminders' | 'evening_winddown' | 'job_followups';
 const KINDS: { key: Toggle; label: string; hint: (s: Settings) => string }[] = [
   {
     key: 'wake_checkin',
@@ -34,6 +40,12 @@ const KINDS: { key: Toggle; label: string; hint: (s: Settings) => string }[] = [
     key: 'evening_winddown',
     label: 'Evening wind-down',
     hint: (s) => `At ${s.notifications.evening_time}: a nudge for the 1-minute check-in.`,
+  },
+  {
+    key: 'job_followups',
+    label: 'Job follow-ups',
+    hint: () =>
+      `At ${FOLLOW_UP_TIME} on an application’s follow-up day (7 days after applying, unless you change it).`,
   },
 ];
 
@@ -148,7 +160,7 @@ export function NotificationSettings({ settings }: { settings: Settings }) {
       )}
 
       <ul className="divide-border flex flex-col divide-y">
-        {KINDS.map((k) => (
+        {KINDS.filter((k) => k.key !== 'job_followups' || settings.jobs_enabled).map((k) => (
           <li key={k.key} className="flex items-start justify-between gap-4 py-3">
             <div>
               <p className="font-medium" id={`notify-${k.key}`}>

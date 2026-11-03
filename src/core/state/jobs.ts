@@ -8,9 +8,15 @@ import { subscribeAll } from '@/core/pipeline';
 export interface JobsState {
   status: 'loading' | 'ready';
   jobs: JobApplication[];
+  /** Job-stats suggestions hidden until a day, by kind (this device only). */
+  snoozed: Record<string, string>;
 }
 
-export const jobsStore = createStore<JobsState>(() => ({ status: 'loading', jobs: [] }));
+export const jobsStore = createStore<JobsState>(() => ({
+  status: 'loading',
+  jobs: [],
+  snoozed: {},
+}));
 
 export function useJobs<T>(selector: (state: JobsState) => T): T {
   return useStore(jobsStore, selector);
@@ -21,7 +27,14 @@ export async function loadJobs(database: AscendDB = defaultDb): Promise<void> {
     const jobs = (await database.job_applications.toArray())
       .filter((j) => j.deleted_at === null)
       .sort((a, b) => b.updated_at.localeCompare(a.updated_at));
-    jobsStore.setState({ status: 'ready', jobs });
+    const snoozed: Record<string, string> = {};
+    for (const m of await database.meta
+      .where('id')
+      .startsWith('job_suggestion_snooze:')
+      .toArray()) {
+      if (typeof m.value === 'string') snoozed[m.id.split(':')[1] ?? ''] = m.value;
+    }
+    jobsStore.setState({ status: 'ready', jobs, snoozed });
   } catch (error) {
     logError(error, 'jobs.load');
   }

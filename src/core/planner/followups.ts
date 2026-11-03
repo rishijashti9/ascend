@@ -1,5 +1,6 @@
 import type { Dream, MainQuest, Milestone } from '@/core/db/types';
 import { analyze, matchTemplate, type PlannerState } from './analyze';
+import { applicationCount } from './jobs';
 import { itemList, linkedTo, weeklyCount, weeklyIdeas } from './plan';
 import type { ProposalItem } from './types';
 
@@ -46,6 +47,7 @@ export function planMilestoneWeek(
       linked_goal_type: 'milestone',
       linked_goal_id: milestone.id,
       carried_over_from: null,
+      ...applicationCount(title),
     },
   }));
 }

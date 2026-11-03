@@ -6,7 +6,7 @@ import type { DayString } from '@/core/db/types';
  * web: while ASCEND is open). Everything is recomputed from data, never stored.
  */
 export type NotificationKind =
-  'wake' | 'briefing' | 'reminder' | 'winddown' | 'welcome_back' | 'test';
+  'wake' | 'briefing' | 'reminder' | 'winddown' | 'welcome_back' | 'job_followup' | 'test';
 
 export interface PlannedNotification {
   /** Stable key, e.g. `wake:2026-11-03` — the same reminder always gets the same key. */

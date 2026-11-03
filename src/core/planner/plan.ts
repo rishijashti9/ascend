@@ -10,6 +10,7 @@ import {
   type PlannerState,
 } from './analyze';
 import type { Answers, Plan, PlanMilestone, PlanTemplate, ProposalItem } from './types';
+import { applicationCount } from './jobs';
 
 /**
  * Plans (SPEC 6.3 step 3): milestones with dates, this week's weekly quests and new daily
@@ -189,6 +190,7 @@ export function planMainQuest(
           linked_goal_type: 'milestone',
           linked_goal_id: activeRef,
           carried_over_from: null,
+          ...applicationCount(title),
         },
       });
     }

@@ -1,3 +1,4 @@
+import { FollowUpsCard } from '@/features/jobs/FollowUpsCard';
 import { BatteryLow, Timer } from 'lucide-react';
 import { Link } from 'react-router';
 import { isEnabled } from '@/config/features';
@@ -76,6 +77,7 @@ export function TodayPage() {
         <ReminderSetupCard />
         <SyncPausedNote />
         <GoalNudges />
+        <FollowUpsCard />
         <WeeklyReviewPrompt />
         <MonthlyReviewPrompt />
         <CheckInPrompt />

@@ -11,6 +11,7 @@ import { Button } from '@/ui/Button';
 import { JobCard } from './JobCard';
 import { JobForm } from './JobForm';
 import { JobStats } from './JobStats';
+import { JobSuggestionCard } from './JobSuggestionCard';
 import { COLUMNS } from './labels';
 
 /**
@@ -80,6 +81,7 @@ export function JobsPage() {
         </p>
       ) : (
         <>
+          <JobSuggestionCard stats={stats} />
           <JobStats stats={stats} />
 
           {/* Mobile: one list in sections; Closed collapsed. */}

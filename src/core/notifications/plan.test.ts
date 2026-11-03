@@ -245,3 +245,42 @@ describe('planNotifications: quiet hours and a week away', () => {
     expect(plan(input({ settings: only([]) }))).toEqual([]); // all off → no note either
   });
 });
+
+describe('planNotifications: job follow-ups (task 9.5)', () => {
+  const settings = {
+    ...only([]),
+    jobs_enabled: true,
+    notifications: { ...only([]).notifications, job_followups: true },
+  };
+  const followUps = [
+    { id: 'a', company: 'Agile Robots', follow_up_at: '2026-10-30' },
+    { id: 'b', company: 'NEURA', follow_up_at: '2026-11-02' },
+    { id: 'c', company: 'Franka', follow_up_at: '2026-11-05' },
+  ];
+  const jobs = (over: Partial<PlanInput> = {}) =>
+    planNotifications(input({ settings, followUps, ...over })).filter(
+      (n) => n.kind === 'job_followup',
+    );
+
+  it('one reminder at 10:00 on each follow-up day; overdue ones come today', () => {
+    const list = jobs();
+    expect(list.map((n) => [n.key, n.title])).toEqual([
+      ['followup:2026-11-02', '2 applications to follow up.'],
+      ['followup:2026-11-05', 'Follow up with Franka?'],
+    ]);
+    expect(list[0]?.at).toBe(ist(2026, 11, 2, 10));
+    expect(list[0]?.path).toBe('/jobs');
+  });
+
+  it('nothing while the tracker or the switch is off', () => {
+    expect(jobs({ settings: { ...settings, jobs_enabled: false } })).toEqual([]);
+    expect(
+      jobs({
+        settings: {
+          ...settings,
+          notifications: { ...settings.notifications, job_followups: false },
+        },
+      }),
+    ).toEqual([]);
+  });
+});

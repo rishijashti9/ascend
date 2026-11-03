@@ -1,4 +1,5 @@
 import type { AscendDB } from '@/core/db/db';
+import { jobStats } from '@/core/engine/jobs';
 import { addDays, currentTimeZone, dayOf, nowMs, weekStartOf } from '@/core/time';
 import type { PlannerState } from './analyze';
 
@@ -6,15 +7,27 @@ import type { PlannerState } from './analyze';
 export async function loadPlannerState(db: AscendDB): Promise<PlannerState> {
   return db.transaction(
     'r',
-    ['settings', 'main_quests', 'milestones', 'habits', 'quests', 'quest_instances'],
+    [
+      'settings',
+      'main_quests',
+      'milestones',
+      'habits',
+      'quests',
+      'quest_instances',
+      'job_applications',
+    ],
     async () => {
       const settings = await db.settings.get('settings');
       const today = dayOf(nowMs(), currentTimeZone(), settings?.day_start_hour ?? 3);
       const live = <T extends { deleted_at: string | null }>(rows: T[]) =>
         rows.filter((r) => r.deleted_at === null);
+      const weekStartsOn = settings?.week_start ?? 1;
       return {
         today,
-        weekStart: weekStartOf(today, settings?.week_start ?? 1),
+        weekStart: weekStartOf(today, weekStartsOn),
+        jobStats: settings?.jobs_enabled
+          ? jobStats(await db.job_applications.toArray(), today, weekStartsOn)
+          : null,
         mainQuests: live(await db.main_quests.toArray()),
         milestones: live(await db.milestones.toArray()),
         habits: live(await db.habits.toArray()),

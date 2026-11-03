@@ -135,6 +135,9 @@ export type ProposalItem = { id: string; reason: string; selected: boolean } & (
         carried_over_from: string | null;
         /** Carried-over quests keep their skills (task 9.2b). */
         skill_ids?: string[];
+        /** "Send N applications" quests are counted (task 9.5). */
+        measure?: 'count';
+        target_value?: number;
       };
     }
   | { kind: 'habit.create'; data: HabitData }

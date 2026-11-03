@@ -20,7 +20,7 @@ export function rescheduleAll(): Promise<PlannedNotification[]> {
 export async function loadPlanInput(database: AscendDB): Promise<PlanInput> {
   return database.transaction(
     'r',
-    ['settings', 'profile', 'habits', 'quest_instances', 'reviews'],
+    ['settings', 'profile', 'habits', 'quest_instances', 'reviews', 'job_applications'],
     async () => {
       const today = await appDayOf(database, isoNow());
       return {
@@ -31,6 +31,12 @@ export async function loadPlanInput(database: AscendDB): Promise<PlanInput> {
         startDay: (await database.profile.get('profile'))?.start_day ?? null,
         habits: (await database.habits.toArray()).filter((h) => h.deleted_at === null),
         todayInstances: await database.quest_instances.where('day').equals(today).toArray(),
+        followUps: (await database.job_applications.toArray()).filter(
+          (j) =>
+            j.deleted_at === null &&
+            j.follow_up_at !== null &&
+            !['offer', 'rejected', 'ghosted'].includes(j.stage),
+        ),
         checkInDone: await database.reviews
           .get(`review:daily:${today}`)
           .then((r) => !!r && r.deleted_at === null),

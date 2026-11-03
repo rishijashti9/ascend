@@ -1,3 +1,4 @@
+import type { JobStats } from '@/core/engine/jobs';
 import type {
   DayString,
   Habit,
@@ -24,6 +25,8 @@ export interface PlannerState {
   quests: readonly Quest[];
   /** Daily-quest instances of recent days (for the completion rate). */
   instances: readonly Pick<QuestInstance, 'source_type' | 'status' | 'day' | 'deleted_at'>[];
+  /** Job search stats while the job tracker is switched on (task 9.5), else null/absent. */
+  jobStats?: JobStats | null;
 }
 
 /** Above this many minutes of daily quests a day, the planner suggests trimming (≈6 h). */
