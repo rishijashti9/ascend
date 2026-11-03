@@ -129,6 +129,8 @@ export function QuestCard({
   const id = instance.id;
   // Weekly and side quests have one version: a single "Done" tap, or one target to reach.
   const single = instance.source_type === 'quest';
+  // The Digital discipline quest completes itself after its day (Phase 11) — no buttons.
+  const auto = instance.auto_source_snapshot === 'screen_time';
 
   return (
     <li
@@ -142,9 +144,14 @@ export function QuestCard({
             <h3 className="font-medium">{instance.title_snapshot}</h3>
             <StatChip stat={instance.stat_snapshot} />
           </div>
-          {m === 'check' && !single && (
+          {m === 'check' && !single && !auto && (
             <p className="text-muted text-sm">
               {instance.full_version_snapshot} · minimum: {instance.min_version_snapshot}
+            </p>
+          )}
+          {auto && (
+            <p className="text-muted text-sm">
+              Completes itself when the day ends within your entertainment limit.
             </p>
           )}
           {m !== 'check' && (
@@ -166,7 +173,7 @@ export function QuestCard({
         </div>
         <div className="flex shrink-0 items-center gap-1">
           <StatusLine status={instance.status} pop={float !== null} single={single} />
-          {done && (
+          {done && !auto && (
             <Button
               variant="ghost"
               className="px-2"
@@ -188,7 +195,7 @@ export function QuestCard({
         />
       )}
 
-      {m === 'check' && single && instance.status === 'pending' && (
+      {m === 'check' && single && !auto && instance.status === 'pending' && (
         <Button
           disabled={busy}
           onClick={() =>
@@ -198,7 +205,7 @@ export function QuestCard({
           Done
         </Button>
       )}
-      {m === 'check' && !single && instance.status === 'pending' && (
+      {m === 'check' && !single && !auto && instance.status === 'pending' && (
         <div className={`flex gap-2 ${lowEnergy ? 'flex-row-reverse' : ''}`}>
           <Button
             variant={lowEnergy ? 'secondary' : 'primary'}
@@ -222,7 +229,7 @@ export function QuestCard({
           </Button>
         </div>
       )}
-      {m === 'check' && instance.status === 'done_min' && (
+      {m === 'check' && !auto && instance.status === 'done_min' && (
         <Button
           variant="secondary"
           className="self-start"

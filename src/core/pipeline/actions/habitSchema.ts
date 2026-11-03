@@ -5,7 +5,14 @@ import { z } from 'zod';
 export const statSchema = z.enum(['STR', 'INT', 'WIL']);
 export const difficultySchema = z.enum(['easy', 'normal', 'hard', 'epic']);
 export const measureSchema = z.enum(['check', 'minutes', 'count', 'steps', 'sleep_hours']);
-export const autoSourceSchema = z.enum(['none', 'steps', 'sleep', 'workout', 'wake_checkin']);
+export const autoSourceSchema = z.enum([
+  'none',
+  'steps',
+  'sleep',
+  'workout',
+  'wake_checkin',
+  'screen_time',
+]);
 const weekday = z.number().int().min(0).max(6);
 
 export const habitFieldsSchema = z

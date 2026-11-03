@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { habitInstanceId } from '@/core/engine/instances';
+import { combineDays, entertainmentSeconds } from '@/core/screentime/apps';
 import {
   applyPending,
   changeRules,
@@ -25,6 +27,8 @@ import { SCREEN_META, trustedMs } from '@/core/screentime/trustedTime';
 import { appDayOf } from '../helpers';
 import { newBase, touch } from '../records';
 import { defineAction, RuleError, type ActionContext } from '../registry';
+import { insertHabit } from './habits';
+import { applyStatus, QUEST_TABLES } from './questCommon';
 
 /**
  * Screen time (SPEC 6.8). Every change to the rules, the lock, breaks and the daily totals goes
@@ -126,9 +130,11 @@ export const setScreenLimit = defineAction({
       lock: z.enum(['week', 'month']).default('week'),
     })
     .strict(),
-  tables: [...RULE_TABLES, 'habits', 'quest_instances'] as RuleTables,
+  tables: [...RULE_TABLES, 'habits', 'quest_instances', 'days'] as RuleTables,
   async run(ctx, { limit_min, lock }): Promise<RuleResult> {
+    const first = rulesState(await getRules(ctx.db)).limit_min === null;
     const r = await change(ctx, { kind: 'limit', limit_min });
+    if (first) await ensureDisciplineHabit(ctx);
     if (r.deferred) return r;
     return { deferred: false, lockEndMs: await extendLock(ctx, lock) };
   },
@@ -298,5 +304,63 @@ export const reportScreenIncidents = defineAction({
     }
     if (added || resolved) ctx.emit({ type: 'ScreenTimeChanged', payload: { change: 'incident' } });
     return { added, resolved };
+  },
+});
+
+// ---- The Digital discipline quest (task 11.10) ----
+
+/** The daily quest offered when the first limit is accepted (SPEC 6.8). */
+export const DISCIPLINE_HABIT = {
+  title: 'Digital discipline',
+  stat: 'WIL',
+  difficulty: 'easy',
+  measure: 'check',
+  full_version: 'Entertainment within today’s limit',
+  min_version: 'Entertainment within today’s limit',
+  target_value: null,
+  min_value: null,
+  core: false,
+  auto_source: 'screen_time',
+  planned_by: 'rules',
+} as const;
+
+/** Adds the quest once — never again if Rishi archived or deleted it. */
+async function ensureDisciplineHabit(ctx: ActionContext): Promise<void> {
+  const any = await ctx.db.habits.filter((h) => h.auto_source === 'screen_time').first();
+  if (any) return;
+  await insertHabit(ctx, { ...DISCIPLINE_HABIT });
+}
+
+/**
+ * Judges the Digital discipline quest for a finished day: done (full) when that day's
+ * entertainment stayed within the limit. Needs that day's readings; status only goes up, like
+ * every quest. Runs at startup (before and after the day closes) and with each screen-time
+ * check, as a real action that may arrive after its day closed (source `screen_time`).
+ */
+export const judgeScreenDay = defineAction({
+  type: 'screen.judgeDay',
+  schema: z.object({ day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/) }).strict(),
+  tables: [...QUEST_TABLES, 'habits', 'screen_days', 'screen_rules'],
+  async run(ctx, { day }): Promise<boolean> {
+    const rules = await getRules(ctx.db);
+    if (!rules?.enabled || rules.limit_min === null) return false;
+    if (day >= (await appDayOf(ctx.db, ctx.processedAt))) return false; // only finished days
+    const records = (await ctx.db.screen_days.where('day').equals(day).toArray()).filter(
+      (d) => !d.deleted_at,
+    );
+    if (records.length === 0) return false;
+    if (entertainmentSeconds(combineDays(records), rules) > rules.limit_min * 60) return false;
+    const habits = await ctx.db.habits
+      .filter((h) => h.auto_source === 'screen_time' && !h.deleted_at)
+      .toArray();
+    let done = false;
+    for (const h of habits) {
+      const instance = await ctx.db.quest_instances.get(habitInstanceId(h.id, day));
+      if (!instance || instance.deleted_at) continue;
+      if (instance.status !== 'pending' && instance.status !== 'missed') continue;
+      await applyStatus(ctx, instance, 'done_full', day);
+      done = true;
+    }
+    return done;
   },
 });

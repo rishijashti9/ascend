@@ -3,6 +3,7 @@ import { logError } from '@/core/errorLog';
 import { recordAction } from '@/core/pipeline';
 import type { ScreenBridge } from './bridge';
 import { checkIntegrity } from './integrity';
+import { judgeRecentDays } from './judge';
 import { READ_EVERY_MS, readScreenTime } from './reader';
 import { startSnapshotWriter } from './snapshot';
 import { refreshTrustedTime } from './trustedTime';
@@ -19,6 +20,7 @@ export async function screenTimeTick(bridge: ScreenBridge, db: AscendDB): Promis
     await recordAction({ type: 'screen.applyPending', source: 'system', payload: {} }, { db });
     await readScreenTime(bridge, db);
     await checkIntegrity(bridge, db);
+    await judgeRecentDays(db);
   } catch (error) {
     logError(error, 'screen.tick');
   }

@@ -30,6 +30,9 @@ export const completeQuest = defineAction({
     if (instance.auto_source_snapshot === 'wake_checkin') {
       throw new RuleError('Use the "I\'m up" check-in for the wake-up quest');
     }
+    if (instance.auto_source_snapshot === 'screen_time') {
+      throw new RuleError('This one completes itself when the day ends within your limit');
+    }
     const to = version === 'full' ? 'done_full' : 'done_min';
     if (instance.status === 'done_full' && to === 'done_min') {
       throw new RuleError('Already done in full. Un-tick first to change it.');

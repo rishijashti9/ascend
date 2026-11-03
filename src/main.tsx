@@ -43,6 +43,7 @@ import { startToday } from './core/state/today';
 import { recordAction } from './core/pipeline';
 import { screenBridge } from './app/screenTime';
 import { readScreenTime } from './core/screentime/reader';
+import { judgeRecentDays } from './core/screentime/judge';
 import { startScreenTime } from './core/screentime/runner';
 import { startScreenStore } from './core/state/screen';
 import { db } from './core/db/db';
@@ -93,9 +94,13 @@ async function start(): Promise<void> {
   // Screen time (Phase 11, Android): yesterday's final totals first, so its Digital discipline
   // quest is judged on real numbers when the day closes.
   const screen = isEnabled('screenTime') && isNativeApp();
-  if (screen) await readScreenTime(screenBridge, db);
+  if (screen) {
+    await readScreenTime(screenBridge, db);
+    await judgeRecentDays(db); // days still open since the last visit
+  }
   // Close past days and start today before the first screen (never blocks startup on error).
   await startRollover();
+  if (screen) await judgeRecentDays(db); // days the app was never opened on
   void runWeeklyLocalBackup();
   // Starter skill tree: adds only the roadmap skills this device doesn't have yet.
   if (isEnabled('skills')) {

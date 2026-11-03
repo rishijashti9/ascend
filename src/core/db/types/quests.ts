@@ -11,7 +11,8 @@ import type {
 } from './common';
 
 export type HabitStatus = 'active' | 'paused' | 'archived';
-export type AutoSource = 'none' | 'steps' | 'sleep' | 'workout' | 'wake_checkin';
+/** `screen_time`: the Digital discipline quest, judged from screen time (Phase 11). */
+export type AutoSource = 'none' | 'steps' | 'sleep' | 'workout' | 'wake_checkin' | 'screen_time';
 
 /** A recurring daily quest. Edits apply from today forward (instances keep snapshots). */
 export interface Habit extends BaseRecord, GoalLink {
@@ -63,7 +64,8 @@ export interface Quest extends BaseRecord, GoalLink {
 
 export type InstanceStatus =
   'pending' | 'done_full' | 'done_min' | 'done_late' | 'skipped' | 'missed';
-export type CompletedVia = 'tap' | 'widget' | 'health' | 'focus' | 'job_log' | 'notification';
+export type CompletedVia =
+  'tap' | 'widget' | 'health' | 'focus' | 'job_log' | 'notification' | 'screen_time';
 
 /**
  * One scheduled occurrence of a habit or quest. Deterministic id:

@@ -26,6 +26,7 @@ export function HabitEditor<T extends EditableHabit>({
   onChange: (h: T) => void;
 }) {
   const wake = habit.auto_source === 'wake_checkin';
+  const screen = habit.auto_source === 'screen_time';
   const problems = editProblems(habit);
   const schedule = habit.schedule;
   const toggleDay = (day: Weekday) => {
@@ -61,9 +62,11 @@ export function HabitEditor<T extends EditableHabit>({
         }))}
         onChange={(e) => onChange({ ...habit, difficulty: e.target.value as T['difficulty'] })}
       />
-      {wake ? (
+      {wake || screen ? (
         <p className="text-muted self-end text-sm">
-          Completed with the “I’m up” button. The times follow your wake-up time.
+          {wake
+            ? 'Completed with the “I’m up” button. The times follow your wake-up time.'
+            : 'Completes itself each day your entertainment stays within your screen-time limit.'}
         </p>
       ) : (
         <Select
@@ -73,7 +76,7 @@ export function HabitEditor<T extends EditableHabit>({
           onChange={(e) => onChange(changeMeasure(habit, e.target.value as Measure))}
         />
       )}
-      {!wake && habit.measure === 'check' && (
+      {!wake && !screen && habit.measure === 'check' && (
         <>
           <TextInput
             label="Full version"

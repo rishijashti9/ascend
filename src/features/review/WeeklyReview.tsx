@@ -14,6 +14,8 @@ import { formatDay } from '@/features/goals/format';
 import { Button } from '@/ui/Button';
 import { Field } from '@/ui/Field';
 import { useAction } from '@/ui/hooks/useAction';
+import { isEnabled } from '@/config/features';
+import { ScreenWeekLine } from '@/features/screentime/ScreenWeekLine';
 import { Stat } from './Stat';
 
 const TEXTAREA =
@@ -106,6 +108,7 @@ export function WeeklyReview({ weekStart, today }: { weekStart: string; today: s
             <Stat label="Weekly quests" value={`${stats.weeklyDone} of ${stats.weeklyTotal}`} />
           </div>
         )}
+        {isEnabled('screenTime') && <ScreenWeekLine weekStart={weekStart} today={today} />}
       </section>
 
       <form

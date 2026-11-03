@@ -83,7 +83,7 @@ export function buildSnapshot(input: SnapshotInput): WidgetSnapshot {
     kind:
       i.auto_source_snapshot === 'wake_checkin'
         ? 'wake'
-        : i.measure_snapshot === 'check'
+        : i.measure_snapshot === 'check' && i.auto_source_snapshot !== 'screen_time'
           ? 'check'
           : 'open',
     done: isDone(i.status),

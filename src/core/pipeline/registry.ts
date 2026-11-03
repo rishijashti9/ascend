@@ -30,6 +30,7 @@ export type ActionSource =
   | 'health'
   | 'focus'
   | 'job_log'
+  | 'screen_time' // the Digital discipline quest, judged after its day (Phase 11)
   | 'planner'
   | 'rollover'
   | 'sync'

@@ -176,6 +176,6 @@ Part C — Ask the System
 - [x] 11.7 Android native II
 - [x] 11.8 Integrity
 - [x] 11.9 Setup + UI
-- [ ] 11.10 "Digital discipline" daily quest
+- [x] 11.10 "Digital discipline" daily quest
 - [ ] 11.11 Privacy + data
 - [ ] 11.12 Phase 11 wrap-up

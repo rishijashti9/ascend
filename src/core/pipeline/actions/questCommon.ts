@@ -21,7 +21,15 @@ export const QUEST_TABLES = [
 
 /** Sources that deliver real actions which may arrive after their day has closed. */
 // 'focus': a session that ends after the day-start hour still counts for the day it began.
-const DELAYED_SOURCES: ActionSource[] = ['widget', 'notification', 'sync', 'health', 'focus'];
+// 'screen_time': the Digital discipline quest is judged once its day is over.
+const DELAYED_SOURCES: ActionSource[] = [
+  'widget',
+  'notification',
+  'sync',
+  'health',
+  'focus',
+  'screen_time',
+];
 
 export async function loadInstance(ctx: ActionContext, id: string): Promise<QuestInstance> {
   const instance = await ctx.db.quest_instances.get(id);
@@ -82,6 +90,8 @@ export function viaFor(source: ActionSource): CompletedVia {
       return 'focus';
     case 'job_log':
       return 'job_log';
+    case 'screen_time':
+      return 'screen_time';
     default:
       return 'tap';
   }
