@@ -10,6 +10,8 @@ import { startAutoPlanner } from './core/planner/auto';
 import { startAchievements } from './core/achievements/auto';
 import { startAchievementsStore } from './core/state/achievements';
 import { startMoments } from './core/state/moments';
+import { startAuthRedirects } from './app/auth';
+import { accountStore, startAccount } from './core/state/account';
 import { getNotifier } from './app/notify';
 import { isEnabled } from './config/features';
 import { startNotificationScheduler } from './core/notifications/scheduler';
@@ -62,6 +64,10 @@ async function start(): Promise<void> {
   await startBody();
   await startReviews();
   await startAchievementsStore();
+  if (isEnabled('sync')) {
+    await startAccount();
+    startAuthRedirects((notice) => accountStore.setState({ notice }));
+  }
   await startSuggestion();
   startAutoPlanner();
   startAchievements();

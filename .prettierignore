@@ -7,3 +7,5 @@ package-lock.json
 SPEC.md
 dev-dist
 assets/
+supabase/.temp
+supabase/.branches

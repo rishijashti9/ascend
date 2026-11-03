@@ -20,6 +20,8 @@ export const features = {
   profile: true,
   // Phase 6
   notifications: true,
+  // Phase 7 — visible only in the local dev server (`npm run dev`) until the phase is done.
+  sync: import.meta.env.DEV,
   // Phase 9 (Jobs also needs to be switched on in Settings)
   skills: false,
   jobs: false,

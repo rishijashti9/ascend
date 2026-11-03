@@ -1,6 +1,7 @@
 import { APP_VERSION } from '@/app/version';
 import { isEnabled } from '@/config/features';
 import { useAppState } from '@/core/state/app';
+import { AccountSection } from './AccountSection';
 import { BackupSection } from './BackupSection';
 import { NotificationSettings } from './NotificationSettings';
 import { PlannerSettings } from './PlannerSettings';
@@ -22,6 +23,7 @@ export function SettingsPage() {
       <h1 className="text-xl font-semibold">Settings</h1>
       {settings && (
         <>
+          {isEnabled('sync') && <AccountSection />}
           <AppearanceSection settings={settings} />
           <DaySection settings={settings} />
           {/* Keyed so the form resets if the stored times change elsewhere. */}
