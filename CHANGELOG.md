@@ -4,10 +4,23 @@ All notable changes to ASCEND. Versions follow [semantic versioning](https://sem
 
 ## [Unreleased]
 
+## [0.7.0] — 2026-11-03 — Phase 7: Sync & accounts
+
 ### Added
 
+- Optional account (Settings → Account, or on onboarding for a new device): Continue with Google or an email sign-in link — no passwords. ASCEND keeps working fully without one.
+- Sync between phone and laptop through Supabase (EU, Ireland): changes go up a few seconds after you make them and come down every few minutes, when the connection returns and when the app opens. The same quest done on two devices counts once; minutes logged on two devices add up; a completion that arrives late turns a missed day active; the low-energy choice travels; level-ups aren't celebrated twice.
+- First sign-in: an empty account gets this device's data, a fresh device downloads everything, and if both have data you choose — merge, keep this device's, or use the account's — after a backup file is saved automatically.
+- Calm sync status in Settings (Synced 2 min ago / Offline / Sync paused — your data is safe here) with Sync now; retries by itself; Today only mentions it after a day without sync. The README explains waking a paused Supabase project.
+- Android: a backup file of everything once a week in Documents/ASCEND (the newest 4 are kept).
 - Android: Settings → Notifications checks “exact timing” (Alarms & reminders) and opens the system screen to allow it, so the wake-up check-in arrives at the exact minute; Today points it out while it's off.
 - Android: a step-by-step guide to stop the phone from closing ASCEND (battery optimisation) for Samsung, Xiaomi / Redmi / POCO, Realme, Oppo / OnePlus, Vivo / iQOO and other phones — opened at your phone's brand — plus a 2-minute test to try with the phone locked.
+
+### Fixed
+
+- Applying synced data could keep a stale local copy when one device's clock ran ahead, hiding the other device's completions.
+- A device with a fast clock could overwrite completions with its fresh "pending" copies of today's quests; quest instances now merge by what happened (un-tick revision, then progress), not by clocks.
+- Opening the app at the same time each week could skip a weekly backup.
 
 ## [0.6.0] — 2026-11-03 — Phase 6: Notifications
 

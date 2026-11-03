@@ -47,6 +47,12 @@ export const applySync = defineAction({
     const days = new Set<string>();
     let applied = 0;
     let newer = 0;
+    // Local records up to this HLC were already pushed: the server's copy has been judged
+    // against them and is the winner. Only changes not pushed yet need comparing.
+    const mark = (await ctx.db.meta.get(SYNC_META.pushHlc))?.value;
+    const pushedMark = typeof mark === 'string' ? mark : '';
+    const replaces = (tbl: string, local: Row, data: Row, sort: string) =>
+      local.hlc <= pushedMark || incomingWins(tbl, local, local.hlc, data, sort);
     for (const r of records) {
       const data = r.data as Row;
       if (!SYNCED.has(r.tbl) || typeof data.id !== 'string' || typeof data.hlc !== 'string')
@@ -55,7 +61,8 @@ export const applySync = defineAction({
         newer++;
         continue;
       }
-      observeHlc(r.hlc);
+      // The capped time: a far-ahead clock elsewhere must not drag this device's clock along.
+      observeHlc(r.sort_key);
       const table = ctx.db.table(r.tbl as TableName);
       const day = typeof data.day === 'string' ? data.day : null;
 
@@ -72,7 +79,7 @@ export const applySync = defineAction({
       const local = (await table.get(data.id)) as Row | undefined;
       if (r.tbl === 'days') {
         if (!local) await table.put(data);
-        else if (incomingWins('days', local, local.hlc, data, r.sort_key)) {
+        else if (replaces('days', local, data, r.sort_key)) {
           await table.put({
             ...local,
             low_energy: data.low_energy,
@@ -85,7 +92,7 @@ export const applySync = defineAction({
         continue;
       }
 
-      if (local && !incomingWins(r.tbl, local, local.hlc, data, r.sort_key)) continue;
+      if (local && !replaces(r.tbl, local, data, r.sort_key)) continue;
       await table.put(data);
       applied++;
       if (day) days.add(day);

@@ -1,6 +1,6 @@
 /**
  * Sync conflict rules (SPEC 9) — the same rules as `sync_incoming_wins` in
- * supabase/migrations/…_sync_records.sql (a test runs both on the same cases).
+ * supabase/migrations (latest: …_instance_merge.sql); a test runs both on the same cases.
  */
 
 /** Local tables that sync. Never: photos (device-only), meta (device state), pending_actions. */
@@ -28,7 +28,7 @@ export const SYNCED_TABLES = [
 ] as const;
 export type SyncedTable = (typeof SYNCED_TABLES)[number];
 
-const DONE = new Set(['done_full', 'done_min', 'done_late']);
+const RANK: Record<string, number> = { done_full: 3, done_min: 2, done_late: 1 };
 
 /** The HLC with its physical time capped at when the server received it. */
 export function sortKey(hlc: string, receivedMs: number): string {
@@ -54,8 +54,14 @@ export function incomingWins(
     return n > o || (n === o && newSort > oldSort);
   }
   if (tbl === 'quest_instances') {
-    if (oldData.status === 'missed' && DONE.has(String(newData.status))) return true;
-    if (newData.status === 'missed' && DONE.has(String(oldData.status))) return false;
+    // By what happened, not by clocks: a deliberate un-tick (higher revision) wins; within a
+    // revision progress only goes up, so more progress wins (a completion beats pending/missed).
+    const oldRev = Number(oldData.award_revision ?? 0);
+    const newRev = Number(newData.award_revision ?? 0);
+    if (newRev !== oldRev) return newRev > oldRev;
+    const oldRank = RANK[String(oldData.status)] ?? 0;
+    const newRank = RANK[String(newData.status)] ?? 0;
+    if (newRank !== oldRank) return newRank > oldRank;
   }
   return newSort > oldSort;
 }
