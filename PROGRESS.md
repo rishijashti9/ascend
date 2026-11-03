@@ -170,8 +170,8 @@ Part C — Ask the System
 - [x] 11.1 Schema v3
 - [x] 11.2 Entertainment app list
 - [x] 11.3 Lock rules
-- [ ] 11.4 Screen-time actions
-- [ ] 11.5 Reminder engine
+- [x] 11.4 Screen-time actions
+- [x] 11.5 Reminder engine
 - [ ] 11.6 Android native I
 - [ ] 11.7 Android native II
 - [ ] 11.8 Integrity
