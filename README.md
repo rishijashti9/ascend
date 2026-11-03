@@ -4,13 +4,13 @@ A personal leveling system for real life: daily quests, stats, levels and ranks,
 
 **Live app:** https://ascend-vert-mu.vercel.app
 
-> Status: Phase 1 (Foundation) complete. See `PROGRESS.md`.
+> Status: everything is built except the optional AI coach (Phase 8, next). Version 0.9.0. See `PROGRESS.md`.
 
 ## Requirements (Windows)
 
 - [Node.js](https://nodejs.org) 22 or newer (`node -v` to check)
 - [Git](https://git-scm.com/download/win)
-- For the Android app: Android Studio (see _Android app_ below)
+- For the Android app: Android Studio (see _Android app_ below) and a phone with Android 8.0 or newer
 
 ## Run it on your laptop
 
@@ -47,7 +47,7 @@ The web/laptop version is hosted on Vercel's free plan and redeploys automatical
 
 **Every update:** just push to `main` — Vercel builds and publishes it. Open apps show "Update ready".
 
-**Privacy:** the site is public, but it contains only the app itself. Your data never leaves your device (until you turn on sync in Phase 7).
+**Privacy:** the site is public, but it contains only the app itself. Your data stays on your device unless you sign in to sync (then it's copied only to your own private sync space).
 
 ## Android app (APK) — step by step on Windows
 
@@ -59,7 +59,7 @@ The Android app is the same app wrapped with Capacitor. You build it on your lap
 2. Open Android Studio. The **Setup Wizard** appears: choose **Standard**, accept the licences, and let it download the Android SDK (this takes a while).
 3. When it finishes, go to **More Actions → SDK Manager** (or **Settings → Languages & Frameworks → Android SDK**) and check that **Android 16 (API 36)** is installed under _SDK Platforms_. Under _SDK Tools_, make sure **Android SDK Build-Tools** and **Android SDK Platform-Tools** are ticked. Click **Apply**.
 
-Android Studio includes its own Java 21, which this project needs (the Java 17 already on your laptop is too old, but you don't need to change it).
+This project builds with **Java 21**. Newer Android Studio versions bundle Java 25, which the project's Gradle can't run on, so check once: **File → Settings → Build, Execution, Deployment → Build Tools → Gradle → Gradle JDK** should say **jbr-21** (if it isn't in the list, choose _Download JDK…_ → version 21 → JetBrains Runtime). The Java 17 already on your laptop doesn't matter.
 
 ### 2. Turn on USB debugging on your phone (once)
 
@@ -89,14 +89,51 @@ npm run android:sync
 
 Then in Android Studio: pick your phone in the device list at the top, and press the green **Run ▶** button. ASCEND is installed and opens on your phone. Your data stays on the phone between updates.
 
+### Or install from PowerShell (no Android Studio window needed)
+
+With the phone connected (USB debugging on):
+
+```powershell
+npm run android:sync
+$env:JAVA_HOME = "$env:USERPROFILE\.jdks\jbr-21.0.11"   # Android Studio's Java 21
+cd android
+.\gradlew.bat assembleDebug
+& "$env:LOCALAPPDATA\Android\Sdk\platform-toolsdb.exe" install -r appuild\outputspk\debugpp-debug.apk
+cd ..
+```
+
+`install -r` updates the app in place — your data stays. (Never uninstall the app to "fix" something: that deletes its data. Export a backup first if you ever must.)
+
 ### Build an APK file instead (optional)
 
 In Android Studio: **Build → Build App Bundle(s) / APK(s) → Build APK(s)**. When it finishes, click **locate** in the popup. The file is `android\app\build\outputs\apk\debug\app-debug.apk`. Copy it to the phone and open it to install (allow "install unknown apps" for your file manager when asked).
 
 ### Notes
 
-- The Android app and a browser PWA on the same phone keep **separate data**. Recommended: the Android app on the phone, the PWA on the laptop, and sync between them (Phase 7).
-- Android launcher icons and splash screen are generated from the app symbol with `npm run icons:android`.
+- The Android app and a browser PWA on the same phone keep **separate data**. Recommended: the Android app on the phone, the PWA on the laptop, and sync between them (see _Sync_ below).
+- Android launcher icons and splash screen are generated from the app symbol with `npm run icons:android` (it also keeps the one-colour layer that themed icons on Nothing OS / Android 13+ use).
+
+## Android extras
+
+### Health Connect (steps, sleep, workouts)
+
+1. Make sure **Health Connect** is on the phone (built into Android 14+; on older phones install it from the Play Store). Apps that record steps or sleep — e.g. your watch's app or Google Fit — need to share into Health Connect too (in their own settings).
+2. In ASCEND: **Settings → Health Connect → Connect Health Connect**, and allow **Steps**, **Sleep** and **Exercise**.
+3. From then on ASCEND reads them when it opens, when you come back to it, and every 15 minutes while it's open: your Walk and Sleep quests and the Body log fill in by themselves, and a workout of 10+ minutes completes the Workout quest (30+ in full). Sleep counts for the morning you wake up into. A number you type yourself always wins. ASCEND only reads; it never writes to Health Connect.
+4. To stop: switch it off in ASCEND's Settings, or remove ASCEND under **Health Connect → App permissions**.
+
+### Home-screen widgets
+
+Long-press an empty spot on the home screen → **Widgets** → **ASCEND**. Two sizes:
+
+- **ASCEND — today** (4×2): level, XP bar, streak and two of today's quests.
+- **ASCEND — today + focus** (4×4): four quests and a **Start focus** button.
+
+Tap **Done?** to mark a quest done in full, or **I'm up** for the wake-up check-in — it counts at the moment you tap, even if ASCEND only opens later. Quests that need a number (minutes, steps, sleep) open the app. After the day-start hour the widget says "Open ASCEND to start today" until you do.
+
+### Reminders that arrive on time
+
+Settings → Notifications → **Reliable reminders** has "Exact timing" and a battery guide for your phone's brand (Nothing, Samsung, Xiaomi, Realme, Oppo / OnePlus, Vivo and others) plus a 2-minute locked-phone test.
 
 ## Using ASCEND day to day
 
@@ -121,20 +158,22 @@ When running `npm run dev`, a small yellow wrench button appears at the bottom-l
 
 ## Useful commands
 
-| Command                 | What it does                                                           |
-| ----------------------- | ---------------------------------------------------------------------- |
-| `npm run dev`           | Development server with live reload                                    |
-| `npm run build`         | Production build into `dist/`                                          |
-| `npm run preview`       | Serve the production build locally                                     |
-| `npm run e2e`           | End-to-end tests in a real browser (phone and laptop sizes)            |
-| `npm test`              | Run unit tests once                                                    |
-| `npm run check`         | Type-check + lint + formatting check + tests (run before every commit) |
-| `npm run format`        | Auto-format all files                                                  |
-| `npm run icons`         | Regenerate all app icons from `public/icon.svg`                        |
-| `npm run android:sync`  | Build the web app and copy it into the Android project                 |
-| `npm run android:open`  | Open the Android project in Android Studio                             |
-| `npm run icons:android` | Regenerate Android launcher icons and splash                           |
-| `npm run simulate`      | 5-year game-balance simulation (after changing `src/config/game.ts`)   |
+| Command                                | What it does                                                           |
+| -------------------------------------- | ---------------------------------------------------------------------- |
+| `npm run dev`                          | Development server with live reload                                    |
+| `npm run build`                        | Production build into `dist/`                                          |
+| `npm run preview`                      | Serve the production build locally                                     |
+| `npm run e2e`                          | End-to-end tests in a real browser (phone and laptop sizes)            |
+| `npm test`                             | Run unit tests once                                                    |
+| `npm run check`                        | Type-check + lint + formatting check + tests (run before every commit) |
+| `npm run format`                       | Auto-format all files                                                  |
+| `npm run icons`                        | Regenerate all app icons from `public/icon.svg`                        |
+| `npm run android:sync`                 | Build the web app and copy it into the Android project                 |
+| `npm run android:open`                 | Open the Android project in Android Studio                             |
+| `npm run icons:android`                | Regenerate Android launcher icons and splash                           |
+| `npm run simulate`                     | 5-year game-balance simulation (after changing `src/config/game.ts`)   |
+| `npm run perf`                         | 10-year performance test (times every screen's data with 10 years)     |
+| `npx playwright test e2e/a11y.spec.ts` | Accessibility check (axe, 44px targets) on every screen                |
 
 ## Project docs
 
@@ -146,7 +185,7 @@ When running `npm run dev`, a small yellow wrench button appears at the bottom-l
 
 ## Backing up your data
 
-Until sync arrives (Phase 7), your data lives only on the device you use. Back it up:
+Your data lives on your devices (and in your sync space if you sign in). Back it up anyway — the Android app also saves a weekly backup file to **Documents/ASCEND** by itself:
 
 1. **Export:** Settings → Backup → **Export my data**. In a browser this downloads `ascend-backup-YYYY-MM-DD.json`; in the Android app a share sheet opens — save it to Files, Google Drive or email it to yourself. Keep the file somewhere safe (not only on the same device). Body photos are never included.
 2. **Reminder:** in a browser, Today shows a gentle note when your last export is a week old.

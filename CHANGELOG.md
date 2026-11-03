@@ -4,6 +4,26 @@ All notable changes to ASCEND. Versions follow [semantic versioning](https://sem
 
 ## [Unreleased]
 
+## [0.9.0] — 2026-11-03 — Phase 10: Android native & polish
+
+### Added
+
+- **Health Connect** (Settings → Health Connect): steps, sleep and workouts fill the Walk, Sleep and Workout quests and the Body log by themselves — when ASCEND opens, when you come back to it and every 15 minutes while it's open. Yesterday's late steps still count for yesterday. A number you type always wins; ASCEND only reads.
+- **Home-screen widgets**: "ASCEND — today" (level, XP, streak, two quests) and "ASCEND — today + focus" (four quests and Start focus). Tap "Done?" or "I'm up" right on the home screen — it counts at the moment you tap, even if the app opens later, and never twice. Yesterday's widget never shows stale quests.
+- Themed icon support (Nothing OS / Android 13+), a dark splash with the ASCEND symbol, and a proper status-bar icon for reminders.
+- An accessibility check on every screen (light and dark, phone and laptop) and a 10-year performance test (`npm run perf`).
+
+### Changed
+
+- The Android app needs Android 8.0 or newer (was 7.0).
+- On/off switches have a bigger tap area; full-screen sheets close with Escape and keep keyboard focus in the right place.
+
+### Fixed
+
+- After a long absence or an import, closing many days at once was slow (it recomputed every streak once per day): 47 s → under 1 s, 153 s → 4 s with ten years of data.
+- Two steps / sleep entries with the same time could pick the wrong one as "latest"; the later one now always wins.
+- Skill-tree nodes now read correctly with a screen reader.
+
 ## [0.8.0] — 2026-11-03 — Phase 9: Career tools
 
 ### Added
