@@ -330,46 +330,42 @@ Rishi's full instruction is kept verbatim in `docs/phase8-prompt.md`; this secti
 
 **Phase tests:** prediction calibration; simulated users (`scripts/simulate.ts`) showing adaptive difficulty improves adherence without oscillating; health safety rules; scope refusal; Ask fallback paths; no sensitive data ever sent; compaction invariants.
 
-### 6.8 Phase 11 — Digital Discipline (screen time + strict reminders, never blocking)
+### 6.8 Phase 11 — Screen Time (phone only, simple, never blocking)
 
-Rishi's full instruction is kept verbatim in `docs/phase11-prompt.md`; this section is the buildable version. Keep it simple. **Nothing is ever blocked** — ASCEND only measures and reminds. **Everything is off by default**; each part (phone screen time, laptop extension, reminders, Do Not Disturb pass-through) is switched on separately in Settings → Digital discipline (feature flag `screenTime`).
+Rishi's full instruction is kept verbatim in `docs/phase11-prompt.md`; this section is the buildable version. **Phone only (Android).** Above all **simple**: setup takes under 3 minutes and needs no decision beyond accepting a suggestion. It supports willpower; **it never blocks anything**. **Off by default** (feature flag `screenTime`; Settings → Screen time).
 
-**Screen time — what is measured**
-- **Android:** a small native plugin (Java, like the widget code) reads `UsageStatsManager` after Rishi grants **Usage access** (setup guide in the app, with the exact Nothing OS path). Only **daily totals per app** (seconds per package per day) are read and stored — never what happened inside an app.
-- **Laptop:** a Chrome/Edge extension (Manifest V3) in `extension/` of this repo, installed unpacked (own README). It counts time on the **active tab of the focused window** while the computer isn't idle, as **daily totals per website domain** (`youtube.com`, subdomains folded into the domain) — never full URLs, page titles, content or history. Incognito counts too: setup guides Rishi to switch on "Allow in Incognito" and the extension reports whether it is allowed.
-- **Extension ↔ app:** the extension has no account of its own. It hands its daily totals to the ASCEND web app open in the same browser (a content script on the ASCEND site, `postMessage` bridge), which stores and syncs them; in return it receives the current rules, lock, focus state and planned free time, which it keeps a copy of so reminders work when ASCEND isn't open. Only daily totals ever cross.
-- **Days** use ASCEND's day (day-start hour, local timezone, 4.8). Totals from the phone and each browser are kept per device and added up for stats and rules.
-- **Three categories only:** Entertainment, Work/Study, Neutral. Default Entertainment sites: youtube.com, netflix.com, primevideo.com, jiohotstar.com, sonyliv.com, zee5.com, aha.video, mxplayer.in, crunchyroll.com, twitch.tv, instagram.com, facebook.com, x.com, snapchat.com, pinterest.com, poki.com, crazygames.com, store.steampowered.com, webtoons.com, cricbuzz.com, dream11.com — and the matching phone apps (package names in a data file, checked during the build). Everything else starts Neutral; phone browsers are always Neutral. Rishi can move any app/site between categories (subject to the lock). **During any focus session YouTube counts as Work/Study** (the time inside focus sessions is kept apart per app/site so the stats can count it that way).
-- **Observe week:** when screen time is switched on, the first 7 days only measure (no reminders). Then ASCEND suggests realistic rules from the real numbers — a daily Entertainment limit (below the observed average, rounded to 15 min), study hours (from when study/focus actually happens and the study quests' targets) and a wind-down time (from the wind-down reminder, default 21:00, protecting the 5:00 wake-up) — which Rishi accepts or edits, choosing a lock (below).
-- **Screen time screen** (More → Screen time): today and this week, top apps/sites, Entertainment vs Work/Study (and Neutral), phone and laptop together.
+**Setup — 3 steps, nothing more**
+1. One **"Allow screen time"** button that opens Android's Usage access screen for ASCEND, with a short guide (incl. the Nothing OS path). Nothing else to configure.
+2. **Observe week:** for 7 days ASCEND only measures, quietly — no reminders, no questions.
+3. After 7 days, **one card** on Today: "You average Xh Ym of entertainment a day. Set your daily limit to Z min?" — Z is a realistic step down from the average (rounded to 15 min). Buttons: **Accept** (locks for 1 week) / **Edit**. That's the whole setup.
 
-**Reminders (strict, never blocking)**
-- Only for **Entertainment**, never Work/Study or Neutral.
-- **Three triggers:** (1) over the daily Entertainment limit; (2) Entertainment during study hours or any focus session; (3) Entertainment after the wind-down time (until the day-start hour).
-- **Interval** 15 s, 30 s or 1 min (default 1 min). While Entertainment is still in front, re-alert at that interval until Rishi leaves or taps a button — always by **updating one ongoing notification** (sound/vibration + time spent so far), never stacking. Buttons: **Start focus** (opens Focus), **5 more minutes** (once per day), **I'm on a break** (pauses reminders 20 min). Calm, clear wording, never shaming ("12 min of YouTube past your limit today. Ready to switch?").
-- **Quiet hours** are respected: no screen-time reminders during quiet hours (the foreground service doesn't run then either).
-- Screen-time reminders use **their own Android notification channel**, separate from wake-up and the other reminders.
-- **Do Not Disturb pass-through (optional):** after a plain explanation, Rishi can grant Do Not Disturb access once; then screen-time reminders come through Do Not Disturb — never during quiet hours.
-- **Planned free time:** entertainment time scheduled in advance — at least **12 hours ahead**, at most **2 per week**, e.g. "Sunday 19:00–21:00 movie night". No reminders inside it; the time still shows in stats and the weekly review. During a lock it can't be created or extended at short notice (the 12-hour rule always holds; extending counts as creating).
-- **Android:** a small **foreground service** (with its required ongoing notification, e.g. "ASCEND: study time") runs **only while a trigger is active**, checking the foreground app at the chosen interval (and not at all while the screen is off). It is started by exact alarms at the start of study hours, wind-down and focus sessions; for "over the limit" an alarm is set for the earliest moment the limit could be reached (remaining budget), re-checked then — so there is no background checking otherwise. Battery impact is measured on the Nothing Phone (3a).
-- **Laptop:** the extension shows a **reminder bar on the Entertainment page itself** at the same interval (plus a browser notification), with the same buttons. It never covers or blocks the page.
+**What it tracks**
+- Android `UsageStatsManager` via a small native plugin: **daily totals per app only** (seconds per app per ASCEND day — day-start hour and local timezone, 4.8). Nothing about what happens inside an app.
+- A **built-in list of entertainment apps** (data file): YouTube, Instagram, Facebook, X, Snapchat, Netflix, Prime Video, JioHotstar, SonyLIV, ZEE5, aha, MX Player, Crunchyroll, Twitch, Webtoon, Cricbuzz, Dream11 and common games (Android's "game" app category). Everything else is never limited. Rishi can **add or remove apps** from the list; removing waits for the lock to end.
+- **During a focus session YouTube doesn't count** (its time inside focus sessions is kept apart).
+- A simple **Screen time card** on Today and a **Screen time screen**: today vs the limit, this week, top apps.
 
-**Locked limits** (a deliberate exception to principle 8)
-- When setting rules, Rishi chooses a **lock**: 1 week (suggested the first time) or 1 month.
-- During a lock anything **stricter** applies at once; anything **looser** waits until the lock ends, shown with its date ("Applies on 18 Nov, when the lock ends"). Looser = raising or deleting a limit, shortening study hours, a later wind-down, moving an app/site out of Entertainment, a less frequent reminder interval, turning reminders off, removing Do Not Disturb pass-through.
-- **"I'm on a break" at most 2 per day** during a lock.
-- **Locks can't be undone by tricks:** they are synced; their end is judged by trusted time (the server's clock from any ASCEND request — no account needed — never just the device clock; a clock moved forward doesn't end a lock, a clock moved back doesn't matter). Reinstalling and signing in brings the lock back; importing a backup or "Delete everything" never removes or shortens an active lock (rules merge strictest-first). Honest limit: a phone wiped and never signed in again has no rules — the laptop extension keeps its own copy.
-- **Integrity incidents** (only during a lock): ASCEND's notifications or just the screen-time channel switched off in system settings, Usage access removed, Do Not Disturb access revoked (if it was granted), the extension disabled/removed or its incognito access removed. Each new incident → a persistent banner on Today until fixed, **the lock extends by 7 days**, and it shows in the weekly review. **No XP loss.** Checked when ASCEND opens/resumes and by the service; the extension's absence is noticed by the ASCEND web app in that browser.
+**Reminders (never blocking)**
+- Only for entertainment apps, only in **two cases**: (1) over the daily limit; (2) on an entertainment app **after the wind-down time** (the existing evening wind-down time, default 21:00, until the day-start hour — protects the 5:00 wake-up).
+- A gentle **first notification**, then a **re-alert every 1 minute** (fixed) while an entertainment app is still in front — **one ongoing notification updated** with the time spent, never a stack. Buttons: **Start focus** (opens Focus) and **I'm on a break** (pauses reminders 20 min, **max 2 per day**). Calm wording, never shaming.
+- **Quiet hours:** reminders still update the notification, but **silently** (no sound or vibration) — Rishi's choice, 2026-11-04.
+- Its **own notification channel**, separate from the wake-up and other reminders.
+- A small **foreground service** (with its required ongoing notification) runs **only while a reminder is active**; otherwise no background checking. It is started by an exact alarm at the wind-down time, and for "over the limit" by an alarm at the earliest moment the remaining allowance could run out (re-checked then). It checks the foreground app once a minute and not at all while the screen is off; it stops when the reminder case ends. Battery impact is measured on the Nothing Phone (3a).
+
+**Lock (automatic, invisible until needed)** — a deliberate exception to principle 8
+- Accepting or changing the limit locks it for **1 week** (option: 1 month).
+- During the lock the limit can be **lowered** (and apps added) anytime; **raising** it, **removing apps** from the list or **turning reminders off** only takes effect when the lock ends, with the date shown.
+- If during a lock ASCEND's notifications or the screen-time channel are turned off, or Usage access is removed: a **banner on Today** until fixed, and the **lock extends by 7 days** (per incident). Checked whenever ASCEND opens/resumes and by the service. No XP loss.
+- Locks are **synced**; the end is judged by trusted time (the server's clock from any ASCEND request, so moving the phone's clock never ends a lock early); reinstalling and signing in brings the lock back; importing a backup or "Delete everything" never removes or shortens an active lock.
 
 **Connected to the System**
-- A **"Digital discipline"** daily quest (WIL, Easy, check): done automatically when the day's Entertainment stayed within the limit (planned free time excluded), judged when the day closes. Offered when rules are first accepted; editable/pausable like any daily quest.
-- **Weekly review:** Entertainment time vs last week, breaks and planned free time used, any lock extensions. No XP loss, no guilt.
+- A **"Digital discipline"** daily quest (WIL, Easy, check): done automatically when the day's entertainment stayed under the limit, judged when the day closes. Counts toward Daily Clear like any daily quest (Rishi, 2026-11-04). Added when the first limit is accepted.
+- **One line in the weekly review:** entertainment time vs last week. No XP loss, no guilt.
 
 **Privacy and rules**
-- Only daily totals are stored, on the device and in Rishi's own synced account; **never sent to any AI** (Ask the System's allow-list excludes them). Included in export, compaction (old days → monthly totals) and "Delete everything" — which does **not** remove an active lock or its rules.
-- Schema change = a Dexie version with an upgrade that leaves existing records untouched; old backups keep importing.
-- **Tests:** triggers, reminder intervals, break cap, 5-more once, planned free time rules, observe week, locks (clock changes, import, re-categorise attempts, channel disabling, the 7-day extension), Work/Study never limited, YouTube during focus, privacy (nothing in Ask context or outside the account).
-- A real-device checklist for the Nothing Phone (3a) and Chrome on Windows at the end of the phase.
+- Only daily totals; on the device and Rishi's own synced account only; **never sent to any AI** (Ask the System's allow-list excludes it). Included in export, compaction (old days → monthly totals) and "Delete everything" — which doesn't remove an active lock.
+- Never break existing user data: new tables in a new Dexie version, existing records untouched, old backups keep importing.
+- **Tests:** observe week, limit suggestion, reminder cases (incl. YouTube during focus, quiet hours silent, 1-minute re-alerts), break cap, lock rules (clock and import attempts, the 7-day extension), privacy. A short real-phone checklist for the Nothing Phone (3a) at the end.
 
 ---
 
@@ -495,7 +491,7 @@ Design the **complete schema in Phase 1**, even for features built later, so lat
 8. **Adaptive System + Growth Compass + Ask the System** (replaces the AI coach — section 6.7) — on-device learning, career & health guidance from trusted data, data ownership + compaction, optional scope-locked Gemini layer. Built after Phases 9 and 10.
 9. **Career tools** — skill tree and job application tracker, connected to XP, quests, notifications and the Goal Planner.
 10. **Android native & polish** — Health Connect auto-tracking, home-screen widgets with the pending-actions queue, app icon/splash, accessibility pass, performance test with 10 years of generated data, final README.
-11. **Digital Discipline** (section 6.8) — screen time on phone (Usage access) and laptop (Chrome/Edge extension), strict Entertainment reminders that never block, locked limits, a Digital discipline quest and weekly review section. Everything off by default.
+11. **Screen Time** (section 6.8) — phone only: Usage access daily totals per app, 7-day observe week, one suggested entertainment limit, 1-minute reminders when over the limit or after wind-down (never blocking), an automatic lock, a Digital discipline quest and one weekly review line. Off by default.
 
 ---
 
@@ -555,5 +551,6 @@ Know these exist so the architecture leaves room for them, but do not start them
 
 - **Yearly Chronicle** — an auto-generated, beautiful year-in-review: levels and ranks gained, best streaks, goals and milestones finished, skills unlocked, focus hours, biggest comeback. Shareable as an image (without private data).
 - **Letter to future self** — write a letter that stays locked until a chosen date or a rank-up, then opens with a quiet moment.
-- **Accountability partner** (Phase 11 idea) — optionally, a person I choose gets an email if I disable screen-time reminders during a lock.
+- **Laptop screen time** (Phase 11 idea) — a Chrome extension with the same entertainment reminders on the laptop.
+- **Accountability partner** (Phase 11 idea) — optionally, a person I choose gets an email if I turn screen-time reminders off during a lock.
 - **Voice input** — speak quick notes, journal entries or brain dumps; transcribe and (with AI on) turn them into quests for approval.
