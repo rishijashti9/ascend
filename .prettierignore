@@ -14,3 +14,7 @@ supabase/.branches
 docs/phase8-prompt.md
 docs/phase11-prompt.md
 /phase*-prompt.md
+
+# Design references for Phase 12 (not code)
+docs/design/
+phase12-prompt.md
