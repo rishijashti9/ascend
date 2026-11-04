@@ -135,6 +135,24 @@ Tap **Done?** to mark a quest done in full, or **I'm up** for the wake-up check-
 
 Settings → Notifications → **Reliable reminders** has "Exact timing" and a battery guide for your phone's brand (Nothing, Samsung, Xiaomi, Realme, Oppo / OnePlus, Vivo and others) plus a 2-minute locked-phone test.
 
+### Screen time (phone only)
+
+Off until you switch it on. It counts how long you spend in entertainment apps each day and reminds you calmly — it **never blocks** anything.
+
+1. **Settings → Screen time → Allow screen time.** Android opens its "Usage access" list: find **ASCEND** and switch on **Permit usage access**, then come back. (Nothing Phone: Settings → Apps → Special app access → Usage access → ASCEND.) Allow notifications if Android asks.
+2. **Observe week:** for 7 days ASCEND only measures — no reminders, no questions.
+3. **One card on Today:** "You average Xh Ym of entertainment a day. Set your daily limit to Z min?" — **Accept** (locks it for 1 week) or **Edit** (another limit, or a 1-month lock). That's the whole setup.
+
+After that:
+
+- **Reminders** only on entertainment apps (the built-in list — YouTube, Instagram, Facebook, X, Snapchat, Netflix, Prime Video, JioHotstar, SonyLIV, ZEE5, aha, MX Player, Crunchyroll, Twitch, Webtoon, Cricbuzz, Dream11 — plus games, plus apps you add), and only when you're **past today's limit** or it's **after your wind-down time** (Settings → Notifications → wind-down, 21:00) until the day-start hour. A gentle first notification, then the same notification updated every minute with the time so far, with **Start focus** and **I'm on a break** (20 minutes, twice a day). Silent in quiet hours. YouTube inside a focus session doesn't count.
+- **The lock:** you can always lower the limit or add apps. Raising the limit, removing an app or turning reminders/screen time off waits until the lock ends (the date is shown). Turning off ASCEND's notifications, the "Screen time reminders" channel or Usage access during a lock shows a banner on Today and adds 7 days to the lock. Changing the phone's clock, reinstalling (and signing in) or importing a backup doesn't unlock it — the end is checked against ASCEND's server time, so the phone needs to be online now and then for a lock to end.
+- **Screen time** (More) shows today vs your limit, this week and top apps. A **Digital discipline** daily quest (Willpower) completes itself for each day you stay within the limit, and the weekly review shows one line comparing your entertainment time with last week.
+- **Privacy:** only daily totals per app, on the phone and your own account — never what you did inside an app, never sent to any AI.
+- **Battery:** nothing runs in the background except one alarm; a small foreground service (with its required "ASCEND: wind-down time" notification) runs only while a reminder applies, checks once a minute, and pauses while the screen is off.
+
+Server step: see **Phase 11 server step** below.
+
 ## Using ASCEND day to day
 
 - **Today** is home: tap “I’m up” when you wake (on time until wake time + window, late until the cutoff), then Full or Minimum on each quest, or log minutes / steps / sleep. Undo fixes a mistaken tap the same day.
@@ -241,6 +259,14 @@ npx supabase functions deploy ask
 ```
 
 Then set up Ask the System (below) and switch it on in Settings → **Ask the System**.
+
+### Phase 11 server step (once)
+
+Phase 11 adds one migration (`supabase/migrations/20261105000000_phase11_screen_time.sql`: the screen-time tables for sync and the server clock used by locks). Run `npx supabase db push` from the project folder. Until then screen time works on the phone alone, its data stays on the phone, and a lock can't end (no trusted time yet) — so push before your first lock is due to end.
+
+```powershell
+npx supabase db push
+```
 
 ### Ask the System: the OpenRouter key
 

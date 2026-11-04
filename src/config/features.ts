@@ -33,7 +33,7 @@ export const features = {
   compass: true,
   ask: true,
   // Phase 11 (Screen Time — also switched on in Settings; Android only)
-  screenTime: false,
+  screenTime: true,
 } as const satisfies Record<string, boolean>;
 
 export type FeatureKey = keyof typeof features;

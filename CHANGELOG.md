@@ -4,6 +4,19 @@ All notable changes to ASCEND. Versions follow [semantic versioning](https://sem
 
 ## [Unreleased]
 
+## [0.11.0] — 2026-11-04 — Phase 11: Screen Time
+
+### Added
+
+- **Screen time** (Android, off by default — Settings → Screen time): one "Allow screen time" button (Usage access, with the Nothing OS path), a quiet 7-day observe week, then one suggestion on Today — "You average Xh Ym of entertainment a day. Set your daily limit to Z min?" — Accept or Edit. Only daily totals per app are kept, on the phone and your own account; never sent to any AI.
+- **Reminders that never block**: only on entertainment apps (a built-in list plus games; add or remove apps), only past your daily limit or after wind-down. A gentle first notification, then the same notification updated every minute with the time so far, with **Start focus** and **I'm on a break** (20 min, twice a day). Its own notification channel; silent in quiet hours; YouTube inside a focus session doesn't count. A small foreground service runs only while a reminder applies; otherwise just one alarm.
+- **Locked limits**: accepting or changing the limit locks it for a week (or a month). Lowering is always allowed; raising, removing apps or turning reminders off waits until the lock ends, with the date shown. Switching off notifications, the reminder channel or Usage access during a lock shows a banner on Today and adds 7 days. Clock changes, reinstalling, importing a backup or clearing data don't unlock it (the end is checked against the server's clock).
+- **Screen time** screen (More): today vs your limit, this week, top apps. A **Digital discipline** daily quest (Willpower) completes itself for each day within the limit and counts toward Daily Clear; the weekly review shows entertainment vs last week. No XP is ever lost.
+
+### Changed
+
+- New server migration (screen-time sync, the server clock for locks, compaction of old screen-time days) — run `npx supabase db push` once.
+
 ## [0.10.0] — 2026-11-03 — Phase 8: Adaptive System, Growth Compass, Ask the System
 
 ### Added

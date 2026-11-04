@@ -22,6 +22,7 @@ const SCREENS = [
   '/profile',
   '/knows',
   '/compass',
+  '/screen-time',
   '/compass?tab=health',
   '/my-data',
   '/ask',
