@@ -1,86 +1,15 @@
 /*
- * ASCEND design tokens — the ONLY place colours are defined.
- * Components use these through Tailwind classes (bg-surface, text-muted, ...) or var(--token).
- * Light is the default; [data-theme='dark'] on <html> switches to dark (set by src/app/theme.ts).
- * Every text/background pair is checked for WCAG AA in src/styles/tokens.test.ts.
+ * ASCEND design tokens shared by every theme. Colours, shapes and type live in one file per theme
+ * (src/styles/themes/*.css, selected by data-theme on <html> — see src/app/theme.ts); components
+ * use them through Tailwind classes (bg-surface, text-muted, rounded-lg, font-display, ...) or
+ * var(--token). No component hard-codes a colour.
  */
 
 :root {
-  color-scheme: light;
-
-  /* Surfaces & text */
-  --bg: #f7f8fa;
-  --surface: #ffffff;
-  --surface-2: #eff1f4;
-  --border: #e1e4e8;
-  --text: #1f2328;
-  --muted: #656d76;
-
-  /* Accent (buttons, links, XP bars) */
-  --accent: #4c8dff; /* fills: XP bar, focus ring */
-  --accent-text: #396abf; /* links/text on light backgrounds */
-  --accent-fill: #396abf; /* primary button background */
-  --on-accent: #ffffff; /* text on primary button */
-
-  /* Stats — base colour for fills, -text for text and icons */
-  --str: #f0894b;
-  --str-text: #9e5a31;
-  --int: #2bb5c8;
-  --int-text: #1c7784;
-  --wil: #9b7bff;
-  --wil-text: #745cbf;
-
-  /* Status — error is for real errors only; missed quests use --missed */
-  --success: #3fb68b;
-  --success-text: #2a785c;
-  --warning: #e3b341;
-  --warning-text: #846826;
-  --error: #e5534b;
-  --error-text: #bc443d;
-  --missed: #656d76;
-
-  /* Elevation: soft shadows in light mode only */
-  --shadow-card: 0 1px 2px rgb(31 35 40 / 0.06), 0 2px 8px rgb(31 35 40 / 0.04);
-  --shadow-overlay: 0 8px 32px rgb(31 35 40 / 0.16);
-
   /* Motion */
   --dur-fast: 150ms;
   --dur: 200ms;
   --dur-slow: 250ms;
   --ease: cubic-bezier(0.2, 0, 0, 1);
-}
-
-:root[data-theme='dark'] {
-  color-scheme: dark;
-
-  --bg: #0e1116;
-  --surface: #161b22;
-  --surface-2: #1c222b;
-  --border: #30363d;
-  --text: #e6edf3;
-  --muted: #8b949e;
-
-  --accent: #4c8dff;
-  --accent-text: #4c8dff;
-  --accent-fill: #4c8dff;
-  --on-accent: #0e1116;
-
-  --str: #f0894b;
-  --str-text: #f0894b;
-  --int: #2bb5c8;
-  --int-text: #2bb5c8;
-  --wil: #9b7bff;
-  --wil-text: #9b7bff;
-
-  --success: #3fb68b;
-  --success-text: #3fb68b;
-  --warning: #e3b341;
-  --warning-text: #e3b341;
-  --error: #e5534b;
-  --error-text: #e75d56;
-  --missed: #8b949e;
-
-  /* Dark mode uses thin borders instead of shadows */
-  --shadow-card: none;
-  --shadow-overlay: 0 8px 32px rgb(0 0 0 / 0.5);
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
 }

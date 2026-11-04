@@ -6,7 +6,7 @@ import { App } from './app/App';
 import { startRollover } from './app/rollover';
 import { runWeeklyLocalBackup } from './app/localBackup';
 import { ErrorScreen } from './app/ErrorScreen';
-import { applyTheme } from './app/theme';
+import { applyUiTheme } from './app/theme';
 import { openDatabase } from './core/db/open';
 import { installGlobalErrorHandlers, logError } from './core/errorLog';
 import { startAutoPlanner } from './core/planner/auto';
@@ -51,14 +51,12 @@ import './styles/index.css';
 
 installGlobalErrorHandlers();
 
-// Follows the system theme until the stored preference is loaded.
-let stopTheme = applyTheme('system');
-let shownTheme = 'system';
+// The default theme until the stored choice is loaded (Phase 12: themes replace light/dark).
+let shownTheme = applyUiTheme(null);
 appStore.subscribe(({ settings }) => {
-  if (!settings || settings.theme === shownTheme) return;
-  stopTheme();
-  shownTheme = settings.theme;
-  stopTheme = applyTheme(settings.theme);
+  if (!settings) return;
+  const next = applyUiTheme(settings.ui_theme);
+  if (next !== shownTheme) shownTheme = next;
 });
 
 const container = document.getElementById('root');

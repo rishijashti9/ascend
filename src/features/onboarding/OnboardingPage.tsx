@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
-import { applyTheme } from '@/app/theme';
+import { useMemo, useState } from 'react';
 import { DEFAULT_SETTINGS } from '@/config/defaults';
 import { logError } from '@/core/errorLog';
 import { recordAction } from '@/core/pipeline';
@@ -31,9 +30,6 @@ export function OnboardingPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const update = (fn: (d: Draft) => Draft) => setDraft(fn);
-
-  // Preview the chosen theme straight away.
-  useEffect(() => applyTheme(draft.theme), [draft.theme]);
 
   const problem = stepProblem(draft, step);
   const last = step === TITLES.length - 1;

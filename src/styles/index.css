@@ -1,10 +1,11 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/inter/wght.css';
 @import '@fontsource-variable/space-grotesk/wght.css';
+@import '@fontsource-variable/archivo/wdth.css';
 @import './tokens.css';
+@import './themes/elevate.css';
 
-/* Theme switching uses the data-theme attribute, not the media query (theme.ts sets it). */
-@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+/* Themes are chosen with the data-theme attribute on <html> (theme.ts sets it). */
 
 @theme inline {
   /* Colours come from tokens.css so they switch with the theme. Tailwind's palette is removed. */
@@ -32,16 +33,34 @@
   --color-error: var(--error);
   --color-error-text: var(--error-text);
   --color-missed: var(--missed);
+  --color-tile-lime: var(--tile-lime);
+  --color-tile-white: var(--tile-white);
+  --color-tile-yellow: var(--tile-yellow);
+  --color-tile-grey: var(--tile-grey);
+  --color-tile-violet: var(--tile-violet);
+  --color-on-tile-lime: var(--on-tile-lime);
+  --color-on-tile-white: var(--on-tile-white);
+  --color-on-tile-yellow: var(--on-tile-yellow);
+  --color-on-tile-grey: var(--on-tile-grey);
+  --color-on-tile-violet: var(--on-tile-violet);
+  --color-on-tile-muted: var(--on-tile-muted);
   --color-transparent: transparent;
   --color-current: currentColor;
 
   --shadow-card: var(--shadow-card);
   --shadow-overlay: var(--shadow-overlay);
+  --shadow-float: var(--shadow-float);
+
+  /* Shape and display type come from the theme */
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+  --radius-full: var(--r-pill);
+  --font-display: var(--font-display-family);
 }
 
 @theme {
   --font-sans: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-display: 'Space Grotesk Variable', 'Inter Variable', system-ui, sans-serif;
 
   /* Type scale: 12 / 14 / 16 / 20 / 28 / 40 */
   --text-*: initial;
@@ -57,15 +76,13 @@
   --text-xl--line-height: 2.25rem;
   --text-2xl: 2.5rem;
   --text-2xl--line-height: 3rem;
-
-  /* Corners 12–16px */
-  --radius-md: 0.75rem;
-  --radius-lg: 1rem;
 }
 
 @layer base {
   html {
     background-color: var(--bg);
+    background-image: var(--bg-light, none);
+    background-attachment: fixed;
     color: var(--text);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;

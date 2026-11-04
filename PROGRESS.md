@@ -185,7 +185,7 @@ Part C — Ask the System
 12A — theme engine + ELEVATE everywhere
 
 - [x] 12A.1 Redesign inventory
-- [ ] 12A.2 Theme engine
+- [x] 12A.2 Theme engine
 - [ ] 12A.3 Settings fields
 - [ ] 12A.4 Fonts
 - [ ] 12A.5 UI primitives in the theme language

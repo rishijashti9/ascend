@@ -1,0 +1,87 @@
+/*
+ * ELEVATE (Phase 12A, the default theme) — dark mode elevation: pure black with faint corner
+ * light, big rounded bento tiles in lime / white / yellow / dark grey / violet, white pills,
+ * extra-bold expanded headings (Archivo) over Inter. Every text/background pair is checked for
+ * WCAG AA in src/styles/tokens.test.ts. It is also the root default, so the first paint (before
+ * any script runs) is already ELEVATE.
+ */
+
+:root,
+:root[data-theme='elevate'] {
+  color-scheme: dark;
+
+  /* Surfaces & text */
+  --bg: #000000;
+  --surface: #161616;
+  --surface-2: #262626;
+  --border: #2a2a2a;
+  --text: #f2f2f2;
+  --muted: #9a9a9a;
+
+  /* Accent: lime */
+  --accent: #c8f03c;
+  --accent-text: #c8f03c;
+  --accent-fill: #c8f03c;
+  --on-accent: #000000;
+
+  /* Stats — fill colour and a text colour that passes AA on every surface */
+  --str: #ff7a1a;
+  --str-text: #ff8f3f;
+  --int: #1e9bff;
+  --int-text: #4fb2ff;
+  --wil: #a35bff;
+  --wil-text: #b98aff;
+
+  /* Status */
+  --success: #1fa35b;
+  --success-text: #3fd07f;
+  --warning: #ffe14d;
+  --warning-text: #ffe14d;
+  --error: #ff3b2f;
+  --error-text: #ff6b61;
+  --missed: #9a9a9a;
+
+  /* Bento tiles and the text on them */
+  --tile-lime: #c8f03c;
+  --tile-white: #f2f2f2;
+  --tile-yellow: #ffe14d;
+  --tile-grey: #2a2a2a;
+  --tile-violet: #a35bff;
+  --on-tile-lime: #000000;
+  --on-tile-white: #000000;
+  --on-tile-yellow: #000000;
+  --on-tile-grey: #f2f2f2;
+  --on-tile-violet: #000000;
+  /* Muted text — on the light tiles (lime, white, yellow) only */
+  --on-tile-muted: #3d3d3d;
+
+  /* Celebration colours (level-up shapes and reward grid) */
+  --fx-violet: #a35bff;
+  --fx-blue: #1e9bff;
+  --fx-red: #ff3b2f;
+  --fx-green: #1fa35b;
+  --fx-orange: #ff7a1a;
+  --fx-pink: #f27be6;
+
+  /* Shape */
+  --r-sm: 0.75rem;
+  --r-md: 1.125rem;
+  --r-lg: 1.75rem;
+  --r-pill: 999px;
+
+  /* Type */
+  --font-display-family: 'Archivo Variable', 'Inter Variable', system-ui, sans-serif;
+  --display-stretch: 125%;
+  --display-weight: 800;
+  --display-tracking: -0.01em;
+
+  /* Elevation: no shadows on black — tiles are lit by colour; overlays get a deep shadow */
+  --shadow-card: none;
+  --shadow-overlay: 0 16px 48px rgb(0 0 0 / 0.7);
+  --shadow-float: 0 12px 24px rgb(0 0 0 / 0.6);
+
+  /* Faint corner light on the black ground */
+  --bg-light:
+    radial-gradient(60rem 30rem at 100% 0%, rgb(163 91 255 / 0.1), transparent 60%),
+    radial-gradient(40rem 24rem at 0% 100%, rgb(200 240 60 / 0.06), transparent 60%);
+}

@@ -1,4 +1,8 @@
 import type { ThemePreference } from '@/app/theme';
+import type { ThemeId } from '@/config/themes';
+
+/** Settings → Effects (Phase 12). */
+export type EffectsLevel = 'full' | 'light' | 'off';
 import type { BaseRecord, DayString, GoalType, IsoTime, Weekday } from './common';
 
 export interface Profile extends BaseRecord {
@@ -48,7 +52,14 @@ export interface Settings extends BaseRecord {
   wake_window_min: number;
   /** After this time the wake-up quest is missed for the day (DECISIONS 1b). */
   wake_late_cutoff: string; // HH:MM
+  /** Phases 1–11 light/dark choice — replaced by `ui_theme` (kept so old records stay valid). */
   theme: ThemePreference;
+  /** Phase 12: the chosen theme (absent = the default, ELEVATE). */
+  ui_theme?: ThemeId;
+  /** Phase 12: visual effects level (absent = full; system "reduce motion" always means off). */
+  effects?: EffectsLevel;
+  /** Phase 12: subtle sound + haptics on quest complete and level-up (absent = off). */
+  sound_haptics?: boolean;
   notifications: NotificationSettings;
   quiet_hours: { start: string; end: string } | null;
   focus_presets: { work_min: number; break_min: number }[];

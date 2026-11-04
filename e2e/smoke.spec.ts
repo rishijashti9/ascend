@@ -25,12 +25,14 @@ test('navigation: Today → More → Settings shows the version', async ({ page,
   await expect(page.getByText(/^\d+\.\d+\.\d+$/)).toBeVisible();
 });
 
-test('follows the dark system theme', async ({ browser }) => {
-  const context = await browser.newContext({ colorScheme: 'dark' });
-  const page = await context.newPage();
-  await page.goto(test.info().project.use.baseURL ?? '/');
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-  await context.close();
+test('starts in the ELEVATE theme whatever the system theme (Phase 12)', async ({ browser }) => {
+  for (const colorScheme of ['light', 'dark'] as const) {
+    const context = await browser.newContext({ colorScheme });
+    const page = await context.newPage();
+    await page.goto(test.info().project.use.baseURL ?? '/');
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'elevate');
+    await context.close();
+  }
 });
 
 test('keeps working offline after the first visit', async ({ page, context }) => {
