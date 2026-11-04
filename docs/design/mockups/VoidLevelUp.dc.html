@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ASCEND VOID — Level up</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0B0F14}
+a{color:#3DF2E0}a:hover{color:#A8FFF6}
+@keyframes vRing{0%{transform:translate(-50%,-50%) scale(.5);opacity:.85}100%{transform:translate(-50%,-50%) scale(1.7);opacity:0}}
+@keyframes vRise{0%{transform:translateY(0);opacity:0}15%{opacity:1}100%{transform:translateY(-300px);opacity:0}}
+@keyframes vNum{0%{transform:scale(.6);opacity:0;filter:blur(10px)}60%{transform:scale(1.08);opacity:1;filter:blur(0)}100%{transform:scale(1)}}
+@keyframes vIn{0%{transform:translateY(16px);opacity:0}100%{transform:none;opacity:1}}
+@keyframes vHop{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-8px) rotate(4deg)}}
+.v-ring{position:absolute;left:50%;top:330px;width:230px;height:230px;border-radius:999px;border:1.5px solid rgba(61,242,224,.6);animation:vRing 3s ease-out infinite}
+.v-p{position:absolute;bottom:60px;border-radius:999px;animation:vRise 4.2s linear infinite}
+.v-num{animation:vNum 1s cubic-bezier(.2,.8,.2,1) both}
+.v-in{animation:vIn .6s ease-out both}
+.v-hop{animation:vHop 1.6s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.v-ring,.v-p,.v-num,.v-in,.v-hop{animation:none !important;opacity:1}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; font-family: Inter, system-ui, sans-serif; color: #E9F2F5; background-color: #0B0F14; background-image: radial-gradient(340px 340px at 50% 330px, rgba(61,242,224,0.22), rgba(11,15,20,0) 70%), radial-gradient(300px 260px at 50% 820px, rgba(138,108,255,0.3), rgba(11,15,20,0) 70%); display: flex; flex-direction: column; align-items: center">
+  <div class="v-ring" aria-hidden="true"></div>
+  <div class="v-ring" aria-hidden="true" style="animation-delay: 1s; border-color: rgba(138,108,255,0.6)"></div>
+  <div class="v-ring" aria-hidden="true" style="animation-delay: 2s; border-color: rgba(228,69,255,0.5)"></div>
+  <sc-for list="{{parts}}" as="p" hint-placeholder-count="16">
+    <span class="v-p" aria-hidden="true" style="{{p.style}}"></span>
+  </sc-for>
+
+  <span class="v-in" style="position: relative; margin-top: 70px; padding: 7px 14px; border-radius: 999px; font-family: Unbounded, sans-serif; font-size: 11px; letter-spacing: 3px; color: #3DF2E0; background: rgba(61,242,224,0.08); border: 1px solid rgba(61,242,224,0.35)">SYSTEM NOTICE</span>
+
+  <div style="position: relative; margin-top: 60px; width: 220px; height: 220px; border-radius: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(160deg, rgba(255,255,255,0.10), rgba(255,255,255,0.02)); border: 1px solid rgba(255,255,255,0.14); box-shadow: 0 0 60px rgba(61,242,224,0.25), inset 0 1px 0 rgba(255,255,255,0.1)">
+    <span style="font-size: 13px; color: #8C9AA8">Level</span>
+    <span class="v-num" style="font-family: Unbounded, sans-serif; font-size: 96px; font-weight: 800; line-height: 1; background: linear-gradient(180deg, #FFFFFF, #3DF2E0); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 0 30px rgba(61,242,224,0.35)">5</span>
+    <div class="v-hop" style="position: absolute; right: -18px; top: -22px">
+      <svg width="62" height="62" viewBox="0 0 46 46" role="img" aria-label="System companion celebrating">
+        <rect x="22" y="1" width="2" height="6" rx="1" fill="#E445FF"></rect><circle cx="23" cy="2" r="2.5" fill="#E445FF"></circle>
+        <rect x="5" y="8" width="36" height="32" rx="11" fill="#EEF3F7"></rect>
+        <rect x="10" y="14" width="26" height="18" rx="7" fill="#0B0F14"></rect>
+        <path d="M15 24q3-4 6 0M25 24q3-4 6 0" fill="none" stroke="#3DF2E0" stroke-width="2.4" stroke-linecap="round"></path>
+      </svg>
+    </div>
+  </div>
+
+  <h1 class="v-in" style="position: relative; margin: 34px 0 0 0; font-family: Unbounded, sans-serif; font-size: 34px; font-weight: 700; letter-spacing: 2px; color: #FFFFFF; animation-delay: .4s">Level up!</h1>
+  <p class="v-in" style="position: relative; margin: 8px 0 0 0; font-size: 14px; color: #8C9AA8; animation-delay: .5s">You're getting stronger, Rishi.</p>
+
+  <div class="v-in" style="position: relative; margin-top: 26px; width: 320px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; animation-delay: .7s">
+    <div style="padding: 14px; border-radius: 18px; background: rgba(61,242,224,0.08); border: 1px solid rgba(61,242,224,0.3); display: flex; flex-direction: column; gap: 4px"><span style="font-size: 11px; letter-spacing: 1.5px; color: #A8FFF6">INT</span><span style="font-family: Unbounded, sans-serif; font-size: 18px; font-weight: 600">4 → 5</span></div>
+    <div style="padding: 14px; border-radius: 18px; background: rgba(228,69,255,0.08); border: 1px solid rgba(228,69,255,0.3); display: flex; flex-direction: column; gap: 4px"><span style="font-size: 11px; letter-spacing: 1.5px; color: #F6B6FF">NEW TITLE</span><span style="font-size: 14px; font-weight: 600">First Light</span></div>
+  </div>
+
+  <a href="VoidToday.dc.html" style="position: relative; margin-top: auto; margin-bottom: 40px; width: 320px; height: 56px; border-radius: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-family: Unbounded, sans-serif; font-size: 14px; font-weight: 600; color: #0B0F14; background: #3DF2E0; box-shadow: 0 0 26px rgba(61,242,224,0.55)">Continue
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const colors = ['#3DF2E0', '#8A6CFF', '#E445FF'];
+    const parts = [];
+    for (let i = 0; i < 16; i++) {
+      const c = colors[i % 3];
+      const s = i % 4 === 0 ? 5 : 3;
+      parts.push({ style: 'left: ' + (14 + (i * 47) % 360) + 'px; width: ' + s + 'px; height: ' + s + 'px; background: ' + c + '; box-shadow: 0 0 8px ' + c + '; animation-delay: ' + ((i * 0.41) % 4.2).toFixed(2) + 's' });
+    }
+    return { parts };
+  }
+}
+</script>
+</body>
+</html>

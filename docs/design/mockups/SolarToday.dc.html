@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ASCEND SOLAR — Today</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F1E8}
+a{color:#0C1A2B}a:hover{color:#3A4A60}
+@keyframes sWiggle{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+@keyframes sPop{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(1)}}
+.s-star{animation:sWiggle 2.4s ease-in-out infinite}
+.s-q{transition:transform 140ms ease, box-shadow 140ms ease}
+.s-q:active{transform:translate(4px,4px);box-shadow:0 0 0 #0C1A2B !important}
+@media (prefers-reduced-motion: reduce){.s-star{animation:none !important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; font-family: 'Space Grotesk', system-ui, sans-serif; color: #0C1A2B; background: #F4F1E8; display: flex; flex-direction: column">
+
+  <div style="padding: 20px 18px 18px 18px; background: #0C1A2B; display: flex; flex-direction: column; gap: 14px; border-bottom: 3px solid #0C1A2B">
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <div style="display: flex; flex-direction: column">
+        <span style="font-size: 13px; font-weight: 700; color: #B6FF3B; letter-spacing: 1px">DAY 003</span>
+        <span style="font-family: 'Archivo Black', sans-serif; font-size: 28px; line-height: 1.05; color: #FFFFFF">LET'S GO,<br>RISHI</span>
+      </div>
+      <div style="position: relative">
+        <svg class="s-star" width="70" height="70" viewBox="0 0 70 70" role="img" aria-label="Rank E"><path d="M35 3l8 18 19-4-11 16 14 13-19 3-1 19-10-15-10 15-1-19-19-3 14-13L7 17l19 4z" fill="#FFD93D" stroke="#B6FF3B" stroke-width="2.5" stroke-linejoin="round"></path></svg>
+        <span style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Archivo Black', sans-serif; font-size: 20px; color: #0C1A2B">E</span>
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 10px">
+      <div style="padding: 12px; border-radius: 14px; background: #B6FF3B; border: 3px solid #0C1A2B; box-shadow: 4px 4px 0 #8A6CFF; display: flex; flex-direction: column; gap: 6px">
+        <div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-weight: 700; font-size: 13px">LEVEL</span><span style="font-family: 'Archivo Black', sans-serif; font-size: 30px; line-height: 1">{{level}}</span></div>
+        <div style="height: 12px; border-radius: 999px; background: #FFFFFF; border: 2px solid #0C1A2B; overflow: hidden"><div style="height: 100%; width: {{xpPct}}; background: #0C1A2B; transition: width 500ms cubic-bezier(.3,1.4,.5,1)"></div></div>
+        <span style="font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums">{{xpText}} XP</span>
+      </div>
+      <div style="padding: 12px; border-radius: 14px; background: #FF7A45; border: 3px solid #0C1A2B; box-shadow: 4px 4px 0 #FFD93D; display: flex; flex-direction: column; justify-content: space-between">
+        <span style="font-weight: 700; font-size: 13px">STREAK</span>
+        <span style="font-family: 'Archivo Black', sans-serif; font-size: 34px; line-height: 1">3<span style="font-size: 14px"> DAYS</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding: 16px 18px 0 18px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1">
+    <div style="display: flex; gap: 8px">
+      <span style="flex: 1; text-align: center; padding: 8px 0; border-radius: 999px; background: #FFFFFF; border: 2.5px solid #0C1A2B; font-weight: 700; font-size: 13px">STR 2</span>
+      <span style="flex: 1; text-align: center; padding: 8px 0; border-radius: 999px; background: #B6FF3B; border: 2.5px solid #0C1A2B; font-weight: 700; font-size: 13px">INT 4</span>
+      <span style="flex: 1; text-align: center; padding: 8px 0; border-radius: 999px; background: #C9BCFF; border: 2.5px solid #0C1A2B; font-weight: 700; font-size: 13px">WIL 3</span>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 14px; background: #FFFFFF; border: 3px solid #0C1A2B; box-shadow: 4px 4px 0 #0C1A2B">
+      <svg width="44" height="44" viewBox="0 0 46 46" role="img" aria-label="System companion" style="flex-shrink: 0">
+        <rect x="22" y="1" width="2" height="6" rx="1" fill="#0C1A2B"></rect><circle cx="23" cy="2" r="2.5" fill="#FF7A45"></circle>
+        <rect x="5" y="8" width="36" height="32" rx="9" fill="#FFD93D" stroke="#0C1A2B" stroke-width="2.5"></rect>
+        <rect x="10" y="14" width="26" height="18" rx="5" fill="#0C1A2B"></rect>
+        <rect x="15" y="20" width="5" height="6" rx="1.5" fill="#B6FF3B"></rect><rect x="26" y="20" width="5" height="6" rx="1.5" fill="#B6FF3B"></rect>
+      </svg>
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-family: 'Archivo Black', sans-serif; font-size: 12px; letter-spacing: 1px">SYSTEM SAYS</span>
+        <span style="font-size: 14px; font-weight: 500; line-height: 1.35">{{systemMsg}}</span>
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: baseline">
+      <span style="font-family: 'Archivo Black', sans-serif; font-size: 18px">QUESTS</span>
+      <span style="padding: 3px 10px; border-radius: 999px; background: #0C1A2B; color: #B6FF3B; font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums">{{doneCount}}/8</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+      <sc-for list="{{quests}}" as="q" hint-placeholder-count="4">
+        <button class="s-q" type="button" onClick="{{q.pick}}" aria-pressed="{{q.done}}" style="{{q.cardStyle}}">
+          <span style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%">
+            <span style="font-family: 'Archivo Black', sans-serif; font-size: 13px">+{{q.xp}}</span>
+            <span style="width: 26px; height: 26px; border-radius: 8px; border: 2.5px solid #0C1A2B; box-sizing: border-box; display: flex; align-items: center; justify-content: center; background: #FFFFFF">
+              <sc-if value="{{q.done}}" hint-placeholder-val="{{false}}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0C1A2B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+              </sc-if>
+            </span>
+          </span>
+          <span style="font-family: 'Archivo Black', sans-serif; font-size: 17px; line-height: 1.1; text-align: left">{{q.title}}</span>
+          <span style="font-size: 12px; font-weight: 600; text-align: left">{{q.meta}}</span>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+
+  <nav aria-label="Main" style="margin: 0 18px 16px 18px; height: 62px; border-radius: 18px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; background: #0C1A2B; border: 3px solid #0C1A2B">
+    <a href="SolarToday.dc.html" aria-current="page" style="justify-self: center; padding: 8px 12px; border-radius: 12px; background: #B6FF3B; color: #0C1A2B; text-decoration: none; font-weight: 700; font-size: 12px">TODAY</a>
+    <a href="SolarToday.dc.html" aria-label="Quests" style="justify-self: center; color: #FFFFFF; display: flex"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"></path></svg></a>
+    <a href="SolarToday.dc.html" aria-label="Focus" style="justify-self: center; color: #FFFFFF; display: flex"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2.5M9 2h6"></path></svg></a>
+    <a href="SolarToday.dc.html" aria-label="Goals" style="justify-self: center; color: #FFFFFF; display: flex"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="4.5"></circle></svg></a>
+    <a href="SolarLevelUp.dc.html" aria-label="More" style="justify-self: center; color: #FFFFFF; display: flex"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></svg></a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { done: { wake: true, study: false, workout: false, walk: false } };
+  }
+  renderVals() {
+    const done = this.state.done;
+    const defs = [
+      { id: 'wake', title: 'WAKE UP', meta: "I'm up · 4:58", xp: 25, bg: '#C9BCFF' },
+      { id: 'study', title: 'AI & ROBOTICS', meta: '90 / 150 min', xp: 50, bg: '#B6FF3B' },
+      { id: 'workout', title: 'WORKOUT', meta: '30 min · min 10', xp: 25, bg: '#FFD93D' },
+      { id: 'walk', title: 'WALK', meta: '6,240 / 8,000', xp: 10, bg: '#FFFFFF' }
+    ];
+    let gained = 0;
+    const quests = defs.map((d) => {
+      const isDone = !!done[d.id];
+      if (isDone && d.id !== 'wake') gained += d.xp;
+      const base = 'min-height: 128px; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; padding: 12px; border-radius: 16px; border: 3px solid #0C1A2B; font-family: inherit; color: #0C1A2B; cursor: pointer; ';
+      return {
+        title: d.title, meta: d.meta, xp: d.xp, done: isDone,
+        cardStyle: base + 'background: ' + d.bg + '; ' + (isDone ? 'transform: translate(4px,4px); box-shadow: 0 0 0 #0C1A2B; opacity: 0.8;' : 'box-shadow: 5px 5px 0 #0C1A2B;'),
+        pick: () => this.setState({ done: Object.assign({}, done, { [d.id]: !isDone }) })
+      };
+    });
+    const xp = Math.min(340 + gained, 520);
+    return {
+      level: 4, xpText: xp + ' / 520', xpPct: Math.round(xp / 520 * 100) + '%',
+      quests, doneCount: 2 + quests.filter((q) => q.done).length,
+      systemMsg: gained >= 75 ? 'CORE QUESTS SMASHED. Keep the streak alive!' : 'Two core quests left. Hit study first — 60 min!'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ASCEND ION — Today</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E4E9F0}
+a{color:#0369A1}a:hover{color:#075985}
+@keyframes iBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.015)}}
+@keyframes iBlink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+.i-orb{animation:iBreathe 5s ease-in-out infinite}
+.i-eye{animation:iBlink 4.5s infinite;transform-origin:center}
+.i-q{transition:box-shadow 260ms ease, transform 260ms ease}
+@media (prefers-reduced-motion: reduce){.i-orb,.i-eye{animation:none !important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #1E2A3A; background: #E4E9F0; display: flex; flex-direction: column">
+
+  <div style="padding: 24px 22px 0 22px; display: flex; flex-direction: column; gap: 18px; flex-grow: 1">
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 13px; color: #5B6878">Good morning,</span>
+        <span style="font-size: 22px; font-weight: 800">Rishi</span>
+      </div>
+      <span role="img" aria-label="Rank E" style="width: 46px; height: 46px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; color: #0369A1; background: #E4E9F0; box-shadow: 6px 6px 12px #C2CAD5, -6px -6px 12px #FFFFFF">E</span>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 18px">
+      <div class="i-orb" style="position: relative; width: 150px; height: 150px; flex-shrink: 0; border-radius: 999px; background: #E4E9F0; box-shadow: 12px 12px 24px #C2CAD5, -12px -12px 24px #FFFFFF; display: flex; align-items: center; justify-content: center">
+        <svg width="150" height="150" viewBox="0 0 150 150" aria-hidden="true" style="position: absolute; inset: 0">
+          <defs><linearGradient id="ionRing" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E445FF"></stop><stop offset="1" stop-color="#FF8A3D"></stop></linearGradient></defs>
+          <circle cx="75" cy="75" r="62" fill="none" stroke="#D3DAE3" stroke-width="10"></circle>
+          <circle cx="75" cy="75" r="62" fill="none" stroke="url(#ionRing)" stroke-width="10" stroke-linecap="round" stroke-dasharray="{{ringDash}}" transform="rotate(-90 75 75)" style="transition: stroke-dasharray 700ms cubic-bezier(.2,.8,.2,1)"></circle>
+        </svg>
+        <div style="width: 96px; height: 96px; border-radius: 999px; background: #E4E9F0; box-shadow: inset 5px 5px 10px #C2CAD5, inset -5px -5px 10px #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center">
+          <span style="font-size: 11px; color: #5B6878">Level</span>
+          <span style="font-size: 34px; font-weight: 800; line-height: 1">{{level}}</span>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 10px; flex-grow: 1">
+        <div style="display: flex; flex-direction: column"><span style="font-size: 12px; color: #5B6878">XP</span><span style="font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums">{{xpText}}</span></div>
+        <div style="display: flex; flex-direction: column"><span style="font-size: 12px; color: #5B6878">Streak</span><span style="font-size: 18px; font-weight: 700">3 days</span></div>
+        <div style="display: flex; flex-direction: column"><span style="font-size: 12px; color: #5B6878">Title</span><span style="font-size: 15px; font-weight: 700; color: #0369A1">First Light</span></div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px">
+      <div style="padding: 12px; border-radius: 18px; background: #E4E9F0; box-shadow: 6px 6px 12px #C2CAD5, -6px -6px 12px #FFFFFF; display: flex; flex-direction: column; align-items: center; gap: 2px"><span style="font-size: 20px; font-weight: 800; color: #C2410C">2</span><span style="font-size: 11px; font-weight: 600; color: #5B6878">STR</span></div>
+      <div style="padding: 12px; border-radius: 18px; background: #E4E9F0; box-shadow: 6px 6px 12px #C2CAD5, -6px -6px 12px #FFFFFF; display: flex; flex-direction: column; align-items: center; gap: 2px"><span style="font-size: 20px; font-weight: 800; color: #0369A1">4</span><span style="font-size: 11px; font-weight: 600; color: #5B6878">INT</span></div>
+      <div style="padding: 12px; border-radius: 18px; background: #E4E9F0; box-shadow: 6px 6px 12px #C2CAD5, -6px -6px 12px #FFFFFF; display: flex; flex-direction: column; align-items: center; gap: 2px"><span style="font-size: 20px; font-weight: 800; color: #7C3AED">3</span><span style="font-size: 11px; font-weight: 600; color: #5B6878">WIL</span></div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 20px; background: #E4E9F0; box-shadow: inset 4px 4px 9px #C2CAD5, inset -4px -4px 9px #FFFFFF">
+      <svg width="42" height="42" viewBox="0 0 46 46" role="img" aria-label="System companion" style="flex-shrink: 0">
+        <rect x="22" y="1" width="2" height="6" rx="1" fill="#4FC3F7"></rect><circle cx="23" cy="2" r="2.5" fill="#4FC3F7"></circle>
+        <rect x="5" y="8" width="36" height="32" rx="12" fill="#F4F7FA"></rect>
+        <rect x="10" y="14" width="26" height="18" rx="8" fill="#1E2A3A"></rect>
+        <g class="i-eye"><circle cx="18" cy="23" r="2.6" fill="#4FC3F7"></circle><circle cx="28" cy="23" r="2.6" fill="#4FC3F7"></circle></g>
+      </svg>
+      <span style="font-size: 14px; line-height: 1.4; color: #1E2A3A">{{systemMsg}}</span>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: baseline">
+      <span style="font-size: 16px; font-weight: 800">Today's quests</span>
+      <span style="font-size: 13px; color: #5B6878; font-variant-numeric: tabular-nums">{{doneCount}} / 8</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px">
+      <sc-for list="{{quests}}" as="q" hint-placeholder-count="3">
+        <button class="i-q" type="button" onClick="{{q.pick}}" aria-pressed="{{q.done}}" style="{{q.cardStyle}}">
+          <span style="{{q.checkStyle}}">
+            <sc-if value="{{q.done}}" hint-placeholder-val="{{false}}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+            </sc-if>
+          </span>
+          <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; text-align: left">
+            <span style="font-size: 14px; font-weight: 700; color: #1E2A3A">{{q.title}}</span>
+            <span style="font-size: 12px; color: #5B6878">{{q.meta}}</span>
+          </span>
+          <span style="font-size: 12px; font-weight: 700; color: #0369A1">+{{q.xp}}</span>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+
+  <nav aria-label="Main" style="margin: 0 20px 18px 20px; height: 64px; border-radius: 24px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; background: #E4E9F0; box-shadow: 8px 8px 16px #C2CAD5, -8px -8px 16px #FFFFFF">
+    <a href="IonToday.dc.html" aria-current="page" aria-label="Today" style="justify-self: center; width: 44px; height: 44px; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: #FFFFFF; background: linear-gradient(145deg, #4FC3F7, #0EA5E9); box-shadow: 4px 4px 10px rgba(14,165,233,0.35)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2"></path></svg></a>
+    <a href="IonToday.dc.html" aria-label="Quests" style="justify-self: center; color: #5B6878; display: flex"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"></path></svg></a>
+    <a href="IonToday.dc.html" aria-label="Focus" style="justify-self: center; color: #5B6878; display: flex"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2.5M9 2h6"></path></svg></a>
+    <a href="IonToday.dc.html" aria-label="Goals" style="justify-self: center; color: #5B6878; display: flex"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="4.5"></circle></svg></a>
+    <a href="IonLevelUp.dc.html" aria-label="More" style="justify-self: center; color: #5B6878; display: flex"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"></circle><circle cx="12" cy="12" r="1.8"></circle><circle cx="19" cy="12" r="1.8"></circle></svg></a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { done: { wake: true, study: false, workout: false } };
+  }
+  renderVals() {
+    const done = this.state.done;
+    const defs = [
+      { id: 'wake', title: 'Wake up on time', meta: "I'm up · 4:58", xp: 25 },
+      { id: 'study', title: 'AI & Robotics study', meta: '90 / 150 min', xp: 50 },
+      { id: 'workout', title: 'Workout', meta: '30 min · min 10 push-ups', xp: 25 }
+    ];
+    let gained = 0;
+    const quests = defs.map((d) => {
+      const isDone = !!done[d.id];
+      if (isDone && d.id !== 'wake') gained += d.xp;
+      const base = 'width: 100%; display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 20px; border: none; background: #E4E9F0; font-family: inherit; cursor: pointer; ';
+      return {
+        title: d.title, meta: d.meta, xp: d.xp, done: isDone,
+        cardStyle: base + (isDone ? 'box-shadow: inset 5px 5px 10px #C2CAD5, inset -5px -5px 10px #FFFFFF;' : 'box-shadow: 7px 7px 14px #C2CAD5, -7px -7px 14px #FFFFFF;'),
+        checkStyle: 'width: 28px; height: 28px; flex-shrink: 0; border-radius: 999px; display: flex; align-items: center; justify-content: center; ' + (isDone
+          ? 'background: linear-gradient(145deg, #4FC3F7, #0EA5E9); box-shadow: 3px 3px 8px rgba(14,165,233,0.4);'
+          : 'background: #E4E9F0; box-shadow: inset 3px 3px 6px #C2CAD5, inset -3px -3px 6px #FFFFFF;'),
+        pick: () => this.setState({ done: Object.assign({}, done, { [d.id]: !isDone }) })
+      };
+    });
+    const xp = Math.min(340 + gained, 520);
+    const circ = 2 * Math.PI * 62;
+    return {
+      level: 4, xpText: xp + ' / 520',
+      ringDash: (circ * xp / 520).toFixed(1) + ' ' + circ.toFixed(1),
+      quests, doneCount: 2 + quests.filter((q) => q.done).length,
+      systemMsg: gained >= 75 ? 'Core quests done. Take a calm breath — well earned.' : 'Two core quests left. One gentle step at a time.'
+    };
+  }
+}
+</script>
+</body>
+</html>

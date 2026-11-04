@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ASCEND — Focus</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#000000}
+a{color:#FFFFFF}a:hover{color:#D9D9D9}
+.e-x{font-family:Archivo,sans-serif;font-stretch:125%;font-weight:800;letter-spacing:-0.3px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.orbit{animation:spin 12s linear infinite;transform-origin:50% 50%}
+@media (prefers-reduced-motion: reduce){.orbit{animation:none !important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; font-family: Inter, system-ui, sans-serif; color: #FFFFFF; background: #000000; display: flex; flex-direction: column">
+  <div style="padding: 24px 20px 0 20px; display: flex; flex-direction: column; gap: 14px; flex-grow: 1">
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <h1 class="e-x" style="margin: 0; font-size: 28px">Focus</h1>
+      <span style="padding: 8px 12px; border-radius: 999px; background: #1C1C1C; font-size: 12px; color: #CFCFCF">Today 96 min</span>
+    </div>
+
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-radius: 22px; background: #C8F03C; color: #000000">
+      <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 11px; font-weight: 700; opacity: 0.6">LINKED QUEST</span><span class="e-x" style="font-size: 16px">AI &amp; Robotics study</span><span style="font-size: 12px; font-weight: 600">96 / 150 min</span></span>
+      <span style="width: 34px; height: 34px; border-radius: 999px; background: #000000; color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></span>
+    </div>
+
+    <div style="position: relative; align-self: center; width: 250px; height: 250px; margin-top: 4px">
+      <svg width="250" height="250" viewBox="0 0 250 250" aria-hidden="true" style="position: absolute; inset: 0">
+        <circle cx="125" cy="125" r="108" fill="none" stroke="#1E1E1E" stroke-width="14"></circle>
+        <circle cx="125" cy="125" r="108" fill="none" stroke="#C8F03C" stroke-width="14" stroke-linecap="round" stroke-dasharray="{{dash}}" transform="rotate(-90 125 125)"></circle>
+        <g class="orbit"><circle cx="125" cy="6" r="4" fill="#FFFFFF"></circle></g>
+      </svg>
+      <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+        <span class="e-x" style="font-size: 56px; line-height: 1; font-variant-numeric: tabular-nums">{{time}}</span>
+        <span style="font-size: 12px; color: #8A8A8A">{{status}}</span>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 8px; justify-content: center">
+      <sc-for list="{{durations}}" as="d" hint-placeholder-count="2">
+        <button type="button" onClick="{{d.pick}}" aria-pressed="{{d.active}}" style="{{d.style}}">{{d.label}}</button>
+      </sc-for>
+    </div>
+    <div style="display: flex; gap: 8px; justify-content: center">
+      <span style="padding: 7px 12px; border-radius: 999px; background: #FFE14D; color: #000000; font-size: 12px; font-weight: 700">ROS 2</span>
+      <span style="padding: 7px 12px; border-radius: 999px; background: #1C1C1C; color: #CFCFCF; font-size: 12px">C++</span>
+      <span style="padding: 7px 12px; border-radius: 999px; background: #1C1C1C; color: #CFCFCF; font-size: 12px">+ skill</span>
+    </div>
+
+    <button type="button" onClick="{{toggle}}" style="margin-top: 4px; height: 58px; border-radius: 999px; border: none; display: flex; align-items: center; justify-content: space-between; padding: 0 8px 0 24px; background: #FFFFFF; color: #000000; font-family: inherit; cursor: pointer">
+      <span class="e-x" style="font-size: 16px">{{cta}}</span>
+      <span style="width: 44px; height: 44px; border-radius: 999px; background: #000000; color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></span>
+    </button>
+  </div>
+
+  <a href="E2Ask.dc.html" aria-label="Ask the System" style="position: absolute; right: 18px; bottom: 104px; width: 56px; height: 56px; border-radius: 999px; background: #C8F03C; display: flex; align-items: center; justify-content: center; box-shadow: 0 12px 24px rgba(0,0,0,0.6)">
+    <svg width="32" height="32" viewBox="0 0 46 46" aria-hidden="true"><rect x="22" y="2" width="2" height="6" rx="1" fill="#000000"></rect><circle cx="23" cy="3" r="2.5" fill="#000000"></circle><rect x="5" y="9" width="36" height="31" rx="11" fill="#000000"></rect><circle cx="17" cy="24" r="3" fill="#C8F03C"></circle><circle cx="29" cy="24" r="3" fill="#C8F03C"></circle></svg>
+  </a>
+
+  <nav aria-label="Main" style="margin: 0 16px 16px 16px; height: 70px; border-radius: 26px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; background: #161616; border: 1px solid #262626">
+    <a href="E2Today.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; text-decoration: none; color: #8A8A8A; font-size: 10px"><span style="width: 38px; height: 38px; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2"></path></svg></span>Today</a>
+    <a href="E2Quests.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; text-decoration: none; color: #8A8A8A; font-size: 10px"><span style="width: 38px; height: 38px; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2"></rect><rect x="13" y="4" width="7" height="7" rx="2"></rect><rect x="4" y="13" width="7" height="7" rx="2"></rect><rect x="13" y="13" width="7" height="7" rx="2"></rect></svg></span>Quests</a>
+    <a href="E2Focus.dc.html" aria-current="page" aria-label="Focus" style="justify-self: center; margin-top: -30px; width: 62px; height: 62px; border-radius: 999px; background: #FFFFFF; color: #000000; display: flex; align-items: center; justify-content: center; border: 5px solid #000000; box-shadow: 0 0 0 2px #C8F03C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2.5M9 2h6"></path></svg></a>
+    <a href="E2Growth.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; text-decoration: none; color: #8A8A8A; font-size: 10px"><span style="width: 38px; height: 38px; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19l5-6 4 3 7-9"></path><path d="M15 7h5v5"></path></svg></span>Growth</a>
+    <a href="E2Me.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; text-decoration: none; color: #8A8A8A; font-size: 10px"><span style="width: 38px; height: 38px; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg></span>Me</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { mins: 25, running: false };
+  }
+  renderVals() {
+    const { mins, running } = this.state;
+    const circ = 2 * Math.PI * 108;
+    const ratio = running ? 0.25 : 1;
+    const durations = [25, 50].map((m) => ({
+      label: m === 25 ? '25 / 5' : '50 / 10', active: m === mins,
+      style: 'padding: 9px 16px; border-radius: 999px; border: none; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; ' + (m === mins ? 'background: #FFFFFF; color: #000000;' : 'background: #1C1C1C; color: #CFCFCF;'),
+      pick: () => this.setState({ mins: m, running: false })
+    }));
+    return {
+      durations,
+      time: running ? (mins === 25 ? '18:42' : '37:20') : mins + ':00',
+      status: running ? 'focusing · phone face-down' : 'ready',
+      dash: (circ * ratio).toFixed(1) + ' ' + circ.toFixed(1),
+      cta: running ? 'PAUSE' : 'START FOCUS',
+      toggle: () => this.setState({ running: !running })
+    };
+  }
+}
+</script>
+</body>
+</html>

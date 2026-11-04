@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ASCEND — Today</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#05070D}
+a{color:#7CC8FF}a:hover{color:#B5E0FF}
+@keyframes sysPulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(90,184,255,.6)}50%{opacity:.55;box-shadow:0 0 0 6px rgba(90,184,255,0)}}
+@keyframes xpShimmer{0%{transform:translateX(-120%)}100%{transform:translateX(320%)}}
+@keyframes ringGlow{0%,100%{filter:drop-shadow(0 0 6px rgba(90,184,255,.55))}50%{filter:drop-shadow(0 0 14px rgba(90,184,255,.9))}}
+@keyframes scan{0%{transform:translateY(-100%)}100%{transform:translateY(900%)}}
+.anim .sys-dot{animation:sysPulse 2.2s ease-in-out infinite}
+.anim .xp-shine{animation:xpShimmer 3.2s ease-in-out infinite}
+.anim .lv-ring{animation:ringGlow 3s ease-in-out infinite}
+.anim .scanline{animation:scan 6s linear infinite}
+.quest-btn:active{transform:scale(.98)}
+@media (prefers-reduced-motion: reduce){.anim *{animation:none !important}}
+</style>
+</helmet>
+<div class="{{animClass}}" style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; font-family: Inter, system-ui, sans-serif; color: #E7EEF9; background-color: #05070D; background-image: radial-gradient(520px 320px at 50% -40px, rgba(70,140,255,0.22), rgba(5,7,13,0) 70%), linear-gradient(rgba(120,170,255,0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(120,170,255,0.045) 1px, transparent 1px); background-size: 100% 100%, 26px 26px, 26px 26px; display: flex; flex-direction: column">
+
+  <div style="padding: 22px 20px 0 20px; display: flex; flex-direction: column; gap: 14px; flex-grow: 1; min-height: 0">
+
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-family: 'Chakra Petch', sans-serif; font-size: 13px; letter-spacing: 3px; color: #7CC8FF; font-weight: 600">DAY 003</span>
+        <span style="font-size: 13px; color: #98A6BD">Wednesday · 4 Nov</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px">
+        <div style="display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; background: rgba(240,137,75,0.12); border: 1px solid rgba(240,137,75,0.35)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F0894B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c2 4 6 5.5 6 10a6 6 0 0 1-12 0c0-2.5 1.5-4 3-5 0 2 1 3 2 3 0-3-1-5 1-8z"></path></svg>
+          <span style="font-size: 13px; font-weight: 600; color: #FFC8A6">3</span>
+        </div>
+        <div aria-label="Rank E" role="img" style="width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background: linear-gradient(160deg, #2A3A5C, #121A2C); font-family: 'Chakra Petch', sans-serif; font-weight: 700; font-size: 17px; color: #CFE6FF">E</div>
+      </div>
+    </div>
+
+    <div style="position: relative; border-radius: 16px; padding: 16px; background: rgba(14,22,38,0.78); border: 1px solid rgba(90,184,255,0.30); box-shadow: 0 0 28px rgba(60,140,255,0.14), inset 0 1px 0 rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 14px; overflow: hidden">
+      <div class="scanline" aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 0; height: 40px; background: linear-gradient(rgba(90,184,255,0), rgba(90,184,255,0.07), rgba(90,184,255,0)); pointer-events: none"></div>
+      <div style="display: flex; align-items: center; gap: 14px">
+        <div class="lv-ring" style="position: relative; width: 76px; height: 76px; flex-shrink: 0">
+          <svg width="76" height="76" viewBox="0 0 76 76" aria-hidden="true">
+            <circle cx="38" cy="38" r="32" fill="none" stroke="rgba(90,184,255,0.15)" stroke-width="6"></circle>
+            <circle cx="38" cy="38" r="32" fill="none" stroke="{{accent}}" stroke-width="6" stroke-linecap="round" stroke-dasharray="{{ringDash}}" transform="rotate(-90 38 38)"></circle>
+          </svg>
+          <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center">
+            <span style="font-size: 10px; letter-spacing: 2px; color: #98A6BD">LV</span>
+            <span style="font-family: 'Chakra Petch', sans-serif; font-size: 26px; font-weight: 700; line-height: 1; color: #FFFFFF">{{level}}</span>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0">
+          <span style="font-family: 'Chakra Petch', sans-serif; font-size: 20px; font-weight: 600; color: #FFFFFF">Rishi</span>
+          <span style="font-size: 12px; color: #7CC8FF; letter-spacing: 0.5px">Title · First Light</span>
+          <div style="display: flex; justify-content: space-between; font-size: 12px; color: #98A6BD; margin-top: 4px">
+            <span>XP</span><span style="font-variant-numeric: tabular-nums; color: #CFE6FF">{{xpText}}</span>
+          </div>
+          <div style="position: relative; height: 8px; border-radius: 999px; background: rgba(90,184,255,0.14); overflow: hidden">
+            <div style="position: absolute; left: 0; top: 0; bottom: 0; width: {{xpPct}}; border-radius: 999px; background: linear-gradient(90deg, #3E7BFF, {{accent}}); box-shadow: 0 0 12px rgba(90,184,255,0.7); transition: width 600ms cubic-bezier(.2,.8,.2,1)"></div>
+            <div class="xp-shine" aria-hidden="true" style="position: absolute; top: 0; bottom: 0; width: 30%; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.45), rgba(255,255,255,0))"></div>
+          </div>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+        <div style="display: flex; flex-direction: column; gap: 6px; padding: 10px; border-radius: 12px; background: rgba(240,137,75,0.08); border: 1px solid rgba(240,137,75,0.22)">
+          <div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-family: 'Chakra Petch', sans-serif; font-size: 12px; letter-spacing: 1.5px; color: #FFB48A">STR</span><span style="font-family: 'Chakra Petch', sans-serif; font-size: 18px; font-weight: 700">2</span></div>
+          <div style="height: 4px; border-radius: 999px; background: rgba(240,137,75,0.18)"><div style="width: 45%; height: 4px; border-radius: 999px; background: #F0894B"></div></div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px; padding: 10px; border-radius: 12px; background: rgba(43,181,200,0.08); border: 1px solid rgba(43,181,200,0.24)">
+          <div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-family: 'Chakra Petch', sans-serif; font-size: 12px; letter-spacing: 1.5px; color: #7FE3F0">INT</span><span style="font-family: 'Chakra Petch', sans-serif; font-size: 18px; font-weight: 700">4</span></div>
+          <div style="height: 4px; border-radius: 999px; background: rgba(43,181,200,0.18)"><div style="width: 70%; height: 4px; border-radius: 999px; background: #2BB5C8"></div></div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px; padding: 10px; border-radius: 12px; background: rgba(155,123,255,0.08); border: 1px solid rgba(155,123,255,0.26)">
+          <div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-family: 'Chakra Petch', sans-serif; font-size: 12px; letter-spacing: 1.5px; color: #C4B2FF">WIL</span><span style="font-family: 'Chakra Petch', sans-serif; font-size: 18px; font-weight: 700">3</span></div>
+          <div style="height: 4px; border-radius: 999px; background: rgba(155,123,255,0.18)"><div style="width: 55%; height: 4px; border-radius: 999px; background: #9B7BFF"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="border-radius: 14px; padding: 12px 14px; background: linear-gradient(180deg, rgba(30,60,110,0.35), rgba(14,22,38,0.7)); border: 1px solid rgba(124,200,255,0.35); display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; align-items: center; gap: 8px">
+        <span class="sys-dot" style="width: 8px; height: 8px; border-radius: 999px; background: #7CC8FF"></span>
+        <span style="font-family: 'Chakra Petch', sans-serif; font-size: 12px; letter-spacing: 3px; color: #7CC8FF; font-weight: 600">SYSTEM</span>
+      </div>
+      <p style="margin: 0; font-size: 14px; line-height: 1.45; color: #E7EEF9">{{systemMsg}}</p>
+      <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #98A6BD">
+        <span style="padding: 3px 8px; border-radius: 6px; background: rgba(124,200,255,0.14); color: #B5E0FF; font-weight: 600">NOW</span>
+        <span>AI &amp; Robotics study · 60 min left</span>
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: baseline">
+      <span style="font-family: 'Chakra Petch', sans-serif; font-size: 13px; letter-spacing: 3px; color: #98A6BD; font-weight: 600">DAILY QUESTS</span>
+      <span style="font-family: 'Chakra Petch', sans-serif; font-size: 14px; color: #CFE6FF; font-variant-numeric: tabular-nums">{{doneCount}} / 8</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <sc-for list="{{quests}}" as="q" hint-placeholder-count="5">
+        <button class="quest-btn" type="button" onClick="{{q.pick}}" aria-pressed="{{q.done}}" style="{{q.cardStyle}}">
+          <sc-if value="{{q.done}}" hint-placeholder-val="{{false}}">
+            <span style="width: 26px; height: 26px; flex-shrink: 0; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: {{q.color}}; box-shadow: 0 0 12px {{q.glow}}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#05070D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+            </span>
+          </sc-if>
+          <sc-if value="{{q.open}}" hint-placeholder-val="{{true}}">
+            <span style="width: 26px; height: 26px; flex-shrink: 0; border-radius: 8px; border: 1.5px solid {{q.color}}; box-sizing: border-box"></span>
+          </sc-if>
+          <span style="display: flex; flex-direction: column; gap: 3px; flex-grow: 1; min-width: 0; text-align: left">
+            <span style="display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: #F2F6FC">
+              {{q.title}}
+              <sc-if value="{{q.core}}" hint-placeholder-val="{{false}}">
+                <svg width="10" height="10" viewBox="0 0 10 10" role="img" aria-label="Core quest"><path d="M5 0l5 5-5 5-5-5z" fill="#7CC8FF"></path></svg>
+              </sc-if>
+            </span>
+            <span style="font-size: 12px; color: #98A6BD">{{q.meta}}</span>
+            <span style="height: 3px; border-radius: 999px; background: rgba(255,255,255,0.07)"><span style="display: block; height: 3px; width: {{q.pct}}; border-radius: 999px; background: {{q.color}}"></span></span>
+          </span>
+          <span style="font-family: 'Chakra Petch', sans-serif; font-size: 12px; font-weight: 600; color: {{q.color}}">+{{q.xp}}</span>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+
+  <nav aria-label="Main" style="height: 74px; flex-shrink: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; background: rgba(8,12,22,0.92); border-top: 1px solid rgba(90,184,255,0.18)">
+    <a href="Main.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: #7CC8FF; font-size: 11px; font-weight: 600">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" style="filter: drop-shadow(0 0 6px rgba(124,200,255,0.8))"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>Today</a>
+    <a href="Main.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: #7D8AA3; font-size: 11px">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l1.5 1.5L8 5M4 12l1.5 1.5L8 11M4 18l1.5 1.5L8 17M11 6h9M11 12h9M11 18h9"></path></svg>Quests</a>
+    <a href="Focus.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: #7D8AA3; font-size: 11px">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2.5M9 2h6"></path></svg>Focus</a>
+    <a href="Main.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: #7D8AA3; font-size: 11px">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1.5"></circle></svg>Goals</a>
+    <a href="Profile.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: #7D8AA3; font-size: 11px">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>More</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#5AB8FF","options":["#5AB8FF","#9B7BFF","#2BB5C8","#F0894B"]},"animate":{"editor":"boolean","default":true},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { done: { wake: true, study: false, workout: false, walk: false, journal: false } };
+  }
+  renderVals() {
+    const accent = this.props.accent ?? '#5AB8FF';
+    const animate = this.props.animate ?? true;
+    const done = this.state.done;
+    const defs = [
+      { id: 'wake', title: 'Wake up on time', meta: "I'm up · 4:58", xp: 25, core: true, color: '#9B7BFF', glow: 'rgba(155,123,255,0.6)', prog: 1 },
+      { id: 'study', title: 'AI & Robotics study', meta: '90 / 150 min · phone-free', xp: 50, core: true, color: '#2BB5C8', glow: 'rgba(43,181,200,0.6)', prog: 0.6 },
+      { id: 'workout', title: 'Workout', meta: 'Full 30 min · min 10 push-ups', xp: 25, core: true, color: '#F0894B', glow: 'rgba(240,137,75,0.6)', prog: 0 },
+      { id: 'walk', title: 'Walk', meta: '6,240 / 8,000 steps', xp: 10, core: false, color: '#F0894B', glow: 'rgba(240,137,75,0.6)', prog: 0.78 },
+      { id: 'journal', title: 'Journal', meta: 'One win, one lesson', xp: 10, core: false, color: '#9B7BFF', glow: 'rgba(155,123,255,0.6)', prog: 0 }
+    ];
+    let gained = 0;
+    const quests = defs.map((d) => {
+      const isDone = !!done[d.id];
+      if (isDone && d.id !== 'wake') gained += d.xp;
+      const base = 'width: 100%; display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 12px; font-family: inherit; cursor: pointer; transition: all 220ms ease; ';
+      const cardStyle = isDone
+        ? base + 'background: rgba(20,32,52,0.55); border: 1px solid ' + d.glow.replace('0.6', '0.45') + '; box-shadow: 0 0 18px ' + d.glow.replace('0.6', '0.18') + '; opacity: 0.88;'
+        : base + 'background: rgba(14,22,38,0.82); border: 1px solid rgba(255,255,255,0.08);';
+      return {
+        title: d.title, meta: d.meta, xp: d.xp, core: d.core, color: d.color, glow: d.glow,
+        done: isDone, open: !isDone,
+        pct: Math.round((isDone ? 1 : d.prog) * 100) + '%',
+        cardStyle,
+        pick: () => this.setState({ done: Object.assign({}, done, { [d.id]: !isDone }) })
+      };
+    });
+    const xp = Math.min(340 + gained, 520);
+    const ratio = xp / 520;
+    const circ = 2 * Math.PI * 32;
+    const doneCount = 2 + quests.filter((q) => q.done).length;
+    const systemMsg = gained >= 75
+      ? 'Core quests cleared. The System acknowledges your effort, Player.'
+      : 'Day 3. Two core quests remain. Start with the smallest step.';
+    return {
+      accent, level: 4, xpText: xp + ' / 520',
+      xpPct: Math.round(ratio * 100) + '%',
+      ringDash: (circ * ratio).toFixed(1) + ' ' + circ.toFixed(1),
+      quests, doneCount, systemMsg,
+      animClass: animate ? 'anim' : ''
+    };
+  }
+}
+</script>
+</body>
+</html>

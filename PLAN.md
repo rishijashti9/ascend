@@ -269,3 +269,62 @@ Phone only, off by default, never blocks. Version 0.11.0 at the end. New tables 
 - 11.10 "Digital discipline" daily quest (auto, judged at day close, WIL, counts toward Daily Clear) + one weekly review line (entertainment vs last week); tests
 - 11.11 Privacy + data: export/import, compaction (old `screen_days` → monthly totals), Delete everything keeps an active lock, Ask context never includes screen time, My data counts; tests
 - 11.12 Phase 11 wrap-up: flag on, E2E, README, CHANGELOG, v0.11.0 (versionCode 11), battery check notes, real-phone checklist (Nothing Phone (3a))
+
+### Phase 12 — Redesign + switchable themes (SPEC 6.9)
+
+Looks and motion only — no change to rules, data, sync or engine. Settings get three new optional fields (`ui_theme`, `effects`, `sound_haptics`); absent = ELEVATE / Full / off, so old records and backups need no migration. Each part ends with a release, a phone checklist and a stop for Rishi's permission.
+
+**12A — theme engine + ELEVATE everywhere** (version 0.12.0)
+
+- 12A.1 Redesign inventory: every route, screen, tab, sheet, dialog, card, banner, toast, empty/loading/offline/error state, notification screen, onboarding step, widget and splash, from the codebase → PROGRESS.md "Redesign inventory" checklist
+- 12A.2 Theme engine: `ThemeDef` (colour tokens incl. stats/status/text levels, fonts, radii, borders, shadows, surface style, motion style, effect set), ELEVATE definition, CSS variables applied on the root at startup (before first paint), Tailwind tokens read them; contrast test per theme
+- 12A.3 Settings fields (`ui_theme`, `effects`, `sound_haptics`) + Settings → Appearance (picker with live mini-preview of built themes, instant, synced) and Effects (Full / Light / Off, reduce motion = Off, sound + haptics toggle); old light/dark setting retired
+- 12A.4 Fonts: bundle Archivo (expanded width) with Inter; per-theme lazy font loading
+- 12A.5 UI primitives in the theme language: Button, chips, Tile (bento + ↗), Field, Switch, ProgressBar, Tabs, Sheet / dialog, StatChip, charts colours — variant switches by surface style
+- 12A.6 Navigation shell: bottom bar Today · Quests · Focus (centre) · Growth · Me, desktop sidebar, More removed; new routes (`/growth/*`, `/me/*`), old addresses redirect; deep links, notification and widget taps updated
+- 12A.7 Growth screen with tabs (Goals · Roadmap · Skills · Jobs when on), wrapping the existing pages
+- 12A.8 Me screen with tabs (Stats & achievements · Body · Reviews), Screen time and "What the System knows" entries, Settings gear
+- 12A.9 System companion robot (SVG, per-theme style, blink/idle, reduced motion) in System messages, empty states, onboarding
+- 12A.10 Ask: floating robot button on every main screen + bottom sheet with screen context and suggested questions (Body: general only, no personal health data), Compass fallback when off
+- 12A.11 Today dashboard: header (level, XP, rank, streak, day), filter chips, Today's quests tile, live tiles (Body, Skill, Roadmap, Screen time, check-in/review when due)
+- 12A.12 Today cards in ELEVATE: quest cards (full/min/numbers), wake-up, low energy, Recovery, Now line, at-risk, suggestion slot, welcome back, goal follow-ups, screen-time card + lock banner, prompts
+- 12A.13 Quests screen (daily/weekly/side tabs, filters) + habit and quest editor sheets, archive/restore
+- 12A.14 Focus: setup, ring timer, running / full-screen, face-down check, "Did you finish?", history and charts
+- 12A.15 Growth → Goals: vision, main quest and milestone pages, edit/pause/finish/archive, forecasts; Goal Planner sheet (analysis, interview, preview/approve), plan history, undo
+- 12A.16 Growth → Roadmap: Compass (discovery quiz, careers list/detail, gap analysis, roadmaps, guides, health check-in, health plans) + the Ask answer/fallback views
+- 12A.17 Growth → Skills (tree, skill editor, evidence, 70/30) + Jobs (list/board, application sheet, stats, follow-ups)
+- 12A.18 Me → Stats & achievements: player card, radar, heatmap, XP history, achievements, titles; "What the System knows"
+- 12A.19 Me → Body (logs, charts, photos, Health Connect), Reviews (check-in, weekly, monthly/yearly), Screen time screen
+- 12A.20 Settings (every section) + My data (storage, sent-outside log, compaction, delete everything) + onboarding (all steps, templates, start today/tomorrow, sign-in on a new device)
+- 12A.21 System surfaces: error screen, update prompt, offline/sync notes, confirmations, toasts/notices, loading and empty states
+- 12A.22 VFX engine (effects level, reduce motion, pause when hidden, transform/opacity only) + ELEVATE quest complete, min→full, Daily Clear, streak milestone, achievement unlocked
+- 12A.23 ELEVATE level-up and rank-up moments (morphing shapes, self-drawing swoosh, sparkles, 2×2 reward grid, CONTINUE)
+- 12A.24 Optional sound + haptics (off by default): tiny generated sounds, Capacitor Haptics on Android
+- 12A.25 Android: widgets and splash in ELEVATE colours (widget snapshot carries the theme palette); widget taps → new routes
+- 12A.26 Desktop layout pass (sidebar, wider grids, two columns where useful)
+- 12A.27 Quality: leftover-style / hard-coded-colour scan, Playwright screenshots of every route/tab at 360 px (key ones 768 / 1440), contrast + tap targets + axe, fixes; inventory 100 % ticked
+- 12A.28 12A wrap-up: e2e updated for the new navigation, README, CHANGELOG, v0.12.0 (versionCode 12), phone checklist → **stop, ask permission for 12B**
+
+**12B — VOID** (only after Rishi says go; version 0.13.0)
+
+- 12B.1 VOID definition (tokens, Unbounded + Inter, glass surface, motion) + contrast test; hidden from the picker
+- 12B.2 Glass surface variants for every primitive and tile; XP shimmer
+- 12B.3 VOID VFX + level-up / rank-up (glowing rings, rising sparks); robot style
+- 12B.4 Widgets/splash palette for VOID; inventory re-ticked for VOID
+- 12B.5 Quality pass (scan, screenshots, contrast, axe), VOID in the picker, wrap-up v0.13.0 → **stop, ask permission for 12C**
+
+**12C — SOLAR** (only after Rishi says go; version 0.14.0)
+
+- 12C.1 SOLAR definition (tokens, Archivo Black + Space Grotesk, brutal surface) + contrast test
+- 12C.2 Brutal variants (thick outlines, hard offset shadows, press-down ticks, star badges)
+- 12C.3 SOLAR VFX + level-up / rank-up (slam/pop); robot style
+- 12C.4 Widgets/splash palette; inventory re-ticked for SOLAR
+- 12C.5 Quality pass, SOLAR in the picker, wrap-up v0.14.0 → **stop, ask permission for 12D**
+
+**12D — ION** (only after Rishi says go; version 0.15.0)
+
+- 12D.1 ION definition (light tokens, Plus Jakarta Sans, soft surface, AA text blues) + contrast test
+- 12D.2 Soft (neumorphic) raised/pressed variants, gradient progress rings
+- 12D.3 ION VFX + level-up / rank-up (calm ring fill, floating bubbles); robot style
+- 12D.4 Widgets/splash palette; inventory re-ticked for ION
+- 12D.5 Quality pass, ION in the picker, wrap-up v0.15.0

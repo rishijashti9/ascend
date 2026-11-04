@@ -367,6 +367,43 @@ Rishi's full instruction is kept verbatim in `docs/phase11-prompt.md`; this sect
 - Never break existing user data: new tables in a new Dexie version, existing records untouched, old backups keep importing.
 - **Tests:** observe week, limit suggestion, reminder cases (incl. YouTube during focus, quiet hours silent, 1-minute re-alerts), break cap, lock rules (clock and import attempts, the 7-day extension), privacy. A short real-phone checklist for the Nothing Phone (3a) at the end.
 
+### 6.9 Phase 12 — Redesign + switchable themes
+
+Rishi's full instruction is kept verbatim in `docs/phase12-prompt.md`; reference mockups are in `docs/design/mockups/`. This phase changes **only how the app looks and moves** — never game rules, data, sync or the engine. Every existing unit and end-to-end test keeps passing; existing user data is never touched.
+
+**Order — one theme at a time, with Rishi's permission**
+- **12A**: the theme system + **ELEVATE** applied to the whole app as the default — every screen, the VFX, Android widgets and splash, a quality pass — released with a phone checklist. Then **stop and ask** before 12B.
+- **12B VOID**, **12C SOLAR**, **12D ION**: each only after Rishi says go, each finished completely and released, then stop and ask again.
+- A theme appears in the picker only once it is fully built.
+
+**Reference mockups** (references, not code to paste; their numbers are placeholders — always real data): ELEVATE = `ElevateToday`, `ElevateLevelUp` and the main screens `E2Today`, `E2Quests`, `E2Focus`, `E2Growth`, `E2Me`, `E2Ask`; VOID = `VoidToday` / `VoidLevelUp`; SOLAR = `SolarToday` / `SolarLevelUp`; ION = `IonToday` / `IonLevelUp`. `Main`, `LevelUp`, `Focus`, `Profile` = an earlier exploration, used only for screen ideas (Focus ring, Profile layout).
+
+**Navigation and structure** (built in 12A, the same in every theme)
+- **No "More" tab.** Bottom bar: **Today · Quests · [Focus — big centre button] · Growth · Me**, icons and labels. Desktop: a sidebar with the same five, wider grids.
+- **Growth** = one screen with tabs: **Goals · Roadmap** (Growth Compass) **· Skills** (and **Jobs** when switched on).
+- **Me** = one screen with tabs: **Stats & achievements · Body · Reviews**; **Screen time** lives in Me (and on Today); **Settings** opens from a gear button top-right; "What the System knows about you" stays reachable from Me.
+- **Today becomes a dashboard**: XP/level header, filter chips (All / Core / Body / Mind / Career), a **Today's quests** tile (progress + next quest), and live tiles that open their screens — **Body** (sleep, steps), **Skill** (current skill, hours this week), **Roadmap** (next step, readiness %), **Screen time** (today vs limit), and a check-in / review tile only when one is due. Every main feature is at most one tap from Today. All existing Today cards (wake-up, low energy, Recovery, Now line, at-risk marks, suggestion card, welcome back, goal follow-ups, screen-time banner, prompts) keep working.
+- **Ask the System** becomes a floating round robot button (bottom-right, above the bar) on every main screen, opening a bottom sheet that knows which screen you came from and offers suggested questions for it (you can also type). Privacy unchanged — on Body it answers general health questions and never sends personal health data. With Ask off, the button opens Growth Compass answers.
+- Every existing screen and feature stays reachable; old addresses redirect to their new places; deep links, notifications and widget taps open the new locations.
+
+**The themes** (same features, only the look changes)
+1. **ELEVATE** (default, 12A) — dark elevation: pure black with faint corner light; big rounded bento tiles in lime `#C8F03C`, white `#F2F2F2`, yellow `#FFE14D`, dark grey `#2A2A2A`, violet `#A35BFF`; round ↗ buttons on tiles; white pill chips; a floating pill bottom bar with a white active circle; extra-bold expanded headings and big numbers (Archivo expanded + Inter). Level-up: "You've reached Level N" with a short grey line, slowly morphing organic shapes (violet `#A35BFF`, blue `#1E9BFF`, red `#FF3B2F`), a self-drawing white swoosh, twinkling sparkles, a 2×2 colour reward grid (green `#1FA35B`, orange `#FF7A1A`, pink `#F27BE6`, blue `#1E9BFF`), a white pill CONTINUE with a black ↗ circle. Every other screen in the same language.
+2. **VOID** (12B) — dark glow: `#0B0F14`, cyan `#3DF2E0`, violet `#8A6CFF`, magenta `#E445FF`; glassy layered panels, soft glow, XP shimmer, glowing level-up rings, rising sparks (Unbounded + Inter).
+3. **SOLAR** (12C) — neo-brutalism: lime `#B6FF3B`, navy `#0C1A2B`, yellow `#FFD93D`, orange `#FF7A45`, lilac `#C9BCFF`, paper `#F4F1E8`; thick navy outlines, hard offset shadows, chunky tiles that press down when ticked, star badges, slam/pop (Archivo Black + Space Grotesk).
+4. **ION** (12D) — soft and calm, light: `#E4E9F0`, blue `#4FC3F7` (blue text `#0369A1` for AA), magenta→orange progress rings `#E445FF→#FF8A3D`; neumorphic raised/pressed surfaces, ticked items sink in, calm ring fill, floating bubbles (Plus Jakarta Sans).
+
+**Theme system** (12A, reused later)
+- One **theme definition** per theme: colour tokens (incl. STR/INT/WIL, success/warning/error, text levels), fonts, radii, borders, shadows/glow, **surface style** (tile / glass / brutal / soft), motion style and effect set. Components read tokens plus a small set of variant switches — no screen hard-codes colours. A new theme = a new definition + its effects.
+- **Settings → Appearance**: a theme picker with a live mini-preview of each built theme; switching is instant, saved and synced, never touches other data. Default ELEVATE. The old light / dark / system setting is replaced by the themes (old records keep their field; it is simply no longer used).
+- Fonts bundled locally (offline); a theme's fonts load only when it's used, where practical.
+- An original **System companion** robot (simple SVG: rounded head, dark visor, two eyes, antenna) styled per theme, used in System messages, level-up / rank-up, empty states and onboarding; blinks and idles subtly.
+
+**VFX** (per theme, each in its own style): quest complete, min→full upgrade, Daily Clear, streak milestone, level-up (full screen, skippable), rank-up (bigger, rare), achievement unlocked. **Settings → Effects: Full / Light / Off**; system "reduce motion" = Off. Transform/opacity animations only where possible, 60 fps on the Nothing Phone (3a), paused while the app is hidden, no battery-heavy loops. Optional subtle **sound + haptics** on quest complete and level-up — off by default, a Settings toggle.
+
+**Every feature redesigned, for each theme**: before building, a complete **Redesign inventory** from the codebase (every route, screen, tab, sheet, dialog, card, banner, toast, empty / loading / offline / error state, notification-related screen, onboarding, Android widgets and splash) is put in PROGRESS.md as a checklist; an item is ticked only when fully redesigned in the current theme. At the end of each theme: a code search for leftover old styles and hard-coded colours, a Playwright screenshot of every route/tab at 360 px (key ones also 768 and 1440), the list of anything not redesigned — the theme isn't finished until the inventory is 100 % ticked.
+
+**Quality, for each theme**: WCAG AA contrast (automated test per theme's tokens), tap targets ≥ 44 px, screen-reader labels unchanged, visual check at 360 / 768 / 1440 px (overlaps, clipping), existing data never broken, all unit and end-to-end tests pass.
+
 ---
 
 ## 7. Screens
@@ -492,6 +529,7 @@ Design the **complete schema in Phase 1**, even for features built later, so lat
 9. **Career tools** — skill tree and job application tracker, connected to XP, quests, notifications and the Goal Planner.
 10. **Android native & polish** — Health Connect auto-tracking, home-screen widgets with the pending-actions queue, app icon/splash, accessibility pass, performance test with 10 years of generated data, final README.
 11. **Screen Time** (section 6.8) — phone only: Usage access daily totals per app, 7-day observe week, one suggested entertainment limit, 1-minute reminders when over the limit or after wind-down (never blocking), an automatic lock, a Digital discipline quest and one weekly review line. Off by default.
+12. **Redesign + switchable themes** (section 6.9) — looks and motion only: a theme engine, new navigation (Today · Quests · Focus · Growth · Me, floating Ask), a Today dashboard, VFX; themes built one at a time with Rishi's permission — ELEVATE (default) → VOID → SOLAR → ION.
 
 ---
 

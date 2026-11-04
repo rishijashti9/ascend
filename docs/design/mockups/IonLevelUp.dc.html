@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ASCEND ION — Level up</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E4E9F0}
+a{color:#0369A1}a:hover{color:#075985}
+@keyframes iFill{0%{stroke-dashoffset:440}100%{stroke-dashoffset:0}}
+@keyframes iBubble{0%{transform:translateY(0) scale(.8);opacity:0}20%{opacity:.9}100%{transform:translateY(-320px) scale(1.1);opacity:0}}
+@keyframes iUp{0%{transform:translateY(14px);opacity:0}100%{transform:none;opacity:1}}
+@keyframes iWave{0%,100%{transform:rotate(0)}50%{transform:rotate(-8deg)}}
+.i-fill{animation:iFill 1.6s cubic-bezier(.2,.8,.2,1) both}
+.i-bub{position:absolute;bottom:40px;border-radius:999px;animation:iBubble 6s ease-in infinite}
+.i-up{animation:iUp .7s ease-out both}
+.i-wave{animation:iWave 2.4s ease-in-out infinite;transform-origin:50% 90%}
+@media (prefers-reduced-motion: reduce){.i-fill,.i-bub,.i-up,.i-wave{animation:none !important;opacity:1}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #1E2A3A; background: #E4E9F0; display: flex; flex-direction: column; align-items: center; padding: 0 24px">
+  <sc-for list="{{bubbles}}" as="b" hint-placeholder-count="9">
+    <span class="i-bub" aria-hidden="true" style="{{b.style}}"></span>
+  </sc-for>
+
+  <span class="i-up" style="position: relative; margin-top: 66px; padding: 8px 16px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 1px; color: #0369A1; background: #E4E9F0; box-shadow: 5px 5px 10px #C2CAD5, -5px -5px 10px #FFFFFF">A NEW LEVEL</span>
+
+  <div style="position: relative; margin-top: 50px; width: 240px; height: 240px; border-radius: 999px; background: #E4E9F0; box-shadow: 16px 16px 32px #C2CAD5, -16px -16px 32px #FFFFFF; display: flex; align-items: center; justify-content: center">
+    <svg width="240" height="240" viewBox="0 0 240 240" aria-hidden="true" style="position: absolute; inset: 0">
+      <defs><linearGradient id="ionLv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E445FF"></stop><stop offset="1" stop-color="#FF8A3D"></stop></linearGradient></defs>
+      <circle cx="120" cy="120" r="70" fill="none" stroke="#D3DAE3" stroke-width="12" transform="scale(1.4) translate(-34 -34)"></circle>
+      <circle class="i-fill" cx="120" cy="120" r="70" fill="none" stroke="url(#ionLv)" stroke-width="12" stroke-linecap="round" stroke-dasharray="440" transform="rotate(-90 120 120) scale(1.4) translate(-34 -34)"></circle>
+    </svg>
+    <div style="width: 150px; height: 150px; border-radius: 999px; background: #E4E9F0; box-shadow: inset 8px 8px 16px #C2CAD5, inset -8px -8px 16px #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center">
+      <span style="font-size: 13px; color: #5B6878">Level</span>
+      <span style="font-size: 68px; font-weight: 800; line-height: 1; background: linear-gradient(145deg, #E445FF, #FF8A3D); -webkit-background-clip: text; background-clip: text; color: transparent">5</span>
+    </div>
+    <svg class="i-wave" width="58" height="58" viewBox="0 0 46 46" role="img" aria-label="System companion waving" style="position: absolute; right: -6px; bottom: 4px">
+      <rect x="22" y="1" width="2" height="6" rx="1" fill="#4FC3F7"></rect><circle cx="23" cy="2" r="2.5" fill="#4FC3F7"></circle>
+      <rect x="5" y="8" width="36" height="32" rx="12" fill="#F4F7FA" stroke="#D3DAE3"></rect>
+      <rect x="10" y="14" width="26" height="18" rx="8" fill="#1E2A3A"></rect>
+      <path d="M15 24q3-4 6 0M25 24q3-4 6 0" fill="none" stroke="#4FC3F7" stroke-width="2.4" stroke-linecap="round"></path>
+    </svg>
+  </div>
+
+  <h1 class="i-up" style="position: relative; margin: 40px 0 0 0; font-size: 32px; font-weight: 800; animation-delay: .5s">Level up, Rishi</h1>
+  <p class="i-up" style="position: relative; margin: 8px 0 0 0; font-size: 14px; color: #5B6878; text-align: center; animation-delay: .6s">Small steps, every day. They add up.</p>
+
+  <div class="i-up" style="position: relative; margin-top: 28px; width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; animation-delay: .8s">
+    <div style="padding: 14px; border-radius: 20px; background: #E4E9F0; box-shadow: 7px 7px 14px #C2CAD5, -7px -7px 14px #FFFFFF; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; font-weight: 600; color: #5B6878">INT</span><span style="font-size: 20px; font-weight: 800; color: #0369A1">4 → 5</span></div>
+    <div style="padding: 14px; border-radius: 20px; background: #E4E9F0; box-shadow: 7px 7px 14px #C2CAD5, -7px -7px 14px #FFFFFF; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; font-weight: 600; color: #5B6878">New title</span><span style="font-size: 15px; font-weight: 800">First Light</span></div>
+  </div>
+
+  <a href="IonToday.dc.html" style="position: relative; margin-top: auto; margin-bottom: 40px; width: 100%; height: 58px; border-radius: 22px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 16px; font-weight: 700; color: #FFFFFF; background: linear-gradient(145deg, #4FC3F7, #0284C7); box-shadow: 8px 8px 18px rgba(2,132,199,0.3), -6px -6px 14px #FFFFFF">Continue</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const cols = ['rgba(79,195,247,0.35)', 'rgba(228,69,255,0.25)', 'rgba(255,138,61,0.28)'];
+    const bubbles = [];
+    for (let i = 0; i < 9; i++) {
+      const s = 10 + (i * 7) % 18;
+      bubbles.push({ style: 'left: ' + (20 + (i * 41) % 340) + 'px; width: ' + s + 'px; height: ' + s + 'px; background: ' + cols[i % 3] + '; animation-delay: ' + ((i * 0.7) % 6).toFixed(1) + 's' });
+    }
+    return { bubbles };
+  }
+}
+</script>
+</body>
+</html>
