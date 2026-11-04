@@ -4,6 +4,7 @@ import { observeHlc } from '@/core/db/hlc';
 import { incomingWins, SYNCED_TABLES } from '@/core/sync/merge';
 import { isRecoveryId } from '@/core/engine/instances';
 import { refreshDayRecord } from '../days';
+import { captureScreenGuard, restoreScreenGuard } from '@/core/screentime/keep';
 import { defineAction } from '../registry';
 import { refreshStreaks } from '../streaks';
 import { QUEST_TABLES } from './questCommon';
@@ -202,7 +203,10 @@ export const linkAccount = defineAction({
   tables: [...SYNCED_TABLES, 'meta'] as TableName[],
   async run(ctx, { userId, clearLocal }) {
     if (clearLocal) {
+      // Taking the account's data never drops an active screen-time lock (SPEC 6.8).
+      const screen = await captureScreenGuard(ctx.db);
       for (const tbl of SYNCED_TABLES) await ctx.db.table(tbl as TableName).clear();
+      await restoreScreenGuard(ctx.db, screen, ctx.processedAt);
     }
     await ctx.db.meta.put({ id: SYNC_META.user, value: userId });
     await ctx.db.meta.put({ id: SYNC_META.pullSeq, value: 0 });

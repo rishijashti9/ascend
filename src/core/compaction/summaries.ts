@@ -10,6 +10,7 @@ import type {
   QuestInstance,
   Stat,
   XpEvent,
+  ScreenDay,
 } from '@/core/db/types';
 import { isRecoveryId } from '@/core/engine/instances';
 import { progressValue } from '@/core/engine/progress';
@@ -78,6 +79,37 @@ export interface MonthSummary {
   body: BodySummary;
   /** Learning events summarised as counts per kind:type:outcome. */
   learning: Record<string, number>;
+  /** Screen time (Phase 11): the month's seconds per app, app names and games; absent before. */
+  screen?: ScreenMonth;
+}
+
+export interface ScreenMonth {
+  days: number;
+  apps: Record<string, number>;
+  labels: Record<string, string>;
+  games: string[];
+}
+
+/** Old screen-time days → one month's totals per app. */
+export function screenMonths(
+  days: readonly Pick<ScreenDay, 'day' | 'apps' | 'labels' | 'games' | 'deleted_at'>[],
+): Map<string, ScreenMonth> {
+  const out = new Map<string, ScreenMonth>();
+  const seen = new Map<string, Set<string>>();
+  for (const d of days) {
+    if (d.deleted_at) continue;
+    const key = d.day.slice(0, 7);
+    const m = out.get(key) ?? { days: 0, apps: {}, labels: {}, games: [] };
+    const dset = seen.get(key) ?? new Set<string>();
+    if (!dset.has(d.day)) m.days++;
+    dset.add(d.day);
+    for (const [pkg, s] of Object.entries(d.apps)) m.apps[pkg] = (m.apps[pkg] ?? 0) + s;
+    Object.assign(m.labels, d.labels);
+    m.games = [...new Set([...m.games, ...d.games])];
+    out.set(key, m);
+    seen.set(key, dset);
+  }
+  return out;
 }
 
 export interface CompactInput {

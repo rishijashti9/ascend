@@ -1,7 +1,7 @@
 import type { AscendDB, TableName } from '@/core/db/db';
 import type { Compaction, DayString, Summary } from '@/core/db/types';
 import { newBase, touch } from '@/core/pipeline/records';
-import { buildSummaries, compactable, type MonthSummary } from './summaries';
+import { buildSummaries, compactable, screenMonths, type MonthSummary } from './summaries';
 
 /**
  * Applying a compaction (SPEC 6.7 D), inside the caller's transaction over COMPACTION_TABLES:
@@ -20,6 +20,7 @@ export const COMPACTION_TABLES: TableName[] = [
   'plan_history',
   'plan_proposals',
   'learning_events',
+  'screen_days',
   'summaries',
   'compactions',
 ];
@@ -60,6 +61,7 @@ export async function planCompaction(
   const proposals = (await db.plan_proposals.toArray()).filter(
     (p) => p.created_at < cutoffIso && p.status !== 'pending',
   );
+  const screenDays = before(await db.screen_days.where('day').below(cutoff).toArray());
   const photos = removePhotos ? before(await db.photos.where('day').below(cutoff).toArray()) : [];
   // A learning "week" record and notification plans are numbers; keep the last year anyway.
   const months = buildSummaries({
@@ -72,6 +74,29 @@ export async function planCompaction(
     bodyLogs,
     learning,
   });
+  // Screen time (Phase 11): old days become the month's totals per app.
+  for (const [key, screen] of screenMonths(screenDays)) {
+    const m = months.get(key);
+    if (m) m.screen = screen;
+    else
+      months.set(key, {
+        version: 1,
+        xp: {},
+        instances: [],
+        sessions: [],
+        body: {
+          days: 0,
+          sleep: null,
+          steps: null,
+          weight: null,
+          waist: null,
+          weightFirst: null,
+          weightLast: null,
+        },
+        learning: {},
+        screen,
+      });
+  }
   const size = (rows: unknown[]) => JSON.stringify(rows).length;
   const removedBytes =
     size(xpEvents) +
@@ -82,6 +107,7 @@ export async function planCompaction(
     size(plans) +
     size(proposals) +
     size(learning) +
+    size(screenDays) +
     photos.reduce((s, p) => s + ((p as { blob?: Blob }).blob?.size ?? 0), 0);
   return {
     cutoff,
@@ -95,6 +121,7 @@ export async function planCompaction(
       plan_history: plans.map((h) => h.id),
       plan_proposals: proposals.map((p) => p.id),
       learning_events: learning.map((e) => e.id),
+      screen_days: screenDays.map((d) => d.id),
       photos: photos.map((p) => p.id),
     },
     bytesSaved: Math.max(0, removedBytes - size([...months.values()])),
@@ -158,5 +185,6 @@ function mergeMonth(a: MonthSummary, b: MonthSummary): MonthSummary {
     sessions: [...a.sessions, ...b.sessions.filter((s) => !sids.has(s[0]))],
     body: b.body.days > 0 ? b.body : a.body,
     learning,
+    ...((b.screen ?? a.screen) ? { screen: b.screen ?? a.screen } : {}),
   };
 }

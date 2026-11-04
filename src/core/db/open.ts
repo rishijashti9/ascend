@@ -1,6 +1,7 @@
 import { logError } from '@/core/errorLog';
 import { db, type AscendDB } from './db';
 import { observeHlc } from './hlc';
+import { restoreStashedLock, stashActiveLock } from '@/core/screentime/keep';
 
 export type PersistResult = 'granted' | 'denied' | 'unsupported';
 
@@ -28,6 +29,8 @@ export async function requestPersistentStorage(database: AscendDB = db): Promise
  */
 export async function openDatabase(database: AscendDB = db): Promise<void> {
   await database.open();
+  // An active screen-time lock survives "Delete everything" / "Reset all data" (SPEC 6.8).
+  await restoreStashedLock(database).catch((error: unknown) => logError(error, 'screen.restore'));
   // Local writes must sort after everything already pushed, even if the clock went back.
   const pushed = (await database.meta.get('sync:push_hlc'))?.value;
   if (typeof pushed === 'string') observeHlc(pushed);
@@ -44,6 +47,7 @@ export async function openDatabase(database: AscendDB = db): Promise<void> {
  * app afterwards, which starts fresh with onboarding. The local crash log is kept.
  */
 export async function deleteAllData(database: AscendDB = db): Promise<void> {
+  await stashActiveLock(database).catch((error: unknown) => logError(error, 'screen.stash'));
   database.close();
   await database.delete();
 }

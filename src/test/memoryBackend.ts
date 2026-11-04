@@ -64,7 +64,13 @@ export class MemoryCloud {
             quest_instance_id?: string;
           };
           const old =
-            (['xp_events', 'focus_sessions', 'body_logs', 'learning_events'].includes(r.tbl) &&
+            ([
+              'xp_events',
+              'focus_sessions',
+              'body_logs',
+              'learning_events',
+              'screen_days',
+            ].includes(r.tbl) &&
               (d.day ?? '9') < cutoff) ||
             (r.tbl === 'quest_instances' &&
               (d.day ?? '9') < cutoff &&
