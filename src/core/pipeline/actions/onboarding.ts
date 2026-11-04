@@ -21,6 +21,8 @@ export const onboardingSchema = z
     name: z.string().trim().min(1, 'name is required').max(40),
     wake_time: hhmm,
     theme: z.enum(['system', 'light', 'dark']),
+    /** Phase 12: the chosen theme (older callers leave it out → the default). */
+    ui_theme: z.enum(['elevate', 'void', 'solar', 'ion']).optional(),
     /** "Start tomorrow" is offered after 6 PM: Day 1 = tomorrow and tonight is neutral. */
     start: z.enum(['today', 'tomorrow']),
     habits: z
@@ -57,9 +59,10 @@ export const completeOnboarding = defineAction({
       ...settings,
       wake_time: payload.wake_time,
       theme: payload.theme,
+      ...(payload.ui_theme ? { ui_theme: payload.ui_theme } : {}),
       ...touch(processedAt),
     });
-    ctx.emit({ type: 'SettingsChanged', payload: { changed: ['wake_time', 'theme'] } });
+    ctx.emit({ type: 'SettingsChanged', payload: { changed: ['wake_time', 'theme', 'ui_theme'] } });
 
     const profile: Profile = {
       ...(existing ?? newBase('profile', processedAt)),

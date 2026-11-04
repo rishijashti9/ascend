@@ -1,10 +1,10 @@
-import { Monitor, Moon, Star, Sun } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { Link } from 'react-router';
-import type { ThemePreference } from '@/app/theme';
+import { resolveThemeId } from '@/config/themes';
 import { GAME } from '@/config/game';
 import { deleteAllData } from '@/core/db/open';
-import type { Settings } from '@/core/db/types';
+import type { EffectsLevel, Settings } from '@/core/db/types';
 import { logError } from '@/core/errorLog';
 import { useHabits } from '@/core/state/habits';
 import { rebuildProgress } from '@/core/state/progress';
@@ -12,6 +12,8 @@ import { addMinutes, formatTime } from '@/data/starter';
 import { Button } from '@/ui/Button';
 import { Select, TextInput } from '@/ui/Field';
 import { useAction } from '@/ui/hooks/useAction';
+import { Switch } from '@/ui/Switch';
+import { ThemePicker } from './ThemePicker';
 
 export function Card({ title, id, children }: { title: string; id?: string; children: ReactNode }) {
   return (
@@ -34,35 +36,76 @@ function Alert({ text }: { text: string | null }) {
   ) : null;
 }
 
-const THEMES: { value: ThemePreference; label: string; icon: typeof Sun }[] = [
-  { value: 'system', label: 'Match device', icon: Monitor },
-  { value: 'light', label: 'Light', icon: Sun },
-  { value: 'dark', label: 'Dark', icon: Moon },
+const EFFECTS: { value: EffectsLevel; label: string; hint: string }[] = [
+  { value: 'full', label: 'Full', hint: 'Every celebration and animation.' },
+  { value: 'light', label: 'Light', hint: 'Short, simple effects.' },
+  { value: 'off', label: 'Off', hint: 'No motion — the same information.' },
 ];
 
+/**
+ * Appearance (Phase 12): the theme picker (built themes only, live previews; instant, saved and
+ * synced — never touches other data), Effects (Full / Light / Off) and optional sound + haptics.
+ */
 export function AppearanceSection({ settings }: { settings: Settings }) {
   const { run, busy, error } = useAction();
+  const effects = settings.effects ?? 'full';
+  const reduce =
+    typeof window !== 'undefined' &&
+    !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   return (
     <Card title="Appearance">
-      <div role="radiogroup" aria-label="Theme" className="flex flex-col gap-2 sm:flex-row">
-        {THEMES.map(({ value, label, icon: Icon }) => (
-          <button
-            key={value}
-            type="button"
-            role="radio"
-            aria-checked={settings.theme === value}
-            disabled={busy}
-            onClick={() => void run({ type: 'settings.update', payload: { theme: value } })}
-            className={`flex min-h-11 flex-1 items-center gap-2 rounded-md border px-3 ${
-              settings.theme === value
-                ? 'border-accent bg-surface-2 font-medium'
-                : 'border-border bg-surface'
-            }`}
-          >
-            <Icon aria-hidden size={18} />
-            {label}
-          </button>
-        ))}
+      <ThemePicker
+        value={resolveThemeId(settings.ui_theme)}
+        disabled={busy}
+        onChange={(ui_theme) => void run({ type: 'settings.update', payload: { ui_theme } })}
+      />
+      <div className="flex flex-col gap-2">
+        <p className="font-medium" id="effects-label">
+          Effects
+        </p>
+        <div
+          role="radiogroup"
+          aria-labelledby="effects-label"
+          className="flex flex-col gap-2 sm:flex-row"
+        >
+          {EFFECTS.map(({ value, label, hint }) => (
+            <button
+              key={value}
+              type="button"
+              role="radio"
+              aria-checked={effects === value}
+              disabled={busy}
+              onClick={() => void run({ type: 'settings.update', payload: { effects: value } })}
+              className={`flex min-h-11 flex-1 flex-col items-start rounded-md border-2 px-3 py-2 text-left ${
+                effects === value ? 'border-accent bg-surface-2' : 'border-transparent bg-surface-2'
+              }`}
+            >
+              <span className="font-medium">{label}</span>
+              <span className="text-muted text-xs">{hint}</span>
+            </button>
+          ))}
+        </div>
+        {reduce && (
+          <p className="text-muted text-sm">
+            Your device asks for reduced motion, so effects stay off whatever you pick here.
+          </p>
+        )}
+      </div>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="font-medium" id="sound-label">
+            Sound and vibration
+          </p>
+          <p className="text-muted text-sm">
+            A soft sound and a short buzz when you complete a quest or level up. Off by default.
+          </p>
+        </div>
+        <Switch
+          on={settings.sound_haptics ?? false}
+          labelledBy="sound-label"
+          disabled={busy}
+          onChange={(on) => void run({ type: 'settings.update', payload: { sound_haptics: on } })}
+        />
       </div>
       <Alert text={error} />
     </Card>

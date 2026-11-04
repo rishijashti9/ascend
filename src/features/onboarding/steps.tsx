@@ -1,5 +1,6 @@
-import { Monitor, Moon, Plus, Sun, X } from 'lucide-react';
-import type { ThemePreference } from '@/app/theme';
+import { Plus, X } from 'lucide-react';
+import { applyUiTheme } from '@/app/theme';
+import { ThemePicker } from '@/features/settings/ThemePicker';
 import { isEnabled } from '@/config/features';
 import { ImportPanel } from '@/features/backup/ImportPanel';
 import { AccountSection } from '@/features/settings/AccountSection';
@@ -178,12 +179,6 @@ export function GoalsStep({ draft, update }: { draft: Draft; update: Update }) {
   );
 }
 
-const THEMES: { value: ThemePreference; label: string; icon: typeof Sun }[] = [
-  { value: 'system', label: 'Match device', icon: Monitor },
-  { value: 'light', label: 'Light', icon: Sun },
-  { value: 'dark', label: 'Dark', icon: Moon },
-];
-
 function Choice({
   selected,
   onSelect,
@@ -219,18 +214,16 @@ export function ThemeStep({
 }) {
   return (
     <div className="flex flex-col gap-6">
-      <div role="radiogroup" aria-label="Theme" className="flex flex-col gap-2 sm:flex-row">
-        {THEMES.map(({ value, label, icon: Icon }) => (
-          <Choice
-            key={value}
-            selected={draft.theme === value}
-            onSelect={() => update((d) => ({ ...d, theme: value }))}
-          >
-            <Icon aria-hidden size={18} />
-            {label}
-          </Choice>
-        ))}
-      </div>
+      <ThemePicker
+        value={draft.uiTheme}
+        onChange={(uiTheme) => {
+          applyUiTheme(uiTheme); // preview it straight away
+          update((d) => ({ ...d, uiTheme }));
+        }}
+      />
+      <p className="text-muted text-sm">
+        More themes arrive in later updates — change it anytime in Settings.
+      </p>
       {lateStart && (
         <div className="flex flex-col gap-2">
           <h3 className="font-medium">Start today or tomorrow?</h3>

@@ -18,6 +18,11 @@ export const settingsPatchSchema = z
     wake_window_min: z.number().int().min(5).max(120),
     wake_late_cutoff: hhmm,
     theme: z.enum(['system', 'light', 'dark']),
+    // Phase 12: the theme, effects level and sound + haptics (any known theme id is stored —
+    // a newer device may know more built themes; this one shows the default for unbuilt ones).
+    ui_theme: z.enum(['elevate', 'void', 'solar', 'ion']),
+    effects: z.enum(['full', 'light', 'off']),
+    sound_haptics: z.boolean(),
     notifications: z
       .object({
         wake_checkin: z.boolean(),

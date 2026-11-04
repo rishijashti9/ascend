@@ -66,10 +66,10 @@ async function smallTargets(page: Page): Promise<string[]> {
   });
 }
 
-for (const scheme of ['light', 'dark'] as const) {
-  test(`every screen passes axe (${scheme})`, async ({ page }) => {
+// Phase 12: one run per BUILT theme (the system light/dark setting no longer changes the look).
+for (const theme of ['elevate'] as const) {
+  test(`every screen passes axe (${theme})`, async ({ page }) => {
     test.setTimeout(120_000);
-    await page.emulateMedia({ colorScheme: scheme });
     await page.clock.install({ time: new Date('2026-11-02T10:00:00+05:30') });
     await onboard(page);
     // Switch the job tracker on so the Jobs screen is real.

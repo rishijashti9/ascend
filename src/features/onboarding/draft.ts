@@ -1,6 +1,6 @@
 import { GAME } from '@/config/game';
 import type { Settings, Stat } from '@/core/db/types';
-import type { ThemePreference } from '@/app/theme';
+import { DEFAULT_THEME, type ThemeId } from '@/config/themes';
 import type { OnboardingPayload } from '@/core/pipeline';
 import {
   STARTER_DREAM,
@@ -22,7 +22,8 @@ export interface Draft {
   habits: StarterHabit[];
   dream: { title: string; why: string };
   mainQuests: { title: string; stat: Stat }[];
-  theme: ThemePreference;
+  /** Phase 12: the chosen theme. */
+  uiTheme: ThemeId;
   start: 'today' | 'tomorrow';
   /** Starter template the quests, dream and main quests came from (all still editable). */
   template: string;
@@ -35,7 +36,7 @@ export function initialDraft(): Draft {
     habits: STARTER_HABITS.map((h) => ({ ...h })),
     dream: { ...STARTER_DREAM },
     mainQuests: STARTER_MAIN_QUESTS.map((m) => ({ ...m })),
-    theme: 'system',
+    uiTheme: DEFAULT_THEME,
     start: 'today',
     template: DEFAULT_TEMPLATE,
   };
@@ -89,7 +90,8 @@ export function toPayload(d: Draft, timing: Timing): OnboardingPayload {
   return {
     name: d.name.trim(),
     wake_time: d.wakeTime,
-    theme: d.theme,
+    theme: 'system',
+    ui_theme: d.uiTheme,
     start: d.start,
     habits: d.habits
       .filter((h) => h.selected)

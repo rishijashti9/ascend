@@ -37,12 +37,19 @@ const section = (name: string) => screen.getByRole('region', { name });
 const stored = async () => db.settings.get('settings');
 
 describe('SettingsPage', () => {
-  it('saves the theme', async () => {
-    await userEvent.click(within(section('Appearance')).getByRole('radio', { name: /Dark/ }));
-    await waitFor(async () => expect((await stored())?.theme).toBe('dark'));
-    await waitFor(() =>
-      expect(within(section('Appearance')).getByRole('radio', { name: /Dark/ })).toBeChecked(),
-    );
+  it('appearance: only built themes; effects and sound + vibration save (Phase 12)', async () => {
+    const appearance = section('Appearance');
+    const themes = within(
+      within(appearance).getByRole('radiogroup', { name: 'Theme' }),
+    ).getAllByRole('radio');
+    expect(themes.map((t) => t.textContent)).toEqual([expect.stringContaining('Elevate')]);
+    expect(themes[0]).toBeChecked();
+    await userEvent.click(within(appearance).getByRole('radio', { name: /Light/ }));
+    await waitFor(async () => expect((await stored())?.effects).toBe('light'));
+    const sound = within(appearance).getByRole('switch', { name: 'Sound and vibration' });
+    expect(sound).toHaveAttribute('aria-checked', 'false');
+    await userEvent.click(sound);
+    await waitFor(async () => expect((await stored())?.sound_haptics).toBe(true));
   });
 
   it('saves day-start hour and week start', async () => {

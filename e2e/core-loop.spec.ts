@@ -19,13 +19,13 @@ test('onboarding: answers are saved and Today greets by name', async ({ page }) 
   await page.getByRole('button', { name: 'Next' }).click();
   await page.getByLabel('Wake-up time').fill('05:30');
   for (let i = 0; i < 3; i++) await page.getByRole('button', { name: 'Next' }).click();
-  await page.getByRole('radio', { name: /Dark/ }).click();
+  await expect(page.getByRole('radio', { name: /Elevate/ })).toBeChecked();
   await page.getByRole('button', { name: 'Begin' }).click();
 
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
   await expect(page.getByText('Rishi J')).toBeVisible();
   await expect(page.getByText('Day 1', { exact: false }).first()).toBeVisible();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'elevate');
   // The wake-up quest's wording follows the chosen time.
   await page.goto('/quests');
   await expect(page.getByText(/"I'm up" by 5:50 AM/)).toBeVisible();
