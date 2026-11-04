@@ -184,7 +184,7 @@ Part C — Ask the System
 
 12A — theme engine + ELEVATE everywhere
 
-- [ ] 12A.1 Redesign inventory
+- [x] 12A.1 Redesign inventory
 - [ ] 12A.2 Theme engine
 - [ ] 12A.3 Settings fields
 - [ ] 12A.4 Fonts
@@ -236,3 +236,131 @@ Part C — Ask the System
 - [ ] 12D.3 ION VFX + level-up / rank-up
 - [ ] 12D.4 Widgets/splash palette; inventory re-ticked for ION
 - [ ] 12D.5 Quality pass, ION in the picker, wrap-up v0.15.0
+
+## Redesign inventory (Phase 12 — current theme: ELEVATE)
+
+Every route, tab, sheet, dialog, card, banner, toast, state and Android surface, from the codebase (task 12A.1). An item is ticked only when it is fully redesigned in the current theme (tokens + the theme's layout language; real data; 360 / 768 / 1440 checked). For each later theme the list is re-ticked from scratch.
+
+**Shell and navigation** (`app/`)
+
+- [ ] Layout: bottom bar Today · Quests · Focus (centre) · Growth · Me (`app/Layout.tsx`)
+- [ ] Layout: desktop sidebar (≥1024 px)
+- [ ] More page removed; `/more` and every old address redirect (`features/more/MorePage.tsx`, `app/routes.tsx`)
+- [ ] Deep links (`app/DeepLinks.tsx`, `app/deepLink.ts`) → new routes
+- [ ] Notification taps (`features/notifications/NotificationBridge.tsx`) → new routes
+- [ ] Ask floating button (every main screen) + Ask bottom sheet (screen context, suggested questions, typed question, answer, sources, fallback, privacy note)
+- [ ] System companion robot (System message, level-up/rank-up, empty states, onboarding)
+
+**Today** (`features/today/`)
+
+- [ ] Dashboard header: name, title, day, level, XP bar, rank, streak (`StatusHeader.tsx`)
+- [ ] Filter chips All / Core / Body / Mind / Career
+- [ ] Today's quests tile (progress + next quest)
+- [ ] Live tiles: Body (sleep, steps), Skill (current skill, hours this week), Roadmap (next step, readiness %), Screen time (today vs limit), check-in / review tile when due
+- [ ] Quest card — check (Full / Minimum / Upgrade), numbers (minutes/count/steps/sleep input), weekly/side "Done", auto (Digital discipline), done/missed states, undo, XP float (`QuestCard.tsx`, `ui/XpFloat.tsx`)
+- [ ] Wake-up card "I'm up" (early / on time / late / window closed) (`WakeCard.tsx`)
+- [ ] Low-energy toggle + hidden-quests note (`TodayPage.tsx`)
+- [ ] Recovery quest card (`RecoveryCard.tsx`)
+- [ ] System message line (`SystemMessage.tsx`) incl. welcome back
+- [ ] "Now:" line (`WhatNow.tsx`) and at-risk marks
+- [ ] Suggestion slot: difficulty card, burnout card, reminder-time card, goal nudges (behind schedule, 30-day check-in, needs a plan), job suggestion (`SuggestionSlot.tsx`, `DifficultyCard.tsx`, `BurnoutCard.tsx`, `ReminderTimeCard.tsx`, `GoalNudges.tsx`, `jobs/JobSuggestionCard.tsx`)
+- [ ] Reminder setup card (`ReminderSetupCard.tsx`)
+- [ ] Sync paused note (`SyncPausedNote.tsx`)
+- [ ] Job follow-ups card (`jobs/FollowUpsCard.tsx`)
+- [ ] Weekly / monthly review prompts (`WeeklyReviewPrompt.tsx`), check-in prompt (`CheckInPrompt.tsx`)
+- [ ] Backup reminder (`BackupReminder.tsx`)
+- [ ] This week (weekly quests on Today) (`ThisWeek.tsx`)
+- [ ] Screen time: observe note, suggestion card (Accept / Edit + LimitEditor), Today card, incident banner (`screentime/ScreenTimeCard.tsx`, `LimitEditor.tsx`)
+- [ ] Start focus button; empty states (no quests today, Day 1)
+
+**Quests** (`features/quests/`, `ui/habit/`)
+
+- [ ] Quests page header + tabs Daily / Weekly / Main / Side (`QuestsPage.tsx`, `QuestDefTabs.tsx`)
+- [ ] Daily tab list, core star, streaks, paused / archived sections (`DailyTab.tsx`, `HabitRow.tsx`)
+- [ ] Habit editor (title, stat, difficulty, measure, target, minimum, full/min wording, days, skills) + new / edit / reorder / pause / archive / restore / delete-forever confirm (`ui/habit/HabitEditor.tsx`, `HabitRow.tsx`)
+- [ ] Weekly / side quest form (`QuestDefForm.tsx`) and lists, done / carried-over states
+- [ ] Skill picker (`ui/SkillPicker.tsx`)
+- [ ] Empty states per tab
+
+**Focus** (`features/focus/`)
+
+- [ ] Setup: quest/stat choice, presets 25/5 · 50/10, skills, Start (`FocusPage.tsx`)
+- [ ] Running timer ring, full-screen mode, face-down check, End early confirm, "Did you finish?" (`FocusRunner.tsx`)
+- [ ] This week summary + session history by day (`SessionHistory.tsx`)
+- [ ] Focus trend chart (`FocusTrend.tsx`)
+
+**Growth → Goals** (`features/goals/`, `features/planner/`)
+
+- [ ] Growth screen with tabs Goals · Roadmap · Skills · Jobs (when on)
+- [ ] Vision: dreams, why, progress, main quests, archived (`GoalsPage.tsx`)
+- [ ] Main quest page: why panel, milestones, progress, forecast line, focus goal of the week, edit / pause / done confirm / archive / restore (`MainQuestPage.tsx`, `parts.tsx`, `ForecastLine.tsx`)
+- [ ] Goal / milestone forms (`forms.tsx`)
+- [ ] Follow-ups: deadline risk options, 30-day check-in (`FollowUps.tsx`)
+- [ ] Goal Planner sheet: analysis, interview questions, preview / approve items, edits (`PlannerSheet.tsx`, `QuestionField.tsx`, `PlanItems.tsx`)
+- [ ] Pending plan card (`PendingPlan.tsx`) and Plan history + Undo (`PlanHistory.tsx`)
+
+**Growth → Roadmap** (`features/compass/`, `features/ask/`)
+
+- [ ] Compass page: Career / Health tabs (`CompassPage.tsx`)
+- [ ] Career discovery quiz (interests, strengths, values, matches) (`Discovery.tsx`)
+- [ ] Careers browser + career detail (`CareerBrowser.tsx`)
+- [ ] Gap analysis + "Your path" + Turn into a plan (`CareerGap.tsx`)
+- [ ] Roadmaps and study guides (`Roadmaps.tsx`)
+- [ ] Health check-in + health picture (`HealthCheck.tsx`), health plan (`HealthPlan.tsx`)
+- [ ] Ask page (answers, sources, fallback, off/offline/quota states) (`AskPage.tsx`)
+
+**Growth → Skills / Jobs** (`features/skills/`, `features/jobs/`)
+
+- [ ] Study balance 70/30 card (`BalanceCard.tsx`)
+- [ ] Skill tree (branches, nodes, levels) (`SkillTree.tsx`)
+- [ ] Skill sheet: detail, evidence, projects, editor, delete confirm (`SkillSheet.tsx`, `SkillForms.tsx`)
+- [ ] Jobs page: stats, list (mobile) / board (desktop) (`JobsPage.tsx`, `JobStats.tsx`, `JobCard.tsx`)
+- [ ] Application sheet (log / edit / stage / delete confirm) (`JobForm.tsx`)
+
+**Me** (`features/profile/`, `features/body/`, `features/review/`, `features/screentime/`, `features/knows/`, `features/achievements/`)
+
+- [ ] Me screen with tabs Stats & achievements · Body · Reviews, Screen time tile, Settings gear
+- [ ] Player card (level, rank, next rank, totals), title picker (`ProfilePage.tsx`, `TitlePicker.tsx`)
+- [ ] Stats triangle / radar (`StatTriangle.tsx`)
+- [ ] XP per week chart; active-days heatmap (`Heatmap.tsx`)
+- [ ] Achievements list (`achievements/AchievementList.tsx`)
+- [ ] What the System knows about you (`knows/KnowsPage.tsx`)
+- [ ] Body: today's log form, last 14 days, Health Connect note (`BodyPage.tsx`)
+- [ ] Body: trends charts (`BodyTrends.tsx`), photos (add / view / delete confirm) (`Photos.tsx`)
+- [ ] Reviews: Daily check-in (`DailyCheckIn.tsx`), Weekly review incl. screen-time line (`WeeklyReview.tsx`, `ScreenWeekLine.tsx`), Monthly / Yearly summaries (`PeriodSummary.tsx`, `Stat.tsx`), tabs (`ReviewPage.tsx`)
+- [ ] Screen time screen: today vs limit, week chart, top apps, off state (`ScreenTimePage.tsx`)
+
+**Settings** (`features/settings/`, `features/screentime/ScreenTimeSettings.tsx`, `features/backup/`)
+
+- [ ] Settings page layout + Settings gear entry, version (`SettingsPage.tsx`)
+- [ ] Appearance → theme picker with live mini-previews (replaces light/dark) + Effects (Full / Light / Off) + sound & haptics
+- [ ] Account & sync: sign-in, status line, sync choice dialog (`AccountSection.tsx`, `SyncStatusLine.tsx`, `SyncChoice.tsx`)
+- [ ] Day / week / wake-up / core quests sections (`sections.tsx`)
+- [ ] Notifications + quiet hours + exact timing + battery guide + test (`NotificationSettings.tsx`, `ReliableReminders.tsx`)
+- [ ] Goal planner / Auto-plan (`PlannerSettings.tsx`), Ask (`AskSettings.tsx`), Jobs (`JobsSettings.tsx`), Health Connect (`HealthSettings.tsx`), Screen time (`ScreenTimeSettings.tsx`)
+- [ ] Backup: export / import panel / photos zip (`BackupSection.tsx`, `backup/ImportPanel.tsx`)
+- [ ] Data: rebuild progress, reset all data confirm (`sections.tsx`)
+- [ ] My data page: stored, space, sent-outside log, exports (`MyDataPage.tsx`)
+- [ ] Compaction (preview, confirm) (`Compaction.tsx`), Delete everything (confirm, progress, result) (`DeleteEverything.tsx`)
+
+**Onboarding** (`features/onboarding/`)
+
+- [ ] Steps: name, wake time, quests (templates, core), dream & main quests, theme; start today / tomorrow; sign-in on a new device (`OnboardingPage.tsx`, `steps.tsx`, `QuestsStep.tsx`)
+
+**Moments, VFX and system surfaces**
+
+- [ ] Quest complete, min→full upgrade, Daily Clear, streak milestone effects
+- [ ] Level-up moment (full screen, skippable) (`moments/LevelUpMoment.tsx`)
+- [ ] Rank-up moment (bigger, rare)
+- [ ] Achievement unlocked toast (`achievements/AchievementToast.tsx`)
+- [ ] In-app reminder banners / notices (`NotificationBridge.tsx`)
+- [ ] Update prompt (`app/UpdatePrompt.tsx`)
+- [ ] Error screen + route error (`app/ErrorScreen.tsx`, `app/ErrorBoundary.tsx`)
+- [ ] Loading states (startup, lists), offline / sync-paused lines, confirmations, form errors
+- [ ] Charts in the theme (`ui/charts/ChartCard.tsx`, `DailyBars.tsx`, `TrendLine.tsx`)
+- [ ] Primitives: Button, Field / TextInput / Select, Switch, ProgressBar, StatChip (`ui/`)
+
+**Android**
+
+- [ ] Home-screen widgets (small, medium) in the theme (`android/…/AscendWidget*.java`, widget layouts)
+- [ ] Splash and status bar in the theme
