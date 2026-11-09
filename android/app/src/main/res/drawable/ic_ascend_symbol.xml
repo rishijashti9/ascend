@@ -13,13 +13,13 @@
         android:scaleY="0.62">
         <path
             android:pathData="M148,292 L256,184 L364,292"
-            android:strokeColor="#4C8DFF"
+            android:strokeColor="#C8F03C"
             android:strokeWidth="46"
             android:strokeLineCap="round"
             android:strokeLineJoin="round" />
         <path
             android:pathData="M184,364 L328,364"
-            android:strokeColor="#E6EDF3"
+            android:strokeColor="#F2F2F2"
             android:strokeAlpha="0.4"
             android:strokeWidth="28"
             android:strokeLineCap="round" />

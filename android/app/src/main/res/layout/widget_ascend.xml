@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/widget_bg"
     android:orientation="vertical"
-    android:padding="12dp">
+    android:padding="14dp">
 
     <LinearLayout
         android:id="@+id/header"
@@ -24,7 +24,7 @@
                 android:layout_weight="1"
                 android:text="ASCEND"
                 android:textColor="@color/widget_text"
-                android:textSize="16sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
             <TextView
                 android:id="@+id/day_label"
@@ -37,7 +37,7 @@
             android:id="@+id/xp_bar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_height="6dp"
+            android:layout_height="8dp"
             android:layout_marginTop="6dp"
             android:max="100"
             android:progress="0"
@@ -189,7 +189,7 @@
         android:background="@drawable/widget_focus_bg"
         android:gravity="center"
         android:text="Start focus"
-        android:textColor="#0E1116"
+        android:textColor="@color/widget_on_accent"
         android:textSize="14sp"
         android:textStyle="bold"
         android:visibility="gone" />

@@ -13,14 +13,18 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:background">@null</item>
+        <!-- ELEVATE (12A.25): black status and navigation bars with light icons. -->
+        <item name="android:statusBarColor">#000000</item>
+        <item name="android:navigationBarColor">#000000</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
 
-    <!-- Launch: Android 12+ shows the system splash — the symbol on the app's dark background
-         (task 10.4); older Android shows the splash image. -->
+    <!-- Launch: Android 12+ shows the system splash — the lime symbol on ELEVATE black
+         (tasks 10.4, 12A.25); older Android shows the splash image. -->
     <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
         <item name="android:background">@drawable/splash</item>
-        <item name="windowSplashScreenBackground">#0E1116</item>
+        <item name="windowSplashScreenBackground">#000000</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_ascend_symbol</item>
         <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
     </style>

@@ -6,14 +6,14 @@ const config: CapacitorConfig = {
   appName: 'ASCEND',
   webDir: 'dist',
   android: {
-    // Matches the dark background so there's no white flash on start.
-    backgroundColor: '#0E1116',
+    // ELEVATE black, so there's no flash on start.
+    backgroundColor: '#000000',
   },
   plugins: {
-    // Status-bar icon for reminders (task 10.4): a white chevron, tinted with the accent.
+    // Status-bar icon for reminders (task 10.4): a white chevron, tinted with the accent (ELEVATE lime).
     LocalNotifications: {
       smallIcon: 'ic_stat_ascend',
-      iconColor: '#4C8DFF',
+      iconColor: '#C8F03C',
     },
   },
 };

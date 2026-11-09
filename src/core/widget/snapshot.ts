@@ -1,3 +1,4 @@
+import { resolveThemeId, THEMES } from '@/config/themes';
 import type { DayString, QuestInstance, Settings } from '@/core/db/types';
 import { isDone } from '@/core/engine/progress';
 import { addDays, dayNumber, instantAt } from '@/core/time';
@@ -44,12 +45,32 @@ export interface WidgetSnapshot {
   doneCount: number;
   /** The wake-up "I'm up" button stops counting after this instant (the late cutoff). */
   wakeUntil: number | null;
+  /**
+   * The current theme's colours (#RRGGBB), so the widget matches the app (Phase 12). Optional:
+   * a widget reading an older snapshot keeps its built-in ELEVATE colours.
+   */
+  palette?: WidgetPalette;
+}
+
+export interface WidgetPalette {
+  bg: string;
+  surface: string;
+  text: string;
+  muted: string;
+  accent: string;
+  onAccent: string;
+}
+
+/** The widget colours for a stored theme choice (unbuilt or unknown themes → ELEVATE). */
+export function widgetPalette(uiTheme: string | null | undefined): WidgetPalette {
+  const { bg, surface, text, muted, accent, onAccent } = THEMES[resolveThemeId(uiTheme)].palette;
+  return { bg, surface, text, muted, accent, onAccent };
 }
 
 export interface SnapshotInput {
   day: DayString;
   tz: string;
-  settings: Pick<Settings, 'day_start_hour' | 'wake_late_cutoff'>;
+  settings: Pick<Settings, 'day_start_hour' | 'wake_late_cutoff' | 'ui_theme'>;
   startDay: DayString | null;
   level: { level: number; xpIntoLevel: number; xpForNext: number; progress: number };
   streak: number;
@@ -107,5 +128,6 @@ export function buildSnapshot(input: SnapshotInput): WidgetSnapshot {
     total: rows.length,
     doneCount: rows.filter((r) => r.done).length,
     wakeUntil: hasWake ? instantAt(input.day, input.settings.wake_late_cutoff, input.tz) : null,
+    palette: widgetPalette(input.settings.ui_theme),
   };
 }

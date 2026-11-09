@@ -18,7 +18,8 @@ import org.json.JSONObject;
  * XP bar, streak and up to four of today's quests. Tapping a "check" quest (or "I'm up")
  * queues the action with its real tap time and shows it done at once; the app counts it the
  * next time it opens. Quests that need a number open the app. A snapshot from an earlier day
- * shows "Open ASCEND to start today" instead of stale quests.
+ * shows "Open ASCEND to start today" instead of stale quests. Colours follow the app's theme
+ * (WidgetPalette, Phase 12).
  */
 public abstract class AscendWidget extends AppWidgetProvider {
     static final String ACTION_TAP = "app.ascend.rishi.WIDGET_TAP";
@@ -81,6 +82,8 @@ public abstract class AscendWidget extends AppWidgetProvider {
         }
 
         JSONObject snap = WidgetStore.snapshot(context);
+        WidgetPalette palette = WidgetPalette.from(context, snap);
+        palette.applyBase(views);
         long now = System.currentTimeMillis();
         if (snap == null) {
             return message(views, "Level —", "Open ASCEND once to set up the widget.");
@@ -134,9 +137,9 @@ public abstract class AscendWidget extends AppWidgetProvider {
             views.setTextViewText(ACTIONS[i], label);
             views.setTextColor(
                     ACTIONS[i],
-                    context.getColor(done || "open".equals(kind) || "Closed".equals(label)
-                            ? R.color.widget_muted
-                            : R.color.widget_accent));
+                    done || "open".equals(kind) || "Closed".equals(label)
+                            ? palette.muted
+                            : palette.accent);
             views.setOnClickPendingIntent(ROWS[i], click);
         }
         views.setTextViewText(

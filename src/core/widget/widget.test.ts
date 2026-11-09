@@ -6,7 +6,7 @@ import { habitFieldsOf, STARTER_HABITS } from '@/data/starter';
 import { setNow } from '@/core/time';
 import { createTestDb, ist } from '@/test/testDb';
 import type { PendingTap, WidgetBridge } from './bridge';
-import { buildSnapshot } from './snapshot';
+import { buildSnapshot, widgetPalette } from './snapshot';
 
 const D = '2026-11-02';
 
@@ -238,5 +238,23 @@ describe('deep links', () => {
     expect(pathFromLink('app.ascend.rishi://open/focus')).toBe('/focus');
     expect(pathFromLink('app.ascend.rishi://auth?code=1')).toBeNull();
     expect(pathFromLink('app.ascend.rishi://open/<script>')).toBe('/script');
+  });
+});
+
+describe('widget palette (Phase 12)', () => {
+  it('carries the current theme’s colours; unbuilt or unknown themes fall back to ELEVATE', () => {
+    const elevate = widgetPalette('elevate');
+    expect(elevate).toEqual({
+      bg: '#000000',
+      surface: '#161616',
+      text: '#F2F2F2',
+      muted: '#9A9A9A',
+      accent: '#C8F03C',
+      onAccent: '#000000',
+    });
+    expect(widgetPalette(undefined)).toEqual(elevate);
+    expect(widgetPalette('void')).toEqual(elevate); // not built yet
+    expect(widgetPalette('nonsense')).toEqual(elevate);
+    for (const colour of Object.values(elevate)) expect(colour).toMatch(/^#[0-9A-F]{6}$/i);
   });
 });

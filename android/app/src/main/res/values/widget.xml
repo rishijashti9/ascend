@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Home-screen widget (task 10.2): the app's dark theme tokens (SPEC 8). -->
-    <color name="widget_bg">#161B22</color>
-    <color name="widget_border">#30363D</color>
-    <color name="widget_text">#E6EDF3</color>
-    <color name="widget_muted">#8B949E</color>
-    <color name="widget_accent">#4C8DFF</color>
+    <!-- Home-screen widget: ELEVATE colours (12A.25). These are the defaults; on Android 12+ the
+         widget recolours itself from the theme palette in the app's snapshot. -->
+    <color name="widget_bg">#000000</color>
+    <color name="widget_border">#2A2A2A</color>
+    <color name="widget_text">#F2F2F2</color>
+    <color name="widget_on_accent">#000000</color>
+    <color name="widget_muted">#9A9A9A</color>
+    <color name="widget_accent">#C8F03C</color>
     <string name="widget_small_label">ASCEND — today</string>
     <string name="widget_medium_label">ASCEND — today + focus</string>
     <string name="widget_description">Level, XP and today’s quests. Tap a quest to mark it done.</string>
