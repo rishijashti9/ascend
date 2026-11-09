@@ -1,6 +1,4 @@
 import { Plus, X } from 'lucide-react';
-import { applyUiTheme } from '@/app/theme';
-import { ThemePicker } from '@/features/settings/ThemePicker';
 import { isEnabled } from '@/config/features';
 import { ImportPanel } from '@/features/backup/ImportPanel';
 import { AccountSection } from '@/features/settings/AccountSection';
@@ -202,49 +200,26 @@ function Choice({
   );
 }
 
-export function ThemeStep({
-  draft,
-  update,
-  lateStart,
-}: {
-  draft: Draft;
-  update: Update;
-  lateStart: boolean;
-}) {
+/** After 6 PM (shown on the last step): start today, or let Day 1 begin tomorrow morning. */
+export function StartChoice({ draft, update }: { draft: Draft; update: Update }) {
   return (
-    <div className="flex flex-col gap-6">
-      <ThemePicker
-        value={draft.uiTheme}
-        onChange={(uiTheme) => {
-          applyUiTheme(uiTheme); // preview it straight away
-          update((d) => ({ ...d, uiTheme }));
-        }}
-      />
-      <p className="text-muted text-sm">
-        More themes arrive in later updates — change it anytime in Settings.
-      </p>
-      {lateStart && (
-        <div className="flex flex-col gap-2">
-          <h3 className="display">Start today or tomorrow?</h3>
-          <p className="text-muted text-sm">
-            It’s late, so today won’t count against you either way.
-          </p>
-          <div role="radiogroup" aria-label="First day" className="flex flex-col gap-2 sm:flex-row">
-            <Choice
-              selected={draft.start === 'today'}
-              onSelect={() => update((d) => ({ ...d, start: 'today' }))}
-            >
-              Start today — do a quest or two tonight
-            </Choice>
-            <Choice
-              selected={draft.start === 'tomorrow'}
-              onSelect={() => update((d) => ({ ...d, start: 'tomorrow' }))}
-            >
-              Start tomorrow — Day 1 begins in the morning
-            </Choice>
-          </div>
-        </div>
-      )}
+    <div className="flex flex-col gap-2">
+      <h3 className="display">Start today or tomorrow?</h3>
+      <p className="text-muted text-sm">It’s late, so today won’t count against you either way.</p>
+      <div role="radiogroup" aria-label="First day" className="flex flex-col gap-2 sm:flex-row">
+        <Choice
+          selected={draft.start === 'today'}
+          onSelect={() => update((d) => ({ ...d, start: 'today' }))}
+        >
+          Start today — do a quest or two tonight
+        </Choice>
+        <Choice
+          selected={draft.start === 'tomorrow'}
+          onSelect={() => update((d) => ({ ...d, start: 'tomorrow' }))}
+        >
+          Start tomorrow — Day 1 begins in the morning
+        </Choice>
+      </div>
     </div>
   );
 }

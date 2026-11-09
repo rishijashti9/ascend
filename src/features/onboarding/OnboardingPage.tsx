@@ -8,11 +8,15 @@ import { currentTimeZone, localParts, nowMs } from '@/core/time';
 import { Button } from '@/ui/Button';
 import { initialDraft, stepProblem, toPayload, type Draft } from './draft';
 import { QuestsStep } from './QuestsStep';
-import { GoalsStep, NameStep, ThemeStep, WakeStep } from './steps';
+import { GoalsStep, NameStep, StartChoice, WakeStep } from './steps';
 
-const TITLES = ['Welcome', 'Wake-up time', 'Daily quests', 'Dream & Main Quests', 'Look & start'];
+// ELEVATE is the only theme (DECISIONS), so there is no theme step: it is applied automatically.
+const TITLES = ['Welcome', 'Wake-up time', 'Daily quests', 'Dream & Main Quests'];
 
-/** Onboarding "Awakening" (SPEC 7.1): five short steps, all pre-filled — mostly just confirm. */
+/**
+ * Onboarding "Awakening" (SPEC 7.1): four short steps, all pre-filled — mostly just confirm. After
+ * 6 PM the last step also asks whether to start today or tomorrow.
+ */
 export function OnboardingPage() {
   const settings = useAppState((s) => s.settings);
   const timing = {
@@ -77,8 +81,12 @@ export function OnboardingPage() {
           {step === 0 && <NameStep draft={draft} update={update} />}
           {step === 1 && <WakeStep draft={draft} update={update} timing={timing} />}
           {step === 2 && <QuestsStep draft={draft} update={update} />}
-          {step === 3 && <GoalsStep draft={draft} update={update} />}
-          {step === 4 && <ThemeStep draft={draft} update={update} lateStart={lateStart} />}
+          {step === 3 && (
+            <div className="flex flex-col gap-8">
+              <GoalsStep draft={draft} update={update} />
+              {lateStart && <StartChoice draft={draft} update={update} />}
+            </div>
+          )}
         </section>
 
         <footer className="bg-bg border-border sticky bottom-0 flex flex-col gap-2 border-t pt-4 pb-2">

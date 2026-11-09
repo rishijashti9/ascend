@@ -1,6 +1,6 @@
 import { GAME } from '@/config/game';
 import type { Settings, Stat } from '@/core/db/types';
-import { DEFAULT_THEME, type ThemeId } from '@/config/themes';
+import { DEFAULT_THEME } from '@/config/themes';
 import type { OnboardingPayload } from '@/core/pipeline';
 import {
   STARTER_DREAM,
@@ -15,15 +15,13 @@ import { editProblems } from '@/ui/habit/habitEdit';
 import { DEFAULT_SETTINGS } from '@/config/defaults';
 import { DEFAULT_TEMPLATE, STARTER_TEMPLATES } from '@/data/starterTemplates';
 
-/** Everything the five onboarding steps edit, kept in memory until "Begin". */
+/** Everything the four onboarding steps edit, kept in memory until "Begin". */
 export interface Draft {
   name: string;
   wakeTime: string;
   habits: StarterHabit[];
   dream: { title: string; why: string };
   mainQuests: { title: string; stat: Stat }[];
-  /** Phase 12: the chosen theme. */
-  uiTheme: ThemeId;
   start: 'today' | 'tomorrow';
   /** Starter template the quests, dream and main quests came from (all still editable). */
   template: string;
@@ -36,7 +34,6 @@ export function initialDraft(): Draft {
     habits: STARTER_HABITS.map((h) => ({ ...h })),
     dream: { ...STARTER_DREAM },
     mainQuests: STARTER_MAIN_QUESTS.map((m) => ({ ...m })),
-    uiTheme: DEFAULT_THEME,
     start: 'today',
     template: DEFAULT_TEMPLATE,
   };
@@ -91,7 +88,8 @@ export function toPayload(d: Draft, timing: Timing): OnboardingPayload {
     name: d.name.trim(),
     wake_time: d.wakeTime,
     theme: 'system',
-    ui_theme: d.uiTheme,
+    // ELEVATE is the only theme (DECISIONS): no choice to make, it is simply stored.
+    ui_theme: DEFAULT_THEME,
     start: d.start,
     habits: d.habits
       .filter((h) => h.selected)

@@ -336,7 +336,7 @@ Every route, tab, sheet, dialog, card, banner, toast, state and Android surface,
 
 **Onboarding** (`features/onboarding/`)
 
-- [x] Steps: name, wake time, quests (templates, core), dream & main quests, theme; start today / tomorrow; sign-in on a new device (`OnboardingPage.tsx`, `steps.tsx`, `QuestsStep.tsx`)
+- [x] Steps: name, wake time, quests (templates, core), dream & main quests (+ start today / tomorrow after 6 PM; no theme step — ELEVATE only); sign-in on a new device (`OnboardingPage.tsx`, `steps.tsx`, `QuestsStep.tsx`)
 
 **Moments, VFX and system surfaces**
 

@@ -14,7 +14,8 @@ export function watchErrors(page: Page): string[] {
 export async function onboard(page: Page) {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Welcome' })).toBeVisible();
-  for (let i = 0; i < 4; i++) await page.getByRole('button', { name: 'Next' }).click();
+  // Four steps (no theme step): three Nexts, then Begin.
+  for (let i = 0; i < 3; i++) await page.getByRole('button', { name: 'Next' }).click();
   await page.getByRole('button', { name: 'Begin' }).click();
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
 }

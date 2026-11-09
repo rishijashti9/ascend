@@ -18,8 +18,7 @@ test('onboarding: answers are saved and Today greets by name', async ({ page }) 
   await page.getByLabel('What should the System call you?').fill('Rishi J');
   await page.getByRole('button', { name: 'Next' }).click();
   await page.getByLabel('Wake-up time').fill('05:30');
-  for (let i = 0; i < 3; i++) await page.getByRole('button', { name: 'Next' }).click();
-  await expect(page.getByRole('radio', { name: /Elevate/ })).toBeChecked();
+  for (let i = 0; i < 2; i++) await page.getByRole('button', { name: 'Next' }).click();
   await page.getByRole('button', { name: 'Begin' }).click();
 
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
