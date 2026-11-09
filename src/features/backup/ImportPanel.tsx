@@ -121,7 +121,7 @@ export function ImportPanel({
       )}
 
       {backup && counts && (
-        <div className="bg-surface-2 flex flex-col gap-3 rounded-md p-3">
+        <div className="inset flex flex-col gap-3 p-3">
           <p className="text-sm">
             Backup from <strong>{dateOf(backup.exported_at)}</strong>: {counts.habits} daily quests,{' '}
             {counts.days} days, {counts.xpEvents} XP records
@@ -136,8 +136,8 @@ export function ImportPanel({
                   role="radio"
                   aria-checked={mode === m.value}
                   onClick={() => setMode(m.value)}
-                  className={`flex min-h-11 flex-col items-start rounded-md border px-3 py-2 text-left ${
-                    mode === m.value ? 'border-accent bg-surface font-medium' : 'border-border'
+                  className={`panel flex min-h-11 flex-col items-start px-3 py-2 text-left ${
+                    mode === m.value ? 'outline-accent font-semibold outline-2' : ''
                   }`}
                 >
                   <span>{m.label}</span>

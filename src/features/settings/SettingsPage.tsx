@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { APP_VERSION } from '@/app/version';
 import { isEnabled } from '@/config/features';
 import { useAppState } from '@/core/state/app';
@@ -24,6 +25,12 @@ export function SettingsPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+      <Link
+        to="/me"
+        className="text-accent-text inline-flex min-h-11 items-center self-start text-sm font-semibold lg:hidden"
+      >
+        ← Me
+      </Link>
       <h1 className="display text-2xl">Settings</h1>
       {settings && (
         <>

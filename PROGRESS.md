@@ -203,7 +203,7 @@ Part C — Ask the System
 - [x] 12A.17 Growth → Skills
 - [x] 12A.18 Me → Stats & achievements
 - [x] 12A.19 Me → Body
-- [ ] 12A.20 Settings
+- [x] 12A.20 Settings
 - [ ] 12A.21 System surfaces
 - [ ] 12A.22 VFX engine
 - [ ] 12A.23 ELEVATE level-up and rank-up moments
@@ -332,20 +332,20 @@ Every route, tab, sheet, dialog, card, banner, toast, state and Android surface,
 
 **Settings** (`features/settings/`, `features/screentime/ScreenTimeSettings.tsx`, `features/backup/`)
 
-- [ ] Settings page layout + Settings gear entry, version (`SettingsPage.tsx`)
-- [ ] Appearance → theme picker with live mini-previews (replaces light/dark) + Effects (Full / Light / Off) + sound & haptics
-- [ ] Account & sync: sign-in, status line, sync choice dialog (`AccountSection.tsx`, `SyncStatusLine.tsx`, `SyncChoice.tsx`)
-- [ ] Day / week / wake-up / core quests sections (`sections.tsx`)
-- [ ] Notifications + quiet hours + exact timing + battery guide + test (`NotificationSettings.tsx`, `ReliableReminders.tsx`)
-- [ ] Goal planner / Auto-plan (`PlannerSettings.tsx`), Ask (`AskSettings.tsx`), Jobs (`JobsSettings.tsx`), Health Connect (`HealthSettings.tsx`), Screen time (`ScreenTimeSettings.tsx`)
-- [ ] Backup: export / import panel / photos zip (`BackupSection.tsx`, `backup/ImportPanel.tsx`)
-- [ ] Data: rebuild progress, reset all data confirm (`sections.tsx`)
-- [ ] My data page: stored, space, sent-outside log, exports (`MyDataPage.tsx`)
-- [ ] Compaction (preview, confirm) (`Compaction.tsx`), Delete everything (confirm, progress, result) (`DeleteEverything.tsx`)
+- [x] Settings page layout + Settings gear entry, version (`SettingsPage.tsx`)
+- [x] Appearance → theme picker with live mini-previews (replaces light/dark) + Effects (Full / Light / Off) + sound & haptics
+- [x] Account & sync: sign-in, status line, sync choice dialog (`AccountSection.tsx`, `SyncStatusLine.tsx`, `SyncChoice.tsx`)
+- [x] Day / week / wake-up / core quests sections (`sections.tsx`)
+- [x] Notifications + quiet hours + exact timing + battery guide + test (`NotificationSettings.tsx`, `ReliableReminders.tsx`)
+- [x] Goal planner / Auto-plan (`PlannerSettings.tsx`), Ask (`AskSettings.tsx`), Jobs (`JobsSettings.tsx`), Health Connect (`HealthSettings.tsx`), Screen time (`ScreenTimeSettings.tsx`)
+- [x] Backup: export / import panel / photos zip (`BackupSection.tsx`, `backup/ImportPanel.tsx`)
+- [x] Data: rebuild progress, reset all data confirm (`sections.tsx`)
+- [x] My data page: stored, space, sent-outside log, exports (`MyDataPage.tsx`)
+- [x] Compaction (preview, confirm) (`Compaction.tsx`), Delete everything (confirm, progress, result) (`DeleteEverything.tsx`)
 
 **Onboarding** (`features/onboarding/`)
 
-- [ ] Steps: name, wake time, quests (templates, core), dream & main quests, theme; start today / tomorrow; sign-in on a new device (`OnboardingPage.tsx`, `steps.tsx`, `QuestsStep.tsx`)
+- [x] Steps: name, wake time, quests (templates, core), dream & main quests, theme; start today / tomorrow; sign-in on a new device (`OnboardingPage.tsx`, `steps.tsx`, `QuestsStep.tsx`)
 
 **Moments, VFX and system surfaces**
 

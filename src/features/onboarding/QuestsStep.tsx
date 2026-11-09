@@ -26,8 +26,8 @@ function QuestRow({ habit, draft, update }: { habit: StarterHabit; draft: Draft;
           aria-label={`Use ${habit.title}`}
           // An unpicked quest can't be core; picking it again starts as non-core.
           onClick={() => set({ ...habit, selected: !habit.selected, core: false })}
-          className={`mt-0.5 flex size-11 shrink-0 items-center justify-center rounded-md border ${
-            habit.selected ? 'bg-accent-fill text-on-accent border-transparent' : 'border-border'
+          className={`mt-0.5 flex size-11 shrink-0 items-center justify-center rounded-full border-2 ${
+            habit.selected ? 'bg-accent-fill text-on-accent border-transparent' : 'border-muted'
           }`}
         >
           {habit.selected && <Check aria-hidden size={20} />}
@@ -92,10 +92,8 @@ export function QuestsStep({ draft, update }: { draft: Draft; update: Update }) 
               aria-pressed={draft.template === t.id}
               title={t.description}
               onClick={() => update((d) => applyTemplate(d, t.id))}
-              className={`min-h-11 rounded-full border px-3 text-sm ${
-                draft.template === t.id
-                  ? 'bg-accent-fill text-on-accent border-transparent'
-                  : 'border-border bg-surface'
+              className={`pill min-h-11 px-4 text-sm font-semibold ${
+                draft.template === t.id ? 'bg-accent-fill text-on-accent' : 'bg-surface-2 text-text'
               }`}
             >
               {t.label}

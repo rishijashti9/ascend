@@ -30,7 +30,7 @@ export function NameStep({ draft, update }: { draft: Draft; update: Update }) {
         onChange={(e) => update((d) => ({ ...d, name: e.target.value }))}
       />
       {isEnabled('exportImport') && (
-        <details className="border-border mt-4 rounded-lg border p-4">
+        <details className="inset mt-4 p-4">
           <summary className="min-h-11 cursor-pointer py-2 font-medium">
             Already use ASCEND? Restore from a backup
           </summary>
@@ -40,7 +40,7 @@ export function NameStep({ draft, update }: { draft: Draft; update: Update }) {
         </details>
       )}
       {isEnabled('sync') && (
-        <details className="border-border rounded-lg border p-4">
+        <details className="inset p-4">
           <summary className="min-h-11 cursor-pointer py-2 font-medium">
             Use ASCEND on another device? Sign in to bring your data here
           </summary>
@@ -193,8 +193,8 @@ function Choice({
       role="radio"
       aria-checked={selected}
       onClick={onSelect}
-      className={`flex min-h-11 flex-1 items-center gap-2 rounded-md border px-3 py-2 text-left ${
-        selected ? 'border-accent bg-surface-2 font-medium' : 'border-border bg-surface'
+      className={`inset flex min-h-11 flex-1 items-center gap-2 px-3 py-2 text-left ${
+        selected ? 'outline-accent font-semibold outline-2' : ''
       }`}
     >
       {children}

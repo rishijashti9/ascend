@@ -303,7 +303,7 @@ export function DataSection() {
           <div
             role="alertdialog"
             aria-label="Reset all data?"
-            className="bg-surface-2 flex flex-col gap-3 rounded-md p-3"
+            className="inset flex flex-col gap-3 p-3"
           >
             <p className="text-sm">
               This deletes every quest, day, XP and setting on this device and starts over with
