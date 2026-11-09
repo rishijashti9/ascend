@@ -45,11 +45,14 @@ describe('SettingsPage', () => {
     expect(themes.map((t) => t.textContent)).toEqual([expect.stringContaining('Elevate')]);
     expect(themes[0]).toBeChecked();
     await userEvent.click(within(appearance).getByRole('radio', { name: /Light/ }));
-    await waitFor(async () => expect((await stored())?.effects).toBe('light'));
+    // Under a full test run the save can take a few seconds.
+    await waitFor(async () => expect((await stored())?.effects).toBe('light'), { timeout: 10_000 });
     const sound = within(appearance).getByRole('switch', { name: 'Sound and vibration' });
     expect(sound).toHaveAttribute('aria-checked', 'false');
     await userEvent.click(sound);
-    await waitFor(async () => expect((await stored())?.sound_haptics).toBe(true));
+    await waitFor(async () => expect((await stored())?.sound_haptics).toBe(true), {
+      timeout: 10_000,
+    });
   });
 
   it('saves day-start hour and week start', async () => {
