@@ -201,7 +201,7 @@ Part C — Ask the System
 - [x] 12A.15 Growth → Goals
 - [x] 12A.16 Growth → Roadmap
 - [x] 12A.17 Growth → Skills
-- [ ] 12A.18 Me → Stats & achievements
+- [x] 12A.18 Me → Stats & achievements
 - [ ] 12A.19 Me → Body
 - [ ] 12A.20 Settings
 - [ ] 12A.21 System surfaces
@@ -320,11 +320,11 @@ Every route, tab, sheet, dialog, card, banner, toast, state and Android surface,
 **Me** (`features/profile/`, `features/body/`, `features/review/`, `features/screentime/`, `features/knows/`, `features/achievements/`)
 
 - [x] Me screen with tabs Stats & achievements · Body · Reviews, Screen time tile, Settings gear
-- [ ] Player card (level, rank, next rank, totals), title picker (`ProfilePage.tsx`, `TitlePicker.tsx`)
-- [ ] Stats triangle / radar (`StatTriangle.tsx`)
-- [ ] XP per week chart; active-days heatmap (`Heatmap.tsx`)
-- [ ] Achievements list (`achievements/AchievementList.tsx`)
-- [ ] What the System knows about you (`knows/KnowsPage.tsx`)
+- [x] Player card (level, rank, next rank, totals), title picker (`ProfilePage.tsx`, `TitlePicker.tsx`)
+- [x] Stats triangle / radar (`StatTriangle.tsx`)
+- [x] XP per week chart; active-days heatmap (`Heatmap.tsx`)
+- [x] Achievements list (`achievements/AchievementList.tsx`)
+- [x] What the System knows about you (`knows/KnowsPage.tsx`)
 - [ ] Body: today's log form, last 14 days, Health Connect note (`BodyPage.tsx`)
 - [ ] Body: trends charts (`BodyTrends.tsx`), photos (add / view / delete confirm) (`Photos.tsx`)
 - [ ] Reviews: Daily check-in (`DailyCheckIn.tsx`), Weekly review incl. screen-time line (`WeeklyReview.tsx`, `ScreenWeekLine.tsx`), Monthly / Yearly summaries (`PeriodSummary.tsx`, `Stat.tsx`), tabs (`ReviewPage.tsx`)

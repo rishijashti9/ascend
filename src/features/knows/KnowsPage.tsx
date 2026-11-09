@@ -1,3 +1,4 @@
+import { Robot } from '@/ui/Robot';
 import { ArrowLeft, Download, RotateCcw } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
@@ -52,7 +53,9 @@ export function KnowsPage() {
         <ArrowLeft aria-hidden size={18} /> Profile
       </Link>
       <header className="flex flex-col gap-1">
-        <h1 className="display text-2xl">What the System knows about you</h1>
+        <h1 className="display flex items-center gap-3 text-2xl">
+          <Robot size={40} /> What the System knows about you
+        </h1>
         <p className="text-muted text-sm">
           Learned on this device from numbers and patterns only — never your journal. It stays on
           this device and in your own synced account. Clearing an item makes it learn afresh from

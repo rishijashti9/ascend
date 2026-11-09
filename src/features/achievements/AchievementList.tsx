@@ -11,6 +11,9 @@ import { ProgressBar } from '@/ui/ProgressBar';
  * Achievements on the Profile (SPEC 7.8): unlocked ones with their date, then the rest with
  * how far along they are. Achievements of features not built yet stay hidden.
  */
+/** Unlocked achievements as bright tiles (only tiles with dark text, so muted text stays AA). */
+const UNLOCKED_TILES = ['tile-lime', 'tile-white', 'tile-yellow'] as const;
+
 export function AchievementList() {
   const unlocked = useAchievements((s) => s.unlocked);
   const facts = useAchievements((s) => s.facts);
@@ -37,13 +40,16 @@ export function AchievementList() {
       </div>
       {done.length > 0 && (
         <ul aria-label="Unlocked" className="grid gap-2 sm:grid-cols-2">
-          {done.map((a) => (
-            <li key={a.key} className="bg-surface-2 flex items-start gap-3 rounded-md p-3">
-              <Award aria-hidden size={20} className="text-accent-text mt-0.5 shrink-0" />
+          {done.map((a, i) => (
+            <li
+              key={a.key}
+              className={`tile ${UNLOCKED_TILES[i % UNLOCKED_TILES.length]} flex items-start gap-3 p-3`}
+            >
+              <Award aria-hidden size={20} className="mt-0.5 shrink-0" />
               <div className="min-w-0 text-sm">
-                <p className="font-medium">{a.name}</p>
-                <p className="text-muted">{a.description}</p>
-                <p className="text-muted text-xs">
+                <p className="display text-base">{a.name}</p>
+                <p className="text-on-tile-muted">{a.description}</p>
+                <p className="text-on-tile-muted text-xs">
                   Unlocked {formatDay((unlocked[a.key]?.unlocked_at ?? '').slice(0, 10))}
                 </p>
               </div>
@@ -58,13 +64,10 @@ export function AchievementList() {
           </summary>
           <ul aria-label="Still to unlock" className="mt-2 grid gap-2 sm:grid-cols-2">
             {locked.map(({ def, value }) => (
-              <li
-                key={def.key}
-                className="border-border flex items-start gap-3 rounded-md border p-3"
-              >
+              <li key={def.key} className="inset flex items-start gap-3 p-3">
                 <Lock aria-hidden size={18} className="text-muted mt-0.5 shrink-0" />
                 <div className="flex min-w-0 flex-1 flex-col gap-1 text-sm">
-                  <p className="font-medium">{def.name}</p>
+                  <p className="display text-base">{def.name}</p>
                   <p className="text-muted">{def.description}</p>
                   <ProgressBar
                     value={Math.min(1, value / def.goal)}
