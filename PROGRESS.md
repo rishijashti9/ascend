@@ -194,7 +194,7 @@ Part C — Ask the System
 - [x] 12A.8 Me screen with tabs
 - [x] 12A.9 System companion robot
 - [x] 12A.10 Ask
-- [ ] 12A.11 Today dashboard
+- [x] 12A.11 Today dashboard
 - [ ] 12A.12 Today cards in ELEVATE
 - [ ] 12A.13 Quests screen
 - [ ] 12A.14 Focus
@@ -253,9 +253,9 @@ Every route, tab, sheet, dialog, card, banner, toast, state and Android surface,
 
 **Today** (`features/today/`)
 
-- [ ] Dashboard header: name, title, day, level, XP bar, rank, streak (`StatusHeader.tsx`)
-- [ ] Filter chips All / Core / Body / Mind / Career
-- [ ] Today's quests tile (progress + next quest)
+- [x] Dashboard header: name, title, day, level, XP bar, rank, streak (`StatusHeader.tsx`)
+- [x] Filter chips All / Core / Body / Mind / Career
+- [x] Today’s quests tile (progress + next quest)
 - [ ] Live tiles: Body (sleep, steps), Skill (current skill, hours this week), Roadmap (next step, readiness %), Screen time (today vs limit), check-in / review tile when due
 - [ ] Quest card — check (Full / Minimum / Upgrade), numbers (minutes/count/steps/sleep input), weekly/side "Done", auto (Digital discipline), done/missed states, undo, XP float (`QuestCard.tsx`, `ui/XpFloat.tsx`)
 - [ ] Wake-up card "I'm up" (early / on time / late / window closed) (`WakeCard.tsx`)

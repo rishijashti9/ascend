@@ -1,6 +1,5 @@
 import { Smartphone, TriangleAlert } from 'lucide-react';
 import { useState } from 'react';
-import { Link } from 'react-router';
 import { screenBridge } from '@/app/screenTime';
 import type { IncidentKind } from '@/core/db/types';
 import { INCIDENT_TEXT } from '@/core/screentime/integrity';
@@ -8,7 +7,6 @@ import { formatMinutes } from '@/core/screentime/observe';
 import { useScreen } from '@/core/state/screen';
 import { Button } from '@/ui/Button';
 import { useAction } from '@/ui/hooks/useAction';
-import { ProgressBar } from '@/ui/ProgressBar';
 import { LimitEditor } from './LimitEditor';
 import { shortDate } from './format';
 
@@ -69,8 +67,6 @@ export function IncidentBanner() {
 function ScreenTimeCard() {
   const observe = useScreen((s) => s.observe);
   const suggestion = useScreen((s) => s.suggestion);
-  const todaySec = useScreen((s) => s.todaySec);
-  const limit = useScreen((s) => s.rules?.limit_min ?? null);
   const { run, busy, error } = useAction();
   const [editing, setEditing] = useState(false);
 
@@ -125,25 +121,6 @@ function ScreenTimeCard() {
     );
   }
 
-  if (limit === null) return null;
-  const min = Math.round(todaySec / 60);
-  const over = min >= limit;
-  return (
-    <Link
-      to="/me/screen-time"
-      aria-label={`Entertainment today: ${min} of ${limit} minutes`}
-      className={`${box} hover:bg-surface-2`}
-    >
-      <span className="flex items-center justify-between gap-2 text-sm">
-        <span className="flex items-center gap-2">
-          <Smartphone aria-hidden size={16} className="text-muted" />
-          Entertainment today
-        </span>
-        <span className={`tabular-nums ${over ? 'text-warning-text' : 'text-muted'}`}>
-          {formatMinutes(min)} / {formatMinutes(limit)}
-        </span>
-      </span>
-      <ProgressBar value={Math.min(1, min / limit)} label="Entertainment today vs limit" />
-    </Link>
-  );
+  // Once the limit is set, Today's Screen time tile shows today vs the limit (Phase 12).
+  return null;
 }

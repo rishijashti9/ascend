@@ -64,6 +64,26 @@ describe('TodayPage', () => {
     expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(8);
   });
 
+  it('dashboard: the quests tile shows progress and the next quest; chips filter the list', async () => {
+    await setup();
+    expect(
+      screen.getByRole('button', { name: /^Today's quests: 0 of 8 done\. Next: / }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Body/ })).toHaveAttribute('href', '/me/body');
+    await userEvent.click(screen.getByRole('button', { name: 'Body', pressed: false }));
+    // Body = STR: Workout, Walk and Sleep.
+    expect(screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent)).toEqual([
+      'Workout',
+      'Walk',
+      'Sleep',
+    ]);
+    // Mind = WIL: the wake-up check-in, Journal and Meditate.
+    await userEvent.click(screen.getByRole('button', { name: 'Mind' }));
+    expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(3);
+    await userEvent.click(screen.getByRole('button', { name: 'All' }));
+    expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(8);
+  });
+
   it('Full / Minimum taps complete a check quest, award XP, and can be undone', async () => {
     await setup();
     await tap(card('Workout'), 'Minimum');

@@ -26,6 +26,28 @@ import { SystemMessage } from './SystemMessage';
 import { ThisWeek } from './ThisWeek';
 import { WakeCard } from './WakeCard';
 import { EmptyState } from '@/ui/EmptyState';
+import { Chip } from '@/ui/Surface';
+import { TodayTiles } from './TodayTiles';
+
+type QuestFilter = 'all' | 'core' | 'body' | 'mind' | 'career';
+
+/** Today's quest filter chips (Phase 12): Body = STR, Mind = WIL, Career = INT. */
+const FILTERS: { id: QuestFilter; label: string }[] = [
+  { id: 'all', label: 'All' },
+  { id: 'core', label: 'Core' },
+  { id: 'body', label: 'Body' },
+  { id: 'mind', label: 'Mind' },
+  { id: 'career', label: 'Career' },
+];
+
+function matchesFilter(
+  i: { core_snapshot: boolean; stat_snapshot: string },
+  f: QuestFilter,
+): boolean {
+  if (f === 'all') return true;
+  if (f === 'core') return i.core_snapshot;
+  return i.stat_snapshot === (f === 'body' ? 'STR' : f === 'mind' ? 'WIL' : 'INT');
+}
 
 /** Low-energy mode (SPEC 4.8): today only, on and off any time before the day closes. */
 function LowEnergyToggle({ on }: { on: boolean }) {
@@ -60,24 +82,23 @@ export function TodayPage() {
   const hidden = daily.filter((q) => !visible(q)).length;
   const hasCore = daily.some((q) => q.instance.core_snapshot);
   const doneCount = daily.filter((q) => isDone(q.instance.status)).length;
+  const [filter, setFilter] = useState<QuestFilter>('all');
+  const shown = (q: (typeof daily)[number]) => visible(q) && matchesFilter(q.instance, filter);
+  const scrollToQuests = () =>
+    document
+      .getElementById('quests-heading')
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   return (
-    <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:items-start lg:gap-8">
+    <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] lg:items-start lg:gap-8">
       <div className="flex flex-col gap-4 lg:sticky lg:top-6">
-        <div className="flex items-center justify-between gap-2">
-          <h1 className="text-xl font-semibold">Today</h1>
-          {isEnabled('focus') && (
-            <Link
-              to="/focus"
-              className="bg-accent-fill text-on-accent inline-flex min-h-11 items-center gap-2 rounded-md px-4 font-medium"
-            >
-              <Timer aria-hidden size={18} /> Start focus
-            </Link>
-          )}
+        <div className="flex flex-col gap-1">
+          <h1 className="text-accent-text text-xs font-bold tracking-widest uppercase">Today</h1>
+          <StatusHeader day={day} />
         </div>
-        <StatusHeader day={day} />
         <SystemMessage />
         <WhatNow next={next} />
+        {status === 'ready' && !notStarted && <TodayTiles onQuests={scrollToQuests} />}
         <SuggestionSlot />
         {isEnabled('screenTime') && <ScreenTimeToday />}
         <ReminderSetupCard />
@@ -89,9 +110,9 @@ export function TodayPage() {
         <BackupReminder />
       </div>
 
-      <section aria-labelledby="quests-heading" className="flex flex-col gap-3 lg:pt-14">
+      <section aria-labelledby="quests-heading" className="flex scroll-mt-6 flex-col gap-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 id="quests-heading" className="text-lg font-semibold">
+          <h2 id="quests-heading" className="display text-lg">
             Daily quests
             {daily.length > 0 && (
               <span className="text-muted ml-2 text-sm font-normal tabular-nums">
@@ -102,6 +123,27 @@ export function TodayPage() {
           {/* Low energy means "core minimums only" — meaningless on a day without core quests. */}
           {status === 'ready' && (hasCore || lowEnergy) && <LowEnergyToggle on={lowEnergy} />}
         </div>
+        {daily.length > 0 && (
+          <div
+            role="group"
+            aria-label="Show quests"
+            className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1"
+          >
+            {FILTERS.map((f) => (
+              <Chip key={f.id} active={filter === f.id} onClick={() => setFilter(f.id)}>
+                {f.label}
+              </Chip>
+            ))}
+          </div>
+        )}
+        {isEnabled('focus') && (
+          <Link
+            to="/focus"
+            className="pill bg-surface-2 text-text inline-flex min-h-11 items-center gap-2 self-start px-4 text-sm font-semibold"
+          >
+            <Timer aria-hidden size={16} /> Start focus
+          </Link>
+        )}
 
         {status === 'ready' && notStarted && (
           <p className="panel p-4">
@@ -115,13 +157,13 @@ export function TodayPage() {
         )}
 
         <ul className="flex flex-col gap-3">
-          {wake.filter(visible).map((q) => (
+          {wake.filter(shown).map((q) => (
             <WakeCard key={q.instance.id} quest={q} />
           ))}
           {recovery.map((q) => (
             <RecoveryCard key={q.instance.id} quest={q} />
           ))}
-          {rest.filter(visible).map((q) => (
+          {rest.filter(shown).map((q) => (
             <QuestCard
               key={q.instance.id}
               quest={q}

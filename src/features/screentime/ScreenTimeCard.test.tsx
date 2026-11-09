@@ -78,9 +78,10 @@ it('after 7 days: one card with the average and a suggestion; Accept sets and lo
   await userEvent.click(screen.getByRole('button', { name: 'Accept' }));
   await waitFor(async () => expect((await getRules(db))?.limit_min).toBe(90));
   expect(await getLock(db)).toBeDefined();
-  expect(
-    await screen.findByRole('link', { name: /Entertainment today: 0 of 90 minutes/ }),
-  ).toBeTruthy();
+  // The suggestion card is done; Today's Screen time tile takes over (Phase 12).
+  await waitFor(() =>
+    expect(screen.queryByRole('region', { name: 'Screen time suggestion' })).toBeNull(),
+  );
 });
 
 it('Edit lets Rishi pick another limit and a month-long lock', async () => {
