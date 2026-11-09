@@ -39,11 +39,12 @@ test('level up: the moment shows once, can be skipped, and the level sticks', as
   await expect(moment.getByRole('button', { name: 'Continue' })).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(moment).toBeHidden();
-  await expect(page.getByRole('region', { name: 'Status' })).toContainText(/Level\s*2/);
+  // The Today header shows the level as "Lv N" (Phase 12 dashboard).
+  await expect(page.getByRole('region', { name: 'Status' })).toContainText(/Lv\s*2/);
 
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
-  await expect(page.getByRole('region', { name: 'Status' })).toContainText(/Level\s*2/);
+  await expect(page.getByRole('region', { name: 'Status' })).toContainText(/Lv\s*2/);
   await expect(page.getByRole('dialog')).toBeHidden();
   expect(errors).toEqual([]);
 });

@@ -4,6 +4,24 @@ All notable changes to ASCEND. Versions follow [semantic versioning](https://sem
 
 ## [Unreleased]
 
+## [0.12.0] — 2026-11-10 — Phase 12A: new look (ELEVATE) and theme engine
+
+### Added
+
+- **ELEVATE**, the new default look: pure black with faint corner light, big rounded bento tiles in lime, white, yellow and violet, white pill chips and tabs, extra-bold wide headings and big numbers. Every screen, sheet, dialog, card and empty state was redesigned; game rules, data and sync are unchanged.
+- **New navigation**: Today · Quests · Focus (the big centre button) · Growth · Me in a floating bottom bar (a sidebar on laptops). **Growth** = Goals, Roadmap, Skills, Jobs; **Me** = Stats & achievements, Body, Reviews, plus Screen time, What the System knows and the Settings gear. The More page is gone; every old address and notification / widget link still works.
+- **Today as a dashboard**: today’s quests tile with the next quest, live Body / Skill / Roadmap / Screen time tiles, filter chips, check-in and review tiles when due.
+- **Ask the System** as a floating robot button on every main screen, with a sheet that knows which screen you’re on; a small **System companion robot** in the System message, empty states, onboarding and celebrations.
+- **Effects**: a burst when you finish a quest (a bigger one for Minimum → Full), Daily Clear and streak-milestone banners, achievement tiles, and a new full-screen **level-up / rank-up** moment ("You’ve reached Level N", moving shapes, a self-drawing swoosh, sparkles, a 2×2 grid of real rewards). **Settings → Appearance → Effects**: Full / Light / Off ("reduce motion" always means Off). Animations pause in the background.
+- **Sound and vibration** (off by default): soft generated tones and a short buzz on quest complete and level-up.
+- **Android**: black splash with the lime symbol, black status and navigation bars, widgets in ELEVATE colours that follow the app’s theme.
+- **Theme engine**: themes are token sets switched instantly from Settings → Appearance (only Elevate is offered until the next themes are built).
+
+### Changed
+
+- The old light / dark / match-device setting is replaced by themes (old records keep their field; it is no longer used).
+- Confirmations that delete or reset for good now have a red outline and a red button.
+
 ## [0.11.0] — 2026-11-04 — Phase 11: Screen Time
 
 ### Added
