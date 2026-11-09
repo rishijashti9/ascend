@@ -22,10 +22,10 @@ export function Switch({
     >
       <span
         aria-hidden
-        className={`relative h-8 w-14 rounded-full transition-colors ${on ? 'bg-accent-fill' : 'bg-surface-2 border-border border'}`}
+        className={`relative h-8 w-14 rounded-full transition-colors ${on ? 'bg-accent-fill' : 'bg-surface-2'}`}
       >
         <span
-          className={`bg-surface absolute top-1 size-6 rounded-full shadow transition-[left] ${on ? 'left-7' : 'left-1'}`}
+          className={`absolute top-1 size-6 rounded-full transition-[left] ${on ? 'bg-on-accent left-7' : 'bg-muted left-1'}`}
         />
       </span>
     </button>

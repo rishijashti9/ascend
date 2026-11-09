@@ -8,7 +8,7 @@ export function MorePage() {
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-xl font-semibold">More</h1>
-      <ul className="border-border bg-surface shadow-card divide-border divide-y overflow-hidden rounded-lg border">
+      <ul className="panel divide-border divide-y overflow-hidden">
         {secondaryNav(settings).map(({ path, label, icon: Icon }) => (
           <li key={path}>
             <Link

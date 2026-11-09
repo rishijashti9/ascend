@@ -34,10 +34,7 @@ export function JobSuggestionCard({ stats }: { stats: JobStats }) {
   if (!visible) return null;
 
   return (
-    <section
-      aria-label="Planner suggestion"
-      className="border-border bg-surface shadow-card flex flex-col gap-2 rounded-lg border p-4"
-    >
+    <section aria-label="Planner suggestion" className="panel flex flex-col gap-2 p-4">
       <p className="text-accent-text flex items-center gap-1 text-xs font-semibold tracking-wide uppercase">
         <Sparkles aria-hidden size={14} /> Goal Planner
       </p>

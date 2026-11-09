@@ -37,7 +37,7 @@ export function LevelUpMoment() {
         role="dialog"
         aria-modal="true"
         aria-labelledby="moment-heading"
-        className="animate-moment-in border-border bg-surface shadow-card flex w-full max-w-sm flex-col items-center gap-4 rounded-lg border p-8 text-center"
+        className="panel animate-moment-in flex w-full max-w-sm flex-col items-center gap-4 p-8 text-center"
         onClick={(e) => e.stopPropagation()}
       >
         <p className="text-accent-text text-xs font-semibold tracking-[0.2em] uppercase">

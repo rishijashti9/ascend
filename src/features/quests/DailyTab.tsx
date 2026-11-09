@@ -126,7 +126,7 @@ export function DailyTab() {
           </span>
         </h2>
         {active.length === 0 ? (
-          <p className="border-border bg-surface rounded-lg border p-4">
+          <p className="panel p-4">
             No daily quests yet. Add one small thing you want to do every day.
           </p>
         ) : (

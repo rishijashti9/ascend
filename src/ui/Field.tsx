@@ -1,8 +1,7 @@
 import { useId, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from 'react';
 
 /** Shared form controls: 44px tap targets, token colours, visible labels. */
-const control =
-  'border-border bg-surface text-text min-h-11 w-full rounded-md border px-3 text-base outline-none focus-visible:border-accent';
+const control = 'control min-h-11 w-full px-3 text-base';
 
 export function Field({
   label,

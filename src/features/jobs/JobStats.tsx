@@ -10,10 +10,7 @@ export function JobStats({ stats }: { stats: Stats }) {
   const rate = stats.responseRate === null ? '—' : `${Math.round(stats.responseRate * 100)}%`;
   return (
     <div className="grid gap-4 md:grid-cols-2">
-      <section
-        aria-label="Job search stats"
-        className="border-border bg-surface shadow-card flex flex-col gap-3 rounded-lg border p-4"
-      >
+      <section aria-label="Job search stats" className="panel flex flex-col gap-3 p-4">
         <h2 className="text-muted text-sm font-medium">So far</h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <Stat label="Applications" value={String(stats.applied)} />

@@ -97,7 +97,7 @@ function NumericInput({ quest, act: run, busy }: { quest: TodayQuest; act: Act; 
             placeholder={total ? `Total ${UNIT[m]}` : `Add ${UNIT[m] || 'amount'}`}
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            className="border-border bg-surface text-text focus-visible:border-accent min-h-11 w-full rounded-md border px-3 text-base outline-none"
+            className="control min-h-11 w-full px-3 text-base"
           />
         </label>
         <Button type="submit" variant="secondary" disabled={busy || !valid}>

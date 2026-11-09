@@ -187,8 +187,8 @@ Part C — Ask the System
 - [x] 12A.1 Redesign inventory
 - [x] 12A.2 Theme engine
 - [x] 12A.3 Settings fields
-- [ ] 12A.4 Fonts
-- [ ] 12A.5 UI primitives in the theme language
+- [x] 12A.4 Fonts
+- [x] 12A.5 UI primitives in the theme language
 - [ ] 12A.6 Navigation shell
 - [ ] 12A.7 Growth screen with tabs
 - [ ] 12A.8 Me screen with tabs

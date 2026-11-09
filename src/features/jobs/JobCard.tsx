@@ -18,10 +18,7 @@ export function JobCard({
   const { run, busy, error } = useAction();
   const due = job.follow_up_at !== null && job.follow_up_at <= today;
   return (
-    <article
-      aria-label={`${job.company}, ${job.role}`}
-      className="border-border bg-surface flex flex-col gap-2 rounded-lg border p-3"
-    >
+    <article aria-label={`${job.company}, ${job.role}`} className="panel flex flex-col gap-2 p-3">
       <div className="flex items-start gap-2">
         <div className="min-w-0 flex-1">
           <h3 className="truncate font-semibold">{job.company}</h3>
@@ -68,7 +65,7 @@ export function JobCard({
               payload: { id: job.id, stage: e.target.value as JobStage },
             })
           }
-          className="border-border bg-surface text-text min-h-11 flex-1 rounded-md border px-2"
+          className="control min-h-11 flex-1 px-2"
         >
           {JOB_STAGES.map((s) => (
             <option key={s} value={s}>

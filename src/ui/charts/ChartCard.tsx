@@ -22,10 +22,7 @@ export function ChartCard({
 }) {
   const [table, setTable] = useState(false);
   return (
-    <section
-      aria-label={title}
-      className="border-border bg-surface shadow-card flex flex-col gap-2 rounded-lg border p-4"
-    >
+    <section aria-label={title} className="panel flex flex-col gap-2 p-4">
       <div className="flex items-start justify-between gap-2">
         <div>
           <h3 className="font-medium">{title}</h3>

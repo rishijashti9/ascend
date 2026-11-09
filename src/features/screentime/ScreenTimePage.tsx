@@ -28,10 +28,7 @@ export function ScreenTimePage() {
         </p>
       ) : (
         <>
-          <section
-            aria-label="Today"
-            className="border-border bg-surface shadow-card flex flex-col gap-3 rounded-lg border p-4"
-          >
+          <section aria-label="Today" className="panel flex flex-col gap-3 p-4">
             <h2 className="font-medium">Entertainment today</h2>
             <p className="font-display text-3xl tabular-nums">
               {formatMinutes(todayMin)}
@@ -70,10 +67,7 @@ export function ScreenTimePage() {
             />
           </ChartCard>
 
-          <section
-            aria-label="Top apps this week"
-            className="border-border bg-surface shadow-card flex flex-col gap-2 rounded-lg border p-4"
-          >
+          <section aria-label="Top apps this week" className="panel flex flex-col gap-2 p-4">
             <h2 className="font-medium">Top apps this week</h2>
             <TopApps apps={s.weekTop} empty="No readings this week yet." />
           </section>

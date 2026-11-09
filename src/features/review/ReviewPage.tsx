@@ -67,7 +67,7 @@ export function ReviewPage() {
           <h2 className="text-lg font-semibold">Past check-ins</h2>
           <ul className="flex flex-col gap-2">
             {past.map((r) => (
-              <li key={r.id} className="border-border bg-surface rounded-lg border p-3 text-sm">
+              <li key={r.id} className="panel p-3 text-sm">
                 <p className="flex flex-wrap gap-x-3">
                   <span className="font-medium">{formatDay(r.period)}</span>
                   {r.energy !== null && (

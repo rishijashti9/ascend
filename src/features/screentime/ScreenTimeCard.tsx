@@ -74,7 +74,7 @@ function ScreenTimeCard() {
   const { run, busy, error } = useAction();
   const [editing, setEditing] = useState(false);
 
-  const box = 'border-border bg-surface flex flex-col gap-3 rounded-lg border p-4';
+  const box = 'panel flex flex-col gap-3 p-4';
 
   if (observe.phase === 'observing' || observe.phase === 'waiting_for_data') {
     return (

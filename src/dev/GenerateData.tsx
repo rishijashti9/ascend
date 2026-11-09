@@ -46,7 +46,7 @@ export function GenerateData({ db, reload }: { db: AscendDB; reload: () => void 
           value={days}
           disabled={progress !== null}
           onChange={(e) => setDays(Number(e.target.value))}
-          className="border-border bg-surface-2 min-h-11 rounded-md border px-2"
+          className="control min-h-11 px-2"
         >
           {SIZES.map((s) => (
             <option key={s.days} value={s.days}>

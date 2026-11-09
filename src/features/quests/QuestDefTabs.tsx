@@ -36,7 +36,7 @@ function QuestDefRow({ quest }: { quest: Quest }) {
       : `${quest.target_value} ${quest.measure === 'minutes' ? 'min' : ''}`;
 
   return (
-    <li className="border-border bg-surface shadow-card rounded-lg border p-3">
+    <li className="panel p-3">
       <div className="flex items-start gap-2">
         <div className="min-w-0 flex-1 pt-1 pl-1">
           <div className="flex flex-wrap items-center gap-x-2">

@@ -81,7 +81,7 @@ export function QuestionField({
           aria-labelledby={labelId}
           value={typeof value === 'string' ? value : ''}
           onChange={(e) => onChange(e.target.value || undefined)}
-          className="border-border bg-surface min-h-11 rounded-md border px-3"
+          className="control min-h-11 px-3"
         />
       )}
       {q.kind === 'text' && (
@@ -91,7 +91,7 @@ export function QuestionField({
           maxLength={200}
           value={typeof value === 'string' ? value : ''}
           onChange={(e) => onChange(e.target.value)}
-          className="border-border bg-surface min-h-11 rounded-md border px-3"
+          className="control min-h-11 px-3"
         />
       )}
     </fieldset>

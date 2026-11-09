@@ -54,7 +54,7 @@ function LogForm({ day, log }: { day: string; log: BodyLog | undefined }) {
   return (
     <form
       aria-label="Today’s body log"
-      className="border-border bg-surface shadow-card flex flex-col gap-3 rounded-lg border p-4"
+      className="panel flex flex-col gap-3 p-4"
       onSubmit={(e) => {
         e.preventDefault();
         if (Object.keys(diff).length === 0 || bad) return;
@@ -104,7 +104,7 @@ function LogForm({ day, log }: { day: string; log: BodyLog | undefined }) {
             maxLength={500}
             value={draft.workout_notes}
             onChange={set('workout_notes')}
-            className="border-border bg-surface text-text focus-visible:border-accent w-full rounded-md border p-3 text-base outline-none"
+            className="control w-full p-3 text-base"
           />
         )}
       </Field>
@@ -150,7 +150,7 @@ export function BodyPage() {
       {recent.length > 0 && (
         <section aria-label="Recent days" className="flex flex-col gap-2">
           <h2 className="text-lg font-semibold">Recent days</h2>
-          <div className="border-border bg-surface overflow-x-auto rounded-lg border">
+          <div className="panel overflow-x-auto">
             <table className="w-full text-sm tabular-nums">
               <thead className="text-muted text-left text-xs">
                 <tr>

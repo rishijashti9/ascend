@@ -132,7 +132,7 @@ export function DevTools({
           type="datetime-local"
           aria-label="Set date and time"
           defaultValue={toLocalInput(current, tz)}
-          className="border-border bg-surface-2 min-h-11 rounded-md border px-2"
+          className="control min-h-11 px-2"
           onChange={(e) => {
             if (!e.target.value) return;
             // Interpret the typed wall time in the app's timezone.
@@ -145,14 +145,14 @@ export function DevTools({
       <div className="flex flex-wrap items-end gap-2">
         <button
           type="button"
-          className="border-border min-h-11 rounded-md border px-3"
+          className="control min-h-11 px-3"
           onClick={() => apply(() => setClockOffset(getClockOffset() + DAY_MS))}
         >
           +1 day
         </button>
         <button
           type="button"
-          className="border-border min-h-11 rounded-md border px-3"
+          className="control min-h-11 px-3"
           onClick={() => apply(() => setClockOffset(getClockOffset() + 7 * DAY_MS))}
         >
           +7 days
@@ -169,7 +169,7 @@ export function DevTools({
           />
           <button
             type="button"
-            className="border-border min-h-11 rounded-md border px-3"
+            className="control min-h-11 px-3"
             onClick={() => apply(() => setClockOffset(getClockOffset() + jumpDays * DAY_MS))}
           >
             Jump
@@ -177,7 +177,7 @@ export function DevTools({
         </label>
         <button
           type="button"
-          className="border-border min-h-11 rounded-md border px-3"
+          className="control min-h-11 px-3"
           onClick={() => apply(() => setClockOffset(0))}
         >
           Real time
@@ -190,7 +190,7 @@ export function DevTools({
           aria-label="Timezone override"
           value={getTimeZoneOverride() ?? ''}
           onChange={(e) => apply(() => setTimeZoneOverride(e.target.value || null))}
-          className="border-border bg-surface-2 min-h-11 rounded-md border px-2"
+          className="control min-h-11 px-2"
         >
           {ZONES.map((z) => (
             <option key={z} value={z}>

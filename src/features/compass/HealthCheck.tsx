@@ -176,7 +176,7 @@ export function HealthCheck() {
           {s.text}
         </p>
       ))}
-      <ul className="border-border bg-surface divide-border flex flex-col divide-y rounded-lg border">
+      <ul className="panel divide-border flex flex-col divide-y">
         {gap.items.map(({ guideline, status, yours }) => (
           <li key={guideline.id} className="flex flex-col gap-1 px-4 py-3">
             <div className="flex items-baseline justify-between gap-2">

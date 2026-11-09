@@ -27,7 +27,7 @@ export function UpdatePrompt() {
   return (
     <div
       role="status"
-      className="border-border bg-surface shadow-overlay fixed inset-x-4 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-50 mx-auto flex max-w-md items-center gap-3 rounded-lg border p-3 lg:bottom-6"
+      className="panel shadow-overlay fixed inset-x-4 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-50 mx-auto flex max-w-md items-center gap-3 p-3 lg:bottom-6"
     >
       <span className="flex-1 text-sm">Update ready.</span>
       <Button onClick={() => void updateServiceWorker(true)}>

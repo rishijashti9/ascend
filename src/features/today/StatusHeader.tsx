@@ -21,10 +21,7 @@ export function StatusHeader({ day }: { day: string | null }) {
       : null;
 
   return (
-    <section
-      aria-label="Status"
-      className="border-border bg-surface shadow-card flex flex-col gap-4 rounded-lg border p-4"
-    >
+    <section aria-label="Status" className="panel flex flex-col gap-4 p-4">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-muted text-sm">

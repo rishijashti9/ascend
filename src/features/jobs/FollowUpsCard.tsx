@@ -21,10 +21,7 @@ export function FollowUpsCard() {
   const byId = new Map(jobs.map((j) => [j.id, j]));
 
   return (
-    <section
-      aria-label="Follow-ups"
-      className="border-border bg-surface shadow-card flex flex-col gap-3 rounded-lg border p-4"
-    >
+    <section aria-label="Follow-ups" className="panel flex flex-col gap-3 p-4">
       <h2 className="text-sm font-medium">
         {due.length === 1 ? 'Time to follow up' : `${due.length} applications to follow up`}
       </h2>

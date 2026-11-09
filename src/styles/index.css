@@ -1,6 +1,5 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/inter/wght.css';
-@import '@fontsource-variable/space-grotesk/wght.css';
 @import '@fontsource-variable/archivo/wdth.css';
 @import './tokens.css';
 @import './themes/elevate.css';
@@ -166,5 +165,95 @@
     .animate-moment-in {
       animation-name: none !important;
     }
+  }
+}
+
+/*
+ * Theme-driven building blocks (Phase 12). Each reads per-theme variables (themes/<id>.css), so a
+ * theme's surface style — tile / glass / brutal / soft — is set in one place, never per screen.
+ */
+@utility display {
+  font-family: var(--font-display-family);
+  font-stretch: var(--display-stretch);
+  font-weight: var(--display-weight);
+  letter-spacing: var(--display-tracking);
+  line-height: 1.05;
+}
+
+/* A panel: a section of content on the page ground. */
+@utility panel {
+  background: var(--panel-bg);
+  border: var(--panel-border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--panel-shadow);
+  backdrop-filter: var(--panel-backdrop);
+}
+
+/* A quieter inset block inside a panel (rows, sub-sections). */
+@utility inset {
+  background: var(--inset-bg);
+  border: var(--inset-border);
+  border-radius: var(--r-md);
+}
+
+/* Form controls (inputs, selects, text areas). */
+@utility control {
+  background: var(--control-bg);
+  color: var(--text);
+  border: 2px solid var(--control-border);
+  border-radius: var(--r-md);
+  outline: none;
+  &:focus-visible {
+    border-color: var(--accent);
+  }
+}
+
+/* Pills: chips, small buttons, tabs. */
+@utility pill {
+  border-radius: var(--r-pill);
+}
+
+/* Bento tiles (ELEVATE's tile surface; other themes restyle them through the same variables). */
+@utility tile {
+  border-radius: var(--r-lg);
+  border: var(--tile-border);
+  box-shadow: var(--tile-shadow);
+}
+@utility tile-lime {
+  background: var(--tile-lime);
+  color: var(--on-tile-lime);
+}
+@utility tile-white {
+  background: var(--tile-white);
+  color: var(--on-tile-white);
+}
+@utility tile-yellow {
+  background: var(--tile-yellow);
+  color: var(--on-tile-yellow);
+}
+@utility tile-grey {
+  background: var(--tile-grey);
+  color: var(--on-tile-grey);
+}
+@utility tile-violet {
+  background: var(--tile-violet);
+  color: var(--on-tile-violet);
+}
+
+/* Bottom sheet rising in (Ask, Phase 12). */
+@keyframes sheet-up {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@utility animate-sheet-up {
+  animation: sheet-up 0.45s var(--ease-out) both;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
   }
 }

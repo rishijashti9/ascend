@@ -50,7 +50,7 @@ function DreamCard({ dream }: { dream: Dream }) {
   const archived = quests.filter((q) => q.status === 'archived');
 
   return (
-    <li className="border-border bg-surface shadow-card flex flex-col gap-3 rounded-lg border p-4">
+    <li className="panel flex flex-col gap-3 p-4">
       <div className="flex items-start gap-2">
         <div className="min-w-0 flex-1">
           <h2 className="flex flex-wrap items-center gap-2 text-lg font-semibold">
@@ -192,7 +192,7 @@ export function GoalsPage() {
         />
       )}
       {open.length === 0 && !adding && (
-        <p className="border-border bg-surface rounded-lg border p-4">
+        <p className="panel p-4">
           No dream yet. Start with the big picture — where do you want to be in 5–10 years?
         </p>
       )}

@@ -28,7 +28,7 @@ export function DifficultyCard() {
     return (
       <section
         aria-label="Suggestion"
-        className="border-border bg-surface flex flex-wrap items-center gap-2 rounded-lg border px-4 py-3 text-sm"
+        className="panel flex flex-wrap items-center gap-2 px-4 py-3 text-sm"
       >
         <span className="flex-1">{applied.summary}</span>
         <Button
@@ -64,10 +64,7 @@ function SuggestionBody({
   const Icon = kind === 'low_energy' ? HeartHandshake : SlidersHorizontal;
 
   return (
-    <section
-      aria-label="Suggestion"
-      className="border-border bg-surface shadow-card flex flex-col gap-3 rounded-lg border p-4 text-sm"
-    >
+    <section aria-label="Suggestion" className="panel flex flex-col gap-3 p-4 text-sm">
       <p className="flex items-start gap-2">
         <Icon aria-hidden size={18} className="text-accent-text mt-0.5 shrink-0" />
         <span>

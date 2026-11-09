@@ -43,7 +43,7 @@ function MilestoneCard({ milestone }: { milestone: Milestone }) {
   const id = milestone.id;
 
   return (
-    <li className="border-border bg-surface shadow-card flex flex-col gap-2 rounded-lg border p-4">
+    <li className="panel flex flex-col gap-2 p-4">
       <h3 className="flex flex-wrap items-center gap-2 font-medium">
         {milestone.title} <StatusChip status={milestone.status} />
       </h3>

@@ -91,7 +91,7 @@ function ItemRow({
               value={edit.title ?? title}
               maxLength={160}
               onChange={(e) => onEdit({ ...edit, title: e.target.value })}
-              className="border-border bg-surface min-h-11 rounded-md border px-3 text-base"
+              className="control min-h-11 px-3 text-base"
             />
           </label>
           {minutes !== null && (
@@ -104,7 +104,7 @@ function ItemRow({
                 onChange={(e) =>
                   onEdit({ ...edit, target_value: Number(e.target.value) || undefined })
                 }
-                className="border-border bg-surface min-h-11 rounded-md border px-3 text-base"
+                className="control min-h-11 px-3 text-base"
               />
             </label>
           )}

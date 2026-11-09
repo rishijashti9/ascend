@@ -19,7 +19,7 @@ export function SyncPausedNote() {
   return (
     <Link
       to="/settings#account"
-      className="border-border bg-surface text-muted flex min-h-11 items-center gap-2 rounded-lg border px-4 py-3 text-sm"
+      className="panel text-muted flex min-h-11 items-center gap-2 px-4 py-3 text-sm"
     >
       <CloudOff aria-hidden size={18} className="shrink-0" />
       <span className="flex-1">

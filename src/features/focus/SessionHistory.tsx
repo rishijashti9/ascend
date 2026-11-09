@@ -29,10 +29,7 @@ export function SessionHistory() {
 
   return (
     <div className="flex flex-col gap-6">
-      <section
-        aria-label="This week"
-        className="border-border bg-surface shadow-card flex flex-col gap-3 rounded-lg border p-4"
-      >
+      <section aria-label="This week" className="panel flex flex-col gap-3 p-4">
         <h2 className="text-muted text-sm font-medium">This week</h2>
         <p>
           <span className="font-display text-2xl font-semibold tabular-nums">{week.minutes}</span>{' '}
@@ -66,7 +63,7 @@ export function SessionHistory() {
               {d === day ? 'Today' : formatDay(d)} ·{' '}
               {list.reduce((sum, s) => sum + s.actual_min, 0)} min
             </h3>
-            <ul className="border-border bg-surface divide-border flex flex-col divide-y rounded-lg border">
+            <ul className="panel divide-border flex flex-col divide-y">
               {list.map((s) => {
                 const stat = statOf(s, linked);
                 const what = s.quest_instance_id

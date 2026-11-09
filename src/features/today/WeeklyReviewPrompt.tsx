@@ -21,7 +21,7 @@ export function WeeklyReviewPrompt() {
   return (
     <Link
       to="/review?tab=weekly"
-      className="border-border bg-surface flex min-h-11 items-center gap-2 rounded-lg border px-4 py-3 text-sm"
+      className="panel flex min-h-11 items-center gap-2 px-4 py-3 text-sm"
     >
       <CalendarCheck aria-hidden size={18} className="text-accent-text shrink-0" />
       <span className="flex-1">Weekly review — 5 minutes to look back and plan next week.</span>
@@ -45,7 +45,7 @@ export function MonthlyReviewPrompt() {
   return (
     <Link
       to={`/review?tab=${type}`}
-      className="border-border bg-surface flex min-h-11 items-center gap-2 rounded-lg border px-4 py-3 text-sm"
+      className="panel flex min-h-11 items-center gap-2 px-4 py-3 text-sm"
     >
       <CalendarCheck aria-hidden size={18} className="text-accent-text shrink-0" />
       <span className="flex-1">

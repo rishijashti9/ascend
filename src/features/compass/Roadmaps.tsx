@@ -23,10 +23,7 @@ export function Roadmaps() {
             {list.map((r) => {
               const weeks = r.steps.reduce((s, x) => s + x.weeks, 0);
               return (
-                <details
-                  key={r.id}
-                  className="border-border bg-surface rounded-lg border px-4 py-2"
-                >
+                <details key={r.id} className="panel px-4 py-2">
                   <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2">
                     <span className="font-medium">{r.title}</span>
                     {weeks > 0 && <span className="text-muted text-sm">~{weeks} weeks</span>}

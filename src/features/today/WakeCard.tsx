@@ -29,7 +29,7 @@ export function WakeCard({ quest }: { quest: TodayQuest }) {
   const beforeWake = now < instantAt(instance.day, settings.wake_time, currentTimeZone());
 
   return (
-    <li className="border-border bg-surface shadow-card relative flex flex-col gap-3 rounded-lg border p-4">
+    <li className="panel relative flex flex-col gap-3 p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-x-2">

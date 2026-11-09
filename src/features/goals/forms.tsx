@@ -5,8 +5,7 @@ import { Field, Select, TextInput } from '@/ui/Field';
 
 /** Forms for dreams, main quests and milestones. Each returns the values to save. */
 
-const TEXTAREA =
-  'border-border bg-surface text-text focus-visible:border-accent w-full rounded-md border p-3 text-base outline-none';
+const TEXTAREA = 'control w-full p-3 text-base';
 
 function FormShell({
   title,

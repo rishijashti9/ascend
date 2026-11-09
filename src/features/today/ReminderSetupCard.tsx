@@ -44,7 +44,7 @@ export function ReminderSetupCard() {
   return (
     <section
       aria-label="Reminder setup"
-      className="border-border bg-surface flex flex-wrap items-center gap-2 rounded-lg border px-4 py-3 text-sm"
+      className="panel flex flex-wrap items-center gap-2 px-4 py-3 text-sm"
     >
       <AlarmClock aria-hidden size={18} className="text-warning-text shrink-0" />
       <span className="flex-1">{problem}</span>

@@ -108,7 +108,7 @@ export function ImportPanel({
   return (
     <div className="flex flex-col gap-3">
       {!backup && (
-        <label className="border-border bg-surface hover:bg-surface-2 inline-flex min-h-11 cursor-pointer items-center gap-2 self-start rounded-md border px-4 font-medium focus-within:outline-2">
+        <label className="control hover:bg-surface-2 inline-flex min-h-11 cursor-pointer items-center gap-2 self-start px-4 font-medium focus-within:outline-2">
           <FileUp aria-hidden size={18} />
           Choose backup file…
           <input

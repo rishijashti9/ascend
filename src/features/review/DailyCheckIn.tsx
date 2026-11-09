@@ -4,8 +4,7 @@ import { Button } from '@/ui/Button';
 import { Field } from '@/ui/Field';
 import { useAction } from '@/ui/hooks/useAction';
 
-const TEXTAREA =
-  'border-border bg-surface text-text focus-visible:border-accent w-full rounded-md border p-3 text-base outline-none';
+const TEXTAREA = 'control w-full p-3 text-base';
 
 function Scale({
   label,
@@ -62,7 +61,7 @@ export function DailyCheckIn({ day, existing }: { day: string; existing: Review 
   return (
     <form
       aria-label="Daily check-in"
-      className="border-border bg-surface shadow-card flex flex-col gap-4 rounded-lg border p-4"
+      className="panel flex flex-col gap-4 p-4"
       onSubmit={(e) => {
         e.preventDefault();
         if (empty) return;

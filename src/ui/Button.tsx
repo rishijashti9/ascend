@@ -4,7 +4,7 @@ type Variant = 'primary' | 'secondary' | 'ghost';
 
 const variants: Record<Variant, string> = {
   primary: 'bg-accent-fill text-on-accent hover:opacity-90',
-  secondary: 'bg-surface text-text border border-border hover:bg-surface-2',
+  secondary: 'bg-surface-2 text-text hover:opacity-90',
   ghost: 'text-accent-text hover:bg-surface-2',
 };
 
@@ -17,7 +17,7 @@ export function Button({
   return (
     <button
       type={type}
-      className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-md px-4 text-base font-medium transition-[background-color,opacity] duration-(--dur-fast) disabled:opacity-50 ${variants[variant]} ${className}`}
+      className={`pill inline-flex min-h-11 items-center justify-center gap-2 px-5 text-base font-semibold transition-[background-color,opacity,transform] duration-(--dur-fast) active:scale-[0.97] disabled:opacity-50 ${variants[variant]} ${className}`}
       {...props}
     />
   );

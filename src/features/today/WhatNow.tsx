@@ -12,7 +12,7 @@ export function WhatNow({ next }: { next: NextAction | null }) {
   return (
     <section
       aria-label="What to do now"
-      className="border-border bg-surface flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg border px-4 py-3 text-sm"
+      className="panel flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3 text-sm"
     >
       <Compass aria-hidden size={18} className="text-accent-text shrink-0" />
       <p className="min-w-0 flex-1">

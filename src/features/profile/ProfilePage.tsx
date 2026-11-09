@@ -43,10 +43,7 @@ export function ProfilePage() {
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
       <h1 className="text-xl font-semibold">Profile</h1>
 
-      <section
-        aria-label="Player"
-        className="border-border bg-surface shadow-card flex flex-col gap-3 rounded-lg border p-4"
-      >
+      <section aria-label="Player" className="panel flex flex-col gap-3 p-4">
         <div className="flex items-baseline justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold">{profile?.name ?? 'Player'}</h2>
@@ -117,10 +114,7 @@ export function ProfilePage() {
         {STATS.map((s) => {
           const Icon = STAT_META[s].icon;
           return (
-            <div
-              key={s}
-              className="border-border bg-surface flex flex-col gap-1 rounded-lg border p-3"
-            >
+            <div key={s} className="panel flex flex-col gap-1 p-3">
               <span className="flex items-center gap-1 text-sm font-medium">
                 <Icon aria-hidden size={16} className={STAT_META[s].text} />
                 {STAT_META[s].label}

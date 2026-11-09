@@ -18,10 +18,7 @@ export function CheckInPrompt() {
   const evening = hour >= 18 || hour < dayStart;
   if (!isEnabled('review') || !day || done || !evening) return null;
   return (
-    <Link
-      to="/review"
-      className="border-border bg-surface flex min-h-11 items-center gap-2 rounded-lg border px-4 py-3 text-sm"
-    >
+    <Link to="/review" className="panel flex min-h-11 items-center gap-2 px-4 py-3 text-sm">
       <NotebookPen aria-hidden size={18} className="text-accent-text shrink-0" />
       <span className="flex-1">How did today go? Take the 1-minute check-in.</span>
     </Link>

@@ -30,7 +30,7 @@ export function CareerBrowser() {
       <label className="flex flex-col gap-1 text-sm">
         <span className="text-muted">Field</span>
         <select
-          className="border-border bg-surface min-h-11 rounded-md border px-3"
+          className="control min-h-11 px-3"
           value={field}
           onChange={(e) => setField(e.target.value as CareerField)}
         >
@@ -43,10 +43,7 @@ export function CareerBrowser() {
       </label>
       <ul className="flex flex-col gap-2">
         {careers.map((c) => (
-          <li
-            key={c.id}
-            className="border-border bg-surface flex flex-col gap-1 rounded-lg border p-4"
-          >
+          <li key={c.id} className="panel flex flex-col gap-1 p-4">
             <h3 className="font-medium">{c.title}</h3>
             <p className="text-muted text-sm">{c.summary}</p>
             <p className="text-sm">

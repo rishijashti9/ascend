@@ -12,8 +12,7 @@ import type { Draft } from './draft';
 
 type Update = (fn: (d: Draft) => Draft) => void;
 
-const TEXTAREA =
-  'border-border bg-surface text-text focus-visible:border-accent w-full rounded-md border p-3 text-base outline-none';
+const TEXTAREA = 'control w-full p-3 text-base';
 type Timing = Pick<Settings, 'wake_window_min' | 'wake_late_cutoff'>;
 
 export function NameStep({ draft, update }: { draft: Draft; update: Update }) {
@@ -76,7 +75,7 @@ export function WakeStep({
         value={draft.wakeTime}
         onChange={(e) => e.target.value && update((d) => ({ ...d, wakeTime: e.target.value }))}
       />
-      <ul className="border-border bg-surface shadow-card flex flex-col gap-2 rounded-lg border p-4 text-sm">
+      <ul className="panel flex flex-col gap-2 p-4 text-sm">
         <li>
           <span className="font-medium">On time:</span> up by{' '}
           {formatTime(addMinutes(draft.wakeTime, timing.wake_window_min))} ({timing.wake_window_min}

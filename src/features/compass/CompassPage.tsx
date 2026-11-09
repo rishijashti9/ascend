@@ -52,7 +52,7 @@ export function CompassPage() {
           {target ? (
             <>
               <CareerGap />
-              <details className="border-border bg-surface rounded-lg border p-4">
+              <details className="panel p-4">
                 <summary className="min-h-11 cursor-pointer font-medium">
                   Find careers that fit you
                 </summary>

@@ -11,10 +11,7 @@ export function GoalNudges() {
   if (rows.length === 0) return null;
 
   return (
-    <nav
-      aria-label="Goals that need a look"
-      className="border-border bg-surface flex flex-col rounded-lg border"
-    >
+    <nav aria-label="Goals that need a look" className="panel flex flex-col">
       {rows.map((r) => (
         <Link key={r.id} to={r.to} className="flex min-h-11 items-center gap-2 px-4 py-2 text-sm">
           <span className="flex-1">

@@ -103,12 +103,12 @@ export function TodayPage() {
         </div>
 
         {status === 'ready' && notStarted && (
-          <p className="border-border bg-surface rounded-lg border p-4">
+          <p className="panel p-4">
             Your first day starts tomorrow. Rest well — your quests will be here in the morning.
           </p>
         )}
         {status === 'ready' && !notStarted && daily.length === 0 && (
-          <p className="border-border bg-surface rounded-lg border p-4">
+          <p className="panel p-4">
             No daily quests today. Enjoy the rest day — it won’t affect your streak.
           </p>
         )}

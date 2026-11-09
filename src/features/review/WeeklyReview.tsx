@@ -18,8 +18,7 @@ import { isEnabled } from '@/config/features';
 import { ScreenWeekLine } from '@/features/screentime/ScreenWeekLine';
 import { Stat } from './Stat';
 
-const TEXTAREA =
-  'border-border bg-surface text-text focus-visible:border-accent w-full rounded-md border p-3 text-base outline-none';
+const TEXTAREA = 'control w-full p-3 text-base';
 
 type Quest = Extract<ProposalItem, { kind: 'quest.create' }>;
 
@@ -94,10 +93,7 @@ export function WeeklyReview({ weekStart, today }: { weekStart: string; today: s
 
   return (
     <div className="flex flex-col gap-5">
-      <section
-        aria-label="This week"
-        className="border-border bg-surface shadow-card flex flex-col gap-3 rounded-lg border p-4"
-      >
+      <section aria-label="This week" className="panel flex flex-col gap-3 p-4">
         <h2 className="font-semibold">Week of {formatDay(weekStart)}</h2>
         {stats && (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
@@ -113,7 +109,7 @@ export function WeeklyReview({ weekStart, today }: { weekStart: string; today: s
 
       <form
         aria-label="Weekly review"
-        className="border-border bg-surface shadow-card flex flex-col gap-4 rounded-lg border p-4"
+        className="panel flex flex-col gap-4 p-4"
         onSubmit={(e) => {
           e.preventDefault();
           void save();
@@ -181,7 +177,7 @@ export function WeeklyReview({ weekStart, today }: { weekStart: string; today: s
                       value={i.data.title}
                       maxLength={120}
                       onChange={(e) => rename(i.id, e.target.value)}
-                      className="border-border bg-surface min-h-11 rounded-md border px-3 text-base"
+                      className="control min-h-11 px-3 text-base"
                     />
                     {i.data.carried_over_from && (
                       <span className="text-muted text-xs">Carried over</span>

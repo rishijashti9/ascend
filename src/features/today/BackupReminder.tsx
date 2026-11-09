@@ -29,11 +29,7 @@ export function BackupReminder() {
   if (!due) return null;
 
   return (
-    <div
-      role="region"
-      aria-label="Backup reminder"
-      className="border-border bg-surface flex flex-col gap-3 rounded-lg border p-4"
-    >
+    <div role="region" aria-label="Backup reminder" className="panel flex flex-col gap-3 p-4">
       <p className="flex items-start gap-2 text-sm">
         <HardDriveDownload aria-hidden size={18} className="text-accent-text mt-0.5 shrink-0" />
         <span>

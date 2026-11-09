@@ -87,7 +87,7 @@ export function CareerGap() {
       </header>
 
       {missing.length > 0 && (
-        <ol className="border-border bg-surface divide-border flex flex-col divide-y rounded-lg border">
+        <ol className="panel divide-border flex flex-col divide-y">
           {missing.map((g) => (
             <li key={g.skill.id} className="flex flex-col gap-1 px-4 py-3">
               <div className="flex items-baseline justify-between gap-2">
@@ -121,11 +121,11 @@ export function CareerGap() {
       )}
 
       {missing.length > 0 && (
-        <div className="border-border bg-surface flex flex-col gap-2 rounded-lg border p-4">
+        <div className="panel flex flex-col gap-2 p-4">
           <label className="flex flex-col gap-1 text-sm">
             <span className="text-muted">Plan it under</span>
             <select
-              className="border-border bg-surface min-h-11 rounded-md border px-3"
+              className="control min-h-11 px-3"
               value={goal}
               onChange={(e) => setGoal(e.target.value)}
             >

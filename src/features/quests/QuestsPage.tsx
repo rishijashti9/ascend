@@ -22,7 +22,7 @@ function MainTab() {
   const active = quests.filter((q) => q.status === 'active');
   if (active.length === 0) {
     return (
-      <p className="border-border bg-surface rounded-lg border p-4">
+      <p className="panel p-4">
         No active main quests.{' '}
         <Link to="/goals" className="text-accent-text">
           Add one in Goals
@@ -34,7 +34,7 @@ function MainTab() {
   return (
     <ul className="flex flex-col gap-2">
       {active.map((q) => (
-        <li key={q.id} className="border-border bg-surface shadow-card rounded-lg border">
+        <li key={q.id} className="panel">
           <Link to={`/goals/${q.id}`} className="flex min-h-11 flex-col gap-1 p-3">
             <span className="flex items-center gap-2">
               <span className="font-medium">{q.title}</span>

@@ -31,10 +31,7 @@ export function BalanceCard() {
   const canGoBack = from > earliest;
 
   return (
-    <section
-      aria-label="Study balance"
-      className="border-border bg-surface shadow-card flex flex-col gap-3 rounded-lg border p-4"
-    >
+    <section aria-label="Study balance" className="panel flex flex-col gap-3 p-4">
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-muted text-sm font-medium">
           {back === 0 ? 'Study balance this week' : `Week of ${shortDay(from)}`}

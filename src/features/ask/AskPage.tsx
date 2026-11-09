@@ -80,10 +80,7 @@ export function AskPage() {
       </header>
 
       {!enabled && (
-        <section
-          aria-label="Switched off"
-          className="border-border bg-surface flex flex-col gap-2 rounded-lg border p-4 text-sm"
-        >
+        <section aria-label="Switched off" className="panel flex flex-col gap-2 p-4 text-sm">
           <p>
             Ask the System is off. Until you switch it on, the Growth Compass answers from trusted
             sources on this device.
@@ -116,7 +113,7 @@ export function AskPage() {
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
           placeholder="e.g. What should I learn after ROS 2 basics to work on humanoid robots?"
-          className="border-border bg-surface rounded-md border px-3 py-2 text-base"
+          className="control px-3 py-2 text-base"
         />
         <Button
           type="submit"
@@ -134,10 +131,7 @@ export function AskPage() {
       </form>
 
       {outcome?.kind === 'answer' && (
-        <section
-          aria-label="Answer"
-          className="border-border bg-surface flex flex-col gap-3 rounded-lg border p-4"
-        >
+        <section aria-label="Answer" className="panel flex flex-col gap-3 p-4">
           <p className="whitespace-pre-line">{outcome.answer.text}</p>
           {outcome.answer.sources.length > 0 && (
             <div className="flex flex-col gap-1 text-sm">
@@ -168,7 +162,7 @@ export function AskPage() {
                   <label className="flex flex-col gap-1">
                     <span className="text-muted">For the goal</span>
                     <select
-                      className="border-border bg-surface min-h-11 rounded-md border px-3"
+                      className="control min-h-11 px-3"
                       value={goal || mainQuests[0]?.id}
                       onChange={(e) => setGoal(e.target.value)}
                     >
@@ -203,7 +197,7 @@ export function AskPage() {
       )}
 
       {outcome?.kind === 'declined' && (
-        <p role="status" className="border-border bg-surface rounded-lg border p-4 text-sm">
+        <p role="status" className="panel p-4 text-sm">
           {outcome.text}
         </p>
       )}
@@ -227,10 +221,7 @@ export function AskPage() {
       )}
 
       {outcome?.kind === 'fallback' && (
-        <section
-          aria-label="Growth Compass"
-          className="border-border bg-surface flex flex-col gap-2 rounded-lg border p-4 text-sm"
-        >
+        <section aria-label="Growth Compass" className="panel flex flex-col gap-2 p-4 text-sm">
           <p>{outcome.text}</p>
           {outcome.compass.length === 0 ? (
             <Link to="/compass" className="text-accent-text inline-flex min-h-11 items-center">

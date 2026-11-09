@@ -126,10 +126,7 @@ export function Discovery() {
     <section aria-label="Careers that fit you" className="flex flex-col gap-3">
       <ul className="flex flex-col gap-2">
         {matches.map(({ career, score, why }) => (
-          <li
-            key={career.id}
-            className="border-border bg-surface flex flex-col gap-2 rounded-lg border p-4"
-          >
+          <li key={career.id} className="panel flex flex-col gap-2 p-4">
             <div className="flex items-baseline justify-between gap-2">
               <h3 className="font-medium">{career.title}</h3>
               <span className="text-muted text-sm tabular-nums">{score}% fit</span>

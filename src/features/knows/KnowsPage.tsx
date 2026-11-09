@@ -61,7 +61,7 @@ export function KnowsPage() {
       </header>
 
       {items.length === 0 && (
-        <p className="border-border bg-surface rounded-lg border p-4">
+        <p className="panel p-4">
           Nothing confident yet. After a couple of weeks of use, what the System learns appears
           here.
         </p>
@@ -73,7 +73,7 @@ export function KnowsPage() {
         return (
           <section key={group} aria-label={group} className="flex flex-col gap-2">
             <h2 className="text-muted text-sm font-medium">{group}</h2>
-            <ul className="border-border bg-surface divide-border flex flex-col divide-y rounded-lg border">
+            <ul className="panel divide-border flex flex-col divide-y">
               {list.map((item) => (
                 <li key={item.key} className="flex items-start gap-3 px-4 py-3">
                   <div className="min-w-0 flex-1">

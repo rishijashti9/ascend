@@ -28,11 +28,7 @@ export function AchievementList() {
     .sort((a, b) => b.progress - a.progress);
 
   return (
-    <section
-      id="achievements"
-      aria-label="Achievements"
-      className="border-border bg-surface shadow-card flex flex-col gap-4 rounded-lg border p-4"
-    >
+    <section id="achievements" aria-label="Achievements" className="panel flex flex-col gap-4 p-4">
       <div>
         <h2 className="font-semibold">Achievements</h2>
         <p className="text-muted text-sm">

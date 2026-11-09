@@ -80,6 +80,18 @@
   --shadow-overlay: 0 16px 48px rgb(0 0 0 / 0.7);
   --shadow-float: 0 12px 24px rgb(0 0 0 / 0.6);
 
+  /* Surface style: tile — flat colour, no outlines or shadows (utilities in index.css) */
+  --panel-bg: var(--surface);
+  --panel-border: 0 solid transparent;
+  --panel-shadow: none;
+  --panel-backdrop: none;
+  --inset-bg: var(--surface-2);
+  --inset-border: 0 solid transparent;
+  --control-bg: var(--surface-2);
+  --control-border: transparent;
+  --tile-border: 0 solid transparent;
+  --tile-shadow: none;
+
   /* Faint corner light on the black ground */
   --bg-light:
     radial-gradient(60rem 30rem at 100% 0%, rgb(163 91 255 / 0.1), transparent 60%),

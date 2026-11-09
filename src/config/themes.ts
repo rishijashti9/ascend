@@ -22,7 +22,10 @@ export interface ThemeDef {
   motion: 'smooth' | 'glow' | 'snap' | 'calm';
   /** Fully built and selectable. */
   built: boolean;
-  /** Loads this theme's fonts (bundled; only fetched when the theme is used). */
+  /**
+   * Loads this theme's fonts (bundled with the app, so offline; split out and fetched only when
+   * the theme is used — e.g. `() => import('@fontsource-variable/unbounded/wght.css')`).
+   */
   loadFonts: () => Promise<unknown>;
   /** Colours for the picker preview and the Android widgets (no CSS available there). */
   palette: {

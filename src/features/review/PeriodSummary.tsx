@@ -20,8 +20,7 @@ import { useAction } from '@/ui/hooks/useAction';
 import { periodLabel } from './format';
 import { Stat } from './Stat';
 
-const TEXTAREA =
-  'border-border bg-surface text-text focus-visible:border-accent w-full rounded-md border p-3 text-base outline-none';
+const TEXTAREA = 'control w-full p-3 text-base';
 
 function Reflection({
   type,
@@ -39,7 +38,7 @@ function Reflection({
   return (
     <form
       aria-label="Reflection"
-      className="border-border bg-surface shadow-card flex flex-col gap-3 rounded-lg border p-4"
+      className="panel flex flex-col gap-3 p-4"
       onSubmit={(e) => {
         e.preventDefault();
         void run({ type: 'review.save', payload: { type, period, text } }).then(setSaved);
@@ -117,10 +116,7 @@ export function PeriodSummary({ type, today }: { type: PeriodType; today: string
 
   return (
     <div className="flex flex-col gap-5">
-      <section
-        aria-label={`Summary for ${name}`}
-        className="border-border bg-surface shadow-card flex flex-col gap-3 rounded-lg border p-4"
-      >
+      <section aria-label={`Summary for ${name}`} className="panel flex flex-col gap-3 p-4">
         <div className="flex items-center gap-2">
           <button
             type="button"

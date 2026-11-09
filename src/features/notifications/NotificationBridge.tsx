@@ -50,19 +50,12 @@ export function NotificationBridge() {
       aria-live="polite"
     >
       {message && (
-        <p
-          role="alert"
-          className="border-border bg-surface text-warning-text shadow-card rounded-lg border px-4 py-3 text-sm"
-        >
+        <p role="alert" className="panel text-warning-text px-4 py-3 text-sm">
           {message}
         </p>
       )}
       {notices.map((n) => (
-        <div
-          key={n.key}
-          role="status"
-          className="border-border bg-surface shadow-card flex items-start gap-3 rounded-lg border px-4 py-3 text-sm"
-        >
+        <div key={n.key} role="status" className="panel flex items-start gap-3 px-4 py-3 text-sm">
           <Bell aria-hidden size={18} className="text-accent-text mt-0.5 shrink-0" />
           <div className="flex min-w-0 flex-1 flex-col gap-2">
             <p>

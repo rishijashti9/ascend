@@ -35,7 +35,7 @@ export function AchievementToast() {
       className="pointer-events-none fixed inset-x-4 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-40 flex justify-center lg:bottom-6 lg:left-auto lg:right-6"
     >
       {first && (
-        <div className="border-border bg-surface shadow-card pointer-events-auto flex max-w-sm items-center gap-3 rounded-lg border px-4 py-3 text-sm">
+        <div className="panel pointer-events-auto flex max-w-sm items-center gap-3 px-4 py-3 text-sm">
           <Award aria-hidden size={20} className="text-accent-text shrink-0" />
           <p className="flex-1">
             {defs.length === 1 ? (

@@ -77,11 +77,11 @@ export function HealthPlan() {
   };
 
   return (
-    <div className="border-border bg-surface flex flex-col gap-2 rounded-lg border p-4">
+    <div className="panel flex flex-col gap-2 p-4">
       <label className="flex flex-col gap-1 text-sm">
         <span className="text-muted">Plan it under</span>
         <select
-          className="border-border bg-surface min-h-11 rounded-md border px-3"
+          className="control min-h-11 px-3"
           value={goal}
           onChange={(e) => setGoal(e.target.value)}
         >

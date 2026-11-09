@@ -97,7 +97,7 @@ export function AccountSection() {
                     setSent(false);
                     setAddress(e.target.value);
                   }}
-                  className="border-border bg-surface min-h-11 rounded-md border px-3 text-base"
+                  className="control min-h-11 px-3 text-base"
                 />
               )}
             </Field>

@@ -39,18 +39,18 @@ export function SkillsPage() {
       <BalanceCard />
 
       {adding && (
-        <section className="border-border bg-surface shadow-card rounded-lg border p-4">
+        <section className="panel p-4">
           <AddSkillForm branches={branches} onDone={() => setAdding(false)} />
         </section>
       )}
       {editing && (
-        <section className="border-border bg-surface shadow-card rounded-lg border p-4">
+        <section className="panel p-4">
           <BranchForm branch={editing} onDone={() => setEditing(null)} />
         </section>
       )}
 
       {branches.length === 0 ? (
-        <section className="border-border bg-surface flex flex-col items-start gap-3 rounded-lg border p-4">
+        <section className="panel flex flex-col items-start gap-3 p-4">
           <p>Your skill tree is empty.</p>
           <div className="flex flex-wrap gap-2">
             <Button disabled={busy} onClick={() => void run({ type: 'skills.seed', payload: {} })}>

@@ -50,7 +50,7 @@ export function Photos({ day }: { day: string }) {
         <Lock aria-hidden size={12} /> Stored only on this device. Never synced, and only included
         in “Export with photos”.
       </p>
-      <label className="border-border bg-surface hover:bg-surface-2 inline-flex min-h-11 cursor-pointer items-center gap-2 self-start rounded-md border px-4 font-medium focus-within:outline-2">
+      <label className="control hover:bg-surface-2 inline-flex min-h-11 cursor-pointer items-center gap-2 self-start px-4 font-medium focus-within:outline-2">
         <Camera aria-hidden size={18} />
         {preparing ? 'Saving…' : hasToday ? 'Replace today’s photo' : 'Add today’s photo'}
         <input

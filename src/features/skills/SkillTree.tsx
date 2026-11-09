@@ -27,10 +27,7 @@ export function SkillTree({
   const childrenOf = (id: string) => active.filter((s) => s.parent_id === id);
 
   return (
-    <section
-      aria-label={branch.name}
-      className="border-border bg-surface shadow-card rounded-lg border p-4"
-    >
+    <section aria-label={branch.name} className="panel p-4">
       <header className="flex items-center gap-3">
         <span
           aria-hidden
