@@ -188,7 +188,7 @@ export function ProjectForm({ skillId, onDone }: { skillId: string; onDone: () =
   return (
     <form
       onSubmit={(e) => void submit(e)}
-      className="bg-surface-2 flex flex-col gap-3 rounded-lg p-3"
+      className="inset flex flex-col gap-3 p-3"
       aria-label="Add a finished project"
     >
       <TextInput

@@ -59,7 +59,7 @@ export function SkillSheet({ skillId, onClose }: { skillId: string; onClose: () 
             ref={closeRef}
             aria-label="Close"
             onClick={onClose}
-            className="text-muted flex size-11 items-center justify-center rounded-md"
+            className="text-muted hover:text-text hover:bg-surface-2 flex size-11 items-center justify-center rounded-full"
           >
             <X aria-hidden size={20} />
           </button>
@@ -108,7 +108,7 @@ export function SkillSheet({ skillId, onClose }: { skillId: string; onClose: () 
           )}
           <ul className="flex flex-col gap-2">
             {projects.map((p) => (
-              <li key={p.id} className="border-border flex items-start gap-2 rounded-md border p-3">
+              <li key={p.id} className="inset flex items-start gap-2 p-3">
                 <div className="min-w-0 flex-1">
                   <p className="font-medium">{projectTitle(p)}</p>
                   {projectNote(p) && <p className="text-muted text-sm">{projectNote(p)}</p>}
@@ -132,7 +132,7 @@ export function SkillSheet({ skillId, onClose }: { skillId: string; onClose: () 
                   aria-label={`Remove project ${projectTitle(p)}`}
                   disabled={busy}
                   onClick={() => void run({ type: 'skill.deleteProject', payload: { id: p.id } })}
-                  className="text-muted flex size-11 shrink-0 items-center justify-center rounded-md"
+                  className="text-muted hover:text-text hover:bg-surface-2 flex size-11 shrink-0 items-center justify-center rounded-full"
                 >
                   <Trash2 aria-hidden size={16} />
                 </button>

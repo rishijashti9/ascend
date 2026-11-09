@@ -200,7 +200,7 @@ Part C — Ask the System
 - [x] 12A.14 Focus
 - [x] 12A.15 Growth → Goals
 - [x] 12A.16 Growth → Roadmap
-- [ ] 12A.17 Growth → Skills
+- [x] 12A.17 Growth → Skills
 - [ ] 12A.18 Me → Stats & achievements
 - [ ] 12A.19 Me → Body
 - [ ] 12A.20 Settings
@@ -311,11 +311,11 @@ Every route, tab, sheet, dialog, card, banner, toast, state and Android surface,
 
 **Growth → Skills / Jobs** (`features/skills/`, `features/jobs/`)
 
-- [ ] Study balance 70/30 card (`BalanceCard.tsx`)
-- [ ] Skill tree (branches, nodes, levels) (`SkillTree.tsx`)
-- [ ] Skill sheet: detail, evidence, projects, editor, delete confirm (`SkillSheet.tsx`, `SkillForms.tsx`)
-- [ ] Jobs page: stats, list (mobile) / board (desktop) (`JobsPage.tsx`, `JobStats.tsx`, `JobCard.tsx`)
-- [ ] Application sheet (log / edit / stage / delete confirm) (`JobForm.tsx`)
+- [x] Study balance 70/30 card (`BalanceCard.tsx`)
+- [x] Skill tree (branches, nodes, levels) (`SkillTree.tsx`)
+- [x] Skill sheet: detail, evidence, projects, editor, delete confirm (`SkillSheet.tsx`, `SkillForms.tsx`)
+- [x] Jobs page: stats, list (mobile) / board (desktop) (`JobsPage.tsx`, `JobStats.tsx`, `JobCard.tsx`)
+- [x] Application sheet (log / edit / stage / delete confirm) (`JobForm.tsx`)
 
 **Me** (`features/profile/`, `features/body/`, `features/review/`, `features/screentime/`, `features/knows/`, `features/achievements/`)
 

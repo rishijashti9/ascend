@@ -88,7 +88,7 @@ export function HabitRow({ habit, streak, coreFull, onMove, first, last }: RowPr
           aria-expanded={open}
           aria-label={`Edit ${habit.title}`}
           onClick={toggleOpen}
-          className="text-muted flex size-11 items-center justify-center rounded-md"
+          className="text-muted hover:text-text hover:bg-surface-2 flex size-11 items-center justify-center rounded-full"
         >
           <ChevronDown
             aria-hidden

@@ -141,7 +141,7 @@ function PhotoViewer({
           ref={closeRef}
           aria-label="Close photo"
           onClick={onClose}
-          className="text-muted flex size-11 items-center justify-center rounded-md"
+          className="text-muted hover:text-text hover:bg-surface-2 flex size-11 items-center justify-center rounded-full"
         >
           <X aria-hidden size={20} />
         </button>

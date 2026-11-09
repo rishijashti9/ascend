@@ -41,7 +41,7 @@ export function SkillTree({
           type="button"
           aria-label={`Edit branch ${branch.name}`}
           onClick={() => onEditBranch(branch)}
-          className="text-muted flex size-11 items-center justify-center rounded-md"
+          className="text-muted hover:text-text hover:bg-surface-2 flex size-11 items-center justify-center rounded-full"
         >
           <Pencil aria-hidden size={16} />
         </button>

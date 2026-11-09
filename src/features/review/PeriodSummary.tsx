@@ -123,7 +123,7 @@ export function PeriodSummary({ type, today }: { type: PeriodType; today: string
             aria-label={`Previous ${unit}`}
             disabled={period <= first}
             onClick={() => setPeriod(shiftPeriod(type, period, -1))}
-            className="text-muted flex size-11 items-center justify-center rounded-md disabled:opacity-40"
+            className="text-muted hover:text-text hover:bg-surface-2 flex size-11 items-center justify-center rounded-full disabled:opacity-40"
           >
             <ChevronLeft aria-hidden size={20} />
           </button>
@@ -133,7 +133,7 @@ export function PeriodSummary({ type, today }: { type: PeriodType; today: string
             aria-label={`Next ${unit}`}
             disabled={period >= current}
             onClick={() => setPeriod(shiftPeriod(type, period, 1))}
-            className="text-muted flex size-11 items-center justify-center rounded-md disabled:opacity-40"
+            className="text-muted hover:text-text hover:bg-surface-2 flex size-11 items-center justify-center rounded-full disabled:opacity-40"
           >
             <ChevronRight aria-hidden size={20} />
           </button>

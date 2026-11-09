@@ -32,7 +32,7 @@ export function JobsPage() {
   if (!settings.jobs_enabled) {
     return (
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
-        <h1 className="display text-2xl">Jobs</h1>
+        <h1 className="sr-only">Jobs</h1>
         <p className="text-muted">
           The job tracker is switched off.{' '}
           <Link to="/settings" className="text-accent-text underline">
@@ -57,7 +57,7 @@ export function JobsPage() {
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="display text-2xl">Jobs</h1>
+        <h1 className="sr-only">Jobs</h1>
         {!adding && (
           <Button
             onClick={() => {
@@ -123,7 +123,7 @@ export function JobsPage() {
               <section
                 key={c.key}
                 aria-label={`${c.label} (board)`}
-                className="bg-surface-2 flex min-h-40 flex-col gap-2 rounded-lg p-2"
+                className="inset flex min-h-40 flex-col gap-2 p-2"
               >
                 <h2 className="display text-muted px-1 text-sm">
                   {c.label} ({c.jobs.length})

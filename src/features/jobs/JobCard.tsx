@@ -30,7 +30,7 @@ export function JobCard({
             target="_blank"
             rel="noreferrer"
             aria-label={`Open the ${job.company} posting`}
-            className="text-muted flex size-11 items-center justify-center rounded-md"
+            className="text-muted hover:text-text hover:bg-surface-2 flex size-11 items-center justify-center rounded-full"
           >
             <ExternalLink aria-hidden size={16} />
           </a>
@@ -39,7 +39,7 @@ export function JobCard({
           type="button"
           aria-label={`Edit ${job.company}`}
           onClick={() => onEdit(job)}
-          className="text-muted flex size-11 items-center justify-center rounded-md"
+          className="text-muted hover:text-text hover:bg-surface-2 flex size-11 items-center justify-center rounded-full"
         >
           <Pencil aria-hidden size={16} />
         </button>

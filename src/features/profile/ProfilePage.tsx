@@ -50,7 +50,7 @@ export function ProfilePage() {
             {title && <p className="text-accent-text text-sm">{title}</p>}
           </div>
           <p className="text-right">
-            <span className="text-2xl font-semibold tabular-nums">Level {level.level}</span>
+            <span className="display text-2xl tabular-nums">Level {level.level}</span>
             <span className="text-muted block text-sm">Rank {rank}</span>
           </p>
         </div>
@@ -122,7 +122,7 @@ export function ProfilePage() {
                 <Icon aria-hidden size={16} className={STAT_META[s].text} />
                 {STAT_META[s].label}
               </span>
-              <span className="text-lg font-semibold tabular-nums">Level {stats[s].level}</span>
+              <span className="display text-lg tabular-nums">Level {stats[s].level}</span>
               <span className="text-muted text-xs tabular-nums">
                 {stats[s].totalXp.toLocaleString()} XP
               </span>

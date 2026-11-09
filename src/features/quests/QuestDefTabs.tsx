@@ -64,7 +64,7 @@ function QuestDefRow({ quest }: { quest: Quest }) {
           aria-expanded={open}
           aria-label={`Edit ${quest.title}`}
           onClick={() => setOpen(!open)}
-          className="text-muted flex size-11 items-center justify-center rounded-md"
+          className="text-muted hover:text-text hover:bg-surface-2 flex size-11 items-center justify-center rounded-full"
         >
           <ChevronDown aria-hidden size={20} className={open ? 'rotate-180' : ''} />
         </button>

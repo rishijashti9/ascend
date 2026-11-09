@@ -28,7 +28,8 @@ export function SkillsPage() {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="display text-2xl">Skills</h1>
+        {/* Growth's Skills tab already names this screen (Phase 12). */}
+        <h1 className="sr-only">Skills</h1>
         {!adding && branches.length > 0 && (
           <Button variant="secondary" onClick={() => setAdding(true)}>
             <Plus aria-hidden size={16} /> Add skill

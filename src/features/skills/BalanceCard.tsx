@@ -42,7 +42,7 @@ export function BalanceCard() {
             aria-label="Previous week"
             disabled={!canGoBack}
             onClick={() => setBack((b) => b + 1)}
-            className="text-muted flex size-11 items-center justify-center rounded-md disabled:opacity-30"
+            className="text-muted hover:text-text hover:bg-surface-2 flex size-11 items-center justify-center rounded-full disabled:opacity-30"
           >
             <ChevronLeft aria-hidden size={18} />
           </button>
@@ -51,7 +51,7 @@ export function BalanceCard() {
             aria-label="Next week"
             disabled={back === 0}
             onClick={() => setBack((b) => Math.max(0, b - 1))}
-            className="text-muted flex size-11 items-center justify-center rounded-md disabled:opacity-30"
+            className="text-muted hover:text-text hover:bg-surface-2 flex size-11 items-center justify-center rounded-full disabled:opacity-30"
           >
             <ChevronRight aria-hidden size={18} />
           </button>
@@ -66,14 +66,14 @@ export function BalanceCard() {
         </p>
       ) : (
         <>
-          <p className="text-lg font-semibold tabular-nums">
+          <p className="display text-lg tabular-nums">
             {ai} / {100 - ai}
             <span className="text-muted ml-2 text-sm font-normal">
               aim {target} / {100 - target}
             </span>
           </p>
           <div
-            className="bg-surface-2 relative flex h-3 w-full overflow-hidden rounded-full"
+            className="bg-surface-2 relative flex h-4 w-full overflow-hidden rounded-full"
             role="img"
             aria-label={`AI & Robotics ${ai}%, Games ${100 - ai}%, aim ${target}%`}
           >
