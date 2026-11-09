@@ -2,7 +2,9 @@ import { Award, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
 import { subscribe } from '@/core/pipeline';
+import { useEffectsLevel } from '@/app/effects';
 import { ACHIEVEMENTS } from '@/data/achievements';
+import { Burst } from '@/ui/vfx/Burst';
 
 const SHOW_MS = 6000;
 
@@ -12,11 +14,14 @@ const SHOW_MS = 6000;
  */
 export function AchievementToast() {
   const [keys, setKeys] = useState<string[]>([]);
+  const [fireKey, setFireKey] = useState<number | null>(null);
+  const moving = useEffectsLevel() !== 'off';
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const unsubscribe = subscribe('AchievementUnlocked', ({ key }) => {
       setKeys((list) => (list.includes(key) ? list : [...list, key]));
+      setFireKey(Date.now());
       if (timer.current) clearTimeout(timer.current);
       timer.current = setTimeout(() => setKeys([]), SHOW_MS);
     });
@@ -32,21 +37,33 @@ export function AchievementToast() {
     <div
       role="status"
       aria-live="polite"
-      className="pointer-events-none fixed inset-x-4 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-40 flex justify-center lg:bottom-6 lg:left-auto lg:right-6"
+      className="pointer-events-none fixed inset-x-4 bottom-[calc(max(0.75rem,env(safe-area-inset-bottom))+9.5rem)] z-40 flex justify-center lg:bottom-6 lg:left-auto lg:right-6"
     >
       {first && (
-        <div className="panel pointer-events-auto flex max-w-sm items-center gap-3 px-4 py-3 text-sm">
-          <Award aria-hidden size={20} className="text-accent-text shrink-0" />
+        <div
+          key={fireKey ?? 0}
+          className={`tile tile-white shadow-float pointer-events-auto relative flex max-w-sm items-center gap-3 py-3 pr-2 pl-3 text-sm ${moving ? 'vfx-pop' : ''}`}
+        >
+          <Burst fireKey={fireKey} tone="celebrate" className="top-1/2 left-8 size-0" />
+          <span className="bg-bg text-accent-text grid size-11 shrink-0 place-items-center rounded-full">
+            <Award aria-hidden size={22} />
+          </span>
           <p className="flex-1">
             {defs.length === 1 ? (
               <>
-                <span className="font-semibold">Achievement: {first.name}</span>
-                <span className="text-muted block">{first.description}</span>
+                <span className="text-on-tile-muted block text-xs font-semibold tracking-wide uppercase">
+                  Achievement
+                </span>
+                <span className="display block text-base">{first.name}</span>
+                <span className="text-on-tile-muted block">{first.description}</span>
               </>
             ) : (
-              <span className="font-semibold">{defs.length} achievements unlocked</span>
+              <span className="display block text-base">{defs.length} achievements unlocked</span>
             )}
-            <Link to="/me/stats#achievements" className="text-accent-text block">
+            <Link
+              to="/me/stats#achievements"
+              className="block min-h-6 font-semibold underline underline-offset-2"
+            >
               See them on your profile
             </Link>
           </p>
@@ -54,7 +71,7 @@ export function AchievementToast() {
             type="button"
             aria-label="Dismiss"
             onClick={() => setKeys([])}
-            className="text-muted flex size-11 shrink-0 items-center justify-center"
+            className="grid size-11 shrink-0 place-items-center rounded-full hover:opacity-70"
           >
             <X aria-hidden size={18} />
           </button>

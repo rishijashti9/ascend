@@ -122,8 +122,14 @@ export function QuestCard({
   /** Extra line for weekly/side quests, e.g. the goal it serves or its due day. */
   note?: string;
 }) {
-  const { act: run, busy, error, float } = useQuestAction();
+  const { act, busy, error, float } = useQuestAction();
   const { instance, progress } = quest;
+  // A min→full top-up gets its own burst: remember whether the tap started from Minimum.
+  const [fromMin, setFromMin] = useState(false);
+  const run: Act = (action) => {
+    setFromMin(instance.status === 'done_min');
+    return act(action);
+  };
   const m = instance.measure_snapshot;
   const done = isDone(instance.status);
   const id = instance.id;
@@ -250,7 +256,10 @@ export function QuestCard({
           {error}
         </p>
       )}
-      <XpFloat float={float} />
+      <XpFloat
+        float={float}
+        tone={fromMin && instance.status === 'done_full' ? 'upgrade' : 'complete'}
+      />
     </li>
   );
 }

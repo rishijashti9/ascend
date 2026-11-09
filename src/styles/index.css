@@ -3,6 +3,7 @@
 @import '@fontsource-variable/archivo/wdth.css';
 @import './tokens.css';
 @import './themes/elevate.css';
+@import './vfx.css';
 
 /* Themes are chosen with the data-theme attribute on <html> (theme.ts sets it). */
 
