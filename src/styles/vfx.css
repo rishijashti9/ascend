@@ -80,7 +80,53 @@
   }
 }
 
+/* Level-up / rank-up (ELEVATE): shapes turn and stretch (transform only), the swoosh draws once. */
+@keyframes vfx-blob {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg) scale(1, 1);
+  }
+  33% {
+    transform: translate(6px, -8px) rotate(14deg) scale(1.06, 0.94);
+  }
+  66% {
+    transform: translate(-5px, 4px) rotate(-10deg) scale(0.95, 1.05);
+  }
+}
+
+@keyframes vfx-draw {
+  0% {
+    stroke-dashoffset: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes vfx-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @layer utilities {
+  .vfx-blob {
+    animation: vfx-blob 9s ease-in-out infinite;
+  }
+  .vfx-draw {
+    animation: vfx-draw 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .vfx-sparkle {
+    animation: vfx-twinkle 2.4s ease-in-out infinite;
+  }
+  .vfx-rise {
+    animation: vfx-rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
   .vfx-particle {
     animation: vfx-particle 750ms cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
   }
@@ -104,7 +150,11 @@
     .vfx-particle,
     .vfx-ring,
     .vfx-twinkle,
-    .vfx-pop {
+    .vfx-pop,
+    .vfx-blob,
+    .vfx-draw,
+    .vfx-sparkle,
+    .vfx-rise {
       animation-name: none !important;
     }
   }

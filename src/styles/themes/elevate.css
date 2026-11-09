@@ -63,6 +63,8 @@
   --fx-green: #1fa35b;
   --fx-orange: #ff7a1a;
   --fx-pink: #f27be6;
+  /* Text on the reward-grid colours (green / orange / pink / blue) */
+  --on-fx: #000000;
 
   /* The System companion robot */
   --robot-head: #f2f2f2;

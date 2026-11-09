@@ -97,6 +97,14 @@ describe.each(themes)('%s theme', (_name, t) => {
     expect(contrast(c(t, 'on-accent'), c(t, 'accent-fill'))).toBeGreaterThanOrEqual(TEXT);
   });
 
+  it.each(['fx-green', 'fx-orange', 'fx-pink', 'fx-blue'])(
+    'text on the %s reward tile passes AA',
+    (fx) => {
+      if (!t['on-fx']) return; // themes without a reward grid
+      expect(contrast(c(t, 'on-fx'), c(t, fx))).toBeGreaterThanOrEqual(TEXT);
+    },
+  );
+
   it('danger button label passes AA', () => {
     expect(contrast(c(t, 'on-error'), c(t, 'error'))).toBeGreaterThanOrEqual(TEXT);
   });
