@@ -195,7 +195,7 @@ Part C — Ask the System
 - [x] 12A.9 System companion robot
 - [x] 12A.10 Ask
 - [x] 12A.11 Today dashboard
-- [ ] 12A.12 Today cards in ELEVATE
+- [x] 12A.12 Today cards in ELEVATE
 - [ ] 12A.13 Quests screen
 - [ ] 12A.14 Focus
 - [ ] 12A.15 Growth → Goals
@@ -256,22 +256,22 @@ Every route, tab, sheet, dialog, card, banner, toast, state and Android surface,
 - [x] Dashboard header: name, title, day, level, XP bar, rank, streak (`StatusHeader.tsx`)
 - [x] Filter chips All / Core / Body / Mind / Career
 - [x] Today’s quests tile (progress + next quest)
-- [ ] Live tiles: Body (sleep, steps), Skill (current skill, hours this week), Roadmap (next step, readiness %), Screen time (today vs limit), check-in / review tile when due
-- [ ] Quest card — check (Full / Minimum / Upgrade), numbers (minutes/count/steps/sleep input), weekly/side "Done", auto (Digital discipline), done/missed states, undo, XP float (`QuestCard.tsx`, `ui/XpFloat.tsx`)
-- [ ] Wake-up card "I'm up" (early / on time / late / window closed) (`WakeCard.tsx`)
-- [ ] Low-energy toggle + hidden-quests note (`TodayPage.tsx`)
-- [ ] Recovery quest card (`RecoveryCard.tsx`)
-- [ ] System message line (`SystemMessage.tsx`) incl. welcome back
-- [ ] "Now:" line (`WhatNow.tsx`) and at-risk marks
-- [ ] Suggestion slot: difficulty card, burnout card, reminder-time card, goal nudges (behind schedule, 30-day check-in, needs a plan), job suggestion (`SuggestionSlot.tsx`, `DifficultyCard.tsx`, `BurnoutCard.tsx`, `ReminderTimeCard.tsx`, `GoalNudges.tsx`, `jobs/JobSuggestionCard.tsx`)
-- [ ] Reminder setup card (`ReminderSetupCard.tsx`)
-- [ ] Sync paused note (`SyncPausedNote.tsx`)
-- [ ] Job follow-ups card (`jobs/FollowUpsCard.tsx`)
-- [ ] Weekly / monthly review prompts (`WeeklyReviewPrompt.tsx`), check-in prompt (`CheckInPrompt.tsx`)
-- [ ] Backup reminder (`BackupReminder.tsx`)
-- [ ] This week (weekly quests on Today) (`ThisWeek.tsx`)
-- [ ] Screen time: observe note, suggestion card (Accept / Edit + LimitEditor), Today card, incident banner (`screentime/ScreenTimeCard.tsx`, `LimitEditor.tsx`)
-- [ ] Start focus button; empty states (no quests today, Day 1)
+- [x] Live tiles: Body (sleep, steps), Skill (current skill, hours this week), Roadmap (next step, readiness %), Screen time (today vs limit), check-in / review tile when due
+- [x] Quest card — check (Full / Minimum / Upgrade), numbers (minutes/count/steps/sleep input), weekly/side "Done", auto (Digital discipline), done/missed states, undo, XP float (`QuestCard.tsx`, `ui/XpFloat.tsx`)
+- [x] Wake-up card "I'm up" (early / on time / late / window closed) (`WakeCard.tsx`)
+- [x] Low-energy toggle + hidden-quests note (`TodayPage.tsx`)
+- [x] Recovery quest card (`RecoveryCard.tsx`)
+- [x] System message line (`SystemMessage.tsx`) incl. welcome back
+- [x] "Now:" line (`WhatNow.tsx`) and at-risk marks
+- [x] Suggestion slot: difficulty card, burnout card, reminder-time card, goal nudges (behind schedule, 30-day check-in, needs a plan), job suggestion (`SuggestionSlot.tsx`, `DifficultyCard.tsx`, `BurnoutCard.tsx`, `ReminderTimeCard.tsx`, `GoalNudges.tsx`, `jobs/JobSuggestionCard.tsx`)
+- [x] Reminder setup card (`ReminderSetupCard.tsx`)
+- [x] Sync paused note (`SyncPausedNote.tsx`)
+- [x] Job follow-ups card (`jobs/FollowUpsCard.tsx`)
+- [x] Weekly / monthly review prompts (`WeeklyReviewPrompt.tsx`), check-in prompt (`CheckInPrompt.tsx`)
+- [x] Backup reminder (`BackupReminder.tsx`)
+- [x] This week (weekly quests on Today) (`ThisWeek.tsx`)
+- [x] Screen time: observe note, suggestion card (Accept / Edit + LimitEditor), Today card, incident banner (`screentime/ScreenTimeCard.tsx`, `LimitEditor.tsx`)
+- [x] Start focus button; empty states (no quests today, Day 1)
 
 **Quests** (`features/quests/`, `ui/habit/`)
 
