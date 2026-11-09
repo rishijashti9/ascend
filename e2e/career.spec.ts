@@ -32,15 +32,16 @@ test('career tools: skills from focus time, then an application gives INT XP', a
   await expect(page.getByRole('region', { name: 'Study balance' })).toContainText('100 / 0');
 
   // Jobs stay hidden until switched on in Settings.
-  await page.goto('/more');
-  await expect(page.getByRole('link', { name: 'Jobs' })).toHaveCount(0);
+  await page.goto('/growth');
+  await expect(page.getByRole('tab', { name: 'Skills' })).toBeVisible();
+  await expect(page.getByRole('tab', { name: 'Jobs' })).toHaveCount(0);
   await page.goto('/settings');
   const jobsSwitch = page.getByRole('switch', { name: 'Show the job tracker' });
   await jobsSwitch.click();
   // Wait for the setting to be saved before leaving the page.
   await expect(jobsSwitch).toBeChecked();
-  await page.goto('/more');
-  await page.getByRole('link', { name: 'Jobs' }).last().click();
+  await page.goto('/growth');
+  await page.getByRole('tab', { name: 'Jobs' }).click();
 
   await page.getByRole('button', { name: 'Add application' }).click();
   const form = page.getByRole('form', { name: 'New application' });

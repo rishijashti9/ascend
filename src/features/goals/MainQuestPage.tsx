@@ -115,7 +115,7 @@ export function MainQuestPage() {
     return status === 'ready' ? (
       <div className="flex flex-col gap-3">
         <p>This main quest doesn’t exist any more.</p>
-        <Link to="/goals" className="text-accent-text">
+        <Link to="/growth/goals" className="text-accent-text">
           Back to Goals
         </Link>
       </div>
@@ -128,7 +128,10 @@ export function MainQuestPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
-      <Link to="/goals" className="text-accent-text flex min-h-11 items-center gap-1 self-start">
+      <Link
+        to="/growth/goals"
+        className="text-accent-text flex min-h-11 items-center gap-1 self-start"
+      >
         <ArrowLeft aria-hidden size={18} /> Goals
       </Link>
       <header className="flex flex-col gap-2">

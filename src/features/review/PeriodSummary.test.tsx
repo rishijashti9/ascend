@@ -93,7 +93,7 @@ describe('Monthly and yearly summaries', () => {
     );
     expect(screen.getByRole('link', { name: /2026 summary is ready/ })).toHaveAttribute(
       'href',
-      '/review?tab=yearly',
+      '/me/reviews?tab=yearly',
     );
   });
 });

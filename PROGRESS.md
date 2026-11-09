@@ -189,9 +189,9 @@ Part C — Ask the System
 - [x] 12A.3 Settings fields
 - [x] 12A.4 Fonts
 - [x] 12A.5 UI primitives in the theme language
-- [ ] 12A.6 Navigation shell
-- [ ] 12A.7 Growth screen with tabs
-- [ ] 12A.8 Me screen with tabs
+- [x] 12A.6 Navigation shell
+- [x] 12A.7 Growth screen with tabs
+- [x] 12A.8 Me screen with tabs
 - [ ] 12A.9 System companion robot
 - [ ] 12A.10 Ask
 - [ ] 12A.11 Today dashboard
@@ -243,11 +243,11 @@ Every route, tab, sheet, dialog, card, banner, toast, state and Android surface,
 
 **Shell and navigation** (`app/`)
 
-- [ ] Layout: bottom bar Today · Quests · Focus (centre) · Growth · Me (`app/Layout.tsx`)
+- [x] Layout: bottom bar Today · Quests · Focus (centre) · Growth · Me (`app/Layout.tsx`)
 - [ ] Layout: desktop sidebar (≥1024 px)
-- [ ] More page removed; `/more` and every old address redirect (`features/more/MorePage.tsx`, `app/routes.tsx`)
-- [ ] Deep links (`app/DeepLinks.tsx`, `app/deepLink.ts`) → new routes
-- [ ] Notification taps (`features/notifications/NotificationBridge.tsx`) → new routes
+- [x] More page removed; `/more` and every old address redirect (`features/more/MorePage.tsx`, `app/routes.tsx`)
+- [x] Deep links (`app/DeepLinks.tsx`, `app/deepLink.ts`) → new routes
+- [x] Notification taps (`features/notifications/NotificationBridge.tsx`) → new routes
 - [ ] Ask floating button (every main screen) + Ask bottom sheet (screen context, suggested questions, typed question, answer, sources, fallback, privacy note)
 - [ ] System companion robot (System message, level-up/rank-up, empty states, onboarding)
 
@@ -291,7 +291,7 @@ Every route, tab, sheet, dialog, card, banner, toast, state and Android surface,
 
 **Growth → Goals** (`features/goals/`, `features/planner/`)
 
-- [ ] Growth screen with tabs Goals · Roadmap · Skills · Jobs (when on)
+- [x] Growth screen with tabs Goals · Roadmap · Skills · Jobs (when on)
 - [ ] Vision: dreams, why, progress, main quests, archived (`GoalsPage.tsx`)
 - [ ] Main quest page: why panel, milestones, progress, forecast line, focus goal of the week, edit / pause / done confirm / archive / restore (`MainQuestPage.tsx`, `parts.tsx`, `ForecastLine.tsx`)
 - [ ] Goal / milestone forms (`forms.tsx`)
@@ -319,7 +319,7 @@ Every route, tab, sheet, dialog, card, banner, toast, state and Android surface,
 
 **Me** (`features/profile/`, `features/body/`, `features/review/`, `features/screentime/`, `features/knows/`, `features/achievements/`)
 
-- [ ] Me screen with tabs Stats & achievements · Body · Reviews, Screen time tile, Settings gear
+- [x] Me screen with tabs Stats & achievements · Body · Reviews, Screen time tile, Settings gear
 - [ ] Player card (level, rank, next rank, totals), title picker (`ProfilePage.tsx`, `TitlePicker.tsx`)
 - [ ] Stats triangle / radar (`StatTriangle.tsx`)
 - [ ] XP per week chart; active-days heatmap (`Heatmap.tsx`)

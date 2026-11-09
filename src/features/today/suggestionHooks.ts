@@ -47,7 +47,7 @@ export function useGoalNudgeRows(): { id: string; title: string; note: string; t
       id: q.id,
       title: q.title,
       note: 'needs a plan',
-      to: `/goals/${q.id}?plan=new`,
+      to: `/growth/goals/${q.id}?plan=new`,
     })),
     ...[...new Set(nudges.map((n) => n.mainQuestId))].map((id) => ({
       id,
@@ -55,7 +55,7 @@ export function useGoalNudgeRows(): { id: string; title: string; note: string; t
       note: nudges.some((n) => n.mainQuestId === id && n.kind === 'risk')
         ? 'behind schedule'
         : 'monthly check-in',
-      to: `/goals/${id}`,
+      to: `/growth/goals/${id}`,
     })),
   ]
     .filter((r, i, all) => all.findIndex((x) => x.id === r.id) === i)

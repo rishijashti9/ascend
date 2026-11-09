@@ -130,7 +130,7 @@ function ScreenTimeCard() {
   const over = min >= limit;
   return (
     <Link
-      to="/screen-time"
+      to="/me/screen-time"
       aria-label={`Entertainment today: ${min} of ${limit} minutes`}
       className={`${box} hover:bg-surface-2`}
     >

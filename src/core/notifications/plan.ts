@@ -173,7 +173,7 @@ export function planNotifications(input: PlanInput): PlannedNotification[] {
               ? `Follow up with ${first.company}?`
               : `${due.length} applications to follow up.`,
           body: 'A short, polite check-in a week after applying often gets an answer.',
-          path: '/jobs',
+          path: '/growth/jobs',
         });
       }
     }
@@ -187,7 +187,7 @@ export function planNotifications(input: PlanInput): PlannedNotification[] {
         day,
         title: 'Time to wind down.',
         body: 'How did today go? The check-in takes a minute.',
-        path: '/review',
+        path: '/me/reviews',
       });
     }
   }

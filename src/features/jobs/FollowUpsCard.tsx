@@ -62,7 +62,7 @@ export function FollowUpsCard() {
         })}
       </ul>
       {due.length > SHOWN && (
-        <Link to="/jobs" className="text-accent-text text-sm">
+        <Link to="/growth/jobs" className="text-accent-text text-sm">
           {due.length - SHOWN} more in Jobs
         </Link>
       )}

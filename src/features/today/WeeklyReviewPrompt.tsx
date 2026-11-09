@@ -20,7 +20,7 @@ export function WeeklyReviewPrompt() {
   if (!lastDay || done) return null;
   return (
     <Link
-      to="/review?tab=weekly"
+      to="/me/reviews?tab=weekly"
       className="panel flex min-h-11 items-center gap-2 px-4 py-3 text-sm"
     >
       <CalendarCheck aria-hidden size={18} className="text-accent-text shrink-0" />
@@ -44,7 +44,7 @@ export function MonthlyReviewPrompt() {
   if (!lastDay || done) return null;
   return (
     <Link
-      to={`/review?tab=${type}`}
+      to={`/me/reviews?tab=${type}`}
       className="panel flex min-h-11 items-center gap-2 px-4 py-3 text-sm"
     >
       <CalendarCheck aria-hidden size={18} className="text-accent-text shrink-0" />

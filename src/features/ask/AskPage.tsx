@@ -64,7 +64,7 @@ export function AskPage() {
         })),
       },
     });
-    if (proposal) navigate(`/goals/${goalId}`);
+    if (proposal) navigate(`/growth/goals/${goalId}`);
   };
 
   return (
@@ -224,7 +224,10 @@ export function AskPage() {
         <section aria-label="Growth Compass" className="panel flex flex-col gap-2 p-4 text-sm">
           <p>{outcome.text}</p>
           {outcome.compass.length === 0 ? (
-            <Link to="/compass" className="text-accent-text inline-flex min-h-11 items-center">
+            <Link
+              to="/growth/roadmap"
+              className="text-accent-text inline-flex min-h-11 items-center"
+            >
               Open the Growth Compass →
             </Link>
           ) : (

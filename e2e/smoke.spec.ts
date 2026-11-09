@@ -9,12 +9,12 @@ test('first visit: onboarding, then Today, with no console errors', async ({ pag
   expect(errors).toEqual([]);
 });
 
-test('navigation: Today → More → Settings shows the version', async ({ page, isMobile }) => {
+test('navigation: Today → Me → Settings (gear) shows the version', async ({ page, isMobile }) => {
   await onboard(page);
   if (isMobile) {
     const bar = page.getByRole('navigation', { name: 'Main' }).last();
     await expect(bar).toBeVisible();
-    await bar.getByRole('link', { name: 'More' }).click();
+    await bar.getByRole('link', { name: 'Me' }).click();
     await page.getByRole('main').getByRole('link', { name: 'Settings' }).click();
   } else {
     const sidebar = page.getByRole('navigation', { name: 'Main' }).first();

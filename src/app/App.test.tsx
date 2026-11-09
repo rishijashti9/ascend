@@ -18,7 +18,7 @@ describe('app shell', () => {
     expect(screen.getByRole('heading', { name: 'Today' })).toBeInTheDocument();
   });
 
-  it('bottom bar shows only enabled primary items plus More', () => {
+  it('bottom bar: Today · Quests · Focus · Growth · Me (Phase 12, no More)', () => {
     renderAt('/');
     // Two "Main" navs exist: desktop sidebar and mobile bar. The mobile bar is the last one.
     const navs = screen.getAllByRole('navigation', { name: 'Main' });
@@ -27,18 +27,23 @@ describe('app shell', () => {
     const labels = within(bar)
       .getAllByRole('link')
       .map((a) => a.textContent);
-    expect(labels).toContain('Today');
-    expect(labels).toContain('More');
-    expect(labels.length).toBeLessThanOrEqual(5);
-    if (!features.focus) expect(labels).not.toContain('Focus');
-    if (!features.goals) expect(labels).not.toContain('Goals');
+    expect(labels).toEqual(['Today', 'Quests', 'Focus', 'Growth', 'Me']);
+    expect(labels).not.toContain('More');
   });
 
-  it('More lists Settings, and Settings shows the version', async () => {
-    renderAt('/more');
-    await userEvent.click(within(screen.getByRole('main')).getByRole('link', { name: /Settings/ }));
+  it('Me has the Settings gear, and Settings shows the version', async () => {
+    renderAt('/me');
+    await userEvent.click(within(screen.getByRole('main')).getByRole('link', { name: 'Settings' }));
     expect(screen.getByRole('heading', { name: 'Settings' })).toBeInTheDocument();
     expect(screen.getByText(pkg.version)).toBeInTheDocument();
+  });
+
+  it('old addresses go to their new places, keeping the query', async () => {
+    const router = renderAt('/review?tab=weekly');
+    await vi.waitFor(() => expect(router.state.location.pathname).toBe('/me/reviews'));
+    expect(router.state.location.search).toBe('?tab=weekly');
+    const goal = renderAt('/goals/abc');
+    await vi.waitFor(() => expect(goal.state.location.pathname).toBe('/growth/goals/abc'));
   });
 
   it('a hidden feature route redirects home', () => {

@@ -66,7 +66,10 @@ export function ProfilePage() {
         </p>
         <TitlePicker current={profile?.display_title ?? null} />
         {isEnabled('adaptive') && (
-          <Link to="/knows" className="text-accent-text inline-flex min-h-11 items-center text-sm">
+          <Link
+            to="/me/knows"
+            className="text-accent-text inline-flex min-h-11 items-center text-sm"
+          >
             What the System knows about you →
           </Link>
         )}

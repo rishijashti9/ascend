@@ -46,7 +46,7 @@ export function AchievementToast() {
             ) : (
               <span className="font-semibold">{defs.length} achievements unlocked</span>
             )}
-            <Link to="/profile#achievements" className="text-accent-text block">
+            <Link to="/me/stats#achievements" className="text-accent-text block">
               See them on your profile
             </Link>
           </p>

@@ -73,7 +73,7 @@ export function HealthPlan() {
         items,
       },
     });
-    if (proposal) navigate(`/goals/${mainQuestId}`);
+    if (proposal) navigate(`/growth/goals/${mainQuestId}`);
   };
 
   return (

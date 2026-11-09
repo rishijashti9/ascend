@@ -167,7 +167,7 @@ describe('planNotifications: briefing, reminder, wind-down', () => {
     ]);
     expect(list[0]?.at).toBe(ist(2026, 11, 2, 5, 20)); // when the wake-up window ends
     expect(list[1]?.at).toBe(ist(2026, 11, 2, 18, 0));
-    expect(list[2]).toMatchObject({ at: ist(2026, 11, 2, 21, 0), path: '/review' });
+    expect(list[2]).toMatchObject({ at: ist(2026, 11, 2, 21, 0), path: '/me/reviews' });
 
     const done = planNotifications(
       input({
@@ -269,7 +269,7 @@ describe('planNotifications: job follow-ups (task 9.5)', () => {
       ['followup:2026-11-05', 'Follow up with Franka?'],
     ]);
     expect(list[0]?.at).toBe(ist(2026, 11, 2, 10));
-    expect(list[0]?.path).toBe('/jobs');
+    expect(list[0]?.path).toBe('/growth/jobs');
   });
 
   it('nothing while the tracker or the switch is off', () => {

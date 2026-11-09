@@ -24,7 +24,7 @@ function MainTab() {
     return (
       <p className="panel p-4">
         No active main quests.{' '}
-        <Link to="/goals" className="text-accent-text">
+        <Link to="/growth/goals" className="text-accent-text">
           Add one in Goals
         </Link>
         .
@@ -35,7 +35,7 @@ function MainTab() {
     <ul className="flex flex-col gap-2">
       {active.map((q) => (
         <li key={q.id} className="panel">
-          <Link to={`/goals/${q.id}`} className="flex min-h-11 flex-col gap-1 p-3">
+          <Link to={`/growth/goals/${q.id}`} className="flex min-h-11 flex-col gap-1 p-3">
             <span className="flex items-center gap-2">
               <span className="font-medium">{q.title}</span>
               <StatChip stat={q.stat} />

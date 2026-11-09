@@ -17,10 +17,10 @@ beforeEach(async () => {
   await startGoals();
   const router = createMemoryRouter(
     [
-      { path: '/goals', element: <GoalsPage /> },
-      { path: '/goals/:id', element: <MainQuestPage /> },
+      { path: '/growth/goals', element: <GoalsPage /> },
+      { path: '/growth/goals/:id', element: <MainQuestPage /> },
     ],
-    { initialEntries: ['/goals'] },
+    { initialEntries: ['/growth/goals'] },
   );
   render(<RouterProvider router={router} />);
 });

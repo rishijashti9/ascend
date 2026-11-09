@@ -27,7 +27,7 @@ export interface CompassHint {
   title: string;
   detail: string;
   url: string;
-  /** Where it lives in the app, e.g. "/compass" or "/compass?tab=health". */
+  /** Where it lives in the app, e.g. "/growth/roadmap" or "/growth/roadmap?tab=health". */
   path: string;
 }
 
@@ -64,14 +64,14 @@ export function compassHints(question: string, limit = 3): CompassHint[] {
       title: r.title,
       detail: r.summary,
       url: p.sources.find((s) => s.id === r.sources[0])?.url ?? 'https://www.onetonline.org/',
-      path: '/compass',
+      path: '/growth/roadmap',
       score: 2 * score(r.title) + score(r.summary),
     })),
     ...p.guidelines.map((g) => ({
       title: g.title,
       detail: g.text,
       url: p.sources.find((s) => s.id === g.sources[0])?.url ?? 'https://www.who.int/',
-      path: '/compass?tab=health',
+      path: '/growth/roadmap?tab=health',
       score: 2 * score(`${g.title} ${g.topic}`) + score(g.text),
     })),
     ...p.careers.map((c) => ({
@@ -80,7 +80,7 @@ export function compassHints(question: string, limit = 3): CompassHint[] {
       url: c.onet
         ? `https://www.onetonline.org/link/summary/${c.onet}`
         : 'https://www.onetonline.org/',
-      path: '/compass',
+      path: '/growth/roadmap',
       score: (2 * score(c.title) + score(c.summary)) * 0.8,
     })),
   ];

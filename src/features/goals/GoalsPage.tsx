@@ -19,7 +19,7 @@ function MainQuestRow({ quest }: { quest: MainQuest }) {
   return (
     <li>
       <Link
-        to={`/goals/${quest.id}`}
+        to={`/growth/goals/${quest.id}`}
         className="hover:bg-surface-2 flex min-h-11 flex-col gap-1 rounded-md px-2 py-2"
       >
         <span className="flex items-center gap-2">
@@ -133,7 +133,7 @@ function DreamCard({ dream }: { dream: Dream }) {
               if (!created) return;
               setMode('none');
               // A new main quest is planned right away (SPEC 6.3).
-              void navigate(`/goals/${created.id}?plan=new`);
+              void navigate(`/growth/goals/${created.id}?plan=new`);
             })
           }
         />

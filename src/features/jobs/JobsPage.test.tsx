@@ -1,7 +1,7 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
-import { secondaryNav } from '@/app/navigation';
+import { growthTabs } from '@/features/growth/tabs';
 import { db } from '@/core/db/db';
 import { clearSubscribers, recordAction } from '@/core/pipeline';
 import { startAppState } from '@/core/state/app';
@@ -41,8 +41,9 @@ describe('Jobs screen', () => {
   it('stays hidden until switched on in Settings', async () => {
     await setup(false);
     expect(await screen.findByText(/job tracker is switched off/)).toBeInTheDocument();
-    expect(secondaryNav({ jobs_enabled: false }).map((i) => i.label)).not.toContain('Jobs');
-    expect(secondaryNav({ jobs_enabled: true }).map((i) => i.label)).toContain('Jobs');
+    // Growth shows a Jobs tab only once it's switched on (Phase 12).
+    expect(growthTabs({ jobs_enabled: false }).map((i) => i.label)).not.toContain('Jobs');
+    expect(growthTabs({ jobs_enabled: true }).map((i) => i.label)).toContain('Jobs');
   });
 
   it('adds an application, shows it with stats, and moves it along', async () => {
