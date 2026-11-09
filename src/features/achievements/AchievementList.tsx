@@ -30,7 +30,7 @@ export function AchievementList() {
   return (
     <section id="achievements" aria-label="Achievements" className="panel flex flex-col gap-4 p-4">
       <div>
-        <h2 className="font-semibold">Achievements</h2>
+        <h2 className="display">Achievements</h2>
         <p className="text-muted text-sm">
           {done.length} of {visible.length} unlocked
         </p>

@@ -25,7 +25,7 @@ export function ChartCard({
     <section aria-label={title} className="panel flex flex-col gap-2 p-4">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <h3 className="font-medium">{title}</h3>
+          <h3 className="display">{title}</h3>
           {subtitle && <p className="text-muted text-xs">{subtitle}</p>}
         </div>
         <button

@@ -33,7 +33,7 @@ export function BalanceCard() {
   return (
     <section aria-label="Study balance" className="panel flex flex-col gap-3 p-4">
       <div className="flex items-center justify-between gap-2">
-        <h2 className="text-muted text-sm font-medium">
+        <h2 className="display text-muted text-sm">
           {back === 0 ? 'Study balance this week' : `Week of ${shortDay(from)}`}
         </h2>
         <div className="flex">

@@ -55,7 +55,7 @@ export function HabitRow({ habit, streak, coreFull, onMove, first, last }: RowPr
       <div className="flex items-start gap-2">
         <div className="min-w-0 flex-1 pt-1 pl-1">
           <div className="flex flex-wrap items-center gap-x-2">
-            <h3 className="font-medium">{habit.title}</h3>
+            <h3 className="display">{habit.title}</h3>
             <StatChip stat={habit.stat} />
           </div>
           <p className="text-muted text-sm">{habitSummary(habit)}</p>

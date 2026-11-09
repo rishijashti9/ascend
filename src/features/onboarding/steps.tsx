@@ -131,7 +131,7 @@ export function GoalsStep({ draft, update }: { draft: Draft; update: Update }) {
         )}
       </Field>
       <div className="flex flex-col gap-2">
-        <h3 className="text-sm font-medium">Main Quests</h3>
+        <h3 className="display text-sm">Main Quests</h3>
         {draft.mainQuests.map((m, i) => (
           <div key={i} className="flex items-end gap-2">
             <div className="flex-1">
@@ -225,7 +225,7 @@ export function ThemeStep({
       </p>
       {lateStart && (
         <div className="flex flex-col gap-2">
-          <h3 className="font-medium">Start today or tomorrow?</h3>
+          <h3 className="display">Start today or tomorrow?</h3>
           <p className="text-muted text-sm">
             It’s late, so today won’t count against you either way.
           </p>

@@ -43,7 +43,7 @@ export function LevelUpMoment() {
         <p className="text-accent-text text-xs font-semibold tracking-[0.2em] uppercase">
           {kicker}
         </p>
-        <h2 id="moment-heading" className="font-display text-4xl font-semibold tabular-nums">
+        <h2 id="moment-heading" className="display font-display text-4xl tabular-nums">
           {heading}
         </h2>
         <ul className="text-muted flex flex-col gap-1 text-sm">

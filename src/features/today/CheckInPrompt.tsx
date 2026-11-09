@@ -6,6 +6,7 @@ import { useReviews } from '@/core/state/reviews';
 import { useToday } from '@/core/state/today';
 import { currentTimeZone, localParts } from '@/core/time';
 import { useNow } from '@/ui/hooks/useNow';
+import { ArrowCircle } from '@/ui/Surface';
 
 /** From 6 PM, a gentle nudge for the 1-minute check-in until it's done (SPEC 7.7). */
 export function CheckInPrompt() {
@@ -18,9 +19,13 @@ export function CheckInPrompt() {
   const evening = hour >= 18 || hour < dayStart;
   if (!isEnabled('review') || !day || done || !evening) return null;
   return (
-    <Link to="/me/reviews" className="panel flex min-h-11 items-center gap-2 px-4 py-3 text-sm">
-      <NotebookPen aria-hidden size={18} className="text-accent-text shrink-0" />
+    <Link
+      to="/me/reviews"
+      className="tile tile-yellow flex min-h-11 items-center gap-3 p-4 text-sm font-semibold transition-transform duration-(--dur) active:scale-[0.98]"
+    >
+      <NotebookPen aria-hidden size={20} className="shrink-0" />
       <span className="flex-1">How did today go? Take the 1-minute check-in.</span>
+      <ArrowCircle />
     </Link>
   );
 }

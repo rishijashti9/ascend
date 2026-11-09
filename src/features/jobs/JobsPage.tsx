@@ -32,7 +32,7 @@ export function JobsPage() {
   if (!settings.jobs_enabled) {
     return (
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
-        <h1 className="text-xl font-semibold">Jobs</h1>
+        <h1 className="display text-2xl">Jobs</h1>
         <p className="text-muted">
           The job tracker is switched off.{' '}
           <Link to="/settings" className="text-accent-text underline">
@@ -57,7 +57,7 @@ export function JobsPage() {
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold">Jobs</h1>
+        <h1 className="display text-2xl">Jobs</h1>
         {!adding && (
           <Button
             onClick={() => {
@@ -106,7 +106,7 @@ export function JobsPage() {
                       {c.label} ({c.jobs.length}) {showClosed ? '▴' : '▾'}
                     </button>
                   ) : (
-                    <h2 className="text-muted text-sm font-medium">
+                    <h2 className="display text-muted text-sm">
                       {c.label} ({c.jobs.length})
                     </h2>
                   )}
@@ -125,7 +125,7 @@ export function JobsPage() {
                 aria-label={`${c.label} (board)`}
                 className="bg-surface-2 flex min-h-40 flex-col gap-2 rounded-lg p-2"
               >
-                <h2 className="text-muted px-1 text-sm font-medium">
+                <h2 className="display text-muted px-1 text-sm">
                   {c.label} ({c.jobs.length})
                 </h2>
                 {c.jobs.map((j) => (

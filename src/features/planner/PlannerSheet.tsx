@@ -100,7 +100,7 @@ export function PlannerSheet({
             <p className="text-accent-text flex items-center gap-1 text-xs font-semibold tracking-wide uppercase">
               <Sparkles aria-hidden size={14} /> Goal Planner
             </p>
-            <h2 id="planner-title" className="text-xl font-semibold">
+            <h2 id="planner-title" className="display text-xl">
               {goal?.title ?? 'Planning…'}
             </h2>
           </div>

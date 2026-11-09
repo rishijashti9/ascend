@@ -34,7 +34,7 @@ export function SkillTree({
           className="border-accent bg-surface-2 size-4 shrink-0 rounded-full border-2"
         />
         <div className="min-w-0 flex-1">
-          <h2 className="font-semibold">{branch.name}</h2>
+          <h2 className="display">{branch.name}</h2>
           <p className="text-muted text-xs">{TRACK_LABEL[branch.track]}</p>
         </div>
         <button

@@ -77,7 +77,7 @@ export function BackupSection() {
         )}
       </div>
       <div className="border-border flex flex-col gap-2 border-t pt-4">
-        <h3 className="text-sm font-medium">Import a backup</h3>
+        <h3 className="display text-sm">Import a backup</h3>
         <ImportPanel allowMerge backupFirst={hasData} />
       </div>
     </Card>

@@ -52,7 +52,7 @@ export function KnowsPage() {
         <ArrowLeft aria-hidden size={18} /> Profile
       </Link>
       <header className="flex flex-col gap-1">
-        <h1 className="text-xl font-semibold">What the System knows about you</h1>
+        <h1 className="display text-2xl">What the System knows about you</h1>
         <p className="text-muted text-sm">
           Learned on this device from numbers and patterns only — never your journal. It stays on
           this device and in your own synced account. Clearing an item makes it learn afresh from
@@ -72,7 +72,7 @@ export function KnowsPage() {
         if (list.length === 0) return null;
         return (
           <section key={group} aria-label={group} className="flex flex-col gap-2">
-            <h2 className="text-muted text-sm font-medium">{group}</h2>
+            <h2 className="display text-muted text-sm">{group}</h2>
             <ul className="panel divide-border flex flex-col divide-y">
               {list.map((item) => (
                 <li key={item.key} className="flex items-start gap-3 px-4 py-3">
@@ -102,7 +102,7 @@ export function KnowsPage() {
       })}
 
       <section aria-label="Learning data" className="flex flex-col gap-2">
-        <h2 className="text-muted text-sm font-medium">Learning data</h2>
+        <h2 className="display text-muted text-sm">Learning data</h2>
         <div className="flex flex-wrap gap-2">
           <Button variant="secondary" onClick={() => void exportCsv('outcomes')}>
             <Download aria-hidden size={16} /> Daily outcomes (CSV)

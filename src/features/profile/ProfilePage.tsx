@@ -41,12 +41,12 @@ export function ProfilePage() {
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
-      <h1 className="text-xl font-semibold">Profile</h1>
+      <h1 className="display text-2xl">Profile</h1>
 
       <section aria-label="Player" className="panel flex flex-col gap-3 p-4">
         <div className="flex items-baseline justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold">{profile?.name ?? 'Player'}</h2>
+            <h2 className="display text-lg">{profile?.name ?? 'Player'}</h2>
             {title && <p className="text-accent-text text-sm">{title}</p>}
           </div>
           <p className="text-right">

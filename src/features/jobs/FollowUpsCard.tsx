@@ -22,7 +22,7 @@ export function FollowUpsCard() {
 
   return (
     <section aria-label="Follow-ups" className="panel flex flex-col gap-3 p-4">
-      <h2 className="text-sm font-medium">
+      <h2 className="display text-sm">
         {due.length === 1 ? 'Time to follow up' : `${due.length} applications to follow up`}
       </h2>
       <ul className="flex flex-col gap-3">

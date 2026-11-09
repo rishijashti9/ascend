@@ -29,7 +29,7 @@ export function SessionHistory() {
   return (
     <div className="flex flex-col gap-6">
       <section aria-label="This week" className="panel flex flex-col gap-3 p-4">
-        <h2 className="text-muted text-sm font-medium">This week</h2>
+        <h2 className="display text-muted text-sm">This week</h2>
         <p>
           <span className="font-display text-2xl font-semibold tabular-nums">{week.minutes}</span>{' '}
           <span className="text-muted">
@@ -55,10 +55,10 @@ export function SessionHistory() {
 
       <FocusTrend />
       <section aria-label="Session history" className="flex flex-col gap-3">
-        <h2 className="text-lg font-semibold">History</h2>
+        <h2 className="display text-lg">History</h2>
         {byDay(sessions).map(([d, list]) => (
           <div key={d} className="flex flex-col gap-1">
-            <h3 className="text-muted text-sm font-medium">
+            <h3 className="display text-muted text-sm">
               {d === day ? 'Today' : formatDay(d)} ·{' '}
               {list.reduce((sum, s) => sum + s.actual_min, 0)} min
             </h3>

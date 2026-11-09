@@ -127,7 +127,7 @@ export function PeriodSummary({ type, today }: { type: PeriodType; today: string
           >
             <ChevronLeft aria-hidden size={20} />
           </button>
-          <h2 className="flex-1 text-center font-semibold">{name}</h2>
+          <h2 className="display flex-1 text-center">{name}</h2>
           <button
             type="button"
             aria-label={`Next ${unit}`}

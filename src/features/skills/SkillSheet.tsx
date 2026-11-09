@@ -50,7 +50,7 @@ export function SkillSheet({ skillId, onClose }: { skillId: string; onClose: () 
               {skill.branch}
               {skill.status === 'archived' && ' · archived'}
             </p>
-            <h2 id="skill-title" className="text-xl font-semibold">
+            <h2 id="skill-title" className="display text-xl">
               {skill.name}
             </h2>
           </div>
@@ -102,7 +102,7 @@ export function SkillSheet({ skillId, onClose }: { skillId: string; onClose: () 
         </section>
 
         <section aria-label="Projects" className="flex flex-col gap-2">
-          <h3 className="text-muted text-sm font-medium">Finished projects</h3>
+          <h3 className="display text-muted text-sm">Finished projects</h3>
           {projects.length === 0 && !adding && (
             <p className="text-muted text-sm">
               None yet. A finished project with a link is the proof levels 4 and 5 ask for.
@@ -151,7 +151,7 @@ export function SkillSheet({ skillId, onClose }: { skillId: string; onClose: () 
         </section>
 
         <section aria-label="Linked quests" className="flex flex-col gap-2">
-          <h3 className="text-muted text-sm font-medium">Quests that count for it</h3>
+          <h3 className="display text-muted text-sm">Quests that count for it</h3>
           {linked.length === 0 ? (
             <p className="text-muted text-sm">
               None. Link a quest to this skill when you edit it, or tag a focus session.
@@ -197,7 +197,7 @@ function SkillEditor({
 
   return (
     <section aria-label="Edit skill" className="border-border flex flex-col gap-3 border-t pt-4">
-      <h3 className="text-muted text-sm font-medium">Edit</h3>
+      <h3 className="display text-muted text-sm">Edit</h3>
       <div className="flex items-end gap-2">
         <div className="flex-1">
           <TextInput

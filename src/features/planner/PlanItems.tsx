@@ -12,7 +12,7 @@ export function PlanItems({ items }: { items: readonly ProposalItem[] }) {
         if (list.length === 0) return null;
         return (
           <section key={g} aria-label={GROUP_TITLE[g]} className="flex flex-col gap-2">
-            <h3 className="text-muted text-sm font-medium">{GROUP_TITLE[g]}</h3>
+            <h3 className="display text-muted text-sm">{GROUP_TITLE[g]}</h3>
             <ul className="flex flex-col gap-2">
               {list.map((i) => (
                 <li key={i.id} className="border-border bg-surface rounded-md border p-3">

@@ -134,14 +134,14 @@ export function QuestCard({
 
   return (
     <li
-      className={`border-border bg-surface shadow-card relative flex flex-col gap-3 rounded-lg border p-4 ${
+      className={`panel relative flex flex-col gap-3 p-4 transition-[outline-color] duration-(--dur) ${
         instance.status === 'missed' ? 'opacity-70' : ''
-      }`}
+      } ${done ? 'outline-accent outline-2' : ''}`}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-x-2">
-            <h3 className="font-medium">{instance.title_snapshot}</h3>
+            <h3 className="display">{instance.title_snapshot}</h3>
             <StatChip stat={instance.stat_snapshot} />
           </div>
           {m === 'check' && !single && !auto && (

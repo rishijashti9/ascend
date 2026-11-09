@@ -72,7 +72,7 @@ export function DailyCheckIn({ day, existing }: { day: string; existing: Review 
       }}
     >
       <div>
-        <h2 className="font-semibold">Daily check-in</h2>
+        <h2 className="display">Daily check-in</h2>
         <p className="text-muted text-sm">One minute. Skip anything you like.</p>
       </div>
       <Scale

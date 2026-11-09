@@ -44,7 +44,7 @@ function MilestoneCard({ milestone }: { milestone: Milestone }) {
 
   return (
     <li className="panel flex flex-col gap-2 p-4">
-      <h3 className="flex flex-wrap items-center gap-2 font-medium">
+      <h3 className="display flex flex-wrap items-center gap-2">
         {milestone.title} <StatusChip status={milestone.status} />
       </h3>
       <ProgressLine value={p.progress} label={`${milestone.title} progress`} />
@@ -136,7 +136,7 @@ export function MainQuestPage() {
       </Link>
       <header className="flex flex-col gap-2">
         {dream && <p className="text-muted text-sm">{dream.title}</p>}
-        <h1 className="flex flex-wrap items-center gap-2 text-xl font-semibold">
+        <h1 className="display flex flex-wrap items-center gap-2 text-2xl">
           {quest.title} <StatChip stat={quest.stat} /> <StatusChip status={quest.status} />
         </h1>
         <ProgressLine value={progress} label={`${quest.title} progress`} />
@@ -148,7 +148,7 @@ export function MainQuestPage() {
 
       {quest.why && (
         <section aria-label="Why this matters" className="bg-surface-2 rounded-lg p-4">
-          <h2 className="text-muted mb-1 text-sm font-medium">Why this matters to me</h2>
+          <h2 className="display text-muted mb-1 text-sm">Why this matters to me</h2>
           <p className="italic">“{quest.why}”</p>
         </section>
       )}
@@ -204,7 +204,7 @@ export function MainQuestPage() {
       )}
 
       <section aria-labelledby="milestones-heading" className="flex flex-col gap-3">
-        <h2 id="milestones-heading" className="text-lg font-semibold">
+        <h2 id="milestones-heading" className="display text-lg">
           Milestones
         </h2>
         {visible.length === 0 && mode !== 'add' && (

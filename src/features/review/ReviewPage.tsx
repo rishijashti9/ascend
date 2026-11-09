@@ -30,7 +30,7 @@ export function ReviewPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
-      <h1 className="text-xl font-semibold">Review</h1>
+      <h1 className="display text-2xl">Review</h1>
       <div
         role="tablist"
         aria-label="Review type"
@@ -64,7 +64,7 @@ export function ReviewPage() {
       )}
       {tab === 'daily' && past.length > 0 && (
         <section aria-label="Past check-ins" className="flex flex-col gap-2">
-          <h2 className="text-lg font-semibold">Past check-ins</h2>
+          <h2 className="display text-lg">Past check-ins</h2>
           <ul className="flex flex-col gap-2">
             {past.map((r) => (
               <li key={r.id} className="panel p-3 text-sm">

@@ -18,7 +18,7 @@ import { ThemePicker } from './ThemePicker';
 export function Card({ title, id, children }: { title: string; id?: string; children: ReactNode }) {
   return (
     <section id={id} aria-label={title} className="panel flex flex-col gap-4 p-4">
-      <h2 className="text-muted text-sm font-medium">{title}</h2>
+      <h2 className="display text-muted text-sm">{title}</h2>
       {children}
     </section>
   );

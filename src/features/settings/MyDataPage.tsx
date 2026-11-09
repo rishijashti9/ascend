@@ -55,7 +55,7 @@ export function MyDataPage() {
       <Link to="/settings" className="text-accent-text inline-flex min-h-11 items-center gap-1">
         <ArrowLeft aria-hidden size={18} /> Settings
       </Link>
-      <h1 className="text-xl font-semibold">My data</h1>
+      <h1 className="display text-2xl">My data</h1>
       <p className="flex items-start gap-2 text-sm">
         <ShieldCheck aria-hidden size={18} className="text-success-text mt-0.5 shrink-0" />
         <span>

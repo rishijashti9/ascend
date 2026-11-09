@@ -24,7 +24,7 @@ export function CompassPage() {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
       <header className="flex flex-col gap-1">
-        <h1 className="text-xl font-semibold">Growth Compass</h1>
+        <h1 className="display text-2xl">Growth Compass</h1>
         <p className="text-muted text-sm">
           Career and health guidance from trusted sources, worked out on this device. Every
           suggestion shows why and where it comes from.
@@ -63,7 +63,7 @@ export function CompassPage() {
             </>
           ) : (
             <section className="flex flex-col gap-3">
-              <h2 className="text-lg font-semibold">Find careers that fit you</h2>
+              <h2 className="display text-lg">Find careers that fit you</h2>
               <Discovery />
             </section>
           )}

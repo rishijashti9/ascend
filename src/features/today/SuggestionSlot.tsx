@@ -1,3 +1,4 @@
+import { Robot } from '@/ui/Robot';
 import type { ReactNode } from 'react';
 import { DifficultyCard } from './DifficultyCard';
 import { GoalNudges } from './GoalNudges';
@@ -31,5 +32,14 @@ export function SuggestionSlot({
     { visible: goals, node: <GoalNudges /> },
     { visible: reminder, node: <ReminderTimeCard /> },
   ];
-  return candidates.find((c) => c.visible)?.node ?? null;
+  const node = candidates.find((c) => c.visible)?.node;
+  if (!node) return null;
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="text-accent-text flex items-center gap-2 text-xs font-bold tracking-widest uppercase">
+        <Robot size={22} /> The System suggests
+      </p>
+      {node}
+    </div>
+  );
 }

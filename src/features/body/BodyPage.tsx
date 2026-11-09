@@ -61,7 +61,7 @@ function LogForm({ day, log }: { day: string; log: BodyLog | undefined }) {
         void run({ type: 'body.log', payload: { day, ...diff } }).then((ok) => setSaved(ok));
       }}
     >
-      <h2 className="font-semibold">Today</h2>
+      <h2 className="display">Today</h2>
       <div className="grid grid-cols-2 gap-3">
         <TextInput
           label="Weight (kg)"
@@ -143,13 +143,13 @@ export function BodyPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
-      <h1 className="text-xl font-semibold">Body</h1>
+      <h1 className="display text-2xl">Body</h1>
       <LogForm key={day} day={day} log={todayLog} />
       <BodyTrends today={day} />
       <Photos day={day} />
       {recent.length > 0 && (
         <section aria-label="Recent days" className="flex flex-col gap-2">
-          <h2 className="text-lg font-semibold">Recent days</h2>
+          <h2 className="display text-lg">Recent days</h2>
           <div className="panel overflow-x-auto">
             <table className="w-full text-sm tabular-nums">
               <thead className="text-muted text-left text-xs">

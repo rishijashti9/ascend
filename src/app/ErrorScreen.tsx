@@ -38,7 +38,7 @@ export function ErrorScreen({ message }: { message?: string }) {
       className="bg-bg mx-auto flex min-h-dvh max-w-md flex-col justify-center gap-6 p-6"
     >
       <div className="flex flex-col gap-2">
-        <h1 className="text-xl font-semibold">Something went wrong</h1>
+        <h1 className="display text-2xl">Something went wrong</h1>
         <p className="text-muted">
           Your data is safe on this device. Reloading usually fixes this. If it keeps happening,
           copy the error details and share them.

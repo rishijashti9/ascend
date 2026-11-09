@@ -128,7 +128,7 @@ export function Discovery() {
         {matches.map(({ career, score, why }) => (
           <li key={career.id} className="panel flex flex-col gap-2 p-4">
             <div className="flex items-baseline justify-between gap-2">
-              <h3 className="font-medium">{career.title}</h3>
+              <h3 className="display">{career.title}</h3>
               <span className="text-muted text-sm tabular-nums">{score}% fit</span>
             </div>
             <p className="text-muted text-sm">{career.summary}</p>

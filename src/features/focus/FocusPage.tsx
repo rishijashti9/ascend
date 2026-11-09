@@ -40,10 +40,10 @@ export function FocusPage() {
   const linked = target !== 'stat' && quests.some((q) => q.instance.id === target);
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
-      <h1 className="text-xl font-semibold">Focus</h1>
+      <h1 className="display text-2xl">Focus</h1>
 
       <section aria-label="What is it for?" className="flex flex-col gap-2">
-        <h2 className="font-medium">What is it for?</h2>
+        <h2 className="display">What is it for?</h2>
         <div role="radiogroup" aria-label="What is it for?" className="flex flex-col gap-2">
           {quests.map((q) => (
             <button
@@ -93,7 +93,7 @@ export function FocusPage() {
       </section>
 
       <section aria-label="Length" className="flex flex-col gap-2">
-        <h2 className="font-medium">Length</h2>
+        <h2 className="display">Length</h2>
         <div role="radiogroup" aria-label="Length" className="flex flex-wrap gap-2">
           {presets.map((p, i) => (
             <button

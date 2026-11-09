@@ -94,7 +94,7 @@ export function WeeklyReview({ weekStart, today }: { weekStart: string; today: s
   return (
     <div className="flex flex-col gap-5">
       <section aria-label="This week" className="panel flex flex-col gap-3 p-4">
-        <h2 className="font-semibold">Week of {formatDay(weekStart)}</h2>
+        <h2 className="display">Week of {formatDay(weekStart)}</h2>
         {stats && (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
             <Stat label="Active days" value={`${stats.activeDays} of ${stats.daysSoFar}`} />
@@ -141,7 +141,7 @@ export function WeeklyReview({ weekStart, today }: { weekStart: string; today: s
         </Field>
 
         <section aria-label="Next week's quests" className="flex flex-col gap-2">
-          <h3 className="font-medium">Next week’s quests</h3>
+          <h3 className="display">Next week’s quests</h3>
           <FocusGoalLine prefix="Focus goal" />
           {planned ? (
             <p className="text-muted text-sm">

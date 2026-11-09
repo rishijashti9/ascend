@@ -13,13 +13,13 @@ export function Roadmaps() {
   const roadmaps = pack().roadmaps;
   return (
     <section aria-label="Roadmaps and guides" className="flex flex-col gap-3">
-      <h2 className="text-lg font-semibold">Roadmaps and guides</h2>
+      <h2 className="display text-lg">Roadmaps and guides</h2>
       {Object.entries(KIND).map(([kind, label]) => {
         const list = roadmaps.filter((r) => r.kind === kind);
         if (list.length === 0) return null;
         return (
           <div key={kind} className="flex flex-col gap-2">
-            <h3 className="text-muted text-sm font-medium">{label}</h3>
+            <h3 className="display text-muted text-sm">{label}</h3>
             {list.map((r) => {
               const weeks = r.steps.reduce((s, x) => s + x.weeks, 0);
               return (

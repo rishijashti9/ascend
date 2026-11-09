@@ -21,7 +21,7 @@ export function JobCard({
     <article aria-label={`${job.company}, ${job.role}`} className="panel flex flex-col gap-2 p-3">
       <div className="flex items-start gap-2">
         <div className="min-w-0 flex-1">
-          <h3 className="truncate font-semibold">{job.company}</h3>
+          <h3 className="display truncate">{job.company}</h3>
           <p className="text-muted truncate text-sm">{job.role}</p>
         </div>
         {job.link && (

@@ -45,7 +45,7 @@ export function Photos({ day }: { day: string }) {
 
   return (
     <section aria-label="Photos" className="flex flex-col gap-3">
-      <h2 className="flex items-center gap-2 text-lg font-semibold">Photos</h2>
+      <h2 className="display flex items-center gap-2 text-lg">Photos</h2>
       <p className="text-muted flex items-center gap-1 text-xs">
         <Lock aria-hidden size={12} /> Stored only on this device. Never synced, and only included
         in “Export with photos”.

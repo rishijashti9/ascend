@@ -41,7 +41,7 @@ export function IncidentBanner() {
     <div
       role="region"
       aria-label="Screen-time reminders are off"
-      className="border-warning bg-surface flex flex-col gap-3 rounded-lg border p-4"
+      className="panel outline-warning flex flex-col gap-3 p-4 outline-2"
     >
       {kinds.map((k) => (
         <p key={k} className="flex items-start gap-2 text-sm">

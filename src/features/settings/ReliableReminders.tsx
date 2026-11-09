@@ -59,7 +59,7 @@ export function ReliableReminders({ wakeTime }: { wakeTime: string }) {
 
   return (
     <div className="border-border flex flex-col gap-4 border-t pt-4">
-      <h3 className="font-medium">Make sure reminders arrive on time</h3>
+      <h3 className="display">Make sure reminders arrive on time</h3>
 
       <div className="flex flex-col gap-2">
         <p className="text-sm font-medium" id="exact-alarms">

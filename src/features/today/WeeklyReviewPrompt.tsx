@@ -7,6 +7,7 @@ import { useToday } from '@/core/state/today';
 import { periodOf, periodRange } from '@/core/engine/periodStats';
 import { addDays, weekStartOf } from '@/core/time';
 import { periodLabel } from '@/features/review/format';
+import { ArrowCircle } from '@/ui/Surface';
 
 /** On the week's last day: a nudge for the weekly review, until it's saved (SPEC 4.5). */
 export function WeeklyReviewPrompt() {
@@ -21,10 +22,11 @@ export function WeeklyReviewPrompt() {
   return (
     <Link
       to="/me/reviews?tab=weekly"
-      className="panel flex min-h-11 items-center gap-2 px-4 py-3 text-sm"
+      className="tile tile-white flex min-h-11 items-center gap-3 p-4 text-sm font-semibold transition-transform duration-(--dur) active:scale-[0.98]"
     >
-      <CalendarCheck aria-hidden size={18} className="text-accent-text shrink-0" />
+      <CalendarCheck aria-hidden size={20} className="shrink-0" />
       <span className="flex-1">Weekly review — 5 minutes to look back and plan next week.</span>
+      <ArrowCircle />
     </Link>
   );
 }
@@ -45,12 +47,13 @@ export function MonthlyReviewPrompt() {
   return (
     <Link
       to={`/me/reviews?tab=${type}`}
-      className="panel flex min-h-11 items-center gap-2 px-4 py-3 text-sm"
+      className="tile tile-white flex min-h-11 items-center gap-3 p-4 text-sm font-semibold transition-transform duration-(--dur) active:scale-[0.98]"
     >
-      <CalendarCheck aria-hidden size={18} className="text-accent-text shrink-0" />
+      <CalendarCheck aria-hidden size={20} className="shrink-0" />
       <span className="flex-1">
         Your {periodLabel(type, period)} summary is ready — take a look back.
       </span>
+      <ArrowCircle />
     </Link>
   );
 }

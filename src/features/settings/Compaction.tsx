@@ -197,7 +197,7 @@ export function Compaction({ totalBytes }: { totalBytes: number | null }) {
       )}
       {history.length > 0 && (
         <div className="flex flex-col gap-1 text-sm">
-          <h3 className="text-muted font-medium">History</h3>
+          <h3 className="display text-muted">History</h3>
           <ul className="text-muted">
             {history.map((h) => (
               <li key={h.id}>

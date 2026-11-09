@@ -20,7 +20,7 @@ export function RecoveryCard({ quest }: { quest: TodayQuest }) {
   const repairs = quest.quest?.repairs_day != null;
 
   return (
-    <li className="border-accent bg-surface shadow-card relative flex flex-col gap-3 rounded-lg border p-4">
+    <li className="panel outline-accent relative flex flex-col gap-3 p-4 outline-2">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-accent-text flex items-center gap-1 text-xs font-semibold tracking-wide uppercase">
@@ -28,7 +28,7 @@ export function RecoveryCard({ quest }: { quest: TodayQuest }) {
             Recovery quest
           </p>
           <div className="flex flex-wrap items-center gap-x-2">
-            <h3 className="font-medium">{instance.title_snapshot}</h3>
+            <h3 className="display">{instance.title_snapshot}</h3>
             <StatChip stat={instance.stat_snapshot} />
           </div>
           <p className="text-muted text-sm">{instance.full_version_snapshot}</p>

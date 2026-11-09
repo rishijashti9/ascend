@@ -76,7 +76,7 @@ export function CareerGap() {
   return (
     <section aria-label="Your path" className="flex flex-col gap-3">
       <header className="flex flex-col gap-1">
-        <h2 className="text-lg font-semibold">{career.title}</h2>
+        <h2 className="display text-lg">{career.title}</h2>
         <p className="text-muted text-sm">
           {gap.done} of {gap.items.length} skills at the level needed.
         </p>

@@ -54,7 +54,7 @@ function DreamCard({ dream }: { dream: Dream }) {
     <li className="panel flex flex-col gap-3 p-4">
       <div className="flex items-start gap-2">
         <div className="min-w-0 flex-1">
-          <h2 className="flex flex-wrap items-center gap-2 text-lg font-semibold">
+          <h2 className="display flex flex-wrap items-center gap-2 text-lg">
             {dream.title} <StatusChip status={dream.status} />
           </h2>
           {dream.why && <p className="text-muted mt-1 text-sm italic">“{dream.why}”</p>}
@@ -173,7 +173,7 @@ export function GoalsPage() {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h1 className="text-xl font-semibold">Goals</h1>
+        <h1 className="display text-2xl">Goals</h1>
         {!adding && (
           <Button onClick={() => setAdding(true)}>
             <Plus aria-hidden size={18} />

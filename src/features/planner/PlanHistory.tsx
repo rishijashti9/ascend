@@ -79,7 +79,7 @@ export function PlanHistoryList({ goalId, limit }: { goalId?: string; limit?: nu
   if (rows.length === 0) return null;
   return (
     <section aria-label="Plan history" className="flex flex-col gap-2">
-      <h2 className="flex items-center gap-2 text-lg font-semibold">
+      <h2 className="display flex items-center gap-2 text-lg">
         <History aria-hidden size={18} /> Plan history
       </h2>
       <ul className="flex flex-col gap-2">

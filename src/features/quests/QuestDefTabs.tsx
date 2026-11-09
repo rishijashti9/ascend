@@ -40,7 +40,7 @@ function QuestDefRow({ quest }: { quest: Quest }) {
       <div className="flex items-start gap-2">
         <div className="min-w-0 flex-1 pt-1 pl-1">
           <div className="flex flex-wrap items-center gap-x-2">
-            <h3 className="font-medium">{quest.title}</h3>
+            <h3 className="display">{quest.title}</h3>
             <StatChip stat={quest.stat} />
             <span
               className={`text-xs ${quest.status === 'done' ? 'text-success-text' : 'text-muted'}`}
@@ -163,7 +163,7 @@ export function WeeklyTab() {
   return (
     <div className="flex flex-col gap-4">
       <NewQuestButton kind="weekly" />
-      <h2 className="text-lg font-semibold">
+      <h2 className="display text-lg">
         This week
         {thisWeek && (
           <span className="text-muted ml-2 text-sm font-normal">from {formatDay(thisWeek)}</span>

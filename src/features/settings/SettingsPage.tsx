@@ -24,7 +24,7 @@ export function SettingsPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
-      <h1 className="text-xl font-semibold">Settings</h1>
+      <h1 className="display text-2xl">Settings</h1>
       {settings && (
         <>
           {isEnabled('sync') && <AccountSection />}

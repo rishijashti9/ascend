@@ -35,7 +35,7 @@ function FormShell({
         if (canSave) onSave();
       }}
     >
-      <h3 className="font-semibold">{title}</h3>
+      <h3 className="display">{title}</h3>
       {children}
       {error && (
         <p role="alert" className="text-warning-text text-sm">

@@ -16,7 +16,7 @@ export function ScreenTimePage() {
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
-      <h1 className="text-xl font-semibold">Screen time</h1>
+      <h1 className="display text-2xl">Screen time</h1>
       <IncidentBanner />
       {!s.rules?.enabled ? (
         <p className="text-muted text-sm">
@@ -29,7 +29,7 @@ export function ScreenTimePage() {
       ) : (
         <>
           <section aria-label="Today" className="panel flex flex-col gap-3 p-4">
-            <h2 className="font-medium">Entertainment today</h2>
+            <h2 className="display">Entertainment today</h2>
             <p className="font-display text-3xl tabular-nums">
               {formatMinutes(todayMin)}
               {limit !== null && (
@@ -68,7 +68,7 @@ export function ScreenTimePage() {
           </ChartCard>
 
           <section aria-label="Top apps this week" className="panel flex flex-col gap-2 p-4">
-            <h2 className="font-medium">Top apps this week</h2>
+            <h2 className="display">Top apps this week</h2>
             <TopApps apps={s.weekTop} empty="No readings this week yet." />
           </section>
           <p className="text-muted text-xs">

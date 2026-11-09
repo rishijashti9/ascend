@@ -26,7 +26,7 @@ export function CareerBrowser() {
   const careers = careersIn(field);
   return (
     <section aria-label="Browse careers" className="flex flex-col gap-3">
-      <h2 className="text-lg font-semibold">Browse careers</h2>
+      <h2 className="display text-lg">Browse careers</h2>
       <label className="flex flex-col gap-1 text-sm">
         <span className="text-muted">Field</span>
         <select
@@ -44,7 +44,7 @@ export function CareerBrowser() {
       <ul className="flex flex-col gap-2">
         {careers.map((c) => (
           <li key={c.id} className="panel flex flex-col gap-1 p-4">
-            <h3 className="font-medium">{c.title}</h3>
+            <h3 className="display">{c.title}</h3>
             <p className="text-muted text-sm">{c.summary}</p>
             <p className="text-sm">
               <span className="text-muted">Route: </span>

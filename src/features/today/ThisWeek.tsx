@@ -80,7 +80,7 @@ export function ThisWeek() {
     <section aria-labelledby="week-heading" className="flex flex-col gap-3">
       {week.length > 0 && (
         <>
-          <h2 id="week-heading" className="text-lg font-semibold">
+          <h2 id="week-heading" className="display text-lg">
             This week
             <span className="text-muted ml-2 text-sm font-normal tabular-nums">
               {done} / {week.length} done
@@ -97,7 +97,7 @@ export function ThisWeek() {
       )}
       {side.length > 0 && (
         <>
-          <h2 id={week.length ? undefined : 'week-heading'} className="text-lg font-semibold">
+          <h2 id={week.length ? undefined : 'week-heading'} className="display text-lg">
             Side quests
           </h2>
           <ul className="flex flex-col gap-3">

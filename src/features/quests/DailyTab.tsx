@@ -45,7 +45,7 @@ function NewHabit({ onDone }: { onDone: () => void }) {
       aria-label="New daily quest"
       className="border-accent bg-surface shadow-card flex flex-col gap-4 rounded-lg border p-4"
     >
-      <h2 className="font-semibold">New daily quest</h2>
+      <h2 className="display">New daily quest</h2>
       <HabitEditor habit={draft} onChange={setDraft} />
       <p className="text-muted text-xs">
         It appears today. It can be made core from the list — core counts from tomorrow.
@@ -72,7 +72,7 @@ function Section({ title, habits, hint }: { title: string; habits: Habit[]; hint
   if (habits.length === 0) return null;
   return (
     <section className="flex flex-col gap-2">
-      <h2 className="text-lg font-semibold">
+      <h2 className="display text-lg">
         {title} <span className="text-muted text-sm font-normal">· {hint}</span>
       </h2>
       <ul className="flex flex-col gap-2">
@@ -120,7 +120,7 @@ export function DailyTab() {
       {adding && <NewHabit onDone={() => setAdding(false)} />}
 
       <section className="flex flex-col gap-2">
-        <h2 className="text-lg font-semibold">
+        <h2 className="display text-lg">
           Daily quests{' '}
           <span className="text-muted text-sm font-normal">
             · {active.filter((h) => h.core).length} of {GAME.maxCoreHabits} core

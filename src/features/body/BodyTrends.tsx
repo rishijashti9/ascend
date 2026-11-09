@@ -72,7 +72,7 @@ export function BodyTrends({ today }: { today: DayString }) {
   }
   return (
     <section aria-label="Trends" className="flex flex-col gap-3">
-      <h2 className="text-lg font-semibold">Trends</h2>
+      <h2 className="display text-lg">Trends</h2>
       <div className="grid gap-3 lg:grid-cols-2">
         {weight.length >= 2 && (
           <ChartCard title="Weight" subtitle="kg · last 90 days" rows={rows(weight, 'kg')}>

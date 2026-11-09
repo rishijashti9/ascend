@@ -153,7 +153,7 @@ export function ImpactPreview({
       aria-label="Plan waiting for review"
       className="border-accent bg-surface shadow-card flex flex-col gap-4 rounded-lg border p-4"
     >
-      <h2 className="flex items-center gap-2 font-semibold">
+      <h2 className="display flex items-center gap-2">
         <Sparkles aria-hidden size={18} className="text-accent-text" /> Plan waiting for review
       </h2>
       <p className="text-sm">{proposal.summary}</p>
@@ -162,7 +162,7 @@ export function ImpactPreview({
         if (list.length === 0) return null;
         return (
           <section key={g} aria-label={GROUP_TITLE[g]} className="flex flex-col gap-2">
-            <h3 className="text-muted text-sm font-medium">{GROUP_TITLE[g]}</h3>
+            <h3 className="display text-muted text-sm">{GROUP_TITLE[g]}</h3>
             <ul className="flex flex-col gap-2">
               {list.map((i) => (
                 <ItemRow
