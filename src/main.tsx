@@ -51,6 +51,13 @@ import './styles/index.css';
 
 installGlobalErrorHandlers();
 
+// Animations pause while ASCEND is in the background (Phase 12: no battery-heavy loops).
+const markHidden = () => {
+  document.documentElement.toggleAttribute('data-hidden', document.visibilityState === 'hidden');
+};
+document.addEventListener('visibilitychange', markHidden);
+markHidden();
+
 // The default theme until the stored choice is loaded (Phase 12: themes replace light/dark).
 let shownTheme = applyUiTheme(null);
 appStore.subscribe(({ settings }) => {

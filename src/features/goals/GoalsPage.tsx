@@ -11,6 +11,7 @@ import { PlanHistoryList } from '@/features/planner/PlanHistory';
 import { DreamForm, MainQuestForm } from './forms';
 import { formatDay } from './format';
 import { ProgressLine, StatusActions, StatusChip } from './parts';
+import { EmptyState } from '@/ui/EmptyState';
 
 function MainQuestRow({ quest }: { quest: MainQuest }) {
   const progress = useGoals((s) => s.mainQuestProgress[quest.id] ?? 0);
@@ -192,9 +193,9 @@ export function GoalsPage() {
         />
       )}
       {open.length === 0 && !adding && (
-        <p className="panel p-4">
+        <EmptyState>
           No dream yet. Start with the big picture — where do you want to be in 5–10 years?
-        </p>
+        </EmptyState>
       )}
       <ul className="flex flex-col gap-4">
         {open.map((d) => (

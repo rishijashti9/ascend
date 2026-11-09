@@ -10,6 +10,7 @@ import { editProblems, type EditableHabit } from '@/ui/habit/habitEdit';
 import { HabitEditor } from '@/ui/habit/HabitEditor';
 import { useAction } from '@/ui/hooks/useAction';
 import { HabitRow } from './HabitRow';
+import { EmptyState } from '@/ui/EmptyState';
 
 /** Stable empty value: a new `{}` on every render would make the store re-render forever. */
 const NO_STREAKS: Record<string, HabitStreak> = {};
@@ -126,9 +127,9 @@ export function DailyTab() {
           </span>
         </h2>
         {active.length === 0 ? (
-          <p className="panel p-4">
+          <EmptyState>
             No daily quests yet. Add one small thing you want to do every day.
-          </p>
+          </EmptyState>
         ) : (
           <ul className="flex flex-col gap-2">
             {active.map((h, i) => (

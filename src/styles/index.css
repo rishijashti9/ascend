@@ -257,3 +257,51 @@
     animation: none;
   }
 }
+
+/* The System companion robot (Phase 12): a slow blink, a gentle bob, a soft antenna pulse. */
+@keyframes robot-blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.1);
+  }
+}
+@keyframes robot-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1.5px);
+  }
+}
+@keyframes robot-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+@utility robot-idle {
+  animation: robot-bob 3.2s ease-in-out infinite;
+}
+@utility robot-blink {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: robot-blink 4.5s infinite;
+}
+@utility robot-pulse {
+  animation: robot-pulse 2.4s ease-in-out infinite;
+}
+
+/* While the app is in the background every animation pauses (battery; set in main.tsx). */
+html[data-hidden] *,
+html[data-hidden] *::before,
+html[data-hidden] *::after {
+  animation-play-state: paused !important;
+}

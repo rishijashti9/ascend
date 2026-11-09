@@ -1,4 +1,3 @@
-import { Sparkle } from 'lucide-react';
 import { welcomeBack } from '@/app/rollover';
 import { evaluateDay } from '@/core/engine/dayEval';
 import { isRecoveryId } from '@/core/engine/instances';
@@ -9,6 +8,7 @@ import { useProgress } from '@/core/state/progress';
 import { useToday } from '@/core/state/today';
 import { currentTimeZone, dayNumber, localParts } from '@/core/time';
 import { useNow } from '@/ui/hooks/useNow';
+import { Robot } from '@/ui/Robot';
 
 /** One calm line from the System (rule templates in engine/messages.ts). */
 export function SystemMessage() {
@@ -45,12 +45,14 @@ export function SystemMessage() {
   });
 
   return (
-    <p
-      role="status"
-      className="border-border bg-surface-2 text-text flex items-start gap-2 rounded-lg border px-4 py-3 text-sm"
-    >
-      <Sparkle aria-hidden size={16} className="text-accent-text mt-0.5 shrink-0" />
-      <span>{text}</span>
+    <p role="status" className="inset text-text flex items-center gap-3 px-3 py-2.5 text-sm">
+      <Robot size={36} mood={evaluateDay(instances, lowEnergy).dailyClear ? 'happy' : 'idle'} />
+      <span>
+        <span className="text-accent-text block text-xs font-semibold tracking-wide uppercase">
+          System
+        </span>
+        {text}
+      </span>
     </p>
   );
 }

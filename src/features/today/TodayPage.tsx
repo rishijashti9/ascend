@@ -25,6 +25,7 @@ import { SyncPausedNote } from './SyncPausedNote';
 import { SystemMessage } from './SystemMessage';
 import { ThisWeek } from './ThisWeek';
 import { WakeCard } from './WakeCard';
+import { EmptyState } from '@/ui/EmptyState';
 
 /** Low-energy mode (SPEC 4.8): today only, on and off any time before the day closes. */
 function LowEnergyToggle({ on }: { on: boolean }) {
@@ -108,9 +109,9 @@ export function TodayPage() {
           </p>
         )}
         {status === 'ready' && !notStarted && daily.length === 0 && (
-          <p className="panel p-4">
+          <EmptyState>
             No daily quests today. Enjoy the rest day — it won’t affect your streak.
-          </p>
+          </EmptyState>
         )}
 
         <ul className="flex flex-col gap-3">

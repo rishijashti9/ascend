@@ -192,7 +192,7 @@ Part C — Ask the System
 - [x] 12A.6 Navigation shell
 - [x] 12A.7 Growth screen with tabs
 - [x] 12A.8 Me screen with tabs
-- [ ] 12A.9 System companion robot
+- [x] 12A.9 System companion robot
 - [ ] 12A.10 Ask
 - [ ] 12A.11 Today dashboard
 - [ ] 12A.12 Today cards in ELEVATE

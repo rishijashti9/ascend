@@ -8,6 +8,7 @@ import { formatDay } from '@/features/goals/format';
 import { STAT_META } from '@/ui/statMeta';
 import { FocusTrend } from './FocusTrend';
 import { byDay, statOf, weekSummary } from './history';
+import { EmptyState } from '@/ui/EmptyState';
 
 const time = (iso: string) =>
   new Date(iso).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
@@ -20,9 +21,7 @@ export function SessionHistory() {
   const weekStartsOn = useAppState((s) => s.settings?.week_start ?? 1);
   if (sessions.length === 0) {
     return (
-      <p className="text-muted text-sm">
-        No sessions yet. Your first one starts above — 25 minutes is plenty.
-      </p>
+      <EmptyState>No sessions yet. Your first one starts above — 25 minutes is plenty.</EmptyState>
     );
   }
   const week = weekSummary(sessions, day ? weekStartOf(day, weekStartsOn) : '0000-00-00', linked);

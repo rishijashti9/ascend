@@ -63,6 +63,12 @@
   --fx-orange: #ff7a1a;
   --fx-pink: #f27be6;
 
+  /* The System companion robot */
+  --robot-head: #f2f2f2;
+  --robot-visor: #000000;
+  --robot-eye: #c8f03c;
+  --robot-accent: #c8f03c;
+
   /* Shape */
   --r-sm: 0.75rem;
   --r-md: 1.125rem;

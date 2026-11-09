@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { DEFAULT_SETTINGS } from '@/config/defaults';
+import { Robot } from '@/ui/Robot';
 import { logError } from '@/core/errorLog';
 import { recordAction } from '@/core/pipeline';
 import { useAppState } from '@/core/state/app';
@@ -53,8 +54,9 @@ export function OnboardingPage() {
       <main className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col gap-6 px-4 pt-[max(2rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:px-6">
         <header className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
-            <span className="font-display text-muted text-sm font-semibold tracking-widest">
-              AWAKENING
+            <span className="flex items-center gap-2">
+              <Robot size={32} mood={step === TITLES.length - 1 ? 'happy' : 'idle'} />
+              <span className="display text-muted text-sm tracking-widest">AWAKENING</span>
             </span>
             <span className="text-muted text-sm tabular-nums">
               Step {step + 1} of {TITLES.length}
@@ -68,7 +70,7 @@ export function OnboardingPage() {
               />
             ))}
           </div>
-          <h1 className="text-xl font-semibold">{TITLES[step]}</h1>
+          <h1 className="display text-2xl">{TITLES[step]}</h1>
         </header>
 
         <section className="flex-1">

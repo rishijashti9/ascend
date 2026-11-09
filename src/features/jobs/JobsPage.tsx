@@ -13,6 +13,7 @@ import { JobForm } from './JobForm';
 import { JobStats } from './JobStats';
 import { JobSuggestionCard } from './JobSuggestionCard';
 import { COLUMNS } from './labels';
+import { EmptyState } from '@/ui/EmptyState';
 
 /**
  * Jobs (SPEC 7.10, 6.5): the application pipeline — a list on mobile, columns (board) on
@@ -75,10 +76,10 @@ export function JobsPage() {
       )}
 
       {jobs.length === 0 && !adding ? (
-        <p className="text-muted">
+        <EmptyState>
           No applications yet. Add one when you apply — each gives INT XP through an “Applied”
           quest, and a follow-up reminder a week later.
-        </p>
+        </EmptyState>
       ) : (
         <>
           <JobSuggestionCard stats={stats} />
