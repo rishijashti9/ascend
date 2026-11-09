@@ -6,6 +6,8 @@ import { ProgressLine } from '@/features/goals/parts';
 import { StatChip } from '@/ui/stats';
 import { DailyTab } from './DailyTab';
 import { SideTab, WeeklyTab } from './QuestDefTabs';
+import { Tabs } from '@/ui/Surface';
+import { tabPanelProps } from '@/ui/tabs';
 
 const TABS = [
   { id: 'daily', label: 'Daily' },
@@ -59,29 +61,13 @@ export function QuestsPage() {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
       <h1 className="display text-2xl">Quests</h1>
-      <div
-        role="tablist"
-        aria-label="Quest types"
-        className="bg-surface-2 flex gap-1 rounded-md p-1"
-      >
-        {tabs.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            role="tab"
-            id={`tab-${t.id}`}
-            aria-selected={tab === t.id}
-            aria-controls={`panel-${t.id}`}
-            onClick={() => setParams(t.id === 'daily' ? {} : { tab: t.id }, { replace: true })}
-            className={`min-h-11 flex-1 rounded-md text-sm font-medium ${
-              tab === t.id ? 'bg-surface text-text shadow-card' : 'text-muted'
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-      <div role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`}>
+      <Tabs
+        label="Quest types"
+        tabs={tabs}
+        active={tab}
+        onChange={(id) => setParams(id === 'daily' ? {} : { tab: id }, { replace: true })}
+      />
+      <div {...tabPanelProps(tab)}>
         {tab === 'daily' && <DailyTab />}
         {tab === 'weekly' && <WeeklyTab />}
         {tab === 'main' && <MainTab />}

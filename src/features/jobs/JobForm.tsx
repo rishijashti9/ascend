@@ -96,7 +96,7 @@ export function JobForm({
     <form
       onSubmit={(e) => void submit(e)}
       aria-label={job ? `Edit ${job.company}` : 'New application'}
-      className="border-accent bg-surface shadow-card flex flex-col gap-3 rounded-lg border p-4"
+      className="panel outline-accent outline-2 flex flex-col gap-3 p-4"
     >
       <div className="grid gap-3 sm:grid-cols-2">
         <TextInput label="Company" value={v.company} maxLength={80} onChange={set('company')} />

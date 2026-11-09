@@ -29,7 +29,7 @@ function FormShell({
   return (
     <form
       aria-label={title}
-      className="border-accent bg-surface shadow-card flex flex-col gap-3 rounded-lg border p-4"
+      className="panel outline-accent outline-2 flex flex-col gap-3 p-4"
       onSubmit={(e) => {
         e.preventDefault();
         if (canSave) onSave();

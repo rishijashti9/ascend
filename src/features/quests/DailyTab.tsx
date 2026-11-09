@@ -43,7 +43,7 @@ function NewHabit({ onDone }: { onDone: () => void }) {
   return (
     <section
       aria-label="New daily quest"
-      className="border-accent bg-surface shadow-card flex flex-col gap-4 rounded-lg border p-4"
+      className="panel outline-accent outline-2 flex flex-col gap-4 p-4"
     >
       <h2 className="display">New daily quest</h2>
       <HabitEditor habit={draft} onChange={setDraft} />

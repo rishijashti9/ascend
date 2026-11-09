@@ -65,10 +65,8 @@ export function SkillPicker({
                         type="button"
                         aria-pressed={on}
                         onClick={() => toggle(s.id)}
-                        className={`min-h-11 rounded-full border px-3 text-sm ${
-                          on
-                            ? 'bg-accent-fill text-on-accent border-transparent'
-                            : 'border-border text-text'
+                        className={`pill min-h-11 px-4 text-sm font-semibold ${
+                          on ? 'bg-accent-fill text-on-accent' : 'bg-surface-2 text-text'
                         }`}
                       >
                         {s.name}

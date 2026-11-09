@@ -151,7 +151,7 @@ export function ImpactPreview({
   return (
     <section
       aria-label="Plan waiting for review"
-      className="border-accent bg-surface shadow-card flex flex-col gap-4 rounded-lg border p-4"
+      className="panel outline-accent outline-2 flex flex-col gap-4 p-4"
     >
       <h2 className="display flex items-center gap-2">
         <Sparkles aria-hidden size={18} className="text-accent-text" /> Plan waiting for review

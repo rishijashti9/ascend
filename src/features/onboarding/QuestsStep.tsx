@@ -17,9 +17,7 @@ function QuestRow({ habit, draft, update }: { habit: StarterHabit; draft: Draft;
   const coreLocked = !habit.core && (!habit.selected || !canAddCore(draft));
 
   return (
-    <li
-      className={`border-border bg-surface shadow-card rounded-lg border p-3 ${habit.selected ? '' : 'opacity-70'}`}
-    >
+    <li className={`panel p-3 ${habit.selected ? '' : 'opacity-70'}`}>
       <div className="flex items-start gap-3">
         <button
           type="button"

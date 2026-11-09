@@ -196,7 +196,7 @@ Part C — Ask the System
 - [x] 12A.10 Ask
 - [x] 12A.11 Today dashboard
 - [x] 12A.12 Today cards in ELEVATE
-- [ ] 12A.13 Quests screen
+- [x] 12A.13 Quests screen
 - [ ] 12A.14 Focus
 - [ ] 12A.15 Growth → Goals
 - [ ] 12A.16 Growth → Roadmap
@@ -275,12 +275,12 @@ Every route, tab, sheet, dialog, card, banner, toast, state and Android surface,
 
 **Quests** (`features/quests/`, `ui/habit/`)
 
-- [ ] Quests page header + tabs Daily / Weekly / Main / Side (`QuestsPage.tsx`, `QuestDefTabs.tsx`)
-- [ ] Daily tab list, core star, streaks, paused / archived sections (`DailyTab.tsx`, `HabitRow.tsx`)
-- [ ] Habit editor (title, stat, difficulty, measure, target, minimum, full/min wording, days, skills) + new / edit / reorder / pause / archive / restore / delete-forever confirm (`ui/habit/HabitEditor.tsx`, `HabitRow.tsx`)
-- [ ] Weekly / side quest form (`QuestDefForm.tsx`) and lists, done / carried-over states
-- [ ] Skill picker (`ui/SkillPicker.tsx`)
-- [ ] Empty states per tab
+- [x] Quests page header + tabs Daily / Weekly / Main / Side (`QuestsPage.tsx`, `QuestDefTabs.tsx`)
+- [x] Daily tab list, core star, streaks, paused / archived sections (`DailyTab.tsx`, `HabitRow.tsx`)
+- [x] Habit editor (title, stat, difficulty, measure, target, minimum, full/min wording, days, skills) + new / edit / reorder / pause / archive / restore / delete-forever confirm (`ui/habit/HabitEditor.tsx`, `HabitRow.tsx`)
+- [x] Weekly / side quest form (`QuestDefForm.tsx`) and lists, done / carried-over states
+- [x] Skill picker (`ui/SkillPicker.tsx`)
+- [x] Empty states per tab
 
 **Focus** (`features/focus/`)
 

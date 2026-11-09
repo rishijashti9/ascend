@@ -49,9 +49,7 @@ export function HabitRow({ habit, streak, coreFull, onMove, first, last }: RowPr
   const problems = editProblems(draft);
 
   return (
-    <li
-      className={`border-border bg-surface shadow-card rounded-lg border p-3 ${active ? '' : 'opacity-80'}`}
-    >
+    <li className={`panel p-3 ${active ? '' : 'opacity-80'}`}>
       <div className="flex items-start gap-2">
         <div className="min-w-0 flex-1 pt-1 pl-1">
           <div className="flex flex-wrap items-center gap-x-2">
