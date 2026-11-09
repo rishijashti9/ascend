@@ -143,7 +143,8 @@ export function BodyPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
-      <h1 className="display text-2xl">Body</h1>
+      {/* Me's Body tab already names this screen (Phase 12). */}
+      <h1 className="sr-only">Body</h1>
       <LogForm key={day} day={day} log={todayLog} />
       <BodyTrends today={day} />
       <Photos day={day} />

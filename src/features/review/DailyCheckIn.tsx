@@ -31,8 +31,8 @@ function Scale({
             aria-checked={value === n}
             aria-label={`${label} ${n} of 5`}
             onClick={() => onChange(n)}
-            className={`min-h-11 flex-1 rounded-md border text-base tabular-nums ${
-              value === n ? 'border-accent bg-surface-2 font-semibold' : 'border-border bg-surface'
+            className={`pill min-h-11 flex-1 text-base font-semibold tabular-nums ${
+              value === n ? 'bg-accent-fill text-on-accent' : 'bg-surface-2 text-text'
             }`}
           >
             {n}

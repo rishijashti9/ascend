@@ -163,10 +163,10 @@ export function WeeklyReview({ weekStart, today }: { weekStart: string; today: s
                     aria-checked={kept.has(i.id)}
                     aria-label={`Keep: ${i.data.title}`}
                     onClick={() => toggle(i.id)}
-                    className={`flex size-11 shrink-0 items-center justify-center rounded-md border ${
+                    className={`flex size-11 shrink-0 items-center justify-center rounded-full border-2 ${
                       kept.has(i.id)
                         ? 'bg-accent-fill text-on-accent border-transparent'
-                        : 'border-border'
+                        : 'border-muted'
                     }`}
                   >
                     {kept.has(i.id) && <Check aria-hidden size={20} />}

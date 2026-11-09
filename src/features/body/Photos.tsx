@@ -75,7 +75,7 @@ export function Photos({ day }: { day: string }) {
                   setOpen(p);
                   setConfirmDelete(false);
                 }}
-                className="border-border bg-surface-2 block aspect-square w-full overflow-hidden rounded-md border"
+                className="bg-surface-2 block aspect-square w-full overflow-hidden rounded-md"
               >
                 <img src={urls[p.id]} alt="" className="h-full w-full object-cover" />
               </button>

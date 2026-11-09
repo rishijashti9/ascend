@@ -49,8 +49,11 @@ export function KnowsPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
-      <Link to="/me/stats" className="text-accent-text inline-flex min-h-11 items-center gap-1">
-        <ArrowLeft aria-hidden size={18} /> Profile
+      <Link
+        to="/me"
+        className="text-accent-text inline-flex min-h-11 items-center gap-1 self-start text-sm font-semibold"
+      >
+        <ArrowLeft aria-hidden size={18} /> Me
       </Link>
       <header className="flex flex-col gap-1">
         <h1 className="display flex items-center gap-3 text-2xl">

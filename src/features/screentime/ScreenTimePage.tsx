@@ -16,6 +16,12 @@ export function ScreenTimePage() {
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+      <Link
+        to="/me"
+        className="text-accent-text inline-flex min-h-11 items-center self-start text-sm font-semibold"
+      >
+        ← Me
+      </Link>
       <h1 className="display text-2xl">Screen time</h1>
       <IncidentBanner />
       {!s.rules?.enabled ? (
