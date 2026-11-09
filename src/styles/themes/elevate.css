@@ -39,6 +39,7 @@
   --warning-text: #ffe14d;
   --error: #ff3b2f;
   --error-text: #ff6b61;
+  --on-error: #000000;
   --missed: #9a9a9a;
 
   /* Bento tiles and the text on them */

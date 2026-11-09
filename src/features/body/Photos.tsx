@@ -154,7 +154,7 @@ function PhotoViewer({
       {confirmDelete ? (
         <div className="flex flex-wrap items-center justify-center gap-2">
           <span className="text-sm">Delete this photo for good?</span>
-          <Button disabled={busy} onClick={onDelete}>
+          <Button variant="danger" disabled={busy} onClick={onDelete}>
             Delete
           </Button>
           <Button variant="secondary" onClick={() => setConfirmDelete(false)}>

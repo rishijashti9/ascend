@@ -4,6 +4,7 @@ import { GAME } from '@/config/game';
 import type { Habit } from '@/core/db/types';
 import type { HabitStreak } from '@/core/engine/streaks';
 import { Button } from '@/ui/Button';
+import { Confirm } from '@/ui/Confirm';
 import {
   editProblems,
   habitSummary,
@@ -75,7 +76,7 @@ export function HabitRow({ habit, streak, coreFull, onMove, first, last }: RowPr
             onClick={() =>
               void run({ type: 'habit.update', payload: { id, changes: { core: !habit.core } } })
             }
-            className={`flex min-h-11 items-center gap-1 rounded-md px-2 text-sm disabled:opacity-40 ${
+            className={`pill hover:bg-surface-2 flex min-h-11 items-center gap-1 px-3 text-sm disabled:opacity-40 ${
               habit.core ? 'text-warning-text font-medium' : 'text-muted'
             }`}
           >
@@ -162,27 +163,20 @@ export function HabitRow({ habit, streak, coreFull, onMove, first, last }: RowPr
             )}
           </div>
           {confirmDelete && (
-            <div
-              role="alertdialog"
-              aria-label="Delete forever?"
-              className="bg-surface-2 flex flex-col gap-2 rounded-md p-3"
+            <Confirm
+              danger
+              label="Delete forever?"
+              confirmLabel="Delete forever"
+              cancelLabel="Keep it"
+              busy={busy}
+              onConfirm={() => void run({ type: 'habit.delete', payload: { id, confirm: true } })}
+              onCancel={() => setConfirmDelete(false)}
             >
-              <p className="text-sm">
+              <p>
                 Delete “{habit.title}” forever? Past days keep their history, but it can’t be
                 restored.
               </p>
-              <div className="flex gap-2">
-                <Button
-                  disabled={busy}
-                  onClick={() => void run({ type: 'habit.delete', payload: { id, confirm: true } })}
-                >
-                  Delete forever
-                </Button>
-                <Button variant="secondary" onClick={() => setConfirmDelete(false)}>
-                  Keep it
-                </Button>
-              </div>
-            </div>
+            </Confirm>
           )}
           {active && (
             <p className="text-muted text-xs">

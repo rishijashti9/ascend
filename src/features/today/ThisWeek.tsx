@@ -48,7 +48,7 @@ function WeeklyPlanNote({ weekStart }: { weekStart: string }) {
   );
   if (!entry) return null;
   return (
-    <div className="bg-surface-2 flex flex-wrap items-center justify-between gap-2 rounded-md px-3 py-2 text-sm">
+    <div className="inset flex flex-wrap items-center justify-between gap-2 px-4 py-2 text-sm">
       <span>This week’s quests were planned by the System.</span>
       <Button
         variant="ghost"

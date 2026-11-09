@@ -4,6 +4,7 @@ import { isEnabled } from '@/config/features';
 import { formatErrorLog, logError } from '@/core/errorLog';
 import { exportBackup } from './files';
 import { Button } from '@/ui/Button';
+import { Robot } from '@/ui/Robot';
 
 /**
  * Friendly full-page error screen shown instead of a blank page. "Export my data" tries to
@@ -35,15 +36,16 @@ export function ErrorScreen({ message }: { message?: string }) {
   return (
     <main
       role="alert"
-      className="bg-bg mx-auto flex min-h-dvh max-w-md flex-col justify-center gap-6 p-6"
+      className="mx-auto flex min-h-dvh max-w-md flex-col justify-center gap-6 p-6"
     >
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
+        <Robot size={56} />
         <h1 className="display text-2xl">Something went wrong</h1>
         <p className="text-muted">
           Your data is safe on this device. Reloading usually fixes this. If it keeps happening,
           copy the error details and share them.
         </p>
-        {message && <p className="bg-surface-2 rounded-md p-3 font-mono text-sm">{message}</p>}
+        {message && <p className="inset p-4 font-mono text-sm break-words">{message}</p>}
       </div>
       <div className="flex flex-wrap gap-3">
         <Button onClick={() => window.location.reload()}>

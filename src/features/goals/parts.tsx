@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { GoalStatus, MilestoneStatus } from '@/core/db/types';
 import type { Action } from '@/core/pipeline';
 import { Button } from '@/ui/Button';
+import { Confirm } from '@/ui/Confirm';
 import { ProgressBar } from '@/ui/ProgressBar';
 
 const LABEL: Record<GoalStatus | MilestoneStatus, string> = {
@@ -55,27 +56,19 @@ export function StatusActions({
 
   if (confirmFinish) {
     return (
-      <div
-        role="alertdialog"
-        aria-label={`Mark ${name} done?`}
-        className="inset flex flex-col gap-2 p-3"
+      <Confirm
+        label={`Mark ${name} done?`}
+        confirmLabel="Yes, it’s done"
+        cancelLabel="Not yet"
+        busy={busy}
+        onConfirm={() => {
+          setConfirmFinish(false);
+          go('done');
+        }}
+        onCancel={() => setConfirmFinish(false)}
       >
-        <p className="text-sm">Mark “{name}” as done?</p>
-        <div className="flex gap-2">
-          <Button
-            disabled={busy}
-            onClick={() => {
-              setConfirmFinish(false);
-              go('done');
-            }}
-          >
-            Yes, it’s done
-          </Button>
-          <Button variant="secondary" onClick={() => setConfirmFinish(false)}>
-            Not yet
-          </Button>
-        </div>
-      </div>
+        <p>Mark “{name}” as done?</p>
+      </Confirm>
     );
   }
   // `contents`: the buttons flow inline with whatever the parent row already holds (e.g. Edit).

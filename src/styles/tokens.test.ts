@@ -97,6 +97,10 @@ describe.each(themes)('%s theme', (_name, t) => {
     expect(contrast(c(t, 'on-accent'), c(t, 'accent-fill'))).toBeGreaterThanOrEqual(TEXT);
   });
 
+  it('danger button label passes AA', () => {
+    expect(contrast(c(t, 'on-error'), c(t, 'error'))).toBeGreaterThanOrEqual(TEXT);
+  });
+
   it('primary button stands out from the surface (3:1)', () => {
     expect(contrast(c(t, 'accent-fill'), c(t, 'surface'))).toBeGreaterThanOrEqual(UI);
   });

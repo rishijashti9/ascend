@@ -7,6 +7,7 @@ import { handleTap, LEARNED_KINDS } from '@/core/notifications/taps';
 import { recordAction } from '@/core/pipeline';
 import { dismissNotice, useNotices } from '@/core/state/notices';
 import { nowMs } from '@/core/time';
+import { Button } from '@/ui/Button';
 
 /**
  * Connects notification taps to the app (open the right screen; "I'm up" checks in at the tap
@@ -50,23 +51,33 @@ export function NotificationBridge() {
       aria-live="polite"
     >
       {message && (
-        <p role="alert" className="panel text-warning-text px-4 py-3 text-sm">
+        <p
+          role="alert"
+          className="panel shadow-float text-warning-text outline-warning px-5 py-4 text-sm outline-2"
+        >
           {message}
         </p>
       )}
       {notices.map((n) => (
-        <div key={n.key} role="status" className="panel flex items-start gap-3 px-4 py-3 text-sm">
-          <Bell aria-hidden size={18} className="text-accent-text mt-0.5 shrink-0" />
+        <div
+          key={n.key}
+          role="status"
+          className="panel shadow-float flex items-start gap-3 py-3 pr-2 pl-3 text-sm"
+        >
+          <span
+            aria-hidden
+            className="bg-tile-lime text-on-tile-lime grid size-10 shrink-0 place-items-center rounded-full"
+          >
+            <Bell size={18} strokeWidth={2.5} />
+          </span>
           <div className="flex min-w-0 flex-1 flex-col gap-2">
-            <p>
-              <span className="font-medium">{n.title}</span>{' '}
+            <p className="pt-0.5">
+              <span className="display block text-base">{n.title}</span>
               <span className="text-muted">{n.body}</span>
             </p>
             <div className="flex flex-wrap gap-2">
               {n.wakeInstanceId && (
-                <button
-                  type="button"
-                  className="bg-accent-fill text-on-accent min-h-11 rounded-md px-4 font-medium"
+                <Button
                   onClick={() => {
                     dismissNotice(n.key);
                     void handleTap({
@@ -81,19 +92,18 @@ export function NotificationBridge() {
                   }}
                 >
                   I’m up
-                </button>
+                </Button>
               )}
               {n.path !== '/' && (
-                <button
-                  type="button"
-                  className="text-accent-text min-h-11 px-2"
+                <Button
+                  variant="secondary"
                   onClick={() => {
                     dismissNotice(n.key);
                     navigate(n.path);
                   }}
                 >
                   Open
-                </button>
+                </Button>
               )}
             </div>
           </div>
@@ -101,7 +111,7 @@ export function NotificationBridge() {
             type="button"
             aria-label="Dismiss reminder"
             onClick={() => dismissNotice(n.key)}
-            className="text-muted flex size-11 shrink-0 items-center justify-center"
+            className="text-muted hover:text-text hover:bg-surface-2 grid size-11 shrink-0 place-items-center rounded-full"
           >
             <X aria-hidden size={18} />
           </button>

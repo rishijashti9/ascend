@@ -10,6 +10,7 @@ import { useHabits } from '@/core/state/habits';
 import { rebuildProgress } from '@/core/state/progress';
 import { addMinutes, formatTime } from '@/data/starter';
 import { Button } from '@/ui/Button';
+import { Confirm } from '@/ui/Confirm';
 import { Select, TextInput } from '@/ui/Field';
 import { useAction } from '@/ui/hooks/useAction';
 import { Switch } from '@/ui/Switch';
@@ -300,22 +301,18 @@ export function DataSection() {
             Reset all data…
           </Button>
         ) : (
-          <div
-            role="alertdialog"
-            aria-label="Reset all data?"
-            className="inset flex flex-col gap-3 p-3"
+          <Confirm
+            danger
+            label="Reset all data?"
+            confirmLabel="Delete everything"
+            onConfirm={() => void reset()}
+            onCancel={() => setConfirmReset(false)}
           >
-            <p className="text-sm">
+            <p>
               This deletes every quest, day, XP and setting on this device and starts over with
               onboarding. It can’t be undone.
             </p>
-            <div className="flex flex-wrap gap-2">
-              <Button onClick={() => void reset()}>Delete everything</Button>
-              <Button variant="secondary" onClick={() => setConfirmReset(false)}>
-                Cancel
-              </Button>
-            </div>
-          </div>
+          </Confirm>
         )}
       </div>
     </Card>

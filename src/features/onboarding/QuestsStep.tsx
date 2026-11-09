@@ -44,7 +44,7 @@ function QuestRow({ habit, draft, update }: { habit: StarterHabit; draft: Draft;
           aria-pressed={habit.core}
           disabled={coreLocked}
           onClick={() => set({ ...habit, core: !habit.core })}
-          className={`flex min-h-11 items-center gap-1 rounded-md px-2 text-sm disabled:opacity-40 ${
+          className={`pill hover:bg-surface-2 flex min-h-11 items-center gap-1 px-3 text-sm disabled:opacity-40 ${
             habit.core ? 'text-warning-text font-medium' : 'text-muted'
           }`}
         >

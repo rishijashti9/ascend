@@ -7,6 +7,7 @@ import { useAccount } from '@/core/state/account';
 import { supabaseBackend } from '@/core/sync/backend';
 import { getSupabase } from '@/core/sync/client';
 import { Button } from '@/ui/Button';
+import { Confirm } from '@/ui/Confirm';
 import { Card } from './sections';
 
 /**
@@ -45,7 +46,15 @@ export function DeleteEverything() {
           <Trash2 aria-hidden size={16} /> Delete everything…
         </Button>
       ) : (
-        <div className="flex flex-col gap-3 text-sm">
+        <Confirm
+          danger
+          label="Delete everything?"
+          confirmLabel={busy ? 'Deleting…' : 'Yes, export and delete everything'}
+          cancelLabel="Keep my data"
+          busy={busy}
+          onConfirm={() => void run()}
+          onCancel={() => setConfirming(false)}
+        >
           <p>
             This removes all your ASCEND data from this device
             {signedIn ? ' and from your cloud account' : ''} — quests, XP, goals, logs, photos and
@@ -63,15 +72,7 @@ export function DeleteEverything() {
               Also delete my account
             </label>
           )}
-          <div className="flex flex-wrap gap-2">
-            <Button disabled={busy} onClick={() => void run()}>
-              {busy ? 'Deleting…' : 'Yes, export and delete everything'}
-            </Button>
-            <Button variant="ghost" disabled={busy} onClick={() => setConfirming(false)}>
-              Keep my data
-            </Button>
-          </div>
-        </div>
+        </Confirm>
       )}
       {message && (
         <p role="alert" className="text-warning-text text-sm">

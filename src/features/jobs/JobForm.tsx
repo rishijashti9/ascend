@@ -172,7 +172,7 @@ export function JobForm({
         {job &&
           (confirmDelete ? (
             <Button
-              variant="secondary"
+              variant="danger"
               disabled={busy}
               onClick={() =>
                 void run({ type: 'job.delete', payload: { id: job.id } }).then(

@@ -1,11 +1,13 @@
 import type { ButtonHTMLAttributes } from 'react';
 
-type Variant = 'primary' | 'secondary' | 'ghost';
+type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 
 const variants: Record<Variant, string> = {
   primary: 'bg-accent-fill text-on-accent hover:opacity-90',
   secondary: 'bg-surface-2 text-text hover:opacity-90',
   ghost: 'text-accent-text hover:bg-surface-2',
+  /** The one button that deletes or resets for good (inside a confirmation). */
+  danger: 'bg-error text-on-error hover:opacity-90',
 };
 
 export function Button({

@@ -27,16 +27,21 @@ export function UpdatePrompt() {
   return (
     <div
       role="status"
-      className="panel shadow-overlay fixed inset-x-4 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-50 mx-auto flex max-w-md items-center gap-3 p-3 lg:bottom-6"
+      className="pill bg-surface shadow-float fixed inset-x-4 bottom-[calc(max(0.75rem,env(safe-area-inset-bottom))+10rem)] z-50 mx-auto flex max-w-md items-center gap-2 py-2 pr-2 pl-5 lg:bottom-6"
     >
-      <span className="flex-1 text-sm">Update ready.</span>
+      <span className="flex-1 text-sm font-semibold">Update ready.</span>
       <Button onClick={() => void updateServiceWorker(true)}>
         <RotateCw aria-hidden size={18} />
         Reload
       </Button>
-      <Button variant="ghost" aria-label="Later" onClick={() => setNeedRefresh(false)}>
+      <button
+        type="button"
+        aria-label="Later"
+        onClick={() => setNeedRefresh(false)}
+        className="text-muted hover:text-text hover:bg-surface-2 grid size-11 shrink-0 place-items-center rounded-full"
+      >
         <X aria-hidden size={18} />
-      </Button>
+      </button>
     </div>
   );
 }

@@ -289,7 +289,7 @@ function SkillEditor({
         {skill.status === 'archived' &&
           (confirmDelete ? (
             <Button
-              variant="secondary"
+              variant="danger"
               disabled={busy}
               onClick={() =>
                 void run({ type: 'skill.delete', payload: { id: skill.id } }).then(

@@ -9,9 +9,51 @@
     <link rel="icon" href="/icon.svg" sizes="any" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" />
     <title>ASCEND</title>
+    <style>
+      .boot {
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.25rem;
+        color: var(--text, #f2f2f2);
+        font-family: system-ui, sans-serif;
+      }
+      .boot-mark {
+        font-size: 1.75rem;
+        font-weight: 800;
+        letter-spacing: 0.2em;
+        font-stretch: 125%;
+      }
+      .boot-dot {
+        width: 0.75rem;
+        height: 0.75rem;
+        border-radius: 999px;
+        background: var(--accent, #c8f03c);
+        animation: boot-pulse 1.2s ease-in-out infinite;
+      }
+      @keyframes boot-pulse {
+        50% {
+          opacity: 0.25;
+          transform: scale(0.7);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .boot-dot {
+          animation: none;
+        }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Startup splash (Phase 12): shown while the database opens; React replaces it. -->
+      <div class="boot" role="status" aria-label="Starting ASCEND">
+        <span class="boot-mark">ASCEND</span>
+        <span class="boot-dot" aria-hidden="true"></span>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

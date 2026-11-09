@@ -31,6 +31,7 @@
   --color-warning-text: var(--warning-text);
   --color-error: var(--error);
   --color-error-text: var(--error-text);
+  --color-on-error: var(--on-error);
   --color-missed: var(--missed);
   --color-tile-lime: var(--tile-lime);
   --color-tile-white: var(--tile-white);
