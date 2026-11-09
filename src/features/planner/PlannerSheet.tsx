@@ -109,7 +109,7 @@ export function PlannerSheet({
             ref={closeRef}
             aria-label="Close planner"
             onClick={onClose}
-            className="text-muted flex size-11 items-center justify-center rounded-md"
+            className="bg-surface-2 text-text flex size-11 items-center justify-center rounded-full"
           >
             <X aria-hidden size={20} />
           </button>
@@ -127,7 +127,7 @@ export function PlannerSheet({
               {analysis.activeMainQuests === 1 ? '' : 's'}.
             </p>
             {analysis.conflicts.length > 0 ? (
-              <ul className="bg-surface-2 flex flex-col gap-1 rounded-lg p-4 text-sm">
+              <ul className="inset flex flex-col gap-1 p-4 text-sm">
                 {analysis.conflicts.map((c) => (
                   <li key={c}>• {c}</li>
                 ))}

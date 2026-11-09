@@ -31,7 +31,7 @@ function Entry({ entry }: { entry: HistoryRow }) {
   const { run, busy, error } = useAction();
   const lines = changeLines(entry.changes);
   return (
-    <li className="border-border bg-surface flex flex-col gap-2 rounded-md border p-3">
+    <li className="inset flex flex-col gap-2 p-3">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="font-medium">{entry.summary}</p>

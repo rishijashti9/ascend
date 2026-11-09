@@ -77,7 +77,7 @@ function RiskCard({
   return (
     <section
       aria-label="Deadline at risk"
-      className="border-warning bg-surface flex flex-col gap-3 rounded-lg border p-4"
+      className="panel outline-warning flex flex-col gap-3 p-4 outline-2"
     >
       <p className="flex items-start gap-2">
         <AlertTriangle aria-hidden size={18} className="text-warning-text mt-0.5 shrink-0" />
@@ -134,10 +134,7 @@ function CheckInCard({
   useShown(today ? 'goal_checkin' : null, mainQuestId);
   if (!today) return null;
   return (
-    <section
-      aria-label="Check-in"
-      className="border-border bg-surface-2 flex flex-col gap-3 rounded-lg border p-4"
-    >
+    <section aria-label="Check-in" className="inset flex flex-col gap-3 p-4">
       <p className="flex items-start gap-2">
         <HeartHandshake aria-hidden size={18} className="text-accent-text mt-0.5 shrink-0" />
         {message}

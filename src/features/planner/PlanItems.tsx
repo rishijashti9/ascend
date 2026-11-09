@@ -15,7 +15,7 @@ export function PlanItems({ items }: { items: readonly ProposalItem[] }) {
             <h3 className="display text-muted text-sm">{GROUP_TITLE[g]}</h3>
             <ul className="flex flex-col gap-2">
               {list.map((i) => (
-                <li key={i.id} className="border-border bg-surface rounded-md border p-3">
+                <li key={i.id} className="inset p-3">
                   <p className="font-medium">{itemLabel(i)}</p>
                   <p className="text-muted text-sm">{i.reason}</p>
                 </li>

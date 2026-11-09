@@ -16,7 +16,7 @@ export function StatusChip({ status }: { status: GoalStatus | MilestoneStatus })
   if (status === 'active') return null;
   const tone = status === 'done' ? 'text-success-text' : 'text-muted';
   return (
-    <span className={`border-border rounded-md border px-1.5 py-0.5 text-xs font-medium ${tone}`}>
+    <span className={`pill bg-surface-2 px-2.5 py-0.5 text-xs font-semibold ${tone}`}>
       {LABEL[status]}
     </span>
   );
@@ -58,7 +58,7 @@ export function StatusActions({
       <div
         role="alertdialog"
         aria-label={`Mark ${name} done?`}
-        className="bg-surface-2 flex flex-col gap-2 rounded-md p-3"
+        className="inset flex flex-col gap-2 p-3"
       >
         <p className="text-sm">Mark “{name}” as done?</p>
         <div className="flex gap-2">

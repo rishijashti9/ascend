@@ -198,7 +198,7 @@ Part C — Ask the System
 - [x] 12A.12 Today cards in ELEVATE
 - [x] 12A.13 Quests screen
 - [x] 12A.14 Focus
-- [ ] 12A.15 Growth → Goals
+- [x] 12A.15 Growth → Goals
 - [ ] 12A.16 Growth → Roadmap
 - [ ] 12A.17 Growth → Skills
 - [ ] 12A.18 Me → Stats & achievements
@@ -292,12 +292,12 @@ Every route, tab, sheet, dialog, card, banner, toast, state and Android surface,
 **Growth → Goals** (`features/goals/`, `features/planner/`)
 
 - [x] Growth screen with tabs Goals · Roadmap · Skills · Jobs (when on)
-- [ ] Vision: dreams, why, progress, main quests, archived (`GoalsPage.tsx`)
-- [ ] Main quest page: why panel, milestones, progress, forecast line, focus goal of the week, edit / pause / done confirm / archive / restore (`MainQuestPage.tsx`, `parts.tsx`, `ForecastLine.tsx`)
-- [ ] Goal / milestone forms (`forms.tsx`)
-- [ ] Follow-ups: deadline risk options, 30-day check-in (`FollowUps.tsx`)
-- [ ] Goal Planner sheet: analysis, interview questions, preview / approve items, edits (`PlannerSheet.tsx`, `QuestionField.tsx`, `PlanItems.tsx`)
-- [ ] Pending plan card (`PendingPlan.tsx`) and Plan history + Undo (`PlanHistory.tsx`)
+- [x] Vision: dreams, why, progress, main quests, archived (`GoalsPage.tsx`)
+- [x] Main quest page: why panel, milestones, progress, forecast line, focus goal of the week, edit / pause / done confirm / archive / restore (`MainQuestPage.tsx`, `parts.tsx`, `ForecastLine.tsx`)
+- [x] Goal / milestone forms (`forms.tsx`)
+- [x] Follow-ups: deadline risk options, 30-day check-in (`FollowUps.tsx`)
+- [x] Goal Planner sheet: analysis, interview questions, preview / approve items, edits (`PlannerSheet.tsx`, `QuestionField.tsx`, `PlanItems.tsx`)
+- [x] Pending plan card (`PendingPlan.tsx`) and Plan history + Undo (`PlanHistory.tsx`)
 
 **Growth → Roadmap** (`features/compass/`, `features/ask/`)
 

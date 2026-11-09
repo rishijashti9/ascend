@@ -47,9 +47,7 @@ function ItemRow({
   const shown = itemLabel(edit.title ? withTitle(item, edit.title) : item);
 
   return (
-    <li
-      className={`border-border bg-surface flex flex-col gap-2 rounded-md border p-3 ${checked ? '' : 'opacity-60'}`}
-    >
+    <li className={`inset flex flex-col gap-2 p-3 ${checked ? '' : 'opacity-60'}`}>
       <div className="flex items-start gap-3">
         <button
           type="button"
@@ -57,8 +55,8 @@ function ItemRow({
           aria-checked={checked}
           aria-label={`Include: ${shown}`}
           onClick={onToggle}
-          className={`flex size-11 shrink-0 items-center justify-center rounded-md border ${
-            checked ? 'bg-accent-fill text-on-accent border-transparent' : 'border-border'
+          className={`flex size-11 shrink-0 items-center justify-center rounded-full border-2 ${
+            checked ? 'bg-accent-fill text-on-accent border-transparent' : 'border-muted'
           }`}
         >
           {checked && <Check aria-hidden size={20} />}

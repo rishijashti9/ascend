@@ -147,8 +147,8 @@ export function MainQuestPage() {
       </header>
 
       {quest.why && (
-        <section aria-label="Why this matters" className="bg-surface-2 rounded-lg p-4">
-          <h2 className="display text-muted mb-1 text-sm">Why this matters to me</h2>
+        <section aria-label="Why this matters" className="tile tile-violet p-4">
+          <h2 className="display mb-1 text-sm">Why this matters to me</h2>
           <p className="italic">“{quest.why}”</p>
         </section>
       )}
@@ -208,7 +208,7 @@ export function MainQuestPage() {
           Milestones
         </h2>
         {visible.length === 0 && mode !== 'add' && (
-          <div className="bg-surface-2 flex flex-col gap-2 rounded-lg p-4">
+          <div className="inset flex flex-col gap-2 p-4">
             <p className="text-sm">
               No plan yet. The Goal Planner can break this goal into milestones and weekly quests
               after a few quick questions — or add milestones yourself.

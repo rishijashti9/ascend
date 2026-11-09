@@ -21,13 +21,16 @@ function MainQuestRow({ quest }: { quest: MainQuest }) {
     <li>
       <Link
         to={`/growth/goals/${quest.id}`}
-        className="hover:bg-surface-2 flex min-h-11 flex-col gap-1 rounded-md px-2 py-2"
+        className="inset flex min-h-11 flex-col gap-1.5 px-3 py-3 transition-transform duration-(--dur) active:scale-[0.99]"
       >
         <span className="flex items-center gap-2">
-          <span className="font-medium">{quest.title}</span>
+          <span className="display text-base">{quest.title}</span>
           <StatChip stat={quest.stat} />
           <StatusChip status={quest.status} />
-          <ChevronRight aria-hidden size={16} className="text-muted ml-auto" />
+          <span className="display ml-auto text-lg tabular-nums">
+            {Math.round(progress * 100)}%
+          </span>
+          <ChevronRight aria-hidden size={16} className="text-muted" />
         </span>
         <ProgressLine value={progress} label={`${quest.title} progress`} />
         <span className="text-muted text-xs">
@@ -51,20 +54,26 @@ function DreamCard({ dream }: { dream: Dream }) {
   const archived = quests.filter((q) => q.status === 'archived');
 
   return (
-    <li className="panel flex flex-col gap-3 p-4">
-      <div className="flex items-start gap-2">
+    <li className="panel flex flex-col gap-3 p-3">
+      <div className="tile tile-lime flex items-start gap-2 p-4">
         <div className="min-w-0 flex-1">
-          <h2 className="display flex flex-wrap items-center gap-2 text-lg">
+          <p className="text-on-tile-muted text-xs font-bold tracking-widest uppercase">Dream</p>
+          <h2 className="display mt-1 flex flex-wrap items-center gap-2 text-xl">
             {dream.title} <StatusChip status={dream.status} />
           </h2>
-          {dream.why && <p className="text-muted mt-1 text-sm italic">“{dream.why}”</p>}
+          {dream.why && <p className="text-on-tile-muted mt-1 text-sm italic">“{dream.why}”</p>}
+          <p className="text-on-tile-muted mt-2 text-sm">
+            {visible.length} main quest{visible.length === 1 ? '' : 's'} ·{' '}
+            <span className="display text-on-tile-lime text-lg">{Math.round(progress * 100)}%</span>{' '}
+            overall
+          </p>
         </div>
         <button
           type="button"
           aria-expanded={mode === 'manage'}
           aria-label={`Manage ${dream.title}`}
           onClick={() => setMode(mode === 'manage' ? 'none' : 'manage')}
-          className="text-muted flex size-11 items-center justify-center rounded-md"
+          className="flex size-11 items-center justify-center rounded-full"
         >
           <ChevronDown aria-hidden size={20} className={mode === 'manage' ? 'rotate-180' : ''} />
         </button>
@@ -173,7 +182,8 @@ export function GoalsPage() {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h1 className="display text-2xl">Goals</h1>
+        {/* Growth's Goals tab already names this screen (Phase 12). */}
+        <h1 className="sr-only">Goals</h1>
         {!adding && (
           <Button onClick={() => setAdding(true)}>
             <Plus aria-hidden size={18} />

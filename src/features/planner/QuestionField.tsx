@@ -14,13 +14,13 @@ export function QuestionField({
   const id = useId();
   const labelId = `${id}-label`;
   const chip = (selected: boolean) =>
-    `min-h-11 rounded-md border px-3 text-sm ${
-      selected ? 'border-accent bg-surface-2 font-medium' : 'border-border bg-surface'
+    `pill min-h-11 px-4 text-sm font-semibold ${
+      selected ? 'bg-accent-fill text-on-accent' : 'bg-surface-2 text-text'
     }`;
 
   return (
     <fieldset className="flex flex-col gap-2">
-      <legend id={labelId} className="mb-1 font-medium">
+      <legend id={labelId} className="display mb-1 text-base">
         {q.label}
       </legend>
       {q.kind === 'chips' && (
