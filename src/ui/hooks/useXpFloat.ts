@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { playFeedback } from '@/app/feedback';
 import { progressStore } from '@/core/state/progress';
 
 /**
@@ -19,7 +20,10 @@ export function useXpFloat() {
     const before = total();
     const ok = await fn();
     const gained = total() - before;
-    if (ok && gained > 0) setFloat({ key: Date.now(), xp: gained });
+    if (ok && gained > 0) {
+      setFloat({ key: Date.now(), xp: gained });
+      playFeedback('complete');
+    }
     return ok;
   }, []);
 

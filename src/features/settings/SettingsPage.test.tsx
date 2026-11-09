@@ -49,6 +49,8 @@ describe('SettingsPage', () => {
     await waitFor(async () => expect((await stored())?.effects).toBe('light'), { timeout: 20_000 });
     const sound = within(appearance).getByRole('switch', { name: 'Sound and vibration' });
     expect(sound).toHaveAttribute('aria-checked', 'false');
+    // The switch is disabled while the effects save finishes; a click then would be ignored.
+    await waitFor(() => expect(sound).toBeEnabled(), { timeout: 20_000 });
     await userEvent.click(sound);
     await waitFor(async () => expect((await stored())?.sound_haptics).toBe(true), {
       timeout: 20_000,

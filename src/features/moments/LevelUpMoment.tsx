@@ -1,6 +1,7 @@
 import { ArrowUpRight } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { useEffectsLevel } from '@/app/effects';
+import { playFeedback } from '@/app/feedback';
 import { dismissMoment, useMoments } from '@/core/state/moments';
 import { useProgress } from '@/core/state/progress';
 import { Robot } from '@/ui/Robot';
@@ -26,6 +27,7 @@ export function LevelUpMoment() {
   useEffect(() => {
     if (!moment) return;
     button.current?.focus();
+    playFeedback(moment.rank ? 'rankup' : 'levelup');
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') dismissMoment();
     };
