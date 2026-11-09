@@ -1,4 +1,6 @@
-import { NavLink, Outlet } from 'react-router';
+import { Link, NavLink, Outlet } from 'react-router';
+import { useProgress } from '@/core/state/progress';
+import { Robot } from '@/ui/Robot';
 import { AchievementToast } from '@/features/achievements/AchievementToast';
 import { isEnabled } from '@/config/features';
 import { NotificationBridge } from '@/features/notifications/NotificationBridge';
@@ -23,6 +25,34 @@ function SidebarLink({ item }: { item: NavItem }) {
       <Icon aria-hidden size={20} />
       {item.label}
     </NavLink>
+  );
+}
+
+/** Desktop sidebar foot: a lime player tile (level, rank, XP bar) → Stats & achievements. */
+function SidebarPlayer() {
+  const level = useProgress((s) => s.progress?.level);
+  const rank = useProgress((s) => s.progress?.rank);
+  if (!level || !rank) return null;
+  const pct = Math.round(level.progress * 100);
+  return (
+    <Link
+      to="/me/stats"
+      aria-label={`Level ${level.level}, rank ${rank} — stats and achievements`}
+      className="tile tile-lime mt-auto flex flex-col gap-2 p-4 transition-transform duration-(--dur) active:scale-[0.97]"
+    >
+      <span className="flex items-end justify-between gap-2">
+        <span className="display text-xl tabular-nums">Level {level.level}</span>
+        <span className="pill bg-on-tile-lime text-tile-lime px-2.5 py-0.5 text-xs font-bold">
+          Rank {rank}
+        </span>
+      </span>
+      <span aria-hidden className="bg-on-tile-lime/15 block h-2 overflow-hidden rounded-full">
+        <span className="bg-on-tile-lime block h-full rounded-full" style={{ width: `${pct}%` }} />
+      </span>
+      <span className="text-on-tile-muted text-xs tabular-nums">
+        {level.xpIntoLevel.toLocaleString()} / {level.xpForNext.toLocaleString()} XP
+      </span>
+    </Link>
   );
 }
 
@@ -82,12 +112,16 @@ export function Layout() {
   return (
     <div className="min-h-dvh lg:flex">
       <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col gap-8 p-5 lg:flex">
-        <div className="display px-4 pt-2 text-xl">ASCEND</div>
+        <div className="display flex items-center gap-2 px-3 pt-2 text-xl">
+          <Robot size={32} />
+          ASCEND
+        </div>
         <nav aria-label="Main" className="flex flex-col gap-1">
           {[...primary, SETTINGS_ITEM].map((item) => (
             <SidebarLink key={item.path} item={item} />
           ))}
         </nav>
+        <SidebarPlayer />
       </aside>
 
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 pt-[max(1.5rem,env(safe-area-inset-top))] pb-32 sm:px-6 lg:px-10 lg:pb-10">

@@ -40,65 +40,68 @@ export function ProfilePage() {
   const title = titleName(profile?.display_title, settings);
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-5 lg:max-w-none">
       {/* Me already shows the name and the Stats & achievements tab names this screen. */}
       <h1 className="sr-only">Stats and achievements</h1>
 
-      <section aria-label="Player" className="panel flex flex-col gap-3 p-3">
-        <div className="tile tile-lime flex flex-col gap-2 p-4">
-          <div className="flex items-end justify-between gap-3">
-            <span className="display text-3xl tabular-nums">Level {level.level}</span>
-            <span className="pill bg-on-tile-lime text-tile-lime px-3 py-1 text-sm font-bold">
-              Rank {rank}
-            </span>
-          </div>
-          <span
-            role="progressbar"
-            aria-label={`${level.xpIntoLevel} of ${level.xpForNext} XP to level ${level.level + 1}`}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={Math.round(level.progress * 100)}
-            className="bg-on-tile-lime/15 block h-2.5 overflow-hidden rounded-full"
-          >
-            <span
-              className="bg-on-tile-lime block h-full rounded-full"
-              style={{ width: `${Math.round(level.progress * 100)}%` }}
-            />
-          </span>
-          <p className="text-on-tile-muted text-xs">
-            {level.xpIntoLevel.toLocaleString()} / {level.xpForNext.toLocaleString()} XP to level{' '}
-            {level.level + 1}
-            {nextRank &&
-              ` · Rank ${nextRank.rank} needs level ${nextRank.minLevel} and ${nextRank.minActiveDays} active days`}
-          </p>
-        </div>
-        {title && <p className="text-accent-text px-1 text-sm">{title}</p>}
-        <TitlePicker current={profile?.display_title ?? null} />
-        <div className="grid grid-cols-2 gap-3 px-1 sm:grid-cols-4">
-          <Stat label="Total XP" value={level.totalXp.toLocaleString()} />
-          <Stat label="Days active" value={String(streak.daysActive)} />
-          <Stat label="Longest streak" value={`${streak.longest} days`} />
-          <Stat label="Focus" value={`${focusHours} h`} />
-        </div>
-      </section>
-
-      <section aria-label="Stat levels" className="grid grid-cols-3 gap-3">
-        {STATS.map((s) => {
-          const Icon = STAT_META[s].icon;
-          return (
-            <div key={s} className={`tile ${STAT_TILE[s]} flex flex-col gap-1 p-3`}>
-              <span className="flex items-center gap-1 text-sm font-semibold">
-                <Icon aria-hidden size={16} />
-                {STAT_META[s].label}
-              </span>
-              <span className="display text-xl tabular-nums">Level {stats[s].level}</span>
-              <span className="text-on-tile-muted text-xs tabular-nums">
-                {stats[s].totalXp.toLocaleString()} XP
+      {/* Desktop: the player block and the stat tiles side by side. */}
+      <div className="flex flex-col gap-5 lg:grid lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:items-start">
+        <section aria-label="Player" className="panel flex flex-col gap-3 p-3">
+          <div className="tile tile-lime flex flex-col gap-2 p-4">
+            <div className="flex items-end justify-between gap-3">
+              <span className="display text-3xl tabular-nums">Level {level.level}</span>
+              <span className="pill bg-on-tile-lime text-tile-lime px-3 py-1 text-sm font-bold">
+                Rank {rank}
               </span>
             </div>
-          );
-        })}
-      </section>
+            <span
+              role="progressbar"
+              aria-label={`${level.xpIntoLevel} of ${level.xpForNext} XP to level ${level.level + 1}`}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={Math.round(level.progress * 100)}
+              className="bg-on-tile-lime/15 block h-2.5 overflow-hidden rounded-full"
+            >
+              <span
+                className="bg-on-tile-lime block h-full rounded-full"
+                style={{ width: `${Math.round(level.progress * 100)}%` }}
+              />
+            </span>
+            <p className="text-on-tile-muted text-xs">
+              {level.xpIntoLevel.toLocaleString()} / {level.xpForNext.toLocaleString()} XP to level{' '}
+              {level.level + 1}
+              {nextRank &&
+                ` · Rank ${nextRank.rank} needs level ${nextRank.minLevel} and ${nextRank.minActiveDays} active days`}
+            </p>
+          </div>
+          {title && <p className="text-accent-text px-1 text-sm">{title}</p>}
+          <TitlePicker current={profile?.display_title ?? null} />
+          <div className="grid grid-cols-2 gap-3 px-1 sm:grid-cols-4">
+            <Stat label="Total XP" value={level.totalXp.toLocaleString()} />
+            <Stat label="Days active" value={String(streak.daysActive)} />
+            <Stat label="Longest streak" value={`${streak.longest} days`} />
+            <Stat label="Focus" value={`${focusHours} h`} />
+          </div>
+        </section>
+
+        <section aria-label="Stat levels" className="grid grid-cols-3 gap-3 lg:grid-cols-1">
+          {STATS.map((s) => {
+            const Icon = STAT_META[s].icon;
+            return (
+              <div key={s} className={`tile ${STAT_TILE[s]} flex flex-col gap-1 p-3`}>
+                <span className="flex items-center gap-1 text-sm font-semibold">
+                  <Icon aria-hidden size={16} />
+                  {STAT_META[s].label}
+                </span>
+                <span className="display text-xl tabular-nums">Level {stats[s].level}</span>
+                <span className="text-on-tile-muted text-xs tabular-nums">
+                  {stats[s].totalXp.toLocaleString()} XP
+                </span>
+              </div>
+            );
+          })}
+        </section>
+      </div>
 
       <div className="grid gap-5 md:grid-cols-2">
         <div className="flex flex-col gap-2">
