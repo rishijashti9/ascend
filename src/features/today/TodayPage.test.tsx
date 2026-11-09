@@ -67,7 +67,7 @@ describe('TodayPage', () => {
   it('dashboard: the quests tile shows progress and the next quest; chips filter the list', async () => {
     await setup();
     expect(
-      screen.getByRole('button', { name: /^Today's quests: 0 of 8 done\. Next: / }),
+      screen.getByRole('button', { name: /^Today’s quests\s*0\/8\s*Next: / }),
     ).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Body/ })).toHaveAttribute('href', '/me/body');
     await userEvent.click(screen.getByRole('button', { name: 'Body', pressed: false }));

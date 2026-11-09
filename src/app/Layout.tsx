@@ -37,12 +37,11 @@ function SidebarPlayer() {
   return (
     <Link
       to="/me/stats"
-      aria-label={`Level ${level.level}, rank ${rank} — stats and achievements`}
       className="tile tile-lime mt-auto flex flex-col gap-2 p-4 transition-transform duration-(--dur) active:scale-[0.97]"
     >
-      <span className="flex items-end justify-between gap-2">
-        <span className="display text-xl tabular-nums">Level {level.level}</span>
-        <span className="pill bg-on-tile-lime text-tile-lime px-2.5 py-0.5 text-xs font-bold">
+      <span className="flex flex-wrap items-center justify-between gap-2">
+        <span className="display text-lg whitespace-nowrap tabular-nums">Level {level.level}</span>
+        <span className="pill bg-on-tile-lime text-tile-lime shrink-0 px-2.5 py-0.5 text-xs font-bold whitespace-nowrap">
           Rank {rank}
         </span>
       </span>

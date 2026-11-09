@@ -125,10 +125,10 @@ export function HabitEditor<T extends EditableHabit>({
                 aria-pressed={schedule.includes(w.day)}
                 aria-label={w.long}
                 onClick={() => toggleDay(w.day)}
-                className={`size-11 rounded-md border text-sm font-medium ${
+                className={`size-11 rounded-full text-sm font-semibold ${
                   schedule.includes(w.day)
-                    ? 'bg-accent-fill text-on-accent border-transparent'
-                    : 'border-border text-muted'
+                    ? 'bg-accent-fill text-on-accent'
+                    : 'bg-surface-2 text-muted'
                 }`}
               >
                 {w.short}

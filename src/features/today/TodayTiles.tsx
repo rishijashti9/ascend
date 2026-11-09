@@ -44,8 +44,7 @@ function QuestsTile({ onQuests }: { onQuests: () => void }) {
     <button
       type="button"
       onClick={onQuests}
-      className="tile tile-lime col-span-2 flex flex-col gap-2 text-left transition-transform duration-(--dur) active:scale-[0.98]"
-      aria-label={`Today's quests: ${done} of ${daily.length} done${next ? `. Next: ${next.instance.title_snapshot}` : ''}`}
+      className="tile tile-lime col-span-2 flex flex-col gap-2 p-4 text-left transition-transform duration-(--dur) active:scale-[0.98]"
     >
       <span className="flex items-start justify-between gap-3">
         <span className="display text-lg">Today’s quests</span>

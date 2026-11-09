@@ -92,7 +92,10 @@ export function Tile({
   children: ReactNode;
   className?: string;
 }) {
-  const cls = `tile ${TONE[tone]} relative flex flex-col gap-2 overflow-hidden ${className}`;
+  // p-4 inside; with a link the first line of text keeps clear of the ↗ circle.
+  const cls = `tile ${TONE[tone]} relative flex min-h-32 flex-col gap-2 overflow-hidden p-4 ${
+    to ? '[&>*:nth-child(2)]:pr-11' : ''
+  } ${className}`;
   if (!to)
     return (
       <section aria-label={label} className={cls}>

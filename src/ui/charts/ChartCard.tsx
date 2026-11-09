@@ -75,7 +75,7 @@ export function Tooltip({
   return (
     <div
       role="status"
-      className="border-border bg-surface shadow-overlay pointer-events-none absolute top-0 z-10 -translate-x-1/2 rounded-md border px-2 py-1 text-xs whitespace-nowrap"
+      className="pill bg-surface-2 shadow-overlay pointer-events-none absolute top-0 z-10 -translate-x-1/2 px-3 py-1 text-xs whitespace-nowrap"
       style={{ left }}
     >
       <span className="text-text font-semibold tabular-nums">{value}</span>{' '}

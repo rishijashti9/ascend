@@ -108,8 +108,8 @@ export function Heatmap({
                 setYear(y);
                 setActive(null);
               }}
-              className={`min-h-11 rounded-md px-3 text-sm ${
-                y === year ? 'bg-surface-2 font-semibold' : 'text-muted'
+              className={`pill min-h-11 px-4 text-sm font-semibold ${
+                y === year ? 'bg-tile-white text-on-tile-white' : 'bg-surface-2 text-muted'
               }`}
             >
               {y}

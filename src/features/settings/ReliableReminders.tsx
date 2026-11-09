@@ -102,8 +102,8 @@ export function ReliableReminders({ wakeTime }: { wakeTime: string }) {
               type="button"
               aria-pressed={g.id === brand}
               onClick={() => setBrand(g.id)}
-              className={`min-h-11 rounded-md px-3 text-sm ${
-                g.id === brand ? 'bg-surface-2 font-semibold' : 'text-muted'
+              className={`pill min-h-11 px-4 text-sm font-semibold ${
+                g.id === brand ? 'bg-tile-white text-on-tile-white' : 'bg-surface-2 text-muted'
               }`}
             >
               {g.name}

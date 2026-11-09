@@ -88,13 +88,21 @@ export function ProfilePage() {
           {STATS.map((s) => {
             const Icon = STAT_META[s].icon;
             return (
-              <div key={s} className={`tile ${STAT_TILE[s]} flex flex-col gap-1 p-3`}>
+              <div key={s} className={`tile ${STAT_TILE[s]} flex min-w-0 flex-col gap-1 p-3`}>
+                {/* Phones show the stat code (three tiles share 360 px); wider screens the name. */}
                 <span className="flex items-center gap-1 text-sm font-semibold">
-                  <Icon aria-hidden size={16} />
-                  {STAT_META[s].label}
+                  <Icon aria-hidden size={16} className="shrink-0" />
+                  <span className="sm:hidden">{s}</span>
+                  <span className="hidden truncate sm:inline">{STAT_META[s].label}</span>
                 </span>
-                <span className="display text-xl tabular-nums">Level {stats[s].level}</span>
-                <span className="text-on-tile-muted text-xs tabular-nums">
+                <span className="flex items-baseline gap-1.5">
+                  <span className="text-xs font-semibold">Level</span>
+                  <span className="display text-2xl tabular-nums">{stats[s].level}</span>
+                </span>
+                {/* Muted text only on the light tiles; the violet tile keeps full-strength text. */}
+                <span
+                  className={`text-xs tabular-nums ${s === 'WIL' ? 'font-medium' : 'text-on-tile-muted'}`}
+                >
                   {stats[s].totalXp.toLocaleString()} XP
                 </span>
               </div>
