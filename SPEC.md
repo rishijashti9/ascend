@@ -592,3 +592,4 @@ Know these exist so the architecture leaves room for them, but do not start them
 - **Laptop screen time** (Phase 11 idea) — a Chrome extension with the same entertainment reminders on the laptop.
 - **Accountability partner** (Phase 11 idea) — optionally, a person I choose gets an email if I turn screen-time reminders off during a lock.
 - **Voice input** — speak quick notes, journal entries or brain dumps; transcribe and (with AI on) turn them into quests for approval.
+- **More themes** (dropped from Phase 12, 2026-11-10 — not planned) — ELEVATE is the only theme. The theme engine stays in the code (token files, `ThemeDef`, the hidden picker), so other looks — e.g. the VOID / SOLAR / ION ideas and mockups in `docs/design/mockups/` — could be added later as a new token set + effects, with the picker reappearing once a second theme is built.

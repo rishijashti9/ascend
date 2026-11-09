@@ -1,7 +1,7 @@
 import { Star } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { Link } from 'react-router';
-import { resolveThemeId } from '@/config/themes';
+import { builtThemes, resolveThemeId } from '@/config/themes';
 import { GAME } from '@/config/game';
 import { deleteAllData } from '@/core/db/open';
 import type { EffectsLevel, Settings } from '@/core/db/types';
@@ -40,8 +40,9 @@ const EFFECTS: { value: EffectsLevel; label: string; hint: string }[] = [
 ];
 
 /**
- * Appearance (Phase 12): the theme picker (built themes only, live previews; instant, saved and
- * synced — never touches other data), Effects (Full / Light / Off) and optional sound + haptics.
+ * Appearance (Phase 12): Effects (Full / Light / Off) and optional sound + haptics. The theme
+ * picker (built themes only, live previews; instant, saved and synced) shows only when more than
+ * one theme is built — ELEVATE is the only theme for now (DECISIONS), so it stays hidden.
  */
 export function AppearanceSection({ settings }: { settings: Settings }) {
   const { run, busy, error } = useAction();
@@ -51,11 +52,13 @@ export function AppearanceSection({ settings }: { settings: Settings }) {
     !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   return (
     <Card title="Appearance">
-      <ThemePicker
-        value={resolveThemeId(settings.ui_theme)}
-        disabled={busy}
-        onChange={(ui_theme) => void run({ type: 'settings.update', payload: { ui_theme } })}
-      />
+      {builtThemes().length > 1 && (
+        <ThemePicker
+          value={resolveThemeId(settings.ui_theme)}
+          disabled={busy}
+          onChange={(ui_theme) => void run({ type: 'settings.update', payload: { ui_theme } })}
+        />
+      )}
       <div className="flex flex-col gap-2">
         <p className="font-medium" id="effects-label">
           Effects

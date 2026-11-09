@@ -37,13 +37,10 @@ const section = (name: string) => screen.getByRole('region', { name });
 const stored = async () => db.settings.get('settings');
 
 describe('SettingsPage', () => {
-  it('appearance: only built themes; effects and sound + vibration save (Phase 12)', async () => {
+  it('appearance: no theme picker (ELEVATE only); effects and sound + vibration save', async () => {
     const appearance = section('Appearance');
-    const themes = within(
-      within(appearance).getByRole('radiogroup', { name: 'Theme' }),
-    ).getAllByRole('radio');
-    expect(themes.map((t) => t.textContent)).toEqual([expect.stringContaining('Elevate')]);
-    expect(themes[0]).toBeChecked();
+    // One built theme → the picker is hidden (DECISIONS: ELEVATE is the only theme).
+    expect(within(appearance).queryByRole('radiogroup', { name: 'Theme' })).not.toBeInTheDocument();
     await userEvent.click(within(appearance).getByRole('radio', { name: /Light/ }));
     // Under a full test run the save can take a few seconds.
     await waitFor(async () => expect((await stored())?.effects).toBe('light'), { timeout: 20_000 });

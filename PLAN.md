@@ -303,28 +303,6 @@ Looks and motion only — no change to rules, data, sync or engine. Settings get
 - 12A.25 Android: widgets and splash in ELEVATE colours (widget snapshot carries the theme palette); widget taps → new routes
 - 12A.26 Desktop layout pass (sidebar, wider grids, two columns where useful)
 - 12A.27 Quality: leftover-style / hard-coded-colour scan, Playwright screenshots of every route/tab at 360 px (key ones 768 / 1440), contrast + tap targets + axe, fixes; inventory 100 % ticked
-- 12A.28 12A wrap-up: e2e updated for the new navigation, README, CHANGELOG, v0.12.0 (versionCode 12), phone checklist → **stop, ask permission for 12B**
+- 12A.28 12A wrap-up: e2e updated for the new navigation, README, CHANGELOG, v0.12.0 (versionCode 12), phone checklist → **Phase 12 done**
 
-**12B — VOID** (only after Rishi says go; version 0.13.0)
-
-- 12B.1 VOID definition (tokens, Unbounded + Inter, glass surface, motion) + contrast test; hidden from the picker
-- 12B.2 Glass surface variants for every primitive and tile; XP shimmer
-- 12B.3 VOID VFX + level-up / rank-up (glowing rings, rising sparks); robot style
-- 12B.4 Widgets/splash palette for VOID; inventory re-ticked for VOID
-- 12B.5 Quality pass (scan, screenshots, contrast, axe), VOID in the picker, wrap-up v0.13.0 → **stop, ask permission for 12C**
-
-**12C — SOLAR** (only after Rishi says go; version 0.14.0)
-
-- 12C.1 SOLAR definition (tokens, Archivo Black + Space Grotesk, brutal surface) + contrast test
-- 12C.2 Brutal variants (thick outlines, hard offset shadows, press-down ticks, star badges)
-- 12C.3 SOLAR VFX + level-up / rank-up (slam/pop); robot style
-- 12C.4 Widgets/splash palette; inventory re-ticked for SOLAR
-- 12C.5 Quality pass, SOLAR in the picker, wrap-up v0.14.0 → **stop, ask permission for 12D**
-
-**12D — ION** (only after Rishi says go; version 0.15.0)
-
-- 12D.1 ION definition (light tokens, Plus Jakarta Sans, soft surface, AA text blues) + contrast test
-- 12D.2 Soft (neumorphic) raised/pressed variants, gradient progress rings
-- 12D.3 ION VFX + level-up / rank-up (calm ring fill, floating bubbles); robot style
-- 12D.4 Widgets/splash palette; inventory re-ticked for ION
-- 12D.5 Quality pass, ION in the picker, wrap-up v0.15.0
+Phase 12 ends with 12A: ELEVATE is the only theme (Rishi, 2026-11-10 — see DECISIONS). The planned VOID, SOLAR and ION themes (12B–12D) were dropped; SPEC 15 keeps them as a future idea.
