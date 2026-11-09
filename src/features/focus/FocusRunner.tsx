@@ -6,6 +6,7 @@ import { Button } from '@/ui/Button';
 import { useAction } from '@/ui/hooks/useAction';
 import { useNow } from '@/ui/hooks/useNow';
 import { STAT_META } from '@/ui/statMeta';
+import { FocusRing } from './FocusRing';
 
 const mmss = (ms: number) => {
   const total = Math.ceil(ms / 1000);
@@ -61,18 +62,26 @@ export function FocusRunner({ session }: { session: FocusSession }) {
       aria-label="Focus session"
       className="bg-bg fixed inset-0 z-40 flex flex-col items-center justify-center gap-8 p-6 text-center"
     >
-      <p className="text-muted text-sm tracking-wide uppercase">
+      <p className="text-accent-text text-xs font-bold tracking-widest uppercase">
         {phase === 'work' ? 'Focus' : phase === 'break' ? 'Break' : 'Done'}
       </p>
-      <p className="text-lg">{forWhat}</p>
+      <p className="display text-xl">{forWhat}</p>
       {phase !== 'over' && (
-        <p
-          role="timer"
-          aria-live="off"
-          className="font-display text-[clamp(4rem,22vw,8rem)] leading-none font-semibold tabular-nums"
+        <FocusRing
+          ratio={
+            remainingMs /
+            Math.max(1, (phase === 'work' ? session.planned_min : session.break_min) * 60_000)
+          }
+          size={280}
         >
-          {mmss(remainingMs)}
-        </p>
+          <p
+            role="timer"
+            aria-live="off"
+            className="display text-[4.5rem] leading-none tabular-nums"
+          >
+            {mmss(remainingMs)}
+          </p>
+        </FocusRing>
       )}
 
       {phase === 'work' && !confirmEnd && (
@@ -84,7 +93,7 @@ export function FocusRunner({ session }: { session: FocusSession }) {
         <div
           role="alertdialog"
           aria-label="End the session now?"
-          className="bg-surface-2 flex max-w-sm flex-col gap-3 rounded-lg p-4"
+          className="panel flex max-w-sm flex-col gap-3 p-4"
         >
           <p className="text-sm">
             {session.quest_instance_id

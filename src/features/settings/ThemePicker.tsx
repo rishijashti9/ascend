@@ -34,7 +34,7 @@ export function ThemePicker({
             <MiniPreview theme={t} />
             <span className="flex items-start justify-between gap-2">
               <span>
-                <span className="font-display block text-base">{t.name}</span>
+                <span className="display block text-base">{t.name}</span>
                 <span className="text-muted block text-sm">{t.tagline}</span>
               </span>
               {selected && (

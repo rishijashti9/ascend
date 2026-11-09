@@ -326,3 +326,17 @@ html[data-hidden] *::after {
     animation: none;
   }
 }
+
+/* The Focus ring's orbiting dot (Phase 12): one slow turn every 12 s, Full effects only. */
+@keyframes focus-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@utility focus-orbit {
+  transform-origin: 50% 50%;
+  animation: focus-orbit 12s linear infinite;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}

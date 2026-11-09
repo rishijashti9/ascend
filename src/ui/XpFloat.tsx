@@ -5,7 +5,7 @@ export function XpFloat({ float }: { float: { key: number; xp: number } | null }
       {float && (
         <span
           key={float.key}
-          className="animate-xp-float font-display text-accent-text block text-lg font-semibold tabular-nums"
+          className="animate-xp-float display text-accent-text block text-lg tabular-nums"
         >
           +{float.xp} XP
         </span>

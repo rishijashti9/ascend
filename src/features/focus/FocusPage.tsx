@@ -9,11 +9,15 @@ import { useToday } from '@/core/state/today';
 import { Button } from '@/ui/Button';
 import { useAction } from '@/ui/hooks/useAction';
 import { STAT_META } from '@/ui/statMeta';
+import { FocusRing } from './FocusRing';
 import { FocusRunner } from './FocusRunner';
 import { SessionHistory } from './SessionHistory';
 
-const chip = (on: boolean) =>
-  `min-h-11 rounded-md border px-3 text-sm ${on ? 'border-accent bg-surface-2 font-medium' : 'border-border bg-surface'}`;
+/** A choice row (quests) and a pill (stat, length): lime outline / lime fill when picked. */
+const row = (on: boolean) =>
+  `inset min-h-11 px-4 py-2 text-sm ${on ? 'outline-accent font-semibold outline-2' : ''}`;
+const pill = (on: boolean) =>
+  `pill min-h-11 px-4 text-sm font-semibold ${on ? 'bg-accent-fill text-on-accent' : 'bg-surface-2 text-text'}`;
 
 /** Focus (SPEC 4.6, 7.5): pick what it's for, pick a length, start. */
 export function FocusPage() {
@@ -41,6 +45,14 @@ export function FocusPage() {
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
       <h1 className="display text-2xl">Focus</h1>
+      <div className="flex justify-center">
+        <FocusRing ratio={1} size={220}>
+          <span className="display text-5xl tabular-nums">
+            {String(chosen.work_min).padStart(2, '0')}:00
+          </span>
+          <span className="text-muted text-sm">{chosen.break_min} min break after</span>
+        </FocusRing>
+      </div>
 
       <section aria-label="What is it for?" className="flex flex-col gap-2">
         <h2 className="display">What is it for?</h2>
@@ -52,7 +64,7 @@ export function FocusPage() {
               role="radio"
               aria-checked={target === q.instance.id}
               onClick={() => setTarget(q.instance.id)}
-              className={`${chip(target === q.instance.id)} flex items-center justify-between text-left`}
+              className={`${row(target === q.instance.id)} flex items-center justify-between text-left`}
             >
               <span>{q.instance.title_snapshot}</span>
               <span className="text-muted tabular-nums">
@@ -65,7 +77,7 @@ export function FocusPage() {
             role="radio"
             aria-checked={!linked}
             onClick={() => setTarget('stat')}
-            className={`${chip(!linked)} text-left`}
+            className={`${row(!linked)} text-left`}
           >
             No quest — 1 XP per minute for a stat
           </button>
@@ -82,7 +94,7 @@ export function FocusPage() {
                   aria-checked={stat === s}
                   aria-label={label}
                   onClick={() => setStat(s)}
-                  className={`${chip(stat === s)} flex items-center gap-1 ${text}`}
+                  className={`${pill(stat === s)} flex items-center gap-1 ${stat === s ? '' : text}`}
                 >
                   <Icon aria-hidden size={16} /> {s}
                 </button>
@@ -102,7 +114,7 @@ export function FocusPage() {
               role="radio"
               aria-checked={preset === i}
               onClick={() => setPreset(i)}
-              className={chip(preset === i)}
+              className={pill(preset === i)}
             >
               {p.work_min} min focus · {p.break_min} min break
             </button>
@@ -117,6 +129,7 @@ export function FocusPage() {
       />
 
       <Button
+        className="min-h-14 text-lg"
         disabled={busy}
         onClick={() =>
           void run({

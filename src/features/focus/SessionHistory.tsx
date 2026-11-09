@@ -31,7 +31,7 @@ export function SessionHistory() {
       <section aria-label="This week" className="panel flex flex-col gap-3 p-4">
         <h2 className="display text-muted text-sm">This week</h2>
         <p>
-          <span className="font-display text-2xl font-semibold tabular-nums">{week.minutes}</span>{' '}
+          <span className="display text-2xl tabular-nums">{week.minutes}</span>{' '}
           <span className="text-muted">
             min focused · {week.sessions} sessions, {week.completed} completed
           </span>

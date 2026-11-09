@@ -30,7 +30,7 @@ export function ScreenTimePage() {
         <>
           <section aria-label="Today" className="panel flex flex-col gap-3 p-4">
             <h2 className="display">Entertainment today</h2>
-            <p className="font-display text-3xl tabular-nums">
+            <p className="display text-3xl tabular-nums">
               {formatMinutes(todayMin)}
               {limit !== null && (
                 <span className="text-muted text-base"> of {formatMinutes(limit)}</span>

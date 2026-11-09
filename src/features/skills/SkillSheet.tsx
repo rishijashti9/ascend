@@ -67,9 +67,7 @@ export function SkillSheet({ skillId, onClose }: { skillId: string; onClose: () 
 
         <section aria-label="Current level" className="flex flex-col gap-2">
           <div className="flex items-center gap-3">
-            <span className="font-display text-4xl font-semibold tabular-nums">
-              {progress.level}
-            </span>
+            <span className="display text-4xl tabular-nums">{progress.level}</span>
             <div className="flex flex-col gap-1">
               <span className="text-muted text-sm">
                 Level {progress.level} of {MAX_SKILL_LEVEL}
