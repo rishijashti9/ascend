@@ -199,7 +199,7 @@ Part C — Ask the System
 - [x] 12A.13 Quests screen
 - [x] 12A.14 Focus
 - [x] 12A.15 Growth → Goals
-- [ ] 12A.16 Growth → Roadmap
+- [x] 12A.16 Growth → Roadmap
 - [ ] 12A.17 Growth → Skills
 - [ ] 12A.18 Me → Stats & achievements
 - [ ] 12A.19 Me → Body
@@ -301,13 +301,13 @@ Every route, tab, sheet, dialog, card, banner, toast, state and Android surface,
 
 **Growth → Roadmap** (`features/compass/`, `features/ask/`)
 
-- [ ] Compass page: Career / Health tabs (`CompassPage.tsx`)
-- [ ] Career discovery quiz (interests, strengths, values, matches) (`Discovery.tsx`)
-- [ ] Careers browser + career detail (`CareerBrowser.tsx`)
-- [ ] Gap analysis + "Your path" + Turn into a plan (`CareerGap.tsx`)
-- [ ] Roadmaps and study guides (`Roadmaps.tsx`)
-- [ ] Health check-in + health picture (`HealthCheck.tsx`), health plan (`HealthPlan.tsx`)
-- [ ] Ask page (answers, sources, fallback, off/offline/quota states) (`AskPage.tsx`)
+- [x] Compass page: Career / Health tabs (`CompassPage.tsx`)
+- [x] Career discovery quiz (interests, strengths, values, matches) (`Discovery.tsx`)
+- [x] Careers browser + career detail (`CareerBrowser.tsx`)
+- [x] Gap analysis + "Your path" + Turn into a plan (`CareerGap.tsx`)
+- [x] Roadmaps and study guides (`Roadmaps.tsx`)
+- [x] Health check-in + health picture (`HealthCheck.tsx`), health plan (`HealthPlan.tsx`)
+- [x] Ask page (answers, sources, fallback, off/offline/quota states) (`AskPage.tsx`)
 
 **Growth → Skills / Jobs** (`features/skills/`, `features/jobs/`)
 

@@ -6,6 +6,8 @@ import { CareerGap } from './CareerGap';
 import { Discovery } from './Discovery';
 import { HealthCheck } from './HealthCheck';
 import { Roadmaps } from './Roadmaps';
+import { Tabs } from '@/ui/Surface';
+import { tabPanelProps } from '@/ui/tabs';
 
 const TABS = [
   { id: 'career', label: 'Career' },
@@ -24,31 +26,22 @@ export function CompassPage() {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
       <header className="flex flex-col gap-1">
-        <h1 className="display text-2xl">Growth Compass</h1>
+        <h1 className="display text-xl">Growth Compass</h1>
         <p className="text-muted text-sm">
           Career and health guidance from trusted sources, worked out on this device. Every
           suggestion shows why and where it comes from.
         </p>
       </header>
-      <div role="tablist" aria-label="Compass" className="border-border flex gap-1 border-b">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            role="tab"
-            aria-selected={tab === t.id}
-            onClick={() => setParams(t.id === 'career' ? {} : { tab: t.id }, { replace: true })}
-            className={`min-h-11 px-4 text-sm font-medium ${
-              tab === t.id ? 'border-accent text-accent-text border-b-2' : 'text-muted'
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
+      <Tabs
+        label="Compass"
+        idPrefix="compass"
+        tabs={TABS}
+        active={tab}
+        onChange={(id) => setParams(id === 'career' ? {} : { tab: id }, { replace: true })}
+      />
 
       {tab === 'career' ? (
-        <div role="tabpanel" aria-label="Career" className="flex flex-col gap-6">
+        <div {...tabPanelProps('career', 'compass')} className="flex flex-col gap-6">
           {target ? (
             <>
               <CareerGap />
@@ -72,7 +65,7 @@ export function CompassPage() {
           <p className="text-muted text-xs">{ONET_ATTRIBUTION}</p>
         </div>
       ) : (
-        <div role="tabpanel" aria-label="Health" className="flex flex-col gap-6">
+        <div {...tabPanelProps('health', 'compass')} className="flex flex-col gap-6">
           <HealthCheck />
         </div>
       )}

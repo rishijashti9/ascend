@@ -38,10 +38,8 @@ function Choice<T extends string | number>({
             type="button"
             aria-pressed={value === o.v}
             onClick={() => onChange(o.v)}
-            className={`min-h-11 min-w-11 rounded-full border px-3 text-sm ${
-              value === o.v
-                ? 'border-accent bg-accent-fill text-on-accent'
-                : 'border-border bg-surface'
+            className={`pill min-h-11 min-w-11 px-4 text-sm font-semibold ${
+              value === o.v ? 'bg-accent-fill text-on-accent' : 'bg-surface-2 text-text'
             }`}
           >
             {o.text}
@@ -136,7 +134,7 @@ export function HealthCheck() {
                         : [...(draft.goals ?? []), g.id],
                     })
                   }
-                  className={`min-h-11 min-w-11 rounded-full border px-3 text-sm ${on ? 'border-accent bg-accent-fill text-on-accent' : 'border-border bg-surface'}`}
+                  className={`pill min-h-11 min-w-11 px-4 text-sm font-semibold ${on ? 'bg-accent-fill text-on-accent' : 'bg-surface-2 text-text'}`}
                 >
                   {g.label}
                 </button>
@@ -168,11 +166,7 @@ export function HealthCheck() {
   return (
     <section aria-label="Your health picture" className="flex flex-col gap-3">
       {gap.safety.map((s) => (
-        <p
-          key={s.kind}
-          role="note"
-          className="border-warning bg-surface rounded-lg border p-4 text-sm"
-        >
+        <p key={s.kind} role="note" className="panel outline-warning p-4 text-sm outline-2">
           {s.text}
         </p>
       ))}

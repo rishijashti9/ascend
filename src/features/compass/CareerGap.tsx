@@ -75,14 +75,19 @@ export function CareerGap() {
 
   return (
     <section aria-label="Your path" className="flex flex-col gap-3">
-      <header className="flex flex-col gap-1">
-        <h2 className="display text-lg">{career.title}</h2>
-        <p className="text-muted text-sm">
+      <header className="tile tile-violet flex flex-col gap-1 p-4">
+        <p className="text-xs font-bold tracking-widest uppercase">Career path</p>
+        <div className="flex items-end justify-between gap-3">
+          <h2 className="display text-xl">{career.title}</h2>
+          <span className="display text-3xl tabular-nums">
+            {gap.items.length ? Math.round((gap.done / gap.items.length) * 100) : 100}%
+          </span>
+        </div>
+        <p className="text-sm">
           {gap.done} of {gap.items.length} skills at the level needed.
         </p>
-        <p className="text-sm">
-          {gap.readiness.why}{' '}
-          <span className="text-muted">· {CONFIDENCE_LABEL[gap.readiness.confidence]}</span>
+        <p className="text-sm font-semibold">
+          {gap.readiness.why} · {CONFIDENCE_LABEL[gap.readiness.confidence]}
         </p>
       </header>
 
@@ -91,7 +96,7 @@ export function CareerGap() {
           {missing.map((g) => (
             <li key={g.skill.id} className="flex flex-col gap-1 px-4 py-3">
               <div className="flex items-baseline justify-between gap-2">
-                <span className="font-medium">{g.skill.name}</span>
+                <span className="display text-base">{g.skill.name}</span>
                 <span className="text-muted text-sm tabular-nums">
                   level {g.have} → {g.need} · ~{g.hoursLeft} h
                 </span>
