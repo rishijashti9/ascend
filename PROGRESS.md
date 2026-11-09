@@ -193,7 +193,7 @@ Part C — Ask the System
 - [x] 12A.7 Growth screen with tabs
 - [x] 12A.8 Me screen with tabs
 - [x] 12A.9 System companion robot
-- [ ] 12A.10 Ask
+- [x] 12A.10 Ask
 - [ ] 12A.11 Today dashboard
 - [ ] 12A.12 Today cards in ELEVATE
 - [ ] 12A.13 Quests screen
@@ -248,7 +248,7 @@ Every route, tab, sheet, dialog, card, banner, toast, state and Android surface,
 - [x] More page removed; `/more` and every old address redirect (`features/more/MorePage.tsx`, `app/routes.tsx`)
 - [x] Deep links (`app/DeepLinks.tsx`, `app/deepLink.ts`) → new routes
 - [x] Notification taps (`features/notifications/NotificationBridge.tsx`) → new routes
-- [ ] Ask floating button (every main screen) + Ask bottom sheet (screen context, suggested questions, typed question, answer, sources, fallback, privacy note)
+- [x] Ask floating button (every main screen) + Ask bottom sheet (screen context, suggested questions, typed question, answer, sources, fallback, privacy note)
 - [ ] System companion robot (System message, level-up/rank-up, empty states, onboarding)
 
 **Today** (`features/today/`)

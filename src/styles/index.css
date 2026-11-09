@@ -305,3 +305,24 @@ html[data-hidden] *::before,
 html[data-hidden] *::after {
   animation-play-state: paused !important;
 }
+
+/* The floating Ask button greets you three times when a screen opens, then rests (Phase 12). */
+@keyframes ask-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent),
+      var(--shadow-float);
+  }
+  50% {
+    box-shadow:
+      0 0 0 10px color-mix(in srgb, var(--accent) 0%, transparent),
+      var(--shadow-float);
+  }
+}
+@utility animate-ask-pulse {
+  animation: ask-pulse 2.6s ease-in-out 3;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}

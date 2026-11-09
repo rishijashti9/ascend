@@ -1,4 +1,4 @@
-import { ExternalLink, MessageCircleQuestion, Phone, Sparkles } from 'lucide-react';
+import { ExternalLink, Phone, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { askTheSystem, type AskOutcome } from '@/core/ask/ask';
@@ -9,6 +9,7 @@ import { useToday } from '@/core/state/today';
 import { weekStartOf } from '@/core/time';
 import { Button } from '@/ui/Button';
 import { useAction } from '@/ui/hooks/useAction';
+import { Robot } from '@/ui/Robot';
 import { useAskDeps } from './useAskDeps';
 
 /**
@@ -16,7 +17,17 @@ import { useAskDeps } from './useAskDeps';
  * locked, safety rules first, sources always shown; answers can become weekly quests after
  * approval. When it can't answer, the Growth Compass does — never an error screen.
  */
-export function AskPage() {
+export function AskPanel({
+  suggestions = [],
+  note,
+  autoFocus = false,
+}: {
+  /** Questions that fit the screen you came from (one tap asks). */
+  suggestions?: readonly string[];
+  /** An extra line for this screen (e.g. on Body: general health answers only). */
+  note?: string;
+  autoFocus?: boolean;
+}) {
   const enabled = useAppState((s) => s.settings?.ai_enabled ?? false);
   const weekStartsOn = useAppState((s) => s.settings?.week_start ?? 1);
   const today = useToday((s) => s.day);
@@ -30,9 +41,9 @@ export function AskPage() {
   const { run, runFor, busy, error } = useAction();
   const navigate = useNavigate();
 
-  const ask = async () => {
+  const ask = async (q = question) => {
     setAsking(true);
-    setOutcome(await askTheSystem(question.trim(), await getDeps()));
+    setOutcome(await askTheSystem(q.trim(), await getDeps()));
     setAsking(false);
   };
 
@@ -68,16 +79,31 @@ export function AskPage() {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
-      <header className="flex flex-col gap-1">
-        <h1 className="flex items-center gap-2 text-xl font-semibold">
-          <MessageCircleQuestion aria-hidden size={22} /> Ask the System
-        </h1>
-        <p className="text-muted text-sm">
-          Career and health questions only — skills, studying, career paths, training, sleep,
-          recovery, food basics and wellbeing.
-        </p>
-      </header>
+    <div className="flex flex-col gap-4">
+      {note && <p className="text-muted text-sm">{note}</p>}
+      {suggestions.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <span className="text-muted text-xs font-semibold tracking-wide uppercase">
+            Suggested
+          </span>
+          <div className="flex flex-col gap-2">
+            {suggestions.map((q) => (
+              <button
+                key={q}
+                type="button"
+                disabled={asking}
+                onClick={() => {
+                  setQuestion(q);
+                  void ask(q);
+                }}
+                className="inset min-h-11 px-4 py-2 text-left text-sm font-medium disabled:opacity-50"
+              >
+                {q}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {!enabled && (
         <section aria-label="Switched off" className="panel flex flex-col gap-2 p-4 text-sm">
@@ -112,6 +138,7 @@ export function AskPage() {
           rows={3}
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
+          autoFocus={autoFocus}
           placeholder="e.g. What should I learn after ROS 2 basics to work on humanoid robots?"
           className="control px-3 py-2 text-base"
         />
@@ -203,10 +230,8 @@ export function AskPage() {
       )}
 
       {outcome?.kind === 'safety' && (
-        <section
-          aria-label="Please read"
-          className="border-warning bg-surface flex flex-col gap-2 rounded-lg border p-4 text-sm"
-        >
+        <section aria-label="Please read" className="panel flex flex-col gap-2 p-4 text-sm">
+          <p className="text-warning-text font-semibold">Please read</p>
           <p>{outcome.text}</p>
           {outcome.helpline?.phones.map((p) => (
             <a
@@ -249,6 +274,24 @@ export function AskPage() {
           {error}
         </p>
       )}
+    </div>
+  );
+}
+
+/** Ask the System as a page (the full view; the floating button opens the same panel in a sheet). */
+export function AskPage() {
+  return (
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
+      <header className="flex flex-col gap-2">
+        <h1 className="display flex items-center gap-3 text-2xl">
+          <Robot size={40} /> Ask the System
+        </h1>
+        <p className="text-muted text-sm">
+          Career and health questions only — skills, studying, career paths, training, sleep,
+          recovery, food basics and wellbeing.
+        </p>
+      </header>
+      <AskPanel />
     </div>
   );
 }
