@@ -46,10 +46,37 @@ const envelopeSchema = z.object({
   action_id: z.string().min(1).optional(),
 });
 
+/**
+ * Actions still running, so callers can wait until everything settled — tests do this after
+ * each test, otherwise a test could end mid-action and React would update after the test
+ * environment was torn down (hardening Phase 9, seen on CI).
+ */
+let inFlight = 0;
+let idleWaiters: (() => void)[] = [];
+
+/** Resolves once no action is running. */
+export function actionsSettled(): Promise<void> {
+  return inFlight === 0 ? Promise.resolve() : new Promise((resolve) => idleWaiters.push(resolve));
+}
+
 export async function recordAction<R = unknown>(
   action: Action,
   options: { db?: AscendDB } = {},
 ): Promise<ActionResult<R>> {
+  inFlight++;
+  try {
+    return await runAction<R>(action, options);
+  } finally {
+    inFlight--;
+    if (inFlight === 0) {
+      const waiters = idleWaiters;
+      idleWaiters = [];
+      for (const resolve of waiters) resolve();
+    }
+  }
+}
+
+async function runAction<R>(action: Action, options: { db?: AscendDB }): Promise<ActionResult<R>> {
   const database = options.db ?? defaultDb;
 
   const envelope = envelopeSchema.safeParse(action);
