@@ -6,7 +6,7 @@ import { checkIntegrity } from './integrity';
 import { judgeRecentDays } from './judge';
 import { READ_EVERY_MS, readScreenTime } from './reader';
 import { startSnapshotWriter } from './snapshot';
-import { refreshTrustedTime } from './trustedTime';
+import { refreshTrustedTime } from './serverTime';
 
 /**
  * Screen time while ASCEND is open (tasks 11.6–11.8): read the phone's totals, keep the phone's

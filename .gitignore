@@ -16,5 +16,8 @@ android/local.properties
 *.apk
 *.keystore
 
+# graphify knowledge-graph output (local, regenerated with /graphify)
+graphify-out/
+
 # Android Studio / IntelliJ per-machine settings
 /.idea/

@@ -4,7 +4,8 @@ import { AscendDB } from '@/core/db/db';
 import { recordAction } from '@/core/pipeline';
 import { setSupabase } from '@/core/sync/client';
 import { lockActive } from './lock';
-import { refreshTrustedTime, trustedMs } from './trustedTime';
+import { refreshTrustedTime } from './serverTime';
+import { trustedMs } from './trustedTime';
 
 let db: AscendDB;
 beforeEach(async () => {
