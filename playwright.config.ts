@@ -13,6 +13,9 @@ export default defineConfig({
   reporter: [['list']],
   use: {
     baseURL,
+    // Dates are shown in the device's locale; the tests expect Indian English ("1 Oct 2027"), so
+    // pin it — otherwise a machine in another locale (e.g. CI, en-US) fails for no real reason.
+    locale: 'en-IN',
     trace: 'retain-on-failure',
   },
   projects: [

@@ -14,6 +14,13 @@ on:
 permissions:
   contents: read
 
+# The unit tests check dates as the app shows them in the device's locale and time zone; run them
+# in the same ones as the development laptop (Indian English, India time). Without this a US/UTC
+# runner fails 4 tests over "Oct 1, 2027" vs "1 Oct 2027" — a test assumption, not an app bug.
+env:
+  LANG: en_IN.UTF-8 # Node's ICU takes its default locale from this
+  TZ: Asia/Kolkata
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
