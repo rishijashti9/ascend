@@ -1,7 +1,7 @@
 # Production hardening — Phase 5: backend and API improvements
 
 Date: 2026-11-11 · Builds on [phase-4-auth-db-hardening.md](phase-4-auth-db-hardening.md).
-**Status: fixed and verified locally, committed, NOT deployed** — needs
+**Status: deployed 2026-11-11 with the owner's go-ahead** (was: committed, not deployed) — needs
 `supabase functions deploy ask delete-account` and a push to `main`.
 
 ## 1. What was inspected
@@ -39,3 +39,13 @@ probes after deploying confirm behaviour.
 - CORS protects browsers only; non-browser callers still need a valid token (unchanged,
   verified in Phase 2/4).
 - Not live until deployed.
+
+## 5. Deployment (2026-11-11)
+
+| Step                                           | Evidence                                                                                                                                                                                                                                            |
+| ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `supabase functions deploy ask delete-account` | Both bundled and deployed, each with `_shared/cors.ts` (the deploy bundles and type-checks the code)                                                                                                                                                |
+| Live CORS pre-flight                           | Both functions: `https://ascend-vert-mu.vercel.app` and `https://localhost` echoed; `https://evil.example` → no `Access-Control-Allow-Origin`                                                                                                       |
+| Live auth still enforced                       | `ask` without a user token → `{"error":"signed_out"}` 401                                                                                                                                                                                           |
+| `git push` (`8b6320e`) → Vercel                | Commit status `success`                                                                                                                                                                                                                             |
+| e2e against production                         | security + smoke + career: 15/16 first run — the CSP screen walk **timed out** on laptop (`page.goto` > 30 s over the network; no violation). Gave that test a 90 s budget; re-run ×3 on both devices: 12/12 (slowest 32.3 s, confirming the cause) |

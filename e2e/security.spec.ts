@@ -40,6 +40,9 @@ test('pages carry the security headers', async ({ request }) => {
 });
 
 test('no screen violates the Content-Security-Policy', async ({ page }) => {
+  // 15 full page loads: ~13 s locally, but against the live site (E2E_BASE_URL) the network can
+  // push it past the default 30 s.
+  test.setTimeout(90_000);
   const errors = watchErrors(page);
   await page.addInitScript(() => {
     const w = window as unknown as { __cspViolations: string[] };
