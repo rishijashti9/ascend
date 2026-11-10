@@ -1,7 +1,7 @@
 # Production hardening — Phase 6: frontend quality and performance
 
 Date: 2026-11-11 · Builds on [phase-5-backend-api.md](phase-5-backend-api.md).
-**Status: verified locally, committed, NOT deployed** (push to `main` deploys the web app; the
+**Status: web deployed 2026-11-11 with the owner's go-ahead** (push to `main` deploys the web app; the
 Android change reaches the phone with the next APK install).
 
 ## 1. What was inspected and measured
@@ -51,3 +51,12 @@ and offline use was reused, not rebuilt.
   the next APK.
 - Start-up cost is dominated by libraries; deferring Supabase for signed-out users would help
   others but not you (you're signed in).
+
+## 5. Deployment (2026-11-11)
+
+| Step                            | Evidence                                                                      |
+| ------------------------------- | ----------------------------------------------------------------------------- |
+| `git push` (`a58d4e4`) → Vercel | Commit status `success`                                                       |
+| Meta CSP live                   | `index.html` on the live site contains the `Content-Security-Policy` meta tag |
+| e2e against production          | security + smoke + core-loop: 22/22 passed (phone + laptop)                   |
+| Android                         | Reaches the phone with the next APK install (owner)                           |
