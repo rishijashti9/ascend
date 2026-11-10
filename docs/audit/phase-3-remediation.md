@@ -1,7 +1,7 @@
 # Production hardening — Phase 3: critical and high vulnerability remediation
 
 Date: 2026-11-10 · Builds on [phase-2-security-assessment.md](phase-2-security-assessment.md).
-**Status: fixed and verified locally, committed, NOT deployed** — pushing `main` deploys to
+**Status: deployed 2026-11-10 with the owner's go-ahead** (was: fixed and verified locally, committed, not deployed) — pushing `main` deploys to
 Vercel and the migration needs `supabase db push`; both wait for the owner's go-ahead.
 
 ## 1. Scope
@@ -51,3 +51,14 @@ Until steps 1–2, V-01 remains open in production.
   (a `<meta>` CSP for Android is a Phase 6 candidate).
 - V-05 (plaintext weekly backups in shared storage) and V-07 (server-readable sync data) wait
   for your decision.
+
+## 6. Deployment (2026-11-10)
+
+| Step                                    | Evidence                                                                                             |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `supabase db push --dry-run`            | Only `20261110000000_signup_allowlist.sql` pending                                                   |
+| `supabase db push`                      | Applied; `supabase migration list --linked` shows it remote                                          |
+| Allow-list not reachable via API        | `Accept-Profile: private` → `PGRST106 Invalid schema: private`                                       |
+| `git push` (`3cdb9eb`) → Vercel         | Live response carries CSP, nosniff, X-Frame-Options, Referrer-Policy, COOP, Permissions-Policy, HSTS |
+| e2e against production (`E2E_BASE_URL`) | `security.spec.ts` + `smoke.spec.ts`: 14/14 passed (phone + laptop, incl. offline)                   |
+| Dashboard sign-up switch                | Still on (`disable_signup: false`) — owner action; the database lock already refuses new accounts    |
