@@ -6,6 +6,15 @@
 // question, goal/skill/quest progress numbers and Growth Compass hints (allow-listed there).
 import { createClient } from 'npm:@supabase/supabase-js@2.118.0';
 import { corsHeaders } from '../_shared/cors.ts';
+import {
+  buildPrompt,
+  cleanContext,
+  cleanHints,
+  cleanQuestion,
+  MAX_BODY_BYTES,
+  parseAnswer,
+  UNTRUSTED_RULE,
+} from './guard.ts';
 import { openRouterProvider } from './openrouter.ts';
 
 /** Hard cap per user per day (the app asks for less); keeps us inside free limits. */
@@ -27,7 +36,8 @@ Rules:
   may have changed and tell the user to check the official site. Never invent links or numbers.
 - Build on the trusted ASCEND guidance given with the question when it fits.
 - If concrete next steps would help, end with a line "QUESTS:" followed by up to 3 lines
-  "- <short weekly quest title>" (max 60 characters each).`;
+  "- <short weekly quest title>" (max 60 characters each).
+${UNTRUSTED_RULE}`;
 
 interface Body {
   question?: unknown;
@@ -39,29 +49,6 @@ async function sha256(text: string): Promise<string> {
   const bytes = new TextEncoder().encode(text);
   const hash = await crypto.subtle.digest('SHA-256', bytes);
   return [...new Uint8Array(hash)].map((b) => b.toString(16).padStart(2, '0')).join('');
-}
-
-function parse(text: string): { text: string; quests: string[] } {
-  const [answer, tail] = text.split(/\nQUESTS:\s*\n?/);
-  const quests = (tail ?? '')
-    .split('\n')
-    .map((l) => l.replace(/^[-*•]\s*/, '').trim())
-    .filter((l) => l.length > 0 && l.length <= 60)
-    .slice(0, 3);
-  return { text: (answer ?? '').trim(), quests };
-}
-
-/** The Growth Compass links the app sent (https only) — the answer's sources. */
-function compassSources(hints: unknown): { title: string; url: string }[] {
-  return (Array.isArray(hints) ? hints : [])
-    .filter((h: unknown): h is { title: string; url: string } => {
-      const x = h as { title?: unknown; url?: unknown } | null;
-      return (
-        typeof x?.title === 'string' && typeof x?.url === 'string' && x.url.startsWith('https://')
-      );
-    })
-    .map((h) => ({ title: h.title.slice(0, 120), url: h.url }))
-    .slice(0, 5);
 }
 
 Deno.serve(async (req) => {
@@ -90,11 +77,21 @@ Deno.serve(async (req) => {
   if (!who.user) return json({ error: 'signed_out' }, 401);
   const user = who.user.id;
 
-  const body = (await req.json().catch(() => ({}))) as Body;
-  const question = typeof body.question === 'string' ? body.question.trim().slice(0, 500) : '';
+  // Hardening V-14: a bounded body, and only allow-listed, shape-checked input (guard.ts).
+  const raw = await req.text().catch(() => '');
+  if (new TextEncoder().encode(raw).length > MAX_BODY_BYTES)
+    return json({ error: 'too_large' }, 413);
+  let body: Body = {};
+  try {
+    body = JSON.parse(raw) as Body;
+  } catch {
+    return json({ error: 'empty' }, 400);
+  }
+  const question = cleanQuestion(body.question);
   if (question.length < 3) return json({ error: 'empty' }, 400);
-  const context = JSON.stringify(body.context ?? {}).slice(0, 2000);
-  const hints = JSON.stringify(body.hints ?? []).slice(0, 2000);
+  const contextData = cleanContext(body.context);
+  const hintData = cleanHints(body.hints);
+  const context = JSON.stringify(contextData);
 
   const admin = createClient(url, service);
   const cacheKey = await sha256(
@@ -113,19 +110,16 @@ Deno.serve(async (req) => {
   const taken = await admin.rpc('ask_take', { p_user: user, p_limit: MAX_PER_DAY });
   if (taken.error || taken.data === -1) return json({ error: 'quota' }, 429);
 
-  const prompt = `Question: ${question}\n\nMy progress (numbers only): ${context}\n\nTrusted ASCEND guidance that may help: ${hints}`;
-  const result = await provider.answer(SYSTEM, prompt);
+  const result = await provider.answer(SYSTEM, buildPrompt(question, contextData, hintData));
   if (!result.ok) {
     if (result.reason === 'quota') return json({ error: 'quota' }, 429);
     if (result.reason === 'no_key') return json({ error: 'no_key' }, 503);
     return json({ error: 'provider' }, 502);
   }
-  if (result.text.startsWith('OFF_TOPIC')) return json({ error: 'off_topic' }, 200);
-  const sources = (result.sources.length > 0 ? result.sources : compassSources(body.hints)).slice(
-    0,
-    5,
-  );
-  const { text, quests } = parse(result.text);
+  if (result.text.trim().startsWith('OFF_TOPIC')) return json({ error: 'off_topic' }, 200);
+  const sources = cleanHints(result.sources.length > 0 ? result.sources : hintData);
+  const { text, quests } = parseAnswer(result.text);
+  if (!text) return json({ error: 'provider' }, 502);
   const answer = { text, quests, sources, model: result.model };
   await admin.from('ask_cache').upsert({ user_id: user, key: cacheKey, answer });
   return json({ ...answer, cached: false });

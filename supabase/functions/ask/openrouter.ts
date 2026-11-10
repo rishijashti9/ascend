@@ -18,6 +18,9 @@ const URL = 'https://openrouter.ai/api/v1/chat/completions';
 /** Statuses where trying the other model can help (model gone, busy or rate-limited). */
 const TRY_NEXT = new Set([0, 400, 404, 408, 429, 502, 503, 504]);
 
+/** A model that hangs is given up on (then the other model, then the Compass fallback). */
+export const TIMEOUT_MS = 25_000;
+
 export function openRouterProvider(key: string, preferred?: string | null): ModelProvider {
   const models = [...new Set([preferred || DEFAULT_MODEL, FALLBACK_MODEL])];
   return {
@@ -27,6 +30,7 @@ export function openRouterProvider(key: string, preferred?: string | null): Mode
       for (const model of models) {
         const res = await fetch(URL, {
           method: 'POST',
+          signal: AbortSignal.timeout(TIMEOUT_MS),
           headers: {
             Authorization: `Bearer ${key}`,
             'Content-Type': 'application/json',

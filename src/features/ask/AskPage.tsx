@@ -152,7 +152,8 @@ export function AskPanel({
         <p className="text-muted text-xs">
           Questions go to a free AI model through OpenRouter; free models’ providers may use them to
           improve their services. Only your question and progress numbers are sent — never health
-          data, journal text, mood or photos. The model can’t browse the web, so check deadlines,
+          data, journal text, mood or photos. Your question is sent as you type it, so leave out
+          names and personal health details. The model can’t browse the web, so check deadlines,
           fees and requirements on the official sites.
         </p>
       </form>
