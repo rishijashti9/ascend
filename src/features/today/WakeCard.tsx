@@ -41,7 +41,9 @@ export function WakeCard({ quest }: { quest: TodayQuest }) {
           <p className="text-muted text-sm">
             {pending && phase === 'done_full' && `On time until ${onTimeUntil}`}
             {pending && phase === 'done_late' && `Late check-in until ${lateUntil} — still counts`}
-            {pending && phase === 'missed' && 'The wake-up window has closed for today.'}
+            {pending &&
+              phase === 'missed' &&
+              `Missed for today — tomorrow’s check-in opens at ${formatTime(settings.wake_time)}.`}
             {!pending && instance.full_version_snapshot}
           </p>
         </div>

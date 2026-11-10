@@ -102,7 +102,7 @@ export function TodayPage() {
         </div>
         <SystemMessage />
         <WhatNow next={next} />
-        {status === 'ready' && !notStarted && <TodayTiles onQuests={scrollToQuests} />}
+        {status === 'ready' && !notStarted && <TodayTiles onQuests={scrollToQuests} next={next} />}
         <SuggestionSlot />
         {isEnabled('screenTime') && <ScreenTimeToday />}
         <ReminderSetupCard />

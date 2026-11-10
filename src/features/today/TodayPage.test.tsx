@@ -84,6 +84,23 @@ describe('TodayPage', () => {
     expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(8);
   });
 
+  it('one next action: the quests tile and "Now" agree, and never pick a closed wake-up (UX-2)', async () => {
+    await setup(10); // 10:00 — the wake-up window (until 7:00) has closed
+    const now = screen.getByRole('region', { name: 'What to do now' });
+    const nowTitle = now.querySelector('.font-medium')?.textContent;
+    expect(nowTitle).toBeTruthy();
+    expect(nowTitle).not.toBe('Wake up on time');
+    const tile = screen.getByRole('button', { name: /^Today’s quests/ });
+    expect(tile).toHaveTextContent(`Next: ${nowTitle}`);
+    expect(tile).not.toHaveTextContent('Next: Wake up on time');
+  });
+
+  it('Day 1 has no core quests yet, so the tile says nothing about them (UX-2)', async () => {
+    await setup(10);
+    const tile = screen.getByRole('button', { name: /^Today’s quests/ });
+    expect(tile).not.toHaveTextContent(/core (done|open)/);
+  });
+
   it('Full / Minimum taps complete a check quest, award XP, and can be undone', async () => {
     await setup();
     await tap(card('Workout'), 'Minimum');
@@ -130,7 +147,9 @@ describe('TodayPage', () => {
   it('after the late cutoff the "I\'m up" button is gone', async () => {
     await setup(8);
     expect(screen.queryByRole('button', { name: /I’m up/ })).not.toBeInTheDocument();
-    expect(screen.getByText('The wake-up window has closed for today.')).toBeInTheDocument();
+    expect(
+      screen.getByText('Missed for today — tomorrow’s check-in opens at 5:00 AM.'),
+    ).toBeInTheDocument();
   });
 
   it('when Day 1 is tomorrow, tonight shows a friendly note instead of quests', async () => {

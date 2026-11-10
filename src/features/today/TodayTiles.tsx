@@ -8,6 +8,7 @@ import { useSkills } from '@/core/state/skills';
 import { useToday } from '@/core/state/today';
 import { careerGap } from '@/core/compass/gap';
 import { careerById } from '@/core/compass/pack';
+import type { NextAction } from '@/core/adaptive/today';
 import { isDone } from '@/core/engine/progress';
 import { formatMinutes } from '@/core/screentime/observe';
 import { weekStartOf, type Weekday } from '@/core/time';
@@ -18,10 +19,17 @@ import { Tile } from '@/ui/Surface';
  * Today's live tiles (Phase 12 dashboard): today's quests, Body, Skill, Roadmap and Screen time —
  * each one tap from its screen, each showing real numbers (or the next step when there are none).
  */
-export function TodayTiles({ onQuests }: { onQuests: () => void }) {
+export function TodayTiles({
+  onQuests,
+  next,
+}: {
+  onQuests: () => void;
+  /** The one next action (the same one Today shows as "Now"), or null. */
+  next: NextAction | null;
+}) {
   return (
     <div className="grid grid-cols-2 gap-3">
-      <QuestsTile onQuests={onQuests} />
+      <QuestsTile onQuests={onQuests} next={next} />
       {isEnabled('body') && <BodyTile />}
       {isEnabled('skills') && <SkillTile />}
       {isEnabled('compass') && <RoadmapTile />}
@@ -30,16 +38,27 @@ export function TodayTiles({ onQuests }: { onQuests: () => void }) {
   );
 }
 
-function QuestsTile({ onQuests }: { onQuests: () => void }) {
+/**
+ * Today's quests at a glance. Its "Next" is the SAME next action as Today's "Now" card (UX-2,
+ * docs/product/AUDIT-AND-PROPOSAL.md P1): one answer to "what should I do next?", and only
+ * quests that can still be done (never a wake-up whose window has closed, or tonight's sleep).
+ */
+function QuestsTile({ onQuests, next }: { onQuests: () => void; next: NextAction | null }) {
   const daily = useToday((s) => s.daily);
   const done = daily.filter((q) => isDone(q.instance.status)).length;
   const open = daily.filter((q) => !isDone(q.instance.status) && q.instance.status !== 'missed');
+  const core = daily.filter((q) => q.instance.core_snapshot);
   const coreOpen = open.filter((q) => q.instance.core_snapshot).length;
-  const next = open.find((q) => q.instance.core_snapshot) ?? open[0];
+  const coreAllDone = core.length > 0 && core.every((q) => isDone(q.instance.status));
+  const nextQuest = next ? daily.find((q) => q.instance.id === next.instanceId) : undefined;
   const left =
-    next && next.instance.measure_snapshot === 'minutes' && next.instance.target_snapshot
-      ? `${Math.max(0, next.instance.target_snapshot - next.progress)} min left`
+    nextQuest &&
+    nextQuest.instance.measure_snapshot === 'minutes' &&
+    nextQuest.instance.target_snapshot
+      ? `${Math.max(0, nextQuest.instance.target_snapshot - nextQuest.progress)} min left`
       : null;
+  // Only say something about core quests when there are some today (none on Day 1).
+  const coreNote = coreOpen > 0 ? `${coreOpen} core open` : coreAllDone ? 'core done' : null;
   return (
     <button
       type="button"
@@ -54,16 +73,20 @@ function QuestsTile({ onQuests }: { onQuests: () => void }) {
       </span>
       {next ? (
         <span className="text-sm">
-          <span className="font-semibold">Next: {next.instance.title_snapshot}</span>
-          <span className="text-on-tile-muted block">
-            {[left, coreOpen > 0 ? `${coreOpen} core open` : 'core done']
-              .filter(Boolean)
-              .join(' · ')}
-          </span>
+          <span className="font-semibold">Next: {next.title}</span>
+          {(left || coreNote) && (
+            <span className="text-on-tile-muted block">
+              {[left, coreNote].filter(Boolean).join(' · ')}
+            </span>
+          )}
         </span>
       ) : (
         <span className="text-sm font-semibold">
-          {daily.length ? 'Everything is done for today.' : 'A rest day.'}
+          {!daily.length
+            ? 'A rest day.'
+            : open.length === 0
+              ? 'Everything is done for today.'
+              : 'Nothing else to do right now.'}
         </span>
       )}
       <span className="bg-on-tile-lime/15 block h-2 overflow-hidden rounded-full">
