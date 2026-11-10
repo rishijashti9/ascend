@@ -55,6 +55,10 @@ beforeAll(async () => {
     create role authenticated;
     grant usage on schema public, auth to anon, authenticated;
     grant execute on function auth.uid() to anon, authenticated;
+    -- Like Supabase: new tables and functions in public are granted to the API roles directly
+    -- (so "revoke … from public" alone doesn't lock them — hardening V-10).
+    alter default privileges in schema public grant all on tables to anon, authenticated;
+    alter default privileges in schema public grant execute on functions to anon, authenticated;
     insert into auth.users values ('${A}'), ('${B}');
   `);
   for (const file of readdirSync(MIGRATIONS).sort()) {
@@ -269,6 +273,100 @@ describe('Supabase migration (run in Postgres)', () => {
         })),
       ),
     ).rejects.toThrow();
+  });
+});
+
+describe('least privilege and limits (hardening V-10, V-02)', () => {
+  afterEach(async () => {
+    await pg.exec(`reset role;
+      create or replace function public.sync_row_limit() returns int
+        language sql immutable set search_path = '' as $$ select 250000 $$;`);
+  });
+
+  it('anonymous users can call none of the account functions; only server_time stays open', async () => {
+    await as(null);
+    for (const sql of [
+      `select compact_my_records('2025-01-01')`,
+      'select sync_server_version()',
+      'select my_cloud_usage()',
+      'select reset_my_cloud_data()',
+      `select ask_take('${A}', 5)`,
+      'select sync_row_limit()',
+    ]) {
+      await expect(pg.query(sql), sql).rejects.toThrow(/permission denied/);
+    }
+    expect((await pg.query('select server_time() as t')).rows).toHaveLength(1);
+  });
+
+  it('signed-in users can use the app functions but not the internals or the Ask tables', async () => {
+    await as(A);
+    expect((await pg.query<{ v: number }>('select sync_server_version() as v')).rows[0]?.v).toBe(3);
+    await pg.query('select my_cloud_usage()');
+    for (const sql of [
+      `select sync_sort_key('${hlc(1)}', 1)`,
+      `select sync_incoming_wins('habits', '{}', 'a', '{}', 'b')`,
+      'select sync_row_limit()',
+      'select * from ask_usage',
+      'select * from ask_cache',
+    ]) {
+      await expect(pg.query(sql), sql).rejects.toThrow(/permission denied/);
+    }
+  });
+
+  it('every function in public has a fixed search_path', async () => {
+    await pg.exec('reset role');
+    const loose = await pg.query<{ name: string }>(`
+      select p.proname as name from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+      where n.nspname in ('public', 'private')
+        and not exists (select 1 from unnest(coalesce(p.proconfig, '{}')) c where c like 'search_path=%')`);
+    expect(loose.rows.map((r) => r.name)).toEqual([]);
+  });
+
+  it('a full cloud copy keeps updating existing records but refuses new ones', async () => {
+    await pg.exec(`reset role;
+      create or replace function public.sync_row_limit() returns int
+        language sql immutable set search_path = '' as $$ select 2 $$;`);
+    await as(A);
+    expect(
+      await push([
+        { tbl: 'habits', id: 'a', hlc: hlc(1000), data: { v: 1 } },
+        { tbl: 'habits', id: 'b', hlc: hlc(1000), data: { v: 1 } },
+      ]),
+    ).toEqual({ accepted: 2, kept: 0 });
+    // Changing a record that's already there still works at the limit…
+    expect(await push([{ tbl: 'habits', id: 'a', hlc: hlc(2000), data: { v: 2 } }])).toEqual({
+      accepted: 1,
+      kept: 0,
+    });
+    // …a new one is refused with a clear error, and nothing from that batch is stored.
+    await expect(
+      push([
+        { tbl: 'habits', id: 'b', hlc: hlc(3000), data: { v: 3 } },
+        { tbl: 'habits', id: 'c', hlc: hlc(3000), data: { v: 1 } },
+      ]),
+    ).rejects.toThrow(/storage limit/);
+    expect((await rows()).map((r) => [r.id, r.data.v])).toEqual([
+      ['b', 1],
+      ['a', 2],
+    ]);
+    // Another user's quota is their own.
+    await as(B);
+    expect(await push([{ tbl: 'habits', id: 'c', hlc: hlc(1000), data: {} }])).toEqual({
+      accepted: 1,
+      kept: 0,
+    });
+  });
+
+  it('refuses a request over 8 MB', async () => {
+    await as(A);
+    const big = 'x'.repeat(200_000);
+    const records = Array.from({ length: 45 }, (_, i) => ({
+      tbl: 'habits',
+      id: `big${i}`,
+      hlc: hlc(1000),
+      data: { big: `${big}${i}` },
+    }));
+    await expect(push(records)).rejects.toThrow(/too large/);
   });
 });
 

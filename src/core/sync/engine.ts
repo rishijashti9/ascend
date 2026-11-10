@@ -11,6 +11,27 @@ import { SERVER_VERSION, SYNCED_TABLES, tableServerVersion } from './merge';
  * a round cut short by a lost connection continues where it stopped next time.
  */
 const BATCH = 500;
+/** Also cap a push by size: the server refuses requests over 8 MB (hardening V-02). */
+const BATCH_CHARS = 4_000_000;
+
+/** Splits records into batches of at most BATCH records and about BATCH_CHARS of JSON. */
+export function pushBatches(records: OutRecord[], maxChars = BATCH_CHARS): OutRecord[][] {
+  const batches: OutRecord[][] = [];
+  let current: OutRecord[] = [];
+  let chars = 0;
+  for (const r of records) {
+    const size = JSON.stringify(r).length;
+    if (current.length > 0 && (current.length >= BATCH || chars + size > maxChars)) {
+      batches.push(current);
+      current = [];
+      chars = 0;
+    }
+    current.push(r);
+    chars += size;
+  }
+  if (current.length > 0) batches.push(current);
+  return batches;
+}
 
 type Row = Record<string, unknown> & { id: string; hlc: string; deleted_at?: string | null };
 
@@ -75,8 +96,7 @@ async function serverVersions(db: AscendDB, backend: SyncBackend): Promise<Serve
 export async function pushChanges(db: AscendDB, backend: SyncBackend): Promise<number> {
   const versions = await serverVersions(db, backend);
   const changes = await localChanges(db, versions);
-  for (let i = 0; i < changes.length; i += BATCH) {
-    const batch = changes.slice(i, i + BATCH);
+  for (const batch of pushBatches(changes)) {
     await backend.push(batch);
     const last = batch.at(-1);
     if (last)

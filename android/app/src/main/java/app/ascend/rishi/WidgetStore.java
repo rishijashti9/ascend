@@ -25,8 +25,37 @@ final class WidgetStore {
     private static final String PREFS = "ascend_widget";
     private static final String SNAPSHOT = "snapshot";
     private static final String PENDING = "pending";
+    private static final String TAP_TOKEN = "tap_token";
 
     private WidgetStore() {}
+
+    /**
+     * Hardening V-09: the widget receivers must be exported (the launcher delivers their taps),
+     * so any app could broadcast a fake "tap". Each tap intent carries this per-install secret
+     * (created once with SecureRandom, private to ASCEND); a broadcast without it is ignored.
+     * Other apps can't read it: the PendingIntents are immutable and their extras aren't exposed.
+     */
+    static synchronized String tapToken(Context context) {
+        SharedPreferences p = prefs(context);
+        String token = p.getString(TAP_TOKEN, null);
+        if (token == null) {
+            byte[] bytes = new byte[32];
+            new java.security.SecureRandom().nextBytes(bytes);
+            StringBuilder hex = new StringBuilder(64);
+            for (byte b : bytes) hex.append(String.format(Locale.ROOT, "%02x", b));
+            token = hex.toString();
+            p.edit().putString(TAP_TOKEN, token).apply();
+        }
+        return token;
+    }
+
+    /** Constant-time comparison; a missing or empty token never matches. */
+    static boolean tokensMatch(String expected, String given) {
+        if (expected == null || given == null || expected.isEmpty()) return false;
+        return java.security.MessageDigest.isEqual(
+                expected.getBytes(java.nio.charset.StandardCharsets.UTF_8),
+                given.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    }
 
     private static SharedPreferences prefs(Context context) {
         return context.getApplicationContext().getSharedPreferences(PREFS, Context.MODE_PRIVATE);

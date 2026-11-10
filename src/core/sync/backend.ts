@@ -40,7 +40,7 @@ export interface SyncBackend {
 export class SyncUnavailable extends Error {
   constructor(
     message: string,
-    readonly reason: 'offline' | 'paused' | 'auth' | 'server',
+    readonly reason: 'offline' | 'paused' | 'auth' | 'quota' | 'server',
   ) {
     super(message);
   }
@@ -53,6 +53,8 @@ function classify(error: { message?: string; code?: string; status?: number } | 
     throw new SyncUnavailable(msg, 'offline');
   if (status === 401 || status === 403 || error?.code === 'PGRST301' || error?.code === '28000')
     throw new SyncUnavailable(msg, 'auth');
+  // The account's cloud copy reached its row ceiling (push_records, hardening V-02).
+  if (error?.code === '53400') throw new SyncUnavailable(msg, 'quota');
   // A paused free-tier project answers 540 / 503 or not at all (SPEC 9).
   if (status === 540 || status === 503 || status === 502 || status === 504 || /paused/i.test(msg))
     throw new SyncUnavailable(msg, 'paused');

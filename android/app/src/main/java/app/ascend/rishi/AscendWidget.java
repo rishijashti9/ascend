@@ -25,6 +25,7 @@ public abstract class AscendWidget extends AppWidgetProvider {
     static final String ACTION_TAP = "app.ascend.rishi.WIDGET_TAP";
     static final String EXTRA_TYPE = "type";
     static final String EXTRA_INSTANCE = "instanceId";
+    static final String EXTRA_TOKEN = "tapToken";
 
     private static final int[] ROWS = {R.id.row0, R.id.row1, R.id.row2, R.id.row3};
     private static final int[] TITLES = {R.id.title0, R.id.title1, R.id.title2, R.id.title3};
@@ -46,6 +47,10 @@ public abstract class AscendWidget extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (ACTION_TAP.equals(intent.getAction())) {
+            // Only taps from our own widget rows carry the secret (hardening V-09).
+            if (!WidgetStore.tokensMatch(WidgetStore.tapToken(context), intent.getStringExtra(EXTRA_TOKEN))) {
+                return;
+            }
             String type = intent.getStringExtra(EXTRA_TYPE);
             String instance = intent.getStringExtra(EXTRA_INSTANCE);
             if (type != null && instance != null) {
@@ -162,6 +167,7 @@ public abstract class AscendWidget extends AppWidgetProvider {
         intent.setAction(ACTION_TAP);
         intent.putExtra(EXTRA_TYPE, type);
         intent.putExtra(EXTRA_INSTANCE, instance);
+        intent.putExtra(EXTRA_TOKEN, WidgetStore.tapToken(context));
         // A distinct data URI keeps each row's intent separate.
         intent.setData(Uri.parse("ascend-widget://tap/" + widgetId + "/" + row + "/" + instance));
         return PendingIntent.getBroadcast(

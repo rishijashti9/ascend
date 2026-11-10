@@ -90,7 +90,9 @@ export function startSync(
         message:
           error.reason === 'auth'
             ? 'Your sign-in has expired. Sign in again to keep syncing.'
-            : null,
+            : error.reason === 'quota'
+              ? 'Your cloud copy is full, so new records stay on this device. Compact old history in Settings → My data to make room.'
+              : null,
       });
     } else {
       logError(error, 'sync');
