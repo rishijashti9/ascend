@@ -1,7 +1,7 @@
 # Production hardening — Phase 8: testing, debugging and regression verification
 
 Date: 2026-11-11 · Builds on [phase-7-ai-third-party.md](phase-7-ai-third-party.md).
-**Status: verified locally, committed, NOT deployed** (one performance fix in the app → push).
+**Status: deployed 2026-11-11 with the owner's go-ahead.**
 
 ## 1. Test inventory by type (all executed in this phase)
 
@@ -45,3 +45,11 @@ Other `anyOf` uses were checked: all bounded to a handful of keys (one week, tod
 
 `npm run check` (type-check, lint, format, 894 tests) ✓ · e2e 42 ✓ · live API 6 ✓ · perf 13/13 ✓
 · simulate ✓ · Android JUnit 4 ✓.
+
+## 6. Deployment (2026-11-11)
+
+| Step                               | Evidence                                                          |
+| ---------------------------------- | ----------------------------------------------------------------- |
+| `git push` (`434ad0c`) → Vercel    | Commit status `success`                                           |
+| e2e against production             | core-loop + goals (planner path) + smoke + security: 24/24 passed |
+| Live API regression (`LIVE_API=1`) | 6/6 passed                                                        |
