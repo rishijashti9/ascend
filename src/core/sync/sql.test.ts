@@ -48,7 +48,7 @@ beforeAll(async () => {
   pg = new PGlite();
   await pg.exec(`
     create schema auth;
-    create table auth.users (id uuid primary key);
+    create table auth.users (id uuid primary key, email text);
     create function auth.uid() returns uuid language sql stable as
       $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
     create role anon;
@@ -269,6 +269,56 @@ describe('Supabase migration (run in Postgres)', () => {
         })),
       ),
     ).rejects.toThrow();
+  });
+});
+
+describe('sign-ups are closed except for the allow-list (hardening V-01)', () => {
+  const C = '33333333-3333-3333-3333-333333333333';
+  afterEach(async () => {
+    await pg.exec(`reset role; delete from auth.users where id = '${C}';
+      delete from private.signup_allowlist;`);
+  });
+
+  it('a new account is refused while the allow-list is empty', async () => {
+    await pg.exec('reset role');
+    await expect(
+      pg.query(`insert into auth.users (id, email) values ('${C}', 'stranger@example.com')`),
+    ).rejects.toThrow(/Sign-ups are closed/);
+  });
+
+  it('an allow-listed email may sign up, matched case-insensitively', async () => {
+    await pg.exec(
+      `reset role; insert into private.signup_allowlist (email) values ('me@example.com')`,
+    );
+    await pg.query(`insert into auth.users (id, email) values ('${C}', 'Me@Example.com')`);
+    const n = await pg.query<{ n: number }>(
+      `select count(*)::int as n from auth.users where id = '${C}'`,
+    );
+    expect(n.rows[0]?.n).toBe(1);
+  });
+
+  it('an account without an email (e.g. phone) is refused too', async () => {
+    await pg.exec('reset role');
+    await expect(pg.query(`insert into auth.users (id) values ('${C}')`)).rejects.toThrow(
+      /Sign-ups are closed/,
+    );
+  });
+
+  it('existing accounts keep working: updates (e.g. last sign-in) are not blocked', async () => {
+    await pg.exec('reset role');
+    await pg.query(`update auth.users set email = 'a@example.com' where id = '${A}'`);
+  });
+
+  it('app users can neither read nor change the allow-list', async () => {
+    for (const who of [A, null]) {
+      await as(who);
+      await expect(pg.query('select * from private.signup_allowlist')).rejects.toThrow(
+        /permission denied/,
+      );
+      await expect(
+        pg.query(`insert into private.signup_allowlist (email) values ('x@example.com')`),
+      ).rejects.toThrow(/permission denied/);
+    }
   });
 });
 

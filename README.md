@@ -270,6 +270,13 @@ Phase 11 adds one migration (`supabase/migrations/20261105000000_phase11_screen_
 npx supabase db push
 ```
 
+### Sign-ups are closed (security)
+
+ASCEND is a personal app, so nobody else may create an account in your Supabase project. Two locks:
+
+1. **Dashboard:** Supabase Dashboard → Authentication → Sign In / Providers → turn off **Allow new users to sign up**. Your existing account still signs in with Google or an email link.
+2. **Database:** the migration `supabase/migrations/20261110000000_signup_allowlist.sql` refuses any new account whose email isn't in `private.signup_allowlist` (empty by default). Apply it with `npx supabase db push`. To allow someone (or yourself on a brand-new account), run in the Supabase SQL editor: `insert into private.signup_allowlist (email) values ('name@example.com');`
+
 ### Ask the System: the OpenRouter key
 
 Ask the System uses free models on [OpenRouter](https://openrouter.ai) (an OpenAI-compatible service). Create a key at https://openrouter.ai/settings/keys, then in PowerShell from the project folder — the key is typed into the prompt, never pasted into a chat or a file:

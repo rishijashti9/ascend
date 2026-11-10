@@ -5,8 +5,19 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import pkg from './package.json' with { type: 'json' };
+import vercel from './vercel.json' with { type: 'json' };
+
+/**
+ * The security headers Vercel sends on every page (CSP and friends, hardening V-03). `vite
+ * preview` sends the same ones, so the end-to-end tests run under the exact production policy —
+ * a CSP violation shows up as a console error, which every e2e test already fails on.
+ */
+const securityHeaders = Object.fromEntries(
+  (vercel.headers.find((h) => h.source === '/(.*)')?.headers ?? []).map((h) => [h.key, h.value]),
+);
 
 export default defineConfig({
+  preview: { headers: securityHeaders },
   plugins: [
     react(),
     tailwindcss(),

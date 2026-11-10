@@ -1,3 +1,4 @@
+import './zodConfig'; // first: before any Zod schema is defined (CSP, see the file)
 import { startAdaptive } from '@/core/state/adaptive';
 import { startLearningRecorder } from '@/app/learning';
 import { StrictMode } from 'react';
