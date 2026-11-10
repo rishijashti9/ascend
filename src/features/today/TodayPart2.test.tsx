@@ -51,6 +51,12 @@ async function tap(scope: HTMLElement, name: string | RegExp) {
   const button = within(scope).getByRole('button', { name });
   await waitFor(() => expect(button).toBeEnabled());
   await userEvent.click(button);
+  // Wait for the action itself to finish (its button stops being busy, or is gone). The screen
+  // updates from the database before the action's promise settles, so without this a test could
+  // end mid-action and React would update after the test environment was torn down (seen on CI).
+  await waitFor(() =>
+    expect(!button.isConnected || !(button as HTMLButtonElement).disabled).toBe(true),
+  );
 }
 
 const card = (title: string) =>
