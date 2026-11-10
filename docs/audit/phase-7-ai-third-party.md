@@ -1,7 +1,7 @@
 # Production hardening — Phase 7: AI and third-party integration security
 
 Date: 2026-11-11 · Builds on [phase-6-frontend-performance.md](phase-6-frontend-performance.md).
-**Status: verified locally, committed, NOT deployed** — needs `supabase functions deploy ask`
+**Status: deployed 2026-11-11 with the owner's go-ahead** — needs `supabase functions deploy ask`
 and a push to `main`.
 
 ## 1. What was inspected
@@ -66,4 +66,12 @@ signed-in account.
 
 ## 7. Results
 
-Local verification complete (sections 5). Deployment evidence follows when deployed.
+Local verification complete (section 5).
+
+| Deployment step (2026-11-11)    | Evidence                                                                     |
+| ------------------------------- | ---------------------------------------------------------------------------- |
+| `supabase functions deploy ask` | Bundled with `guard.ts` and `_shared/cors.ts` (bundling = type-check passed) |
+| Live probes                     | No token → `{"error":"signed_out"}` 401; CORS for the app origin echoed      |
+| `git push` (`697d191`) → Vercel | Commit status `success`; live bundle contains the new privacy sentence       |
+| e2e against production          | phase8 (Ask flow) + security + smoke: 16/16 passed                           |
+| Still open                      | A real question through a model with your account (owner)                    |
