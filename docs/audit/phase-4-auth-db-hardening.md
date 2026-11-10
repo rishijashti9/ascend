@@ -1,7 +1,7 @@
 # Production hardening — Phase 4: authentication, authorization and database hardening
 
 Date: 2026-11-11 · Builds on [phase-3-remediation.md](phase-3-remediation.md).
-**Status: fixed and verified locally, committed, NOT deployed.** Deploying needs
+**Status: deployed 2026-11-11 with the owner's go-ahead** (was: committed, not deployed). Deploying needs
 `supabase db push` (migration), `supabase functions deploy delete-account` and a push to
 `main` (app) — waiting for the owner's go-ahead.
 
@@ -50,3 +50,14 @@ in Phase 3's build); to be resolved with the Gradle/Kotlin update in Phase 9.
   them).
 - Open owner decisions: V-05 (weekly backup location), V-07 (server-readable sync data), the
   dashboard sign-up switch.
+
+## 5. Deployment (2026-11-11)
+
+| Step                                       | Evidence                                                                                                                                                                                                                   |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `supabase db push --dry-run` → `db push`   | Only `20261111000000_db_hardening.sql` pending; applied                                                                                                                                                                    |
+| Live anon probes after the migration       | `compact_my_records`, `sync_server_version`, `my_cloud_usage`, `sync_row_limit`, `sync_sort_key`, `push_records` → `42501 permission denied`; `ask_usage`/`ask_cache` → `42501` (were `[]`); `server_time` → still answers |
+| `supabase functions deploy delete-account` | Uploaded `index.ts` + `fresh.ts`; anon call → `{"error":"signed_out"}` 401 (new response format, so the new code is live)                                                                                                  |
+| `git push` (`e3b8177`) → Vercel            | Commit status `success`                                                                                                                                                                                                    |
+| e2e against production                     | `security` + `smoke` + `account` specs: 16/16 passed (phone + laptop)                                                                                                                                                      |
+| Still to do by the owner                   | The manual check in section 4 (account deletion an hour after signing in)                                                                                                                                                  |
