@@ -146,6 +146,31 @@ describe('sync runner', () => {
     runner.stop();
   });
 
+  it('a full cloud copy says so plainly, keeps the app working, and clears when there is room (V-02)', async () => {
+    await onboarded(phone, 'Phone');
+    await connect(phone, cloud.backend(), 'u1', 'upload');
+    const runner = startSync(() => cloud.backend(), { database: phone, retryMs: [60_000] });
+    accountStore.setState({ status: 'signed_in', userId: 'u1', email: null });
+    await vi.waitFor(() => expect(syncStore.getState().status).toBe('synced'));
+
+    cloud.down = 'quota';
+    await run(phone)(habit('Written while the cloud is full'));
+    await runner.syncNow();
+    expect(syncStore.getState().status).toBe('error');
+    expect(syncStore.getState().message).toMatch(/cloud copy is full/i);
+    expect(syncStore.getState().message).toMatch(/Compact old history/);
+    // Nothing is lost: the new habit is still on the device, waiting to sync.
+    expect((await phone.habits.toArray()).map((h) => h.title)).toContain(
+      'Written while the cloud is full',
+    );
+
+    cloud.down = false;
+    await runner.syncNow();
+    expect(syncStore.getState().status).toBe('synced');
+    expect(syncStore.getState().message).toBeNull();
+    runner.stop();
+  });
+
   it('a fresh device downloads at sign-in and restarts on the new data', async () => {
     await onboarded(phone, 'Phone');
     const h = (await run(phone)(habit('Study'))).value as Habit;

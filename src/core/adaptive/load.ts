@@ -35,9 +35,16 @@ export async function loadAdaptiveInput(
       const raw = (
         await db.quest_instances.where('day').between(from, today, true, true).toArray()
       ).filter((i) => !i.deleted_at && i.source_type === 'habit');
-      const numericIds = raw.filter((i) => i.measure_snapshot !== 'check').map((i) => i.id);
-      const entries = numericIds.length
-        ? await db.progress_entries.where('quest_instance_id').anyOf(numericIds).toArray()
+      const numericIds = new Set(
+        raw.filter((i) => i.measure_snapshot !== 'check').map((i) => i.id),
+      );
+      // By day range, then by instance: a daily quest's progress entries always carry its own
+      // day (guardDay), so this finds exactly the same entries. `anyOf` over hundreds of ids ran
+      // one index scan per id — 1.4 s with ten years of data (hardening Phase 8 perf test).
+      const entries = numericIds.size
+        ? (
+            await db.progress_entries.where('day').between(from, today, true, true).toArray()
+          ).filter((e) => numericIds.has(e.quest_instance_id))
         : [];
       const byInstance = new Map<string, typeof entries>();
       for (const e of entries) {

@@ -10,8 +10,8 @@ import { nowMs } from '@/core/time';
 export class MemoryCloud {
   private rows = new Map<string, InRecord>();
   private seq = 0;
-  /** Simulate a paused project / no connection. */
-  down: false | 'paused' | 'offline' = false;
+  /** Simulate a paused project / no connection / a full cloud copy (hardening V-02). */
+  down: false | 'paused' | 'offline' | 'quota' = false;
   /** Server schema version (1 = before the Phase 8 migration, 2 = before Phase 11's): newer tables are refused. */
   version = 3;
 
