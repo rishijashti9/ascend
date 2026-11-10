@@ -198,6 +198,10 @@ When running `npm run dev`, a small yellow wrench button appears at the bottom-l
 | `npm run perf`                         | 10-year performance test (times every screen's data with 10 years)     |
 | `npx playwright test e2e/a11y.spec.ts` | Accessibility check (axe, 44px targets) on every screen                |
 
+## Operations (deploy, rollback, backups, monitoring)
+
+See [docs/operations/RUNBOOK.md](docs/operations/RUNBOOK.md): how to release, roll back, recover from a lost phone or a lost Supabase project, the daily live checks, and where every secret lives. Security reports from the 2026-11 hardening are in `docs/audit/`.
+
 ## Project docs
 
 - `SPEC.md` — what the app must do

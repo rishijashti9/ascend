@@ -1,0 +1,33 @@
+# Daily monitoring of the live server's security (hardening Phase 9): runs the read-only
+# e2e/live-api.spec.ts against production every morning and on demand. A failure (a permission
+# reopened, a function answering signed-out callers, headers missing, the site or Supabase down)
+# fails this workflow, and GitHub emails the repository owner. Uses only the public key.
+name: Live checks
+
+on:
+  schedule:
+    - cron: '30 0 * * *' # 06:00 in India
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install chromium
+      - name: Security checks against the live server and site
+        env:
+          LIVE_API: '1'
+          E2E_BASE_URL: https://ascend-vert-mu.vercel.app
+        run: npx playwright test e2e/live-api.spec.ts --project=laptop
