@@ -1,5 +1,6 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router';
 import type { Habit } from '@/core/db/types';
 import { db } from '@/core/db/db';
 import { clearSubscribers, ensureInstancesForDay, recordAction } from '@/core/pipeline';
@@ -35,7 +36,11 @@ beforeEach(async () => {
   await startAppState();
   await startToday();
   await startFocusStore();
-  render(<FocusPage />);
+  render(
+    <MemoryRouter initialEntries={['/focus']}>
+      <FocusPage />
+    </MemoryRouter>,
+  );
 });
 afterEach(() => {
   clearSubscribers();

@@ -1,4 +1,5 @@
 import { ChevronRight } from 'lucide-react';
+import { AskEntry } from '@/features/ask/AskButton';
 import { Link, useSearchParams } from 'react-router';
 import { isEnabled } from '@/config/features';
 import { useGoals } from '@/core/state/goals';
@@ -60,7 +61,10 @@ export function QuestsPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
-      <h1 className="display text-2xl">Quests</h1>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="display text-2xl">Quests</h1>
+        <AskEntry />
+      </div>
       <Tabs
         label="Quest types"
         tabs={tabs}

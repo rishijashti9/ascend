@@ -7,7 +7,6 @@ import { NotificationBridge } from '@/features/notifications/NotificationBridge'
 import { DeepLinks } from './DeepLinks';
 import { LevelUpMoment } from '@/features/moments/LevelUpMoment';
 import { CelebrationLayer } from '@/features/celebrations/CelebrationLayer';
-import { AskButton } from '@/features/ask/AskButton';
 import { primaryNav, SETTINGS_ITEM, type NavItem } from './navigation';
 
 function SidebarLink({ item }: { item: NavItem }) {
@@ -128,7 +127,6 @@ export function Layout() {
         {isEnabled('widgets') && <DeepLinks />}
         <Outlet />
       </main>
-      {isEnabled('ask') && <AskButton />}
       <CelebrationLayer />
       <AchievementToast />
       <LevelUpMoment />

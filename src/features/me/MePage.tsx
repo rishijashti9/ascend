@@ -1,4 +1,5 @@
 import { Brain, Settings as Gear, Smartphone } from 'lucide-react';
+import { AskEntry } from '@/features/ask/AskButton';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router';
 import { isEnabled } from '@/config/features';
 import { titleName } from '@/core/achievements/titles';
@@ -60,6 +61,7 @@ function MeHeader() {
           {title ? ` · ${title}` : ''}
         </p>
       </div>
+      <AskEntry />
       <Link
         to="/settings"
         aria-label="Settings"

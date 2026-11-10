@@ -1,10 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
-import { AskButton } from './AskButton';
-import { askScreenFor, showsAskButton } from './askContext';
+import { AskEntry } from './AskButton';
+import { askScreenFor } from './askContext';
 
-describe('Ask the System from anywhere (Phase 12)', () => {
+describe('Ask the System from the main screens (Phase 12, UX-1)', () => {
   it('suggests questions that fit the screen you came from', () => {
     expect(askScreenFor('/').name).toBe('Today');
     expect(askScreenFor('/growth/roadmap').suggestions[0]).toMatch(/ROS 2/);
@@ -13,16 +13,20 @@ describe('Ask the System from anywhere (Phase 12)', () => {
     expect(askScreenFor('/me/stats').name).toBe('Me');
   });
 
-  it('shows on the main screens only', () => {
-    for (const p of ['/', '/quests', '/focus', '/growth/skills', '/me/reviews'])
-      expect(showsAskButton(p), p).toBe(true);
-    for (const p of ['/settings', '/my-data', '/ask']) expect(showsAskButton(p), p).toBe(false);
+  it('is an inline button (not floating over the content)', () => {
+    render(
+      <MemoryRouter initialEntries={['/quests']}>
+        <AskEntry />
+      </MemoryRouter>,
+    );
+    const button = screen.getByRole('button', { name: 'Ask the System' });
+    expect(button.className).not.toMatch(/\bfixed\b|\babsolute\b/);
   });
 
   it('opens a bottom sheet that knows the screen; Escape closes it', async () => {
     render(
       <MemoryRouter initialEntries={['/me/body']}>
-        <AskButton />
+        <AskEntry />
       </MemoryRouter>,
     );
     await userEvent.click(screen.getByRole('button', { name: 'Ask the System' }));
@@ -33,14 +37,5 @@ describe('Ask the System from anywhere (Phase 12)', () => {
     expect(screen.getByLabelText('Your question')).toBeVisible();
     await userEvent.keyboard('{Escape}');
     expect(screen.queryByRole('dialog')).toBeNull();
-  });
-
-  it('isn’t there on Settings', () => {
-    render(
-      <MemoryRouter initialEntries={['/settings']}>
-        <AskButton />
-      </MemoryRouter>,
-    );
-    expect(screen.queryByRole('button', { name: 'Ask the System' })).toBeNull();
   });
 });

@@ -147,7 +147,7 @@ export function MainQuestForm({
         maxLength={160}
         onChange={(e) => setV({ ...v, title: e.target.value })}
       />
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Select
           label="Stat"
           value={v.stat}
@@ -253,7 +253,7 @@ export function MilestoneForm({
         maxLength={160}
         onChange={(e) => setV({ ...v, title: e.target.value })}
       />
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Select
           label="Progress measured by"
           value={v.target_type}

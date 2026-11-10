@@ -98,7 +98,7 @@ export function JobForm({
       aria-label={job ? `Edit ${job.company}` : 'New application'}
       className="panel outline-accent outline-2 flex flex-col gap-3 p-4"
     >
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <TextInput label="Company" value={v.company} maxLength={80} onChange={set('company')} />
         <TextInput label="Role" value={v.role} maxLength={100} onChange={set('role')} />
         {!job && (

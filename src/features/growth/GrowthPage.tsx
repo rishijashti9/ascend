@@ -1,4 +1,5 @@
 import { Outlet, useLocation, useNavigate } from 'react-router';
+import { AskEntry } from '@/features/ask/AskButton';
 import { useAppState } from '@/core/state/app';
 import { PageTitle, Tabs } from '@/ui/Surface';
 import { tabPanelProps } from '@/ui/tabs';
@@ -19,7 +20,10 @@ export function GrowthPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-4">
-      <PageTitle>Growth</PageTitle>
+      <div className="flex items-center justify-between gap-3">
+        <PageTitle>Growth</PageTitle>
+        <AskEntry />
+      </div>
       <Tabs
         label="Growth"
         idPrefix="growth"

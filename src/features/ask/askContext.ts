@@ -128,8 +128,3 @@ const TODAY: AskScreen = {
 export function askScreenFor(pathname: string): AskScreen {
   return SCREENS.find((s) => s.match.test(pathname))?.screen ?? TODAY;
 }
-
-/** Main screens show the floating Ask button (not Settings, My data or the Ask page itself). */
-export function showsAskButton(pathname: string): boolean {
-  return /^\/($|quests|focus|growth|me)/.test(pathname);
-}

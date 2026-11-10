@@ -39,7 +39,7 @@ export function AchievementList() {
         </p>
       </div>
       {done.length > 0 && (
-        <ul aria-label="Unlocked" className="grid gap-2 sm:grid-cols-2">
+        <ul aria-label="Unlocked" className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {done.map((a, i) => (
             <li
               key={a.key}
@@ -62,7 +62,7 @@ export function AchievementList() {
           <summary className="text-accent-text min-h-11 cursor-pointer py-2 text-sm">
             Still to unlock ({locked.length})
           </summary>
-          <ul aria-label="Still to unlock" className="mt-2 grid gap-2 sm:grid-cols-2">
+          <ul aria-label="Still to unlock" className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
             {locked.map(({ def, value }) => (
               <li key={def.key} className="inset flex items-start gap-3 p-3">
                 <Lock aria-hidden size={18} className="text-muted mt-0.5 shrink-0" />

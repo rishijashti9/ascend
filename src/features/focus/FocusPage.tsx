@@ -1,4 +1,5 @@
 import { Timer } from 'lucide-react';
+import { AskEntry } from '@/features/ask/AskButton';
 import { useState } from 'react';
 import { SkillPicker } from '@/ui/SkillPicker';
 import type { Stat } from '@/core/db/types';
@@ -44,7 +45,10 @@ export function FocusPage() {
   const linked = target !== 'stat' && quests.some((q) => q.instance.id === target);
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 lg:max-w-5xl">
-      <h1 className="display text-2xl">Focus</h1>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="display text-2xl">Focus</h1>
+        <AskEntry />
+      </div>
       {/* Desktop: setup on the left, this week and history on the right. */}
       <div className="flex flex-col gap-6 lg:grid lg:grid-cols-2 lg:items-start lg:gap-10">
         <div className="flex flex-col gap-6">

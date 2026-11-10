@@ -1,4 +1,5 @@
 import { FollowUpsCard } from '@/features/jobs/FollowUpsCard';
+import { AskEntry } from '@/features/ask/AskButton';
 import { BatteryLow, Timer } from 'lucide-react';
 import { Link } from 'react-router';
 import { isEnabled } from '@/config/features';
@@ -93,7 +94,10 @@ export function TodayPage() {
     <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] lg:items-start lg:gap-8">
       <div className="flex flex-col gap-4 lg:sticky lg:top-6">
         <div className="flex flex-col gap-1">
-          <h1 className="text-accent-text text-xs font-bold tracking-widest uppercase">Today</h1>
+          <div className="flex items-center justify-between gap-3">
+            <h1 className="text-accent-text text-xs font-bold tracking-widest uppercase">Today</h1>
+            <AskEntry />
+          </div>
           <StatusHeader day={day} />
         </div>
         <SystemMessage />

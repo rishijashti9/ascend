@@ -118,7 +118,7 @@ export function DaySection({ settings }: { settings: Settings }) {
   const { run, busy, error } = useAction();
   return (
     <Card title="Day and week">
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Select
           label="New day starts at"
           value={String(settings.day_start_hour)}
@@ -173,7 +173,7 @@ export function WakeSection({ settings }: { settings: Settings }) {
 
   return (
     <Card title="Wake-up">
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <TextInput
           label="Wake-up time"
           type="time"

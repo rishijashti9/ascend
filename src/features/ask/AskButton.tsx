@@ -1,22 +1,24 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router';
 import { useEffectsLevel } from '@/app/effects';
+import { isEnabled } from '@/config/features';
 import { Robot } from '@/ui/Robot';
 import { Sheet } from '@/ui/Sheet';
 import { AskPanel } from './AskPage';
-import { askScreenFor, showsAskButton } from './askContext';
+import { askScreenFor } from './askContext';
 
 /**
- * Ask the System from anywhere (Phase 12): a round robot button bottom-right, above the bottom
- * bar, on every main screen. It pulses a few times when a screen opens, then rests (no endless
- * animation). It opens a bottom sheet that knows which screen you came from and suggests fitting
- * questions; with Ask off the Growth Compass answers instead.
+ * Ask the System from the main screens (Phase 12): a round robot button in the screen's title
+ * row. It used to float bottom-right over the content; since UX-1 (docs/product/AUDIT-AND-
+ * PROPOSAL.md, P6) it sits in the header so it never covers text or controls. It pulses a few
+ * times when a screen opens, then rests. It opens a bottom sheet that knows which screen you came
+ * from and suggests fitting questions; with Ask off the Growth Compass answers instead.
  */
-export function AskButton() {
+export function AskEntry() {
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
   const fx = useEffectsLevel();
-  if (!showsAskButton(pathname)) return null;
+  if (!isEnabled('ask')) return null;
   const screen = askScreenFor(pathname);
 
   return (
@@ -27,11 +29,11 @@ export function AskButton() {
         key={pathname}
         aria-label="Ask the System"
         onClick={() => setOpen(true)}
-        className={`bg-tile-lime shadow-float fixed right-4 bottom-[calc(max(0.75rem,env(safe-area-inset-bottom))+5.5rem)] z-30 grid size-14 place-items-center rounded-full lg:right-8 lg:bottom-8 ${
+        className={`bg-tile-lime grid size-12 shrink-0 place-items-center rounded-full ${
           fx === 'off' ? '' : 'animate-ask-pulse'
         }`}
       >
-        <Robot size={34} />
+        <Robot size={30} />
       </button>
       {open && (
         <Sheet variant="bottom" titleId="ask-title" onClose={() => setOpen(false)}>
