@@ -44,6 +44,13 @@ test('no screen violates the Content-Security-Policy', async ({ page }) => {
   // push it past the default 30 s.
   test.setTimeout(90_000);
   const errors = watchErrors(page);
+  // A malformed security header only shows up as a console *warning* (e.g. an unknown
+  // Permissions-Policy feature, found on CI in hardening Phase 9) — fail on those too.
+  const headerWarnings: string[] = [];
+  page.on('console', (m) => {
+    if (m.type() === 'warning' && /Permissions-Policy|Content Security Policy/i.test(m.text()))
+      headerWarnings.push(m.text());
+  });
   await page.addInitScript(() => {
     const w = window as unknown as { __cspViolations: string[] };
     w.__cspViolations = [];
@@ -64,4 +71,5 @@ test('no screen violates the Content-Security-Policy', async ({ page }) => {
   }
   expect(violations).toEqual([]);
   expect(errors.filter((e) => /Content Security Policy|Refused to/i.test(e))).toEqual([]);
+  expect(headerWarnings).toEqual([]);
 });
