@@ -1,7 +1,7 @@
 # Production hardening — Phase 9: infrastructure and deployment readiness
 
 Date: 2026-11-11 · Builds on [phase-8-testing.md](phase-8-testing.md).
-**Status: on branch `hardening/ci`, CI green, NOT merged to `main` / NOT deployed.**
+**Status: merged to `main` and deployed 2026-11-11 with the owner's go-ahead.**
 
 ## 1. What was inspected
 
@@ -43,13 +43,20 @@ updates, HTTPS/TLS (HSTS preload on Vercel; Supabase HTTPS-only — verified in 
 
 1. **Branch protection** on `main`: require the `CI` checks to pass before merging (GitHub →
    Settings → Branches). Until then CI reports but doesn't block; Vercel still deploys `main`.
-2. **Approve merging `hardening/ci` into `main`** (that deploys: the header fix and the test
-   changes go live; the workflows start running from `main`, incl. the daily live check).
-3. Optional: a second Supabase project for development (runbook §2).
-4. Make sure GitHub Actions failure emails are on (Settings → Notifications → Actions).
+2. Optional: a second Supabase project for development (runbook §2).
+3. Make sure GitHub Actions failure emails are on (Settings → Notifications → Actions).
 
 ## 6. Remaining risks
 
 - CI doesn't gate Vercel until branch protection is on and changes go through PRs.
 - Supabase Free: no server-side backups — device copies + your monthly export are the safety net.
 - The daily live check can only run from `main` (scheduled workflows run on the default branch).
+
+## 7. Deployment (2026-11-11)
+
+| Step                                                        | Evidence                                           |
+| ----------------------------------------------------------- | -------------------------------------------------- |
+| `main` fast-forwarded to `hardening/ci` (`56f9c82`), pushed | Vercel commit status `success`                     |
+| Live header                                                 | `Permissions-Policy` no longer lists `bluetooth`   |
+| CI on `main` (`42822343397`)                                | Check + e2e ✓, Android ✓                           |
+| Live checks, run by hand from `main` (`42823715837`)        | 6/6 ✓ — the daily 06:00 IST schedule is now active |
