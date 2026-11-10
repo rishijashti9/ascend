@@ -15,6 +15,24 @@ export interface ErrorLogEntry {
 const KEY = 'ascend.errorLog';
 const MAX_ENTRIES = 100;
 
+/**
+ * Hardening V-15: the log is kept on the device and copied by hand when reporting a problem, so
+ * it must never hold sign-in tokens, keys, one-time codes or email addresses — even if an
+ * error message or a URL in a stack happens to contain one.
+ */
+const SCRUBS: [RegExp, string][] = [
+  [/\beyJ[\w-]{5,}\.[\w-]{5,}\.[\w-]+/g, '[token]'], // JWTs (access / refresh tokens)
+  [/\bBearer\s+[\w.~+/=-]+/gi, 'Bearer [token]'],
+  [/\bsb_(?:publishable|secret)_[\w-]+/g, '[key]'],
+  [/\bsk-(?:or-v1|ant)-[\w-]+/g, '[key]'],
+  [/([?&#](?:code|access_token|refresh_token|token|provider_token)=)[^&#\s]+/gi, '$1[redacted]'],
+  [/[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g, '[email]'],
+];
+
+export function scrubSecrets(text: string): string {
+  return SCRUBS.reduce((t, [re, to]) => t.replace(re, to), text);
+}
+
 function read(): ErrorLogEntry[] {
   try {
     const raw = localStorage.getItem(KEY);
@@ -29,10 +47,10 @@ export function logError(error: unknown, context?: string): ErrorLogEntry {
   const err = error instanceof Error ? error : new Error(String(error));
   const entry: ErrorLogEntry = {
     at: new Date().toISOString(),
-    message: err.message,
+    message: scrubSecrets(err.message),
     appVersion: APP_VERSION,
-    ...(err.stack ? { stack: err.stack } : {}),
-    ...(context ? { context } : {}),
+    ...(err.stack ? { stack: scrubSecrets(err.stack) } : {}),
+    ...(context ? { context: scrubSecrets(context) } : {}),
   };
   try {
     const entries = [...read(), entry].slice(-MAX_ENTRIES);
@@ -40,7 +58,8 @@ export function logError(error: unknown, context?: string): ErrorLogEntry {
   } catch {
     // Storage full or blocked: nothing more we can safely do.
   }
-  console.error(context ? `[${context}]` : '[error]', err);
+  // Scrubbed too: on Android the WebView's console goes to the system log (logcat).
+  console.error(entry.context ? `[${entry.context}]` : '[error]', entry.stack ?? entry.message);
   return entry;
 }
 

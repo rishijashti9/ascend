@@ -5,18 +5,8 @@
 // Never receives health data, journal text, mood/energy or photos — the app sends only the
 // question, goal/skill/quest progress numbers and Growth Compass hints (allow-listed there).
 import { createClient } from 'npm:@supabase/supabase-js@2.118.0';
+import { corsHeaders } from '../_shared/cors.ts';
 import { openRouterProvider } from './openrouter.ts';
-
-const cors = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
-const json = (body: unknown, status = 200) =>
-  new Response(JSON.stringify(body), {
-    status,
-    headers: { ...cors, 'Content-Type': 'application/json' },
-  });
 
 /** Hard cap per user per day (the app asks for less); keeps us inside free limits. */
 const MAX_PER_DAY = 20;
@@ -75,6 +65,12 @@ function compassSources(hints: unknown): { title: string; url: string }[] {
 }
 
 Deno.serve(async (req) => {
+  const cors = corsHeaders(req.headers.get('Origin'));
+  const json = (body: unknown, status = 200) =>
+    new Response(JSON.stringify(body), {
+      status,
+      headers: { ...cors, 'Content-Type': 'application/json' },
+    });
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
   if (req.method !== 'POST') return json({ error: 'method' }, 405);
   const url = Deno.env.get('SUPABASE_URL') ?? '';

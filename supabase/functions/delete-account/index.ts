@@ -3,20 +3,16 @@
 // Deleting the auth user also removes every sync_records row (foreign key: on delete cascade).
 // Needs a sign-in from the last 10 minutes (hardening V-11, see fresh.ts).
 import { createClient } from 'npm:@supabase/supabase-js@2.118.0';
+import { corsHeaders } from '../_shared/cors.ts';
 import { isFreshSignIn } from './fresh.ts';
 
-const cors = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
-const json = (body: unknown, status = 200) =>
-  new Response(JSON.stringify(body), {
-    status,
-    headers: { ...cors, 'Content-Type': 'application/json' },
-  });
-
 Deno.serve(async (req) => {
+  const cors = corsHeaders(req.headers.get('Origin'));
+  const json = (body: unknown, status = 200) =>
+    new Response(JSON.stringify(body), {
+      status,
+      headers: { ...cors, 'Content-Type': 'application/json' },
+    });
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
   if (req.method !== 'POST') return json({ error: 'method' }, 405);
   const url = Deno.env.get('SUPABASE_URL') ?? '';

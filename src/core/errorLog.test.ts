@@ -1,4 +1,4 @@
-import { clearErrorLog, formatErrorLog, getErrorLog, logError } from './errorLog';
+import { clearErrorLog, formatErrorLog, getErrorLog, logError, scrubSecrets } from './errorLog';
 
 describe('errorLog', () => {
   beforeEach(() => {
@@ -39,5 +39,34 @@ describe('errorLog', () => {
     logError(new Error('second'));
     const text = formatErrorLog();
     expect(text.indexOf('second')).toBeLessThan(text.indexOf('first'));
+  });
+
+  it('never stores tokens, keys, sign-in codes or emails (hardening V-15)', () => {
+    const jwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIn0.c2lnbmF0dXJlLXZhbHVl';
+    const err = new Error(
+      `sync failed for rishi.test+x@example.co.in: Bearer ${jwt} at https://app/settings?code=abc123&next=1`,
+    );
+    err.stack = `Error: boom
+ at fetch (https://x.supabase.co/auth?access_token=${jwt}&type=magiclink)`;
+    logError(err, 'auth with sb_publishable_abcDEF123 and sk-or-v1-deadbeef');
+    const saved = JSON.stringify(getErrorLog());
+    for (const secret of [
+      jwt,
+      'abc123',
+      'rishi.test+x@example.co.in',
+      'sb_publishable_abcDEF123',
+      'sk-or-v1-deadbeef',
+    ]) {
+      expect(saved).not.toContain(secret);
+    }
+    expect(saved).toContain('[email]');
+    expect(saved).toContain('Bearer [token]');
+    expect(saved).toContain('code=[redacted]');
+    expect(saved).toContain('&next=1'); // the rest of the message stays useful
+  });
+
+  it('leaves ordinary messages alone', () => {
+    const text = 'QuotaExceededError: the database is full (2026-11-11, habit h-1, v0.12.0)';
+    expect(scrubSecrets(text)).toBe(text);
   });
 });

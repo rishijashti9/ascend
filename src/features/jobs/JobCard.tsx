@@ -1,6 +1,7 @@
 import { ExternalLink, Pencil } from 'lucide-react';
 import type { JobApplication, JobStage } from '@/core/db/types';
 import { JOB_STAGES } from '@/core/pipeline/actions/jobs';
+import { safeExternalUrl } from '@/core/safeUrl';
 import { formatDay } from '@/features/goals/format';
 import { useAction } from '@/ui/hooks/useAction';
 import { STAGE_LABEL } from './labels';
@@ -24,9 +25,9 @@ export function JobCard({
           <h3 className="display truncate">{job.company}</h3>
           <p className="text-muted truncate text-sm">{job.role}</p>
         </div>
-        {job.link && (
+        {safeExternalUrl(job.link) && (
           <a
-            href={job.link}
+            href={safeExternalUrl(job.link) ?? undefined}
             target="_blank"
             rel="noreferrer"
             aria-label={`Open the ${job.company} posting`}

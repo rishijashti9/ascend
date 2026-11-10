@@ -90,3 +90,7 @@ No Critical findings. Severity = likelihood × impact for this app as it is used
 | Live security headers                                                             | HSTS only → V-03                                       |
 | Existing suite `npm run check` (852 tests incl. SQL isolation)                    | Passed on this tree                                    |
 | Code review checklist above                                                       | 18 findings recorded                                   |
+
+## 7. Corrections
+
+- **V-13** (2026-11-11, Phase 5): project and evidence links _are_ validated on save (`src/core/pipeline/actions/skills.ts:281`); the finding was based on the schema alone. Re-rated to Info; the remaining import/sync gap is closed by a render-time guard (Phase 5).

@@ -11,6 +11,7 @@ import { useAction } from '@/ui/hooks/useAction';
 import { useDialog } from '@/ui/hooks/useDialog';
 import { ProgressBar } from '@/ui/ProgressBar';
 import { Stat } from '@/features/review/Stat';
+import { safeExternalUrl } from '@/core/safeUrl';
 import { formatMinutes, hours } from './format';
 import { ProjectForm } from './SkillForms';
 import { LevelPips } from './SkillTree';
@@ -116,9 +117,9 @@ export function SkillSheet({ skillId, onClose }: { skillId: string; onClose: () 
                     {p.day}
                     {p.minutes > 0 && ` · ${formatMinutes(p.minutes)}`}
                   </p>
-                  {p.link && (
+                  {safeExternalUrl(p.link) && (
                     <a
-                      href={p.link}
+                      href={safeExternalUrl(p.link) ?? undefined}
                       target="_blank"
                       rel="noreferrer"
                       className="text-accent-text inline-flex items-center gap-1 text-sm break-all"
