@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content="ASCEND — a personal leveling system for real life." />
     <meta name="theme-color" content="#000000" />
+    <!--
+      Hardening: the same Content-Security-Policy as vercel.json, for the Android app, which loads
+      these files locally without HTTP headers. On the web both apply (the stricter wins); keep the
+      two in step. frame-ancestors only works as a header, so it is left out here.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://cyvrymsjizkpvtyqqflu.supabase.co; media-src 'self' blob:; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; upgrade-insecure-requests"
+    />
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" href="/icon.svg" sizes="any" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" />
