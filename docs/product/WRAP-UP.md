@@ -1,8 +1,8 @@
 # Product clarity programme — wrap-up
 
 Date: 2026-11-11 · Audit and approved proposal: [AUDIT-AND-PROPOSAL.md](AUDIT-AND-PROPOSAL.md).
-Seven phases (UX-1…UX-7), each tested, reviewed by Rishi and deployed separately (UX-7 waits
-for its go-ahead). No database changes in any phase; existing data, backups and sync untouched.
+Seven phases (UX-1…UX-7), each tested, reviewed by Rishi and deployed separately. UX-7 deployed 2026-11-11
+(`75314bd`): full e2e 46/46 and live security checks 6/6 against production. No database changes in any phase; existing data, backups and sync untouched.
 
 ## What changed, by phase
 
