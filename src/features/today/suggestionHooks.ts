@@ -1,4 +1,5 @@
 import { burnoutWarning } from '@/core/adaptive/burnout';
+import { needsPlan } from '@/features/goals/planState';
 import { mayShow } from '@/core/adaptive/patterns';
 import { useHabits } from '@/core/state/habits';
 import { reminderSuggestion } from '@/core/adaptive/timing';
@@ -36,12 +37,8 @@ export function useGoalNudgeRows(): { id: string; title: string; note: string; t
   const proposals = useGoals((s) => s.proposals);
   if (!isEnabled('goals')) return [];
 
-  const unplanned = mainQuests.filter(
-    (q) =>
-      q.status === 'active' &&
-      !milestones.some((m) => m.main_quest_id === q.id && m.status !== 'archived') &&
-      !proposals.some((p) => p.goal_id === q.id),
-  );
+  // The same rule the Goals cards use (UX-4): one definition of "needs a plan".
+  const unplanned = mainQuests.filter((q) => needsPlan(q, milestones, proposals));
   const rows = [
     ...unplanned.map((q) => ({
       id: q.id,

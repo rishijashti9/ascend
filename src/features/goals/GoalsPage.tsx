@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronRight, Plus } from 'lucide-react';
+import { ChevronDown, ChevronRight, Plus, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import type { Dream, MainQuest } from '@/core/db/types';
@@ -11,17 +11,36 @@ import { PlanHistoryList } from '@/features/planner/PlanHistory';
 import { DreamForm, MainQuestForm } from './forms';
 import { formatDay } from './format';
 import { ProgressLine, StatusActions, StatusChip } from './parts';
+import { planState } from './planState';
 import { EmptyState } from '@/ui/EmptyState';
 
+/**
+ * One main quest in the Vision (UX-4, docs/product/AUDIT-AND-PROPOSAL.md P5/P13): one progress
+ * number, and where it stands — no plan yet (with Plan it), a plan waiting for approval, the next
+ * milestone, or done — so the step from "I want this" to "what I do this week" happens here.
+ */
 function MainQuestRow({ quest }: { quest: MainQuest }) {
   const progress = useGoals((s) => s.mainQuestProgress[quest.id] ?? 0);
   const milestones = useGoals((s) => s.milestones);
+  const proposals = useGoals((s) => s.proposals);
   const own = milestones.filter((m) => m.main_quest_id === quest.id && m.status !== 'archived');
+  const state = planState(quest, milestones, proposals);
+  const doneCount = own.filter((m) => m.status === 'done').length;
+  const line =
+    state.kind === 'unplanned'
+      ? 'No plan yet'
+      : state.kind === 'waiting'
+        ? 'A plan is waiting for your approval'
+        : state.kind === 'next'
+          ? `Next: ${state.milestone.title}`
+          : own.length > 0
+            ? `${doneCount} of ${own.length} milestones done`
+            : null;
   return (
-    <li>
+    <li className="inset flex flex-col gap-2 px-3 py-3">
       <Link
         to={`/growth/goals/${quest.id}`}
-        className="inset flex min-h-11 flex-col gap-1.5 px-3 py-3 transition-transform duration-(--dur) active:scale-[0.99]"
+        className="flex min-h-11 flex-col gap-1.5 transition-transform duration-(--dur) active:scale-[0.99]"
       >
         <span className="flex items-center gap-2">
           <span className="display text-base">{quest.title}</span>
@@ -32,12 +51,29 @@ function MainQuestRow({ quest }: { quest: MainQuest }) {
           </span>
           <ChevronRight aria-hidden size={16} className="text-muted" />
         </span>
-        <ProgressLine value={progress} label={`${quest.title} progress`} />
+        <ProgressLine value={progress} label={`${quest.title} progress`} showValue={false} />
         <span className="text-muted text-xs">
-          {own.filter((m) => m.status === 'done').length} of {own.length} milestones
-          {quest.target_date && ` · by ${formatDay(quest.target_date)}`}
+          {[line, quest.target_date ? `by ${formatDay(quest.target_date)}` : null]
+            .filter(Boolean)
+            .join(' · ')}
         </span>
       </Link>
+      {state.kind === 'unplanned' && (
+        <Link
+          to={`/growth/goals/${quest.id}?plan=new`}
+          className="bg-accent-fill text-on-accent inline-flex min-h-11 items-center gap-2 self-start rounded-full px-4 text-sm font-semibold"
+        >
+          <Sparkles aria-hidden size={16} /> Plan it
+        </Link>
+      )}
+      {state.kind === 'waiting' && (
+        <Link
+          to={`/growth/goals/${quest.id}`}
+          className="text-accent-text inline-flex min-h-11 items-center self-start text-sm font-semibold"
+        >
+          Review the plan
+        </Link>
+      )}
     </li>
   );
 }
@@ -78,7 +114,7 @@ function DreamCard({ dream }: { dream: Dream }) {
           <ChevronDown aria-hidden size={20} className={mode === 'manage' ? 'rotate-180' : ''} />
         </button>
       </div>
-      <ProgressLine value={progress} label={`${dream.title} progress`} />
+      <ProgressLine value={progress} label={`${dream.title} progress`} showValue={false} />
       <PendingPlan goalId={dream.id} />
 
       {mode === 'manage' && (

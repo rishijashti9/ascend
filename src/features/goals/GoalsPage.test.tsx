@@ -63,7 +63,11 @@ describe('Goals screens', () => {
   it('creates a dream with its why, then a main quest with a deadline (the planner opens)', async () => {
     const link = await createDreamAndQuest();
     expect(screen.getByText('“Build humanoids”')).toBeInTheDocument();
-    expect(link).toHaveTextContent('0 of 0 milestones · by 1 Oct 2027');
+    // UX-4: where it stands, in words, and the next step right on the card.
+    expect(link).toHaveTextContent('No plan yet · by 1 Oct 2027');
+    expect(link.textContent?.match(/\d+%/g)).toHaveLength(1); // the percentage once, not twice
+    const plan = screen.getByRole('link', { name: 'Plan it' });
+    expect(plan.getAttribute('href')).toMatch(/^\/growth\/goals\/.+\?plan=new$/);
   });
 
   it('main quest page: why, milestones, and progress when a milestone is marked done', async () => {

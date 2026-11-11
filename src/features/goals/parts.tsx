@@ -23,13 +23,24 @@ export function StatusChip({ status }: { status: GoalStatus | MilestoneStatus })
   );
 }
 
-export function ProgressLine({ value, label }: { value: number; label: string }) {
+export function ProgressLine({
+  value,
+  label,
+  showValue = true,
+}: {
+  value: number;
+  label: string;
+  /** False where the percentage is already shown nearby (UX-4: never show it twice). */
+  showValue?: boolean;
+}) {
   return (
     <div className="flex items-center gap-3">
       <ProgressBar value={value} label={label} className="h-2 flex-1" />
-      <span className="text-muted w-10 text-right text-sm tabular-nums">
-        {Math.round(value * 100)}%
-      </span>
+      {showValue && (
+        <span className="text-muted w-10 text-right text-sm tabular-nums">
+          {Math.round(value * 100)}%
+        </span>
+      )}
     </div>
   );
 }
