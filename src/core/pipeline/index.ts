@@ -21,6 +21,7 @@ import './actions/achievements';
 import './actions/profile';
 import './actions/moments';
 import './actions/difficulty';
+import './actions/links';
 import './actions/sync';
 import './actions/skills';
 import './actions/jobs';

@@ -27,6 +27,9 @@ const NEW_HABIT: EditableHabit = {
   auto_source: 'none',
   schedule: [0, 1, 2, 3, 4, 5, 6],
   skill_ids: [],
+  // A new daily quest can serve a main quest from the start (linking plan L1).
+  linked_goal_type: null,
+  linked_goal_id: null,
 };
 
 function NewHabit({ onDone }: { onDone: () => void }) {

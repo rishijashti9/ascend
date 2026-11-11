@@ -1,3 +1,4 @@
+import { GoalLinkSelect } from '@/ui/GoalLinkSelect';
 import { SkillPicker } from '@/ui/SkillPicker';
 import { GAME } from '@/config/game';
 import type { Measure, Weekday } from '@/core/db/types';
@@ -136,6 +137,15 @@ export function HabitEditor<T extends EditableHabit>({
             ))}
           </div>
         </fieldset>
+      )}
+      {habit.linked_goal_type !== undefined && (
+        <GoalLinkSelect
+          value={{
+            linked_goal_type: habit.linked_goal_type ?? null,
+            linked_goal_id: habit.linked_goal_id ?? null,
+          }}
+          onChange={(link) => onChange({ ...habit, ...link })}
+        />
       )}
       {habit.skill_ids && (
         <SkillPicker

@@ -2,6 +2,8 @@ import { Robot } from '@/ui/Robot';
 import type { ReactNode } from 'react';
 import { DifficultyCard } from './DifficultyCard';
 import { GoalNudges } from './GoalNudges';
+import { LinkQuestsCard } from './LinkQuestsCard';
+import { useLinkCard } from './linkCard';
 import { ReminderTimeCard } from './ReminderTimeCard';
 import { BurnoutCard } from './BurnoutCard';
 import {
@@ -23,12 +25,16 @@ export function SuggestionSlot({
 }) {
   const burnout = useBurnoutCard() !== null;
   const difficulty = useDifficultyVisible();
+  const links = useLinkCard().visible;
   const goals = useGoalNudgeRows().length > 0;
   const reminder = useReminderCard() !== null;
   const candidates = [
     ...extra.filter((c) => c.visible).slice(0, 1),
     { visible: burnout, node: <BurnoutCard /> },
     { visible: difficulty, node: <DifficultyCard /> },
+    // Before the goal nudges: "needs a plan" can stay for weeks and would otherwise hide this
+    // one-time card (linking plan L2). It never shows on Day 1, which stays for planning.
+    { visible: links, node: <LinkQuestsCard /> },
     { visible: goals, node: <GoalNudges /> },
     { visible: reminder, node: <ReminderTimeCard /> },
   ];

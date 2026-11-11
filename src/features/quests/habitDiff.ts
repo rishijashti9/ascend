@@ -26,6 +26,8 @@ export function editableOf(h: Habit): EditableHabit {
     auto_source: h.auto_source,
     schedule: [...h.schedule],
     skill_ids: [...h.skill_ids],
+    linked_goal_type: h.linked_goal_type,
+    linked_goal_id: h.linked_goal_id,
   };
 }
 
@@ -41,6 +43,15 @@ export function changesOf(before: Habit, after: EditableHabit): Partial<Editable
   }
   if (after.skill_ids && after.skill_ids.join() !== before.skill_ids.join()) {
     changes.skill_ids = after.skill_ids;
+  }
+  // The goal link is one thing: both fields change together, or neither.
+  if (
+    after.linked_goal_type !== undefined &&
+    (after.linked_goal_type !== before.linked_goal_type ||
+      after.linked_goal_id !== before.linked_goal_id)
+  ) {
+    changes.linked_goal_type = after.linked_goal_type;
+    changes.linked_goal_id = after.linked_goal_id ?? null;
   }
   return changes as Partial<EditableHabit>;
 }

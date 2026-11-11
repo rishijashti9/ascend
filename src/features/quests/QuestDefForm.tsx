@@ -3,28 +3,11 @@ import { SkillPicker } from '@/ui/SkillPicker';
 import { GAME } from '@/config/game';
 import type { Difficulty, Stat } from '@/core/db/types';
 import { NEW_QUEST, type QuestDefValues } from './questDefValues';
-import { useGoals } from '@/core/state/goals';
 import { Button } from '@/ui/Button';
 import { Select, TextInput } from '@/ui/Field';
+import { GoalLinkSelect } from '@/ui/GoalLinkSelect';
 
 /** Goal choices: active milestones (under their main quest) and active main quests. */
-function useGoalOptions() {
-  const milestones = useGoals((s) => s.milestones);
-  const mainQuests = useGoals((s) => s.mainQuests);
-  const live = mainQuests.filter((q) => q.status === 'active');
-  const mqTitle = (id: string) => mainQuests.find((q) => q.id === id)?.title ?? '';
-  return [
-    { value: '', label: 'Not linked (counts toward its stat only)' },
-    ...milestones
-      .filter((m) => m.status === 'active' || m.status === 'upcoming')
-      .map((m) => ({
-        value: `milestone:${m.id}`,
-        label: `${m.title} — ${mqTitle(m.main_quest_id)}`,
-      })),
-    ...live.map((q) => ({ value: `main_quest:${q.id}`, label: `${q.title} (main quest)` })),
-  ];
-}
-
 /** Create/edit form for a weekly or side quest. */
 export function QuestDefForm({
   kind,
@@ -44,9 +27,6 @@ export function QuestDefForm({
   saveLabel: string;
 }) {
   const [v, setV] = useState(initial);
-  const options = useGoalOptions();
-  const link =
-    v.linked_goal_type && v.linked_goal_id ? `${v.linked_goal_type}:${v.linked_goal_id}` : '';
   const valid =
     v.title.trim().length > 0 &&
     (v.measure === 'check' || (v.target_value !== null && v.target_value > 0));
@@ -124,18 +104,15 @@ export function QuestDefForm({
           />
         )}
       </div>
-      <Select
-        label="Toward goal"
-        value={link}
-        options={options}
-        onChange={(e) => {
-          const [type, id] = e.target.value.split(':') as ['main_quest' | 'milestone', string];
+      <GoalLinkSelect
+        value={v}
+        onChange={(link) =>
           setV({
             ...v,
-            linked_goal_type: e.target.value ? type : null,
-            linked_goal_id: e.target.value ? id : null,
-          });
-        }}
+            linked_goal_type: link.linked_goal_type as 'main_quest' | 'milestone' | null,
+            linked_goal_id: link.linked_goal_id,
+          })
+        }
       />
       <SkillPicker value={v.skill_ids} onChange={(ids) => setV({ ...v, skill_ids: ids })} />
       {error && (

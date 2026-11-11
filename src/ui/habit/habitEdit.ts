@@ -1,4 +1,4 @@
-import type { AutoSource, Difficulty, Measure, Stat, Weekday } from '@/core/db/types';
+import type { AutoSource, Difficulty, GoalType, Measure, Stat, Weekday } from '@/core/db/types';
 import { HABIT_DEFAULTS, habitProblems } from '@/core/pipeline/actions/habitSchema';
 
 /** The habit fields a person edits (onboarding and the Quests screen). */
@@ -15,6 +15,9 @@ export interface EditableHabit {
   schedule?: Weekday[];
   /** Skills it counts for (Quests screen only; onboarding has none yet). */
   skill_ids?: string[];
+  /** The main quest / milestone it serves (Quests screen only; linking plan L1). */
+  linked_goal_type?: GoalType | null;
+  linked_goal_id?: string | null;
 }
 
 export const MEASURES: { value: Measure; label: string }[] = [
