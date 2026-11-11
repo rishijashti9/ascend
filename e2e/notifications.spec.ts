@@ -11,7 +11,7 @@ test('notifications on the web: honest settings, test banner, a due reminder', a
   const errors = watchErrors(page);
   await page.clock.install({ time: new Date('2026-11-02T20:59:00+05:30') });
   await onboard(page);
-  await page.goto('/settings');
+  await page.goto('/settings#notifications');
   const card = page.getByRole('region', { name: 'Notifications' });
   await expect(card).toContainText('reminders appear only while ASCEND is open');
   await card.getByRole('button', { name: 'Send a test' }).click();

@@ -1,5 +1,4 @@
 import { GAME } from '@/config/game';
-import { STATS } from '@/core/db/types';
 import { weakestStat, weeklyXp } from '@/core/engine/profile';
 import { titleName } from '@/core/achievements/titles';
 import { useAppState } from '@/core/state/app';
@@ -18,9 +17,6 @@ import { TitlePicker } from './TitlePicker';
 import { StatTriangle } from './StatTriangle';
 
 /** Profile / Stats (SPEC 7.8): who you are in numbers. Achievements and titles (5.5–5.6) are included. */
-/** Stat tiles in ELEVATE colours (black text on each — never the stat text colour). */
-const STAT_TILE = { STR: 'tile-white', INT: 'tile-yellow', WIL: 'tile-violet' } as const;
-
 export function ProfilePage() {
   const progress = useProgress((s) => s.progress);
   const profile = useAppState((s) => s.profile);
@@ -44,8 +40,9 @@ export function ProfilePage() {
       {/* Me already shows the name and the Stats & achievements tab names this screen. */}
       <h1 className="sr-only">Stats and achievements</h1>
 
-      {/* Desktop: the player block and the stat tiles side by side. */}
-      <div className="flex flex-col gap-5 lg:grid lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:items-start">
+      {/* UX-6 (P11): the stats are shown once — in the triangle below (with a table of levels and
+          XP); the three stat tiles that repeated them are gone. */}
+      <div className="flex flex-col gap-5">
         <section aria-label="Player" className="panel flex flex-col gap-3 p-3">
           <div className="tile tile-lime flex flex-col gap-2 p-4">
             <div className="flex items-end justify-between gap-3">
@@ -83,37 +80,14 @@ export function ProfilePage() {
             <Stat label="Focus" value={`${focusHours} h`} />
           </div>
         </section>
-
-        <section aria-label="Stat levels" className="grid grid-cols-3 gap-3 lg:grid-cols-1">
-          {STATS.map((s) => {
-            const Icon = STAT_META[s].icon;
-            return (
-              <div key={s} className={`tile ${STAT_TILE[s]} flex min-w-0 flex-col gap-1 p-3`}>
-                {/* Phones show the stat code (three tiles share 360 px); wider screens the name. */}
-                <span className="flex items-center gap-1 text-sm font-semibold">
-                  <Icon aria-hidden size={16} className="shrink-0" />
-                  <span className="sm:hidden">{s}</span>
-                  <span className="hidden truncate sm:inline">{STAT_META[s].label}</span>
-                </span>
-                <span className="flex items-baseline gap-1.5">
-                  <span className="text-xs font-semibold">Level</span>
-                  <span className="display text-2xl tabular-nums">{stats[s].level}</span>
-                </span>
-                {/* Muted text only on the light tiles; the violet tile keeps full-strength text. */}
-                <span
-                  className={`text-xs tabular-nums ${s === 'WIL' ? 'font-medium' : 'text-on-tile-muted'}`}
-                >
-                  {stats[s].totalXp.toLocaleString()} XP
-                </span>
-              </div>
-            );
-          })}
-        </section>
       </div>
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
         <div className="flex flex-col gap-2">
-          <StatTriangle levels={levels} />
+          <StatTriangle
+            levels={levels}
+            xp={{ STR: stats.STR.totalXp, INT: stats.INT.totalXp, WIL: stats.WIL.totalXp }}
+          />
           {weakest && (
             <p className="text-muted text-sm">
               {STAT_META[weakest].label} is behind the others — a {weakest} quest or two this week

@@ -18,7 +18,7 @@ test('Screen time: honest phone-only note on the laptop, screen reachable, nothi
   await expect(page.getByRole('heading', { name: 'Today', exact: true })).toBeVisible();
   await expect(page.getByText(/Entertainment today|observing quietly/)).toHaveCount(0);
 
-  await page.goto('/settings');
+  await page.goto('/settings#screen-time');
   const card = page.getByRole('region', { name: 'Screen time' });
   await expect(card).toContainText('Screen time works in the ASCEND Android app');
   await expect(card).toContainText('it never blocks anything');

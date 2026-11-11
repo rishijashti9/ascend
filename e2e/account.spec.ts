@@ -15,11 +15,13 @@ test('account: optional sign-in in onboarding and Settings, app works without it
   await expect(page.getByRole('button', { name: 'Continue with Google' })).toBeVisible();
 
   await onboard(page);
-  await page.goto('/settings');
+  await page.goto('/settings#account');
   const account = page.getByRole('region', { name: 'Account' });
   await expect(account).toContainText('ASCEND works fully without an account');
   await expect(account.getByRole('button', { name: 'Continue with Google' })).toBeVisible();
   await expect(account.getByLabel('Or get a sign-in link by email')).toBeVisible();
+  // Backup lives in the Data & privacy group (UX-6): open it.
+  await page.getByText('Data & privacy').click();
   await expect(page.getByRole('region', { name: 'Backup' })).toContainText(
     'Without sync (Account)',
   );

@@ -81,7 +81,7 @@ test('export → wipe → import gives identical progress', async ({ page }, tes
   await expect(page.getByText(/^43 total$/)).toBeVisible();
   const before = await page.getByRole('region', { name: 'Status' }).innerText();
 
-  await page.goto('/settings');
+  await page.goto('/settings#data');
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Export my data' }).click();
   const file = testInfo.outputPath('backup.json');

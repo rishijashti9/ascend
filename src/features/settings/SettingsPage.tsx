@@ -10,6 +10,7 @@ import { HealthSettings } from './HealthSettings';
 import { ScreenTimeSettings } from '@/features/screentime/ScreenTimeSettings';
 import { NotificationSettings } from './NotificationSettings';
 import { PlannerSettings } from './PlannerSettings';
+import { SettingsGroup } from './SettingsGroup';
 import {
   AppearanceSection,
   Card,
@@ -19,7 +20,10 @@ import {
   WakeSection,
 } from './sections';
 
-/** Settings (SPEC 7.11) — the parts that exist after Phase 2. Later phases add their own. */
+/**
+ * Settings (SPEC 7.11), in fold-out groups (UX-6): Account & sync · Appearance · Day & reminders ·
+ * Quests & planning · Data & privacy, then About. Every control and its wording is unchanged.
+ */
 export function SettingsPage() {
   const settings = useAppState((s) => s.settings);
 
@@ -34,27 +38,57 @@ export function SettingsPage() {
       <h1 className="display text-2xl">Settings</h1>
       {settings && (
         <>
-          {isEnabled('sync') && <AccountSection />}
-          <AppearanceSection settings={settings} />
-          <DaySection settings={settings} />
-          {/* Keyed so the form resets if the stored times change elsewhere. */}
-          <WakeSection
-            key={`${settings.wake_time}|${settings.wake_window_min}|${settings.wake_late_cutoff}`}
-            settings={settings}
-          />
-          <CoreSection />
-          {isEnabled('notifications') && <NotificationSettings settings={settings} />}
-          {isEnabled('goals') && <PlannerSettings settings={settings} />}
-          {isEnabled('ask') && <AskSettings settings={settings} />}
-          {isEnabled('jobs') && <JobsSettings settings={settings} />}
-          {isEnabled('health') && <HealthSettings settings={settings} />}
-          {isEnabled('screenTime') && (
-            <div id="screen-time">
-              <ScreenTimeSettings />
-            </div>
+          {isEnabled('sync') && (
+            <SettingsGroup
+              id="sync"
+              title="Account & sync"
+              summary="Optional sign-in to keep your devices in sync"
+              contains={['account']}
+            >
+              <AccountSection />
+            </SettingsGroup>
           )}
-          {isEnabled('exportImport') && <BackupSection />}
-          <DataSection />
+          <SettingsGroup id="appearance" title="Appearance" summary="Effects, sound and vibration">
+            <AppearanceSection settings={settings} />
+          </SettingsGroup>
+          <SettingsGroup
+            id="day"
+            title="Day & reminders"
+            summary="When your day starts, wake-up, notifications, screen time"
+            contains={['notifications', 'screen-time']}
+          >
+            <DaySection settings={settings} />
+            {/* Keyed so the form resets if the stored times change elsewhere. */}
+            <WakeSection
+              key={`${settings.wake_time}|${settings.wake_window_min}|${settings.wake_late_cutoff}`}
+              settings={settings}
+            />
+            {isEnabled('notifications') && <NotificationSettings settings={settings} />}
+            {isEnabled('screenTime') && (
+              <div id="screen-time">
+                <ScreenTimeSettings />
+              </div>
+            )}
+          </SettingsGroup>
+          <SettingsGroup
+            id="quests"
+            title="Quests & planning"
+            summary="Core quests, the Goal Planner, the job tracker, Health Connect"
+          >
+            <CoreSection />
+            {isEnabled('goals') && <PlannerSettings settings={settings} />}
+            {isEnabled('jobs') && <JobsSettings settings={settings} />}
+            {isEnabled('health') && <HealthSettings settings={settings} />}
+          </SettingsGroup>
+          <SettingsGroup
+            id="data"
+            title="Data & privacy"
+            summary="Ask the System, backups, your data"
+          >
+            {isEnabled('ask') && <AskSettings settings={settings} />}
+            {isEnabled('exportImport') && <BackupSection />}
+            <DataSection />
+          </SettingsGroup>
         </>
       )}
       <Card title="About">

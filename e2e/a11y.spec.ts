@@ -72,7 +72,7 @@ for (const theme of ['elevate'] as const) {
     await page.clock.install({ time: new Date('2026-11-02T10:00:00+05:30') });
     await onboard(page);
     // Switch the job tracker on so the Jobs screen is real.
-    await page.goto('/settings');
+    await page.goto('/settings#quests');
     await page.getByRole('switch', { name: 'Show the job tracker' }).click();
 
     const found: string[] = [];
@@ -81,6 +81,15 @@ for (const theme of ['elevate'] as const) {
       await page.waitForLoadState('networkidle');
       for (const v of await violations(page)) found.push(`${path}: ${v}`);
       for (const t of await smallTargets(page)) found.push(`${path}: target under 44px — ${t}`);
+      if (path === '/settings') {
+        // Settings folds into groups (UX-6): check every control too, with all groups open.
+        await page.evaluate(() =>
+          document.querySelectorAll('details').forEach((d) => (d.open = true)),
+        );
+        for (const v of await violations(page)) found.push(`/settings (open): ${v}`);
+        for (const t of await smallTargets(page))
+          found.push(`/settings (open): target under 44px — ${t}`);
+      }
     }
     expect(found).toEqual([]);
   });

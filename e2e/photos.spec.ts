@@ -19,7 +19,7 @@ test('body photo: add → export with photos → reset → restore → delete', 
     .setInputFiles({ name: 'me.png', mimeType: 'image/png', buffer: PNG });
   await expect(page.getByRole('button', { name: /Photo from/ })).toBeVisible({ timeout: 15_000 });
 
-  await page.goto('/settings');
+  await page.goto('/settings#data');
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Export with photos (.zip)' }).click();
   const file = testInfo.outputPath('with-photos.zip');

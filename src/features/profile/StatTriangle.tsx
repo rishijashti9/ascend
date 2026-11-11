@@ -22,13 +22,23 @@ const polygon = (r: (s: Stat) => number) =>
  * highest one, so imbalance shows as a lopsided shape. Every corner is labelled with its
  * value — the shape is never the only way to read it.
  */
-export function StatTriangle({ levels }: { levels: Record<Stat, number> }) {
+export function StatTriangle({
+  levels,
+  xp,
+}: {
+  levels: Record<Stat, number>;
+  /** Each stat's total XP, shown in the table (UX-6: the only place stats are listed on Me). */
+  xp?: Record<Stat, number>;
+}) {
   const max = Math.max(...STATS.map((s) => levels[s]), 1);
   return (
     <ChartCard
       title="Stats"
       subtitle="Each corner is a stat's level; a balanced triangle means balanced growth."
-      rows={STATS.map((s) => ({ label: STAT_META[s].label, value: `Level ${levels[s]}` }))}
+      rows={STATS.map((s) => ({
+        label: STAT_META[s].label,
+        value: xp ? `Level ${levels[s]} · ${xp[s].toLocaleString()} XP` : `Level ${levels[s]}`,
+      }))}
     >
       <svg
         viewBox={`0 6 ${SIZE} 184`}

@@ -49,7 +49,7 @@ test('screenshots of every screen', async ({ page }) => {
     .getByRole('button', { name: 'Full' })
     .click({ timeout: 5000 })
     .catch(() => undefined);
-  await page.goto('/settings');
+  await page.goto('/settings#quests');
   await page.getByRole('switch', { name: 'Show the job tracker' }).click({ timeout: 10_000 });
 
   for (const width of WIDTHS) {

@@ -1,4 +1,4 @@
-import { Brain, Settings as Gear, Smartphone } from 'lucide-react';
+import { Brain, ChevronRight, Database, Settings as Gear, Smartphone } from 'lucide-react';
 import { AskEntry } from '@/features/ask/AskButton';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router';
 import { isEnabled } from '@/config/features';
@@ -7,13 +7,14 @@ import { formatMinutes } from '@/core/screentime/observe';
 import { useAppState } from '@/core/state/app';
 import { useProgress } from '@/core/state/progress';
 import { useScreen } from '@/core/state/screen';
-import { Tabs, Tile } from '@/ui/Surface';
+import { Tabs } from '@/ui/Surface';
 import { tabPanelProps } from '@/ui/tabs';
 import { meTabs, type MeTab } from './tabs';
 
 /**
  * Me (Phase 12): who you are and how you're doing — Stats & achievements · Body · Reviews, with
- * Screen time and "What the System knows about you" one tap away, and Settings behind the gear.
+ * Screen time, "What the System knows about you" and My data one tap away (compact rows), and
+ * Settings behind the gear.
  */
 export function MePage() {
   const navigate = useNavigate();
@@ -73,33 +74,58 @@ function MeHeader() {
   );
 }
 
-/** Screen time and the knowledge page, one tap away from every Me tab. */
+/**
+ * Screen time, what the System knows and My data — one tap away from every Me tab, as compact
+ * rows (UX-6, docs/product/AUDIT-AND-PROPOSAL.md P12: they were the two largest tiles on Me,
+ * bigger than their importance). Settings stays behind the gear in the header.
+ */
 function MeTiles() {
   const screen = useScreen((s) => s);
   const showScreen = isEnabled('screenTime');
   const showKnows = isEnabled('adaptive');
-  if (!showScreen && !showKnows) return null;
   const limit = screen.rules?.limit_min ?? null;
   const screenLine = !screen.rules?.enabled
     ? 'Off — set it up on your phone'
     : limit === null
       ? 'Observing quietly'
       : `${formatMinutes(Math.round(screen.todaySec / 60))} of ${formatMinutes(limit)} today`;
+  const rows = [
+    showScreen && {
+      to: '/me/screen-time',
+      icon: Smartphone,
+      title: 'Screen time',
+      line: screenLine,
+    },
+    showKnows && {
+      to: '/me/knows',
+      icon: Brain,
+      title: 'What the System knows',
+      line: 'Everything it has learned, each clearable',
+    },
+    isEnabled('settings') && {
+      to: '/my-data',
+      icon: Database,
+      title: 'My data',
+      line: 'What is stored, where, and what leaves the device',
+    },
+  ].filter((r): r is { to: string; icon: typeof Brain; title: string; line: string } => !!r);
+  if (rows.length === 0) return null;
   return (
-    <div className="grid grid-cols-2 gap-3">
-      {showScreen && (
-        <Tile tone="grey" to="/me/screen-time">
-          <Smartphone aria-hidden size={22} />
-          <span className="display mt-6 text-base">Screen time</span>
-          <span className="text-sm opacity-80">{screenLine}</span>
-        </Tile>
-      )}
-      {showKnows && (
-        <Tile tone="violet" to="/me/knows" label="What the System knows about you">
-          <Brain aria-hidden size={22} />
-          <span className="display mt-6 text-base">What the System knows</span>
-        </Tile>
-      )}
-    </div>
+    <nav aria-label="More about you" className="panel flex flex-col">
+      {rows.map(({ to, icon: Icon, title, line }, i) => (
+        <Link
+          key={to}
+          to={to}
+          className={`flex min-h-14 items-center gap-3 px-4 py-2 ${i > 0 ? 'border-border border-t' : ''}`}
+        >
+          <Icon aria-hidden size={20} className="text-muted shrink-0" />
+          <span className="min-w-0 flex-1">
+            <span className="block font-medium">{title}</span>
+            <span className="text-muted block truncate text-sm">{line}</span>
+          </span>
+          <ChevronRight aria-hidden size={16} className="text-muted shrink-0" />
+        </Link>
+      ))}
+    </nav>
   );
 }
