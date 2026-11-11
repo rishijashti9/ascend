@@ -119,7 +119,7 @@ export function QuestCard({
   lowEnergy?: boolean;
   /** "At risk today" (SPEC 6.7 A): why this one tends to slip. */
   risk?: string;
-  /** Extra line for weekly/side quests, e.g. the goal it serves or its due day. */
+  /** The "why" line: the main quest / skill it serves (any quest) or a due day (weekly/side). */
   note?: string;
 }) {
   const { act, busy, error, float } = useQuestAction();

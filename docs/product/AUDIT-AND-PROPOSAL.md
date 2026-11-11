@@ -215,3 +215,9 @@ and sync are untouched.
   data) wasn't walked visually — I'd generate one with the dev tools at the start of UX-2.
 - Decisions for you: approve the IA (D/E) and which phases to do; keep or drop the Jobs tab;
   whether stat bars may leave Today (they stay on Me).
+
+## Corrections (during implementation)
+
+- **P15 was wrong** (found in UX-3): an evening check-in prompt already exists — `CheckInPrompt`
+  shows on Today from 18:00 until the day rolls over. The audit's screenshots were taken at 10:00,
+  so it wasn't visible. No change needed.

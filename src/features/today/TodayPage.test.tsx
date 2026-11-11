@@ -64,12 +64,12 @@ describe('TodayPage', () => {
     expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(8);
   });
 
-  it('dashboard: the quests tile shows progress and the next quest; chips filter the list', async () => {
+  it('dashboard: the Next card shows progress and the next quest; chips filter the list', async () => {
     await setup();
-    expect(
-      screen.getByRole('button', { name: /^Today’s quests\s*0\/8\s*Next: / }),
-    ).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Body/ })).toHaveAttribute('href', '/me/body');
+    const next = screen.getByRole('region', { name: 'Next' });
+    expect(next).toHaveTextContent(/^Next/);
+    // UX-3: no shortcut tiles that repeat the navigation bar.
+    expect(screen.queryByRole('link', { name: /^Body/ })).toBeNull();
     await userEvent.click(screen.getByRole('button', { name: 'Body', pressed: false }));
     // Body = STR: Workout, Walk and Sleep.
     expect(screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent)).toEqual([
@@ -84,21 +84,20 @@ describe('TodayPage', () => {
     expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(8);
   });
 
-  it('one next action: the quests tile and "Now" agree, and never pick a closed wake-up (UX-2)', async () => {
+  it('exactly one next action, never a closed wake-up (UX-2/UX-3)', async () => {
     await setup(10); // 10:00 — the wake-up window (until 7:00) has closed
-    const now = screen.getByRole('region', { name: 'What to do now' });
-    const nowTitle = now.querySelector('.font-medium')?.textContent;
-    expect(nowTitle).toBeTruthy();
-    expect(nowTitle).not.toBe('Wake up on time');
-    const tile = screen.getByRole('button', { name: /^Today’s quests/ });
-    expect(tile).toHaveTextContent(`Next: ${nowTitle}`);
-    expect(tile).not.toHaveTextContent('Next: Wake up on time');
+    expect(screen.getAllByRole('region', { name: 'Next' })).toHaveLength(1);
+    expect(screen.queryByRole('region', { name: 'What to do now' })).toBeNull();
+    const title = within(screen.getByRole('region', { name: 'Next' })).getByText(
+      (_, el) => el?.tagName === 'P' && el.classList.contains('display'),
+    ).textContent;
+    expect(title).toBeTruthy();
+    expect(title).not.toBe('Wake up on time');
   });
 
-  it('Day 1 has no core quests yet, so the tile says nothing about them (UX-2)', async () => {
+  it('Day 1 has no core quests yet, so the Next card says nothing about them (UX-2)', async () => {
     await setup(10);
-    const tile = screen.getByRole('button', { name: /^Today’s quests/ });
-    expect(tile).not.toHaveTextContent(/core (done|open)/);
+    expect(screen.getByRole('region', { name: 'Next' })).not.toHaveTextContent(/core (done|open)/);
   });
 
   it('Full / Minimum taps complete a check quest, award XP, and can be undone', async () => {

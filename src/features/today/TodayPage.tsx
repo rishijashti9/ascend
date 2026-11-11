@@ -20,7 +20,6 @@ import { RecoveryCard } from './RecoveryCard';
 import { StatusHeader } from './StatusHeader';
 import { SuggestionSlot } from './SuggestionSlot';
 import { useAdaptiveToday } from './useAdaptiveToday';
-import { WhatNow } from './WhatNow';
 import { ReminderSetupCard } from './ReminderSetupCard';
 import { SyncPausedNote } from './SyncPausedNote';
 import { SystemMessage } from './SystemMessage';
@@ -28,7 +27,8 @@ import { ThisWeek } from './ThisWeek';
 import { WakeCard } from './WakeCard';
 import { EmptyState } from '@/ui/EmptyState';
 import { Chip } from '@/ui/Surface';
-import { TodayTiles } from './TodayTiles';
+import { NextCard } from './NextCard';
+import { useLinkNote } from './linkNote';
 
 type QuestFilter = 'all' | 'core' | 'body' | 'mind' | 'career';
 
@@ -73,6 +73,7 @@ export function TodayPage() {
   const startDay = useAppState((s) => s.profile?.start_day ?? null);
   const [showAll, setShowAll] = useState(false);
   const { risks, next } = useAdaptiveToday();
+  const linkNote = useLinkNote();
   const notStarted = startDay !== null && day !== null && day < startDay;
 
   const recovery = other.filter((q) => isRecoveryId(q.instance.id));
@@ -100,9 +101,8 @@ export function TodayPage() {
           </div>
           <StatusHeader day={day} />
         </div>
+        {status === 'ready' && !notStarted && <NextCard next={next} onQuests={scrollToQuests} />}
         <SystemMessage />
-        <WhatNow next={next} />
-        {status === 'ready' && !notStarted && <TodayTiles onQuests={scrollToQuests} next={next} />}
         <SuggestionSlot />
         {isEnabled('screenTime') && <ScreenTimeToday />}
         <ReminderSetupCard />
@@ -173,6 +173,7 @@ export function TodayPage() {
               quest={q}
               lowEnergy={lowEnergy}
               risk={risks.get(q.instance.id)?.why}
+              note={linkNote(q, day)}
             />
           ))}
         </ul>
