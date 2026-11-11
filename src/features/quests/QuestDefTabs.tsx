@@ -171,7 +171,7 @@ export function WeeklyTab() {
       </h2>
       <List
         quests={current}
-        empty="No weekly quests this week. Add 3–5 concrete steps toward your goals."
+        empty="No weekly quests this week. Add 3–5 concrete steps toward your main quests — or plan a main quest in Growth to get some."
       />
       <Collapsed title="Earlier weeks" quests={past} />
       <Collapsed title="Archived" quests={weekly.filter((q) => q.status === 'archived')} />
@@ -185,7 +185,10 @@ export function SideTab() {
   return (
     <div className="flex flex-col gap-4">
       <NewQuestButton kind="side" />
-      <List quests={side.filter((q) => q.status === 'active')} empty="No open side quests." />
+      <List
+        quests={side.filter((q) => q.status === 'active')}
+        empty="No open side quests. Add a one-off quest — it stays open until you finish it."
+      />
       <Collapsed title="Done" quests={side.filter((q) => q.status === 'done')} />
       <Collapsed title="Archived" quests={side.filter((q) => q.status === 'archived')} />
     </div>

@@ -1,4 +1,5 @@
 import { FollowUpsCard } from '@/features/jobs/FollowUpsCard';
+import { useHabits } from '@/core/state/habits';
 import { STATS, type Stat } from '@/core/db/types';
 import { STAT_META } from '@/ui/statMeta';
 import { AskEntry } from '@/features/ask/AskButton';
@@ -78,6 +79,10 @@ export function TodayPage() {
   const [showAll, setShowAll] = useState(false);
   const { risks, next } = useAdaptiveToday();
   const linkNote = useLinkNote();
+  // UX-7: an empty Today is a rest day only if there ARE daily quests (just none scheduled today).
+  const hasDailyQuests = useHabits((s) =>
+    s.habits.some((h) => !h.deleted_at && h.status === 'active'),
+  );
   const notStarted = startDay !== null && day !== null && day < startDay;
 
   const recovery = other.filter((q) => isRecoveryId(q.instance.id));
@@ -178,7 +183,17 @@ export function TodayPage() {
         )}
         {status === 'ready' && !notStarted && daily.length === 0 && (
           <EmptyState>
-            No daily quests today. Enjoy the rest day — it won’t affect your streak.
+            {hasDailyQuests ? (
+              'No daily quests today. Enjoy the rest day — it won’t affect your streak.'
+            ) : (
+              <>
+                You have no daily quests yet.{' '}
+                <Link to="/quests" className="text-accent-text">
+                  Add one in Quests
+                </Link>{' '}
+                — something small you want to do every day.
+              </>
+            )}
           </EmptyState>
         )}
 

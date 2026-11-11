@@ -41,7 +41,7 @@ export function BodyTrends({ today }: { today: DayString }) {
       (x) => x.status === 'active' && x.auto_source === source && x.target_value,
     );
     return h?.target_value
-      ? { value: h.target_value, label: `Goal ${h.target_value.toLocaleString()}${unit}` }
+      ? { value: h.target_value, label: `Target ${h.target_value.toLocaleString()}${unit}` }
       : null;
   };
 

@@ -188,7 +188,7 @@ export function AskPanel({
               {mainQuests.length > 0 ? (
                 <div className="flex flex-wrap items-end gap-2">
                   <label className="flex flex-col gap-1">
-                    <span className="text-muted">For the goal</span>
+                    <span className="text-muted">For the main quest</span>
                     <select
                       className="control min-h-11 px-3"
                       value={goal || mainQuests[0]?.id}
@@ -210,7 +210,9 @@ export function AskPanel({
                   </Button>
                 </div>
               ) : (
-                <p className="text-muted">Create a goal first to turn these into quests.</p>
+                <p className="text-muted">
+                  Create a main quest in Growth first to turn these into quests.
+                </p>
               )}
               <p className="text-muted text-xs">
                 You’ll review them first — nothing is added until you approve, and it can be undone.

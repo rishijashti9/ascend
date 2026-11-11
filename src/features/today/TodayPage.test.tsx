@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router';
 import { db } from '@/core/db/db';
 import { clearSubscribers, recordAction } from '@/core/pipeline';
 import { startAppState } from '@/core/state/app';
+import { habitsStore, startHabits } from '@/core/state/habits';
 import { startProgressStore } from '@/core/state/progress';
 import { startToday } from '@/core/state/today';
 import { resetClock, setNow, setTimeZoneOverride } from '@/core/time';
@@ -149,6 +150,42 @@ describe('TodayPage', () => {
     expect(
       screen.getByText('Missed for today — tomorrow’s check-in opens at 5:00 AM.'),
     ).toBeInTheDocument();
+  });
+
+  it('no daily quests at all: says how to add one, instead of calling it a rest day (UX-7)', async () => {
+    setNow(ist(2026, 11, 2, 10));
+    await recordAction({
+      type: 'onboarding.complete',
+      payload: {
+        name: 'Rishi',
+        wake_time: '05:00',
+        theme: 'system',
+        start: 'today',
+        habits: STARTER_HABITS.filter((h) => h.selected).map(habitFieldsOf),
+        dream: null,
+        main_quests: [],
+      },
+    });
+    for (const h of await db.habits.toArray())
+      await recordAction({ type: 'habit.archive', payload: { id: h.id } });
+    // The real habits store (as in the app), so the test reads the archived quests — not an
+    // empty store that would pass no matter what.
+    await startHabits();
+    expect(habitsStore.getState().habits.length).toBeGreaterThan(0);
+    await startAppState();
+    await startProgressStore();
+    await startToday();
+    render(
+      <MemoryRouter>
+        <TodayPage />
+      </MemoryRouter>,
+    );
+    expect(await screen.findByText(/You have no daily quests yet/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Add one in Quests' })).toHaveAttribute(
+      'href',
+      '/quests',
+    );
+    expect(screen.queryByText(/Enjoy the rest day/)).toBeNull();
   });
 
   it('when Day 1 is tomorrow, tonight shows a friendly note instead of quests', async () => {

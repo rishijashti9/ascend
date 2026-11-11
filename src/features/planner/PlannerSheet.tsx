@@ -115,7 +115,7 @@ export function PlannerSheet({
           </button>
         </header>
 
-        {state && !goal && <p>This goal no longer exists.</p>}
+        {state && !goal && <p>This main quest no longer exists.</p>}
 
         {step === 'analyze' && goal && analysis && template && (
           <section aria-label="Analysis" className="flex flex-col gap-4">

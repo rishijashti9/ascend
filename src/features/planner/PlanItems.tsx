@@ -4,7 +4,9 @@ import { GROUP_TITLE, groupOf, itemLabel, type Group } from './itemText';
 /** A plan's items grouped as added / changed / removed, each with its reason (read-only). */
 export function PlanItems({ items }: { items: readonly ProposalItem[] }) {
   if (items.length === 0)
-    return <p className="text-muted text-sm">Nothing to change — this goal is already planned.</p>;
+    return (
+      <p className="text-muted text-sm">Nothing to change — this main quest is already planned.</p>
+    );
   return (
     <div className="flex flex-col gap-4">
       {(['added', 'changed', 'removed'] as Group[]).map((g) => {
