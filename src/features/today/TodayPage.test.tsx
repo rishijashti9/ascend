@@ -70,15 +70,15 @@ describe('TodayPage', () => {
     expect(next).toHaveTextContent(/^Next/);
     // UX-3: no shortcut tiles that repeat the navigation bar.
     expect(screen.queryByRole('link', { name: /^Body/ })).toBeNull();
-    await userEvent.click(screen.getByRole('button', { name: 'Body', pressed: false }));
-    // Body = STR: Workout, Walk and Sleep.
+    await userEvent.click(screen.getByRole('button', { name: /Strength/, pressed: false }));
+    // STR (Strength): Workout, Walk and Sleep.
     expect(screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent)).toEqual([
       'Workout',
       'Walk',
       'Sleep',
     ]);
-    // Mind = WIL: the wake-up check-in, Journal and Meditate.
-    await userEvent.click(screen.getByRole('button', { name: 'Mind' }));
+    // WIL (Willpower): the wake-up check-in, Journal and Meditate.
+    await userEvent.click(screen.getByRole('button', { name: /Willpower/ }));
     expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(3);
     await userEvent.click(screen.getByRole('button', { name: 'All' }));
     expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(8);

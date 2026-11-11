@@ -221,3 +221,6 @@ and sync are untouched.
 - **P15 was wrong** (found in UX-3): an evening check-in prompt already exists — `CheckInPrompt`
   shows on Today from 18:00 until the day rolls over. The audit's screenshots were taken at 10:00,
   so it wasn't visible. No change needed.
+- **P9 was already handled** (found in UX-5): when a target career is set, the Compass shows the
+  career gap first and folds discovery into a closed "Find careers that fit you" section. The
+  audit's screenshot came from a new account with no target career, where the quiz should be open.

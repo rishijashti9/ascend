@@ -41,7 +41,9 @@ export function primaryNav(): NavItem[] {
  */
 export const MOVED: Record<string, string> = {
   '/goals': '/growth/goals',
-  '/compass': '/growth/roadmap',
+  '/compass': '/growth/compass',
+  // UX-5: the Growth Compass tab was called Roadmap until 2026-11 (it isn't the plan for your goals).
+  '/growth/roadmap': '/growth/compass',
   '/skills': '/growth/skills',
   '/jobs': '/growth/jobs',
   '/profile': '/me/stats',

@@ -1,4 +1,6 @@
 import { FollowUpsCard } from '@/features/jobs/FollowUpsCard';
+import { STATS, type Stat } from '@/core/db/types';
+import { STAT_META } from '@/ui/statMeta';
 import { AskEntry } from '@/features/ask/AskButton';
 import { BatteryLow, Timer } from 'lucide-react';
 import { Link } from 'react-router';
@@ -30,15 +32,17 @@ import { Chip } from '@/ui/Surface';
 import { NextCard } from './NextCard';
 import { useLinkNote } from './linkNote';
 
-type QuestFilter = 'all' | 'core' | 'body' | 'mind' | 'career';
+type QuestFilter = 'all' | 'core' | Stat;
 
-/** Today's quest filter chips (Phase 12): Body = STR, Mind = WIL, Career = INT. */
+/**
+ * Today's quest filter chips. UX-5 (docs/product/AUDIT-AND-PROPOSAL.md P8): the three life areas
+ * use the same names everywhere — the stats STR / INT / WIL (Strength, Intellect, Willpower), with
+ * their icon and colour, exactly as on the quest cards (they were "Body / Mind / Career" here).
+ */
 const FILTERS: { id: QuestFilter; label: string }[] = [
   { id: 'all', label: 'All' },
   { id: 'core', label: 'Core' },
-  { id: 'body', label: 'Body' },
-  { id: 'mind', label: 'Mind' },
-  { id: 'career', label: 'Career' },
+  ...STATS.map((s) => ({ id: s, label: s })),
 ];
 
 function matchesFilter(
@@ -47,7 +51,7 @@ function matchesFilter(
 ): boolean {
   if (f === 'all') return true;
   if (f === 'core') return i.core_snapshot;
-  return i.stat_snapshot === (f === 'body' ? 'STR' : f === 'mind' ? 'WIL' : 'INT');
+  return i.stat_snapshot === f;
 }
 
 /** Low-energy mode (SPEC 4.8): today only, on and off any time before the day closes. */
@@ -133,11 +137,29 @@ export function TodayPage() {
             aria-label="Show quests"
             className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1"
           >
-            {FILTERS.map((f) => (
-              <Chip key={f.id} active={filter === f.id} onClick={() => setFilter(f.id)}>
-                {f.label}
-              </Chip>
-            ))}
+            {FILTERS.map((f) => {
+              const stat = (STATS as readonly string[]).includes(f.id)
+                ? STAT_META[f.id as Stat]
+                : null;
+              return (
+                <Chip key={f.id} active={filter === f.id} onClick={() => setFilter(f.id)}>
+                  {stat ? (
+                    <span className="flex items-center gap-1">
+                      <stat.icon
+                        aria-hidden
+                        size={14}
+                        className={filter === f.id ? '' : stat.text}
+                      />
+                      {f.label}
+                      {/* Accessible name "STR Strength": contains what is shown (WCAG 2.5.3). */}
+                      <span className="sr-only">{stat.label}</span>
+                    </span>
+                  ) : (
+                    f.label
+                  )}
+                </Chip>
+              );
+            })}
           </div>
         )}
         {isEnabled('focus') && (

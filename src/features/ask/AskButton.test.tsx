@@ -7,7 +7,7 @@ import { askScreenFor } from './askContext';
 describe('Ask the System from the main screens (Phase 12, UX-1)', () => {
   it('suggests questions that fit the screen you came from', () => {
     expect(askScreenFor('/').name).toBe('Today');
-    expect(askScreenFor('/growth/roadmap').suggestions[0]).toMatch(/ROS 2/);
+    expect(askScreenFor('/growth/compass').suggestions[0]).toMatch(/ROS 2/);
     expect(askScreenFor('/growth/goals/abc').name).toBe('Goals');
     expect(askScreenFor('/me/body').note).toMatch(/never leave this device/);
     expect(askScreenFor('/me/stats').name).toBe('Me');

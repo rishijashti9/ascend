@@ -38,7 +38,7 @@ const TOP: Screen[] = [
 const GROWTH: Screen[] = [
   { path: 'goals', feature: 'goals', element: <GoalsPage /> },
   { path: 'goals/:id', feature: 'goals', element: <MainQuestPage /> },
-  { path: 'roadmap', feature: 'compass', element: <CompassPage /> },
+  { path: 'compass', feature: 'compass', element: <CompassPage /> },
   { path: 'skills', feature: 'skills', element: <SkillsPage /> },
   { path: 'jobs', feature: 'jobs', element: <JobsPage /> },
 ];

@@ -54,9 +54,9 @@ const SCREENS: { match: RegExp; screen: AskScreen }[] = [
     },
   },
   {
-    match: /^\/growth\/roadmap/,
+    match: /^\/growth\/compass/,
     screen: {
-      name: 'Roadmap',
+      name: 'Compass',
       suggestions: [
         'What should I learn after ROS 2 basics to work on humanoid robots?',
         'How do I prepare for an MS in robotics in Germany?',

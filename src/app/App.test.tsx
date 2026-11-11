@@ -46,6 +46,16 @@ describe('app shell', () => {
     await vi.waitFor(() => expect(goal.state.location.pathname).toBe('/growth/goals/abc'));
   });
 
+  it('UX-5: Roadmap is now Compass, and Quests→Main went to Growth — old links still land', async () => {
+    const roadmap = renderAt('/growth/roadmap?tab=health');
+    await vi.waitFor(() => expect(roadmap.state.location.pathname).toBe('/growth/compass'));
+    expect(roadmap.state.location.search).toBe('?tab=health');
+    const compass = renderAt('/compass');
+    await vi.waitFor(() => expect(compass.state.location.pathname).toBe('/growth/compass'));
+    const main = renderAt('/quests?tab=main');
+    await vi.waitFor(() => expect(main.state.location.pathname).toBe('/growth/goals'));
+  });
+
   it('a hidden feature route redirects home', () => {
     if (features.jobs) return;
     const router = renderAt('/jobs');

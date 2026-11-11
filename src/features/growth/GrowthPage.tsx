@@ -6,7 +6,7 @@ import { tabPanelProps } from '@/ui/tabs';
 import { growthTabs, type GrowthTab } from './tabs';
 
 /**
- * Growth (Phase 12): one screen with tabs — Goals · Roadmap (Growth Compass) · Skills, and Jobs
+ * Growth (Phase 12): one screen with tabs — Goals · Compass (the Growth Compass) · Skills, and Jobs
  * when the job tracker is switched on. Each tab is its own address (/growth/goals, …), so deep
  * links, notifications and the back button keep working.
  */

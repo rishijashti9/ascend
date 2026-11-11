@@ -251,7 +251,7 @@ export function AskPanel({
           <p>{outcome.text}</p>
           {outcome.compass.length === 0 ? (
             <Link
-              to="/growth/roadmap"
+              to="/growth/compass"
               className="text-accent-text inline-flex min-h-11 items-center"
             >
               Open the Growth Compass →
