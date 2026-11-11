@@ -51,10 +51,7 @@ describe('Weekly and Side tabs', () => {
     const form = screen.getByRole('form', { name: 'New weekly quest' });
     await userEvent.type(within(form).getByLabelText('Title'), 'Two mock tests');
     await userEvent.selectOptions(within(form).getByLabelText('Done when'), 'count');
-    await userEvent.selectOptions(
-      within(form).getByLabelText('Toward goal'),
-      'MS in Germany (main quest)',
-    );
+    await userEvent.selectOptions(within(form).getByLabelText('Toward goal'), 'MS in Germany');
     await userEvent.click(within(form).getByRole('button', { name: 'Add quest' }));
 
     const row = (await screen.findByRole('heading', { name: 'Two mock tests' })).closest(

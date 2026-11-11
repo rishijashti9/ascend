@@ -13,20 +13,22 @@ export interface GoalLink {
  * quest), then the active main quests. ONE list for weekly, side and daily quests (linking plan L1,
  * docs/product/LINKING-PLAN.md) — the daily quest editor used to have no way to link at all.
  */
-function useGoalOptions(): { value: string; label: string }[] {
+function useGoalOptions(): { value: string; label: string; group?: string }[] {
   const milestones = useGoals((s) => s.milestones);
   const mainQuests = useGoals((s) => s.mainQuests);
   const live = mainQuests.filter((q) => q.status === 'active');
   const mqTitle = (id: string) => mainQuests.find((q) => q.id === id)?.title ?? '';
   return [
-    { value: '', label: 'Not linked (counts toward its stat only)' },
+    // Short labels: a phone-width select clips anything longer (seen at 390 px).
+    { value: '', label: 'Not linked (stat only)' },
     ...milestones
       .filter((m) => m.status === 'active' || m.status === 'upcoming')
       .map((m) => ({
         value: `milestone:${m.id}`,
         label: `${m.title} — ${mqTitle(m.main_quest_id)}`,
+        group: 'Milestones',
       })),
-    ...live.map((q) => ({ value: `main_quest:${q.id}`, label: `${q.title} (main quest)` })),
+    ...live.map((q) => ({ value: `main_quest:${q.id}`, label: q.title, group: 'Main quests' })),
   ];
 }
 

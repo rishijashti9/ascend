@@ -60,10 +60,8 @@ describe('daily quest goal link (L1)', () => {
       .getByRole('heading', { name: 'AI & Robotics study (phone-free)' })
       .closest('li') as HTMLElement;
     const picker = within(row).getByLabelText('Toward goal');
-    expect(
-      within(picker).getByRole('option', { name: 'Core robotics skills (main quest)' }),
-    ).toBeTruthy();
-    await userEvent.selectOptions(picker, 'Core robotics skills (main quest)');
+    expect(within(picker).getByRole('option', { name: 'Core robotics skills' })).toBeTruthy();
+    await userEvent.selectOptions(picker, 'Core robotics skills');
     const save = within(row).getByRole('button', { name: 'Save' });
     await waitFor(() => expect(save).toBeEnabled());
     await userEvent.click(save);

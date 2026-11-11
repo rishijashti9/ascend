@@ -43,17 +43,34 @@ export function Select({
   ...props
 }: SelectHTMLAttributes<HTMLSelectElement> & {
   label: string;
-  options: readonly { value: string; label: string }[];
+  /** `group`: consecutive options with the same group are shown under that heading. */
+  options: readonly { value: string; label: string; group?: string }[];
 }) {
+  const runs: { group?: string; items: (typeof options)[number][] }[] = [];
+  for (const o of options) {
+    const last = runs.at(-1);
+    if (last && last.group === o.group) last.items.push(o);
+    else runs.push({ group: o.group, items: [o] });
+  }
+  const render = (items: (typeof options)[number][]) =>
+    items.map((o) => (
+      <option key={o.value} value={o.value}>
+        {o.label}
+      </option>
+    ));
   return (
     <Field label={label}>
       {(id) => (
         <select id={id} className={control} {...props}>
-          {options.map((o) => (
-            <option key={o.value} value={o.value}>
-              {o.label}
-            </option>
-          ))}
+          {runs.map((r, i) =>
+            r.group ? (
+              <optgroup key={`${r.group}-${i}`} label={r.group}>
+                {render(r.items)}
+              </optgroup>
+            ) : (
+              render(r.items)
+            ),
+          )}
         </select>
       )}
     </Field>
